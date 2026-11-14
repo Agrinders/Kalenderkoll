@@ -2,8 +2,9 @@
    The stand-in keeps the shared data in this test's server, so separate browsers see the same calendar. */
 const {chromium}=require('playwright');const http=require('http'),fs=require('fs'),path=require('path');
 const A=path.resolve(__dirname,'..');const T={'.html':'text/html','.js':'text/javascript','.json':'application/json','.png':'image/png','.webmanifest':'application/manifest+json'};
-let STORE={},writes=0;
+let STORE={},writes=0;const ACC={};
 const srv=http.createServer((q,r)=>{
+  if(q.url.startsWith('/__acc')){let b='';q.on('data',c=>b+=c);q.on('end',()=>{const{op,email,pw,uid}=JSON.parse(b);let o;if(op==='up'){if(ACC[email])o={err:'auth/email-already-in-use'};else{ACC[email]={pw,uid};o={uid}}}else{const a=ACC[email];o=a&&a.pw===pw?{uid:a.uid}:{err:'auth/invalid-credential'}}r.writeHead(200,{'content-type':'application/json'});r.end(JSON.stringify(o))});return}
   if(q.url.startsWith('/__fs')){if(q.method==='GET'){r.writeHead(200,{'content-type':'application/json'});return r.end(JSON.stringify({v:writes,s:STORE}))}
     let b='';q.on('data',c=>b+=c);q.on('end',()=>{const{op,path:p,data}=JSON.parse(b);if(p.split('/')[1].length<20){r.writeHead(403);return r.end()}if(op==='set')STORE[p]=data;else if(op==='update')STORE[p]={...STORE[p],...data};else delete STORE[p];writes++;r.writeHead(200);r.end('{}')});return}
   let u=decodeURIComponent(q.url.split('?')[0]);if(u.endsWith('/'))u+='index.html';fs.readFile(path.join(A,u),(e,d)=>{if(e){r.writeHead(404);return r.end()}r.writeHead(200,{'content-type':T[path.extname(u)]||'application/octet-stream'});r.end(d)})}).listen(0);
@@ -11,7 +12,12 @@ const FAKE={
 'firebase-app.js':`export function initializeApp(c){return{c}}`,
 'firebase-auth.js':`export function getAuth(a){return{a,user:null,ls:[]}}
 export function onAuthStateChanged(au,cb){au.ls.push(cb);if(au.user)setTimeout(()=>cb(au.user),0);return()=>{au.ls=au.ls.filter(f=>f!==cb)}}
-export async function signInAnonymously(au){let id=localStorage.getItem('fakeuid');if(!id){id='u'+Math.random().toString(36).slice(2,10);localStorage.setItem('fakeuid',id)}au.user={uid:id};au.ls.forEach(f=>f(au.user));return{user:au.user}}`,
+export async function signInAnonymously(au){let id=localStorage.getItem('fakeuid');if(!id){id='u'+Math.random().toString(36).slice(2,10);localStorage.setItem('fakeuid',id)}au.user={uid:id};au.cur=au.user;au.ls.forEach(f=>f(au.user));return{user:au.user}}
+const acc=async(op,d)=>{const r=await fetch(location.origin+'/__acc',{method:'POST',body:JSON.stringify({op,...d})});const j=await r.json();if(j.err){const e=new Error(j.err);e.code=j.err;throw e}return j};
+export const EmailAuthProvider={credential:(email,pw)=>({email,pw})};
+export async function linkWithCredential(u,c){await acc('up',{email:c.email,pw:c.pw,uid:u.uid});u.email=c.email;return{user:u}}
+export async function signInWithEmailAndPassword(au,email,pw){const j=await acc('in',{email,pw});localStorage.setItem('fakeuid',j.uid);au.user={uid:j.uid,email};return{user:au.user}}
+export async function sendPasswordResetEmail(){}`,
 'firebase-firestore.js':`const B=location.origin+'/__fs';
 export const persistentLocalCache=o=>o,persistentMultipleTabManager=()=>({});
 export function initializeFirestore(app){return{app}}export function getFirestore(app){return{app}}
@@ -61,5 +67,9 @@ await step('a reinstalled phone gets everything back from a backup file',async()
   await Promise.all([D1.waitForNavigation(),D1.click('#m_yes')]);await waitFor(D1,()=>KK.mode==='cloud');need(await waitFor(D1,()=>EV.some(e=>e.n==='Middag ihop')),'events not back');
   const sa=await A1.evaluate(()=>KK.space());const r=await D1.evaluate(()=>[KK.space(),ME,cs.classList.contains('on'),CP.a]);need(r[0]===sa&&r[1]==='a'&&!r[2],'restore '+JSON.stringify(r));return r.slice(1)});
 await step('a phone left without a place after a reinstall can take its name back',async()=>{need(await waitFor(A1,()=>sc.classList.contains('on')),'phone 1 was not asked');const o=await A1.evaluate(()=>[...sc_o.querySelectorAll('[data-sco]')].map(b=>b.textContent));await A1.click('#sc_o [data-sco="a"]');await w(A1,400);const r=await A1.evaluate(()=>[ME,CP.ua===MYID]);need(r[0]==='a'&&r[1],'who '+r);return[o,r]});
+await step('an account brings the calendar back on a newly installed phone',async()=>{await B1.evaluate(()=>{go('c')});await w(B1);await B1.click('[data-acc="up"]');await B1.fill('#as_e','maya@example.com');await B1.fill('#as_w','hemligt1');await B1.click('#as_ok');need(await waitFor(B1,()=>KK.email==='maya@example.com'&&/Inloggad som/.test(c_acc.textContent)),'not created');
+  const E1=await phone();await E1.goto(base);await waitFor(E1,()=>KK.mode==='cloud');await waitFor(E1,()=>cs.classList.contains('on'));await E1.click('#cs_li');await E1.fill('#as_e','maya@example.com');await E1.fill('#as_w','fel-losen');await E1.click('#as_ok');need(await waitFor(E1,()=>/Fel e-post/.test(toasts.textContent)),'wrong password accepted');
+  await E1.fill('#as_w','hemligt1');await Promise.all([E1.waitForNavigation(),E1.click('#as_ok')]);await waitFor(E1,()=>KK.mode==='cloud');need(await waitFor(E1,()=>EV.some(e=>e.n==='Middag ihop')&&ME==='b'),'calendar not back');
+  const sb=await B1.evaluate(()=>KK.space());const r=await E1.evaluate(()=>[KK.space(),ME,CP.b,cs.classList.contains('on'),sc.classList.contains('on')]);need(r[0]===sb&&r[1]==='b'&&!r[3]&&!r[4],'account '+JSON.stringify(r));return r.slice(1)});
 console.log(errs.length?'PAGE ERRORS: '+errs.join(' | '):'no page errors');if(errs.length)fails++;
 await b.close();srv.close();console.log(fails?fails+' failed':'all passed');process.exit(fails?1:0)})();

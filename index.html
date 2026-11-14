@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="8cc1fe0b31e7">
+<meta name="kal-build" content="690c0c5befc2">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -343,10 +343,14 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 <div class="fl" id="cs_al"></div><input id="cs_a" class="field" type="text" maxlength="30" autocomplete="off">
 <div id="cs_prof"><div class="fl" id="cs_pl"></div><div class="cspic"><span id="cs_av"></span><button type="button" class="btn ghost" id="cs_pb"></button><button type="button" class="lnk bad hide" id="cs_px"></button></div><div class="fl" id="cs_cl"></div><div class="sw" id="cs_c"></div></div>
 <div class="fl" id="cs_sl"></div><button type="button" class="field dbtn" id="cs_s" value=""><span></span></button>
-<div class="acts"><button class="btn ghost hide" id="cs_no"></button><button class="btn" id="cs_ok"></button></div><button class="lnk wide hide" id="cs_rs" type="button"></button></div></div>
+<div class="acts"><button class="btn ghost hide" id="cs_no"></button><button class="btn" id="cs_ok"></button></div><button class="lnk wide hide" id="cs_li" type="button"></button><button class="lnk wide hide" id="cs_rs" type="button"></button></div></div>
 <input type="file" id="pic_in" accept="image/*" class="hide"><input type="file" id="bk_in" accept=".json,application/json,text/plain,*/*" class="hide">
 
 <div id="ip" class="sh" role="dialog" aria-modal="true" aria-labelledby="ip_t"><div class="box"><b id="ip_t" class="title"></b><div class="fl" id="ip_il"></div><div class="ics big" id="ip_l"></div><div class="acts"><button class="btn ghost" id="ip_no"></button><button class="btn" id="ip_ok"></button></div><button class="lnk hide wide" id="ip_none"></button></div></div>
+<div id="as" class="sh" role="dialog" aria-modal="true" aria-labelledby="as_t"><div class="box"><b id="as_t" class="title"></b><p class="muted" id="as_p"></p>
+<div class="fl" id="as_el"></div><input id="as_e" class="field" type="email" autocomplete="email" autocapitalize="off" spellcheck="false" maxlength="120">
+<div class="fl" id="as_wl"></div><input id="as_w" class="field" type="password" autocomplete="current-password" maxlength="100">
+<div class="acts"><button class="btn ghost" id="as_no"></button><button class="btn" id="as_ok"></button></div><button class="lnk wide" id="as_sw" type="button"></button><button class="lnk wide hide" id="as_fp" type="button"></button></div></div>
 <div id="js" class="sh" role="dialog" aria-modal="true" aria-labelledby="js_t"><div class="box"><b id="js_t" class="title"></b><p class="muted" id="js_p"></p><input id="js_in" class="field" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" style="margin-top:12px"><div class="acts"><button class="btn ghost" id="js_no">Avbryt</button><button class="btn" id="js_ok"></button></div></div></div>
 <div id="sc" class="sh" role="dialog" aria-modal="true" aria-labelledby="sc_t"><div class="box"><b id="sc_t" class="title"></b><p class="muted" id="sc_s"></p><div id="sc_o"></div><button class="btn ghost wide" id="sc_no"></button></div></div>
 <div id="pk" class="sh" role="dialog" aria-modal="true" aria-labelledby="pk_t"><div class="box"><b id="pk_t" class="title"></b><div id="pk_l"></div><button class="btn ghost wide" id="pk_no"></button></div></div>
@@ -396,6 +400,7 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 <div class="srow"><span id="c_lgl"></span><div class="seg" id="c_lg"></div></div>
 <div class="srow"><span id="c_wnl"></span><div class="seg" id="c_wn"></div></div>
 <div class="srow"><span id="c_hol"></span><div class="seg" id="c_ho"></div></div></div>
+<div class="card set hide" id="c_acc"></div>
 <div class="card set"><h3 id="c_h2"></h3><p class="muted" id="c_st"></p><p class="muted" id="c_bk"></p><div id="c_bkb"></div><button class="btn ghost wide" id="ics_out"></button></div>
 <div class="card set"><h3 id="c_h3"></h3><p class="muted" id="c_rs"></p><button class="lnk bad" id="reset" style="margin-top:8px"></button></div>
 </section>
@@ -696,6 +701,7 @@ function renderSettings(){
   $("c_th").innerHTML=segOf("th",[["auto","Auto"],["light",tx("Ljust","Light")],["dark",tx("Mörkt","Dark")]],S.theme);
   $("c_lg").innerHTML=segOf("lg",[["sv","Svenska"],["en","English"]],S.lang);
   $("c_wn").innerHTML=segOf("wn",[["1",tx("Visa","Show")],["0",tx("Dölj","Hide")]],S.wkno?1:0);$("c_ho").innerHTML=segOf("ho",[["1",tx("Visa","Show")],["0",tx("Dölj","Hide")]],S.hol?1:0);
+  {const can=LOCAL&&window.KK&&KK.signUp;$("c_acc").classList.toggle("hide",!can);if(can)$("c_acc").innerHTML=`<h3>${tx("Konto","Account")}</h3>`+(KK.email?`<div class="ok">${IOK}<span>${tx("Inloggad som ","Logged in as ")}<b>${esc(KK.email)}</b></span></div><p class="muted">${tx("Om du installerar om appen eller byter telefon loggar du in, så är allt tillbaka.","If you reinstall the app or change phones, log in and everything is back.")}</p>`:`<p class="muted">${tx("Skapa ett konto så kan du aldrig tappa kalendern. Installerar du om appen loggar du bara in igen.","Create an account and you can never lose the calendar. If you reinstall the app, you just log in again.")}</p><button class="btn wide" data-acc="up">${tx("Skapa konto","Create an account")}</button><button class="lnk wide" data-acc="in">${tx("Jag har redan ett konto","I already have an account")}</button>`)}
   $("c_h2").textContent=tx("Er data","Your data");$("c_st").textContent=!col?tx("Inte ansluten: inget sparas när sidan stängs.","Not connected: nothing is saved when the page closes."):!SHARED()?tx("Allt sparas bara på den här telefonen.","Everything is saved on this phone only."):tx("Kalendern är delad. Ändringar syns direkt hos den andra.","The calendar is shared. Changes show up for the other right away.");
   $("c_bk").classList.toggle("hide",!LOCAL);$("c_bk").textContent=NATIVE()?tx("En säkerhetskopia sparas automatiskt i Dokument › Kalenderkoll på telefonen. Om du installerar om appen trycker du på Återställ och väljer filen.","A backup is saved automatically in Documents › Kalenderkoll on the phone. If you reinstall the app, tap Restore and pick the file.")+(bkLast()?" "+tx("Senast sparad ","Last saved ")+bkLast()+".":""):tx("Spara en säkerhetskopia ibland. Om du byter telefon eller installerar om appen kan du hämta tillbaka allt från filen.","Save a backup now and then. If you change phones or reinstall the app, you can bring everything back from the file.");
   $("c_bkb").innerHTML=`<button class="btn wide" id="bk_save">${tx("Spara säkerhetskopia","Save a backup")}</button>`+(LOCAL?`<button class="btn ghost wide" id="bk_load">${tx("Återställ från säkerhetskopia","Restore from a backup")}</button>`:"");$("ics_out").textContent=tx("Exportera till telefonens kalender","Export to your phone's calendar");$("c_h3").textContent=tx("Börja om","Start over");$("c_rs").textContent=tx("Tar bort alla händelser, uppgifter och lappar för er båda. Det går inte att ångra.","Removes all events, tasks and notes for both of you. This cannot be undone.");$("reset").textContent=tx("Radera allt","Delete everything")}
@@ -840,7 +846,7 @@ function openCS(mode){if(mode===true)mode="new";CSM=mode;const m=me(),o=other(m)
   $("cs_a").value=mode==="join"?"":CP[m]||"";$("cs_s").dataset.ph=tx("Välj datum","Pick a date");$("cs_s").dataset.base=CP.since||isoOf(new Date(NOW.getFullYear()-1,NOW.getMonth(),1));$("cs_s").value=CP.since||"";dpLabel($("cs_s"));
   $("cs_sl").classList.toggle("hide",mode==="join");$("cs_s").classList.toggle("hide",mode==="join");
   CSP={col:CP["c"+m]||"",img:PICS[m]||""};$("cs_pl").textContent=tx("Din bild (valfritt)","Your picture (optional)");$("cs_cl").textContent=tx("Din färg","Your colour");paintCSP();
-  const first=mode==="new"||mode==="join";$("cs_no").textContent=tx("Avbryt","Cancel");$("cs_no").classList.toggle("hide",first);$("cs_ok").textContent=mode==="new"?tx("Börja","Start"):mode==="join"?tx("Gå med","Join"):tx("Spara","Save");$("cs_rs").textContent=tx("Har du en säkerhetskopia? Återställ den","Have a backup? Restore it");$("cs_rs").classList.toggle("hide",!(mode==="new"&&LOCAL));$("cs").classList.add("on");setTimeout(()=>$("cs_a").focus(),80)}
+  const first=mode==="new"||mode==="join";$("cs_no").textContent=tx("Avbryt","Cancel");$("cs_no").classList.toggle("hide",first);$("cs_ok").textContent=mode==="new"?tx("Börja","Start"):mode==="join"?tx("Gå med","Join"):tx("Spara","Save");$("cs_rs").textContent=tx("Har du en säkerhetskopia? Återställ den","Have a backup? Restore it");$("cs_rs").classList.toggle("hide",!(mode==="new"&&LOCAL));$("cs_li").textContent=tx("Har du ett konto? Logga in","Have an account? Log in");$("cs_li").classList.toggle("hide",!(mode==="new"&&LOCAL&&window.KK&&KK.signIn));$("cs").classList.add("on");setTimeout(()=>$("cs_a").focus(),80)}
 let CSP={col:"",img:""};
 function paintCSP(){const m=me(),c=CSP.col||(m==="a"?"var(--pa)":"var(--pb)"),nm=$("cs_a").value.trim()||pname(m);
   $("cs_av").innerHTML=`<i class="ava xl${CSP.img?" pic":""}" style="--p:${c}${CSP.img?`;--img:url('${CSP.img}')`:""}">${esc((nm[0]||"?").toUpperCase())}</i>`;
@@ -972,7 +978,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
 (()=>{const on=id=>$(id).classList.contains("on");
-  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
+  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
   const guard=()=>history.pushState({kk:1},"");try{history.replaceState({kk:0},"");guard()}catch(e){return}
   addEventListener("popstate",()=>{if(closeTop())return guard();if(tab!=="h"){go("h");return guard()}history.back()})})();
 
@@ -1070,6 +1076,36 @@ document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest
   if(t.id==="bk_save"){if(!hasData()){toast(tx("Det finns inget att spara än","There is nothing to save yet"));return}saveFile(NATIVE()?BKN.replace(".json","-"+isoOf(new Date())+".json"):"kalenderkoll-sakerhetskopia-"+isoOf(new Date())+".json",backupText(),"application/json")}
   else{$("bk_in").value="";$("bk_in").click()}});
 $("bk_in").addEventListener("change",()=>{const f=$("bk_in").files[0];if(f)restoreFrom(f)});
+/* ---------- Account (optional) ----------
+   E-mail and password. Creating one upgrades this phone's sign-in, so nothing changes in the calendar.
+   Logging in on a newly installed app brings back the calendar and who you are. */
+var ASM="up";
+function openAS(mode){ASM=mode;const up=mode==="up";
+  $("as_t").textContent=up?tx("Skapa konto","Create an account"):tx("Logga in","Log in");
+  $("as_p").textContent=up?tx("Med ett konto får du tillbaka kalendern om du installerar om appen eller byter telefon.","With an account you get the calendar back if you reinstall the app or change phones."):hasData()?tx("Kalendern på den här telefonen byts mot den som hör till kontot.","The calendar on this phone is replaced by the one that belongs to the account."):tx("Logga in så hämtas din kalender.","Log in and your calendar is fetched.");
+  $("as_el").textContent=tx("E-post","E-mail");$("as_wl").textContent=up?tx("Välj ett lösenord (minst 6 tecken)","Pick a password (at least 6 characters)"):tx("Lösenord","Password");$("as_w").autocomplete=up?"new-password":"current-password";$("as_w").value="";
+  $("as_no").textContent=tx("Avbryt","Cancel");$("as_ok").textContent=up?tx("Skapa konto","Create account"):tx("Logga in","Log in");$("as_ok").disabled=false;
+  $("as_sw").textContent=up?tx("Jag har redan ett konto","I already have an account"):tx("Skapa ett nytt konto","Create a new account");$("as_fp").textContent=tx("Glömt lösenordet?","Forgot the password?");$("as_fp").classList.toggle("hide",up);
+  $("as").classList.add("on");setTimeout(()=>($("as_e").value?$("as_w"):$("as_e")).focus(),80)}
+function closeAS(){$("as").classList.remove("on")}
+function accErr(e){const c=e&&e.code||"";return c==="auth/operation-not-allowed"?tx("Inloggning med e-post är inte påslagen i Firebase än","E-mail sign-in is not turned on in Firebase yet"):
+  c==="auth/email-already-in-use"||c==="auth/credential-already-in-use"?tx("Det finns redan ett konto med den e-posten. Välj Jag har redan ett konto.","There is already an account with that e-mail. Choose I already have an account."):
+  c==="auth/weak-password"?tx("Lösenordet behöver minst 6 tecken","The password needs at least 6 characters"):
+  c==="auth/invalid-email"?tx("E-postadressen ser inte rätt ut","That e-mail address does not look right"):
+  c==="auth/invalid-credential"||c==="auth/wrong-password"||c==="auth/user-not-found"?tx("Fel e-post eller lösenord","Wrong e-mail or password"):
+  c==="auth/too-many-requests"?tx("För många försök. Vänta en stund.","Too many tries. Wait a little."):
+  c==="kk/no-link"?tx("Kontot har ingen kalender kopplad","That account has no calendar connected"):
+  tx("Det gick inte. Kontrollera internet och försök igen.","That did not work. Check the internet and try again.")}
+$("as_no").onclick=closeAS;$("as").addEventListener("click",e=>{if(e.target===$("as"))closeAS()});
+$("as_sw").onclick=()=>openAS(ASM==="up"?"in":"up");
+$("as_fp").onclick=async()=>{const em=$("as_e").value.trim();if(!em){toast(tx("Skriv din e-post först","Write your e-mail first"));$("as_e").focus();return}
+  try{await KK.resetPw(em);toast(tx("Om kontot finns har vi skickat ett mejl med en länk för nytt lösenord","If the account exists, we sent an e-mail with a link for a new password"),6000)}catch(e){toast(accErr(e))}};
+$("as_ok").onclick=async()=>{const em=$("as_e").value.trim(),pw=$("as_w").value;if(!em){$("as_e").focus();return}if(pw.length<6){toast(tx("Lösenordet behöver minst 6 tecken","The password needs at least 6 characters"));$("as_w").focus();return}
+  if(!(window.KK&&KK.signUp)){toast(tx("Ingen kontakt med internet just nu","No internet connection right now"));return}
+  $("as_ok").disabled=true;
+  try{if(ASM==="up"){await KK.signUp(em,pw);closeAS();toast(tx("Kontot är skapat","The account is created")+" · "+em);renderSettings()}else{await KK.signIn(em,pw)}}
+  catch(e){$("as_ok").disabled=false;toast(accErr(e),5000)}};
+document.addEventListener("click",e=>{if(!e.target.closest)return;const b=e.target.closest("[data-acc]");if(b)openAS(b.dataset.acc);else if(e.target.closest("#cs_li"))openAS("in")});
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>

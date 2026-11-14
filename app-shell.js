@@ -53,6 +53,15 @@
     if(ids.length&&!joinCode){try{const have=new Set((await F.getDocs(ref("cal"))).docs.map(d=>d.id));await Promise.all(ids.filter(id=>rest?!have.size:!have.has(id)||fresh2).map(id=>F.setDoc(F.doc(fs,"spaces",space,"cal",id),local[id])));ls.set("kalenderkoll.data.sent",JSON.stringify(local));ls.del(KEY)}catch(e){}}
     else if(ids.length&&joinCode){ls.set("kalenderkoll.data.sent",JSON.stringify(local));ls.del(KEY)}
     KK.mode="cloud";KK.uid=user.uid;
+    /* An optional account (e-mail and password). The phone's sign-in is upgraded in place, so who you are stays the same,
+       and the account remembers which calendar is yours. After a reinstall you log in and everything is back. */
+    const link=u=>["spaces","acct_"+u.uid+"_kalenderkoll","cal"];
+    KK.email=user.email||"";if(user.email)F.setDoc(F.doc(fs,...link(user),"link"),{kind:"link",space}).catch(()=>{});
+    KK.signUp=async(email,pw)=>{const r=await Au.linkWithCredential(auth.currentUser||user,Au.EmailAuthProvider.credential(email,pw));await F.setDoc(F.doc(fs,...link(r.user),"link"),{kind:"link",space});KK.email=r.user.email||email};
+    KK.signIn=async(email,pw)=>{const r=await Au.signInWithEmailAndPassword(auth,email,pw);const d=(await F.getDocs(F.collection(fs,...link(r.user)))).docs.find(x=>x.id==="link"),sp=d&&d.data().space;
+      if(!okCode(sp)){const e=new Error("no calendar");e.code="kk/no-link";throw e}
+      ls.set(SKEY,sp);ls.del(KEY);["me","partner","seen","joining","nudge"].forEach(k=>ls.del("kalenderkoll."+k));location.replace(location.pathname)};
+    KK.resetPw=email=>Au.sendPasswordResetEmail(auth,email);
     return{collection:p=>({doc:id=>{const r=F.doc(fs,"spaces",space,p,id);return{id,set:d=>F.setDoc(r,d),update:d=>F.updateDoc(r,d),delete:()=>F.deleteDoc(r)}},
       onSnapshot:(n,err)=>F.onSnapshot(ref(p),s=>n({docs:s.docs.map(x=>({id:x.id,exists:true,data:()=>x.data()})),size:s.size,empty:s.empty,metadata:{fromCache:s.metadata.fromCache}}),err)})}
   })().catch(()=>{KK.mode="local";return localDb});
