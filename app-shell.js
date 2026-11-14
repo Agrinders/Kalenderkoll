@@ -28,7 +28,11 @@
     inviteUrl:()=>(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform()?"https://agrinders.github.io/Kalenderkoll/":location.origin+location.pathname)+"#join="+space,
     codeIn,
     /* Switch this phone to another calendar (from a pasted link or code). */
-    join(c){c=codeIn(c);if(!c)return false;ls.set(SKEY,c);ls.del(KEY);location.replace(location.pathname);return true}};
+    join(c){c=codeIn(c);if(!c)return false;ls.set(SKEY,c);ls.del(KEY);location.replace(location.pathname);return true},
+    /* Bring back a calendar from a backup file: which calendar it was, who you are, and everything in it. */
+    restore(b){if(!b||typeof b.docs!=="object")return false;const sp=okCode(b.space)?b.space:"";
+      if(sp)ls.set(SKEY,sp);else ls.del(SKEY);ls.set(KEY,JSON.stringify({cal:b.docs}));ls.set("kalenderkoll.restore","1");
+      if(b.me==="a"||b.me==="b")ls.set("kalenderkoll.me",b.me);ls.del("kalenderkoll.partner");location.replace(location.pathname);return true}};
   const timeout=ms=>new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")),ms));
   const ready=(async()=>{
     if(window.KK_NO_CLOUD)throw new Error("off");
@@ -42,7 +46,9 @@
     const ref=p=>F.collection(fs,"spaces",space,p);
     /* Anything saved only on this phone is sent up, without overwriting what is already shared. */
     const local=(read().cal)||{},ids=Object.keys(local);
-    if(ids.length&&!joinCode){try{const have=new Set((await F.getDocs(ref("cal"))).docs.map(d=>d.id));await Promise.all(ids.filter(id=>!have.has(id)||fresh2).map(id=>F.setDoc(F.doc(fs,"spaces",space,"cal",id),local[id])));ls.set("kalenderkoll.data.sent",JSON.stringify(local));ls.del(KEY)}catch(e){}}
+    /* After a restore the shared copy wins; the file only fills in a calendar that is empty in the cloud. */
+    const rest=ls.get("kalenderkoll.restore")==="1";ls.del("kalenderkoll.restore");
+    if(ids.length&&!joinCode){try{const have=new Set((await F.getDocs(ref("cal"))).docs.map(d=>d.id));await Promise.all(ids.filter(id=>rest?!have.size:!have.has(id)||fresh2).map(id=>F.setDoc(F.doc(fs,"spaces",space,"cal",id),local[id])));ls.set("kalenderkoll.data.sent",JSON.stringify(local));ls.del(KEY)}catch(e){}}
     else if(ids.length&&joinCode){ls.set("kalenderkoll.data.sent",JSON.stringify(local));ls.del(KEY)}
     KK.mode="cloud";KK.uid=user.uid;
     return{collection:p=>({doc:id=>{const r=F.doc(fs,"spaces",space,p,id);return{id,set:d=>F.setDoc(r,d),update:d=>F.updateDoc(r,d),delete:()=>F.deleteDoc(r)}},

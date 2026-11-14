@@ -1,4 +1,5 @@
-# Builds the Android app (an .apk file) from the same code as the website, every time main changes.
+# Builds the Android app (an .apk file) every time main changes.
+# The app opens the website, so changes pushed to GitHub show up without reinstalling (like a PWABuilder app).
 # The newest file is always at: https://github.com/Agrinders/Kalenderkoll/releases/download/android/Kalenderkoll.apk
 name: Android app
 on:
@@ -34,15 +35,18 @@ jobs:
         run: |
           mkdir -p app && cd app
           npm init -y >/dev/null
-          npm i @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8 @capacitor/local-notifications@8 @capacitor/assets@4
+          npm i @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8 @capacitor/local-notifications@8 @capacitor/filesystem@8 @capacitor/assets@4
           cp -r ../www ./www
           cat > capacitor.config.json <<'JSON'
-          {"appId":"se.agrinders.kalenderkoll","appName":"Kalenderkoll","webDir":"www","android":{"backgroundColor":"#f8f3f4"}}
+          {"appId":"se.agrinders.kalenderkoll","appName":"Kalenderkoll","webDir":"www","server":{"url":"https://agrinders.github.io/Kalenderkoll/"},"android":{"backgroundColor":"#f8f3f4"}}
           JSON
           npx cap add android
           mkdir -p assets && cp ../android-assets/*.png assets/
           npx capacitor-assets generate --android --iconBackgroundColor '#f8e4dc' --splashBackgroundColor '#f8f3f4' --splashBackgroundColorDark '#15131a'
           npx cap sync android
+          # Older phones (Android 10 and earlier) need permission to write the backup to Documents.
+          sed -i 's#<uses-permission android:name="android.permission.INTERNET" />#<uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />#' android/app/src/main/AndroidManifest.xml
+          grep -q WRITE_EXTERNAL_STORAGE android/app/src/main/AndroidManifest.xml
           # Every build gets a higher number, so a new version installs over the old one.
           sed -i -E "s/versionCode [0-9]+/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"2.${{ github.run_number }}\"/" android/app/build.gradle
       - name: Build and sign the apk

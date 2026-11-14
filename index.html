@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="bfce0e8bb7ff">
+<meta name="kal-build" content="272422da93c5">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -329,7 +329,8 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 <div class="fl" id="cs_al"></div><input id="cs_a" class="field" type="text" maxlength="30" autocomplete="off">
 <div class="fl" id="cs_bl"></div><input id="cs_b" class="field" type="text" maxlength="30" autocomplete="off">
 <div class="fl" id="cs_sl"></div><button type="button" class="field dbtn" id="cs_s" value=""><span></span></button>
-<div class="acts"><button class="btn ghost hide" id="cs_no"></button><button class="btn" id="cs_ok"></button></div></div></div>
+<div class="acts"><button class="btn ghost hide" id="cs_no"></button><button class="btn" id="cs_ok"></button></div><button class="lnk wide hide" id="cs_rs" type="button"></button></div></div>
+<input type="file" id="bk_in" accept=".json,application/json,text/plain,*/*" class="hide">
 
 <div id="ip" class="sh" role="dialog" aria-modal="true" aria-labelledby="ip_t"><div class="box"><b id="ip_t" class="title"></b><div class="fl" id="ip_il"></div><div class="ics big" id="ip_l"></div><div class="acts"><button class="btn ghost" id="ip_no"></button><button class="btn" id="ip_ok"></button></div><button class="lnk hide wide" id="ip_none"></button></div></div>
 <div id="js" class="sh" role="dialog" aria-modal="true" aria-labelledby="js_t"><div class="box"><b id="js_t" class="title"></b><p class="muted" id="js_p"></p><input id="js_in" class="field" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" style="margin-top:12px"><div class="acts"><button class="btn ghost" id="js_no">Avbryt</button><button class="btn" id="js_ok"></button></div></div></div>
@@ -671,8 +672,9 @@ function renderSettings(){
   $("c_th").innerHTML=segOf("th",[["auto","Auto"],["light",tx("Ljust","Light")],["dark",tx("Mörkt","Dark")]],S.theme);
   $("c_lg").innerHTML=segOf("lg",[["sv","Svenska"],["en","English"]],S.lang);
   $("c_wn").innerHTML=segOf("wn",[["1",tx("Visa","Show")],["0",tx("Dölj","Hide")]],S.wkno?1:0);$("c_ho").innerHTML=segOf("ho",[["1",tx("Visa","Show")],["0",tx("Dölj","Hide")]],S.hol?1:0);
-  $("c_h2").textContent=tx("Er data","Your data");$("c_st").textContent=!col?tx("Inte ansluten: inget sparas när sidan stängs.","Not connected: nothing is saved when the page closes."):!SHARED()?tx("Allt sparas bara på den här telefonen. Spara en säkerhetskopia ibland.","Everything is saved on this phone only. Save a backup now and then."):tx("Kalendern är delad. Ändringar syns direkt hos den andra.","The calendar is shared. Changes show up for the other right away.");
-  $("c_bk").classList.add("hide");$("ics_out").textContent=tx("Spara som .ics (till telefonens kalender)","Save as .ics (for your phone's calendar)");$("reset").textContent=tx("Radera allt","Delete everything")}
+  $("c_h2").textContent=tx("Er data","Your data");$("c_st").textContent=!col?tx("Inte ansluten: inget sparas när sidan stängs.","Not connected: nothing is saved when the page closes."):!SHARED()?tx("Allt sparas bara på den här telefonen.","Everything is saved on this phone only."):tx("Kalendern är delad. Ändringar syns direkt hos den andra.","The calendar is shared. Changes show up for the other right away.");
+  $("c_bk").classList.toggle("hide",!LOCAL);$("c_bk").textContent=NATIVE()?tx("En säkerhetskopia sparas automatiskt i Dokument › Kalenderkoll på telefonen. Om du installerar om appen trycker du på Återställ och väljer filen.","A backup is saved automatically in Documents › Kalenderkoll on the phone. If you reinstall the app, tap Restore and pick the file.")+(bkLast()?" "+tx("Senast sparad ","Last saved ")+bkLast()+".":""):tx("Spara en säkerhetskopia ibland. Om du byter telefon eller installerar om appen kan du hämta tillbaka allt från filen.","Save a backup now and then. If you change phones or reinstall the app, you can bring everything back from the file.");
+  $("c_bkb").innerHTML=`<button class="btn wide" id="bk_save">${tx("Spara säkerhetskopia","Save a backup")}</button>`+(LOCAL?`<button class="btn ghost wide" id="bk_load">${tx("Återställ från säkerhetskopia","Restore from a backup")}</button>`:"");$("ics_out").textContent=tx("Spara som .ics (till telefonens kalender)","Save as .ics (for your phone's calendar)");$("reset").textContent=tx("Radera allt","Delete everything")}
 
 /* ---------- Side menu ---------- */
 function renderDrawer(){$("dr_sub").textContent=CP.a&&CP.b?CP.a+" ♥ "+CP.b:tx("Er gemensamma kalender","Your shared calendar");
@@ -805,7 +807,7 @@ $("ns_del").onclick=()=>{const x=NS&&NOTES.find(z=>z.id===NS.id);closeNS();if(x)
 function openCS(first){const m=me();$("cs_t").textContent=first?tx("Välkommen till Kalenderkoll","Welcome to Kalenderkoll"):tx("Ni två","The two of you");$("cs_p").textContent=first?tx("En kalender för er två. Börja med era namn.","A calendar for the two of you. Start with your names."):tx("Namnen syns i kalendern och på listorna.","The names show in the calendar and on the lists.");
   $("cs_al").textContent=tx("Ditt namn","Your name");$("cs_bl").textContent=tx("Din partners namn","Your partner's name");$("cs_sl").textContent=tx("Tillsammans sedan (valfritt)","Together since (optional)");
   $("cs_a").value=CP[m]||"";$("cs_b").value=CP[other(m)]||"";$("cs_s").dataset.ph=tx("Välj datum","Pick a date");$("cs_s").dataset.base=CP.since||isoOf(new Date(NOW.getFullYear()-1,NOW.getMonth(),1));$("cs_s").value=CP.since||"";dpLabel($("cs_s"));
-  $("cs_no").textContent=tx("Avbryt","Cancel");$("cs_no").classList.toggle("hide",!!first);$("cs_ok").textContent=first?tx("Börja","Start"):tx("Spara","Save");$("cs").classList.add("on");setTimeout(()=>$("cs_a").focus(),80)}
+  $("cs_no").textContent=tx("Avbryt","Cancel");$("cs_no").classList.toggle("hide",!!first);$("cs_ok").textContent=first?tx("Börja","Start"):tx("Spara","Save");$("cs_rs").textContent=tx("Har du en säkerhetskopia? Återställ den","Have a backup? Restore it");$("cs_rs").classList.toggle("hide",!(first&&LOCAL));$("cs").classList.add("on");setTimeout(()=>$("cs_a").focus(),80)}
 const closeCS=()=>$("cs").classList.remove("on");
 $("cs_no").onclick=closeCS;$("cs").addEventListener("click",e=>{if(e.target===$("cs")&&!$("cs_no").classList.contains("hide"))closeCS()});
 $("cs_ok").onclick=()=>{const a=$("cs_a").value.trim(),b=$("cs_b").value.trim();if(!a||!b){toast(tx("Skriv båda namnen","Write both names"));(a?$("cs_b"):$("cs_a")).focus();return}
@@ -833,8 +835,7 @@ function icsText(evs,bds){const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Ka
   bds.forEach(b=>{const d=nd(bdOnYear(b,b.y||NOW.getFullYear()));L.push("BEGIN:VEVENT","UID:bd-"+b.id+"@kalenderkoll","DTSTAMP:"+stamp,"SUMMARY:"+icsEsc(b.ty==="b"?tx(b.n+" har födelsedag",b.n+"'s birthday"):b.n),"DTSTART;VALUE=DATE:"+icsD(d),"DTEND;VALUE=DATE:"+icsD(nd(dn(d)+1)),"RRULE:FREQ=YEARLY","TRANSP:TRANSPARENT","END:VEVENT")});
   L.push("END:VCALENDAR");return L.map(icsFold).join("\r\n")+"\r\n"}
 async function icsSave(evs,bds,name){const fn=String(name||"kalenderkoll").replace(/[^\wåäöÅÄÖ\- ]+/g,"").trim().replace(/\s+/g,"-").toLowerCase()+".ics",txt=icsText(evs,bds);
-  if(!LOCAL){try{const dl=await claude.use("downloads");if(dl){await dl.save({filename:fn,data:txt});return}}catch(e){return}}
-  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/calendar;charset=utf-8"}));a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+  saveFile(fn,txt,"text/calendar;charset=utf-8")}
 $("ics_out").onclick=()=>{if(!EV.length&&!BD.length){toast(tx("Det finns inget att spara än","There is nothing to save yet"));return}icsSave(EV,BD,"kalenderkoll-"+isoOf(new Date()))};
 /* ---------- Taps ---------- */
 function addHere(){openES(null,null,{d:nd(SEL)})}
@@ -907,7 +908,7 @@ async function firstRun(){if(firstDone)return;firstDone=true;if(!CP.a||!CP.b){op
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
     CP=cp||{a:"",b:"",ua:"",ub:"",since:""};
     if(MYID){if(CP.ua===MYID)setMe("a");else if(CP.ub===MYID)setMe("b")}
-    watchJoin();render();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
+    watchJoin();render();autoBackup();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
 }catch(e){}setTimeout(()=>{if(!ok&&!firstDone)firstRun()},col?10000:400)})();
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
@@ -959,6 +960,39 @@ async function checkUpdate(){if(!LOCAL||!BUILD||!navigator.onLine)return;try{con
 $("upd").onclick=()=>{location.replace(location.pathname+"?v="+($("upd").dataset.v||Date.now()))};
 if(/[?&]v=/.test(location.search))history.replaceState(history.state,"",location.pathname+location.hash);
 setTimeout(checkUpdate,4000);setInterval(checkUpdate,15*6e4);document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkUpdate()});
+/* ---------- Backups ----------
+   A backup is one small file with everything in the calendar, plus which shared calendar it is and who you are.
+   In the Android app a fresh copy is written to Documents › Kalenderkoll after every change.
+   After a reinstall you pick that file under Restore, and the app joins the same shared calendar again. */
+function NATIVE(){return!!(window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform())}
+function FSP(){return NATIVE()&&Capacitor.Plugins&&Capacitor.Plugins.Filesystem||null}
+/* Plain var and function so the settings page can use these while the app is still starting. */
+var BKN="Kalenderkoll-sakerhetskopia.json",BKK="kalenderkoll.backup";
+function bkInfo(){try{return JSON.parse(localStorage.getItem(BKK)||"{}")||{}}catch(e){return{}}}
+function bkLast(){const t=bkInfo().at;if(!t)return"";const d=new Date(t);return isNaN(d)?"":fmtD(dnOf(d))+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
+function backupText(){return JSON.stringify({app:"kalenderkoll",v:1,at:new Date().toISOString(),space:window.KK&&KK.space?KK.space():"",me:ME||"",docs:DOCS},null,1)}
+/* Saves a file where the person can find it: Documents › Kalenderkoll in the Android app, a download elsewhere. */
+async function saveFile(name,text,mime){const F=FSP();
+  if(F){try{await F.writeFile({path:"Kalenderkoll/"+name,data:text,directory:"DOCUMENTS",encoding:"utf8",recursive:true});toast(tx("Sparad i Dokument › Kalenderkoll","Saved in Documents › Kalenderkoll")+" · "+name);return true}
+    catch(e){try{const n2=name.replace(/(\.\w+)$/,"-"+Date.now()+"$1");await F.writeFile({path:"Kalenderkoll/"+n2,data:text,directory:"DOCUMENTS",encoding:"utf8",recursive:true});toast(tx("Sparad i Dokument › Kalenderkoll","Saved in Documents › Kalenderkoll")+" · "+n2);return true}catch(e2){toast(tx("Kunde inte spara filen","Could not save the file"));return false}}}
+  if(!LOCAL){try{const dl=await claude.use("downloads");if(dl){await dl.save({filename:name,data:text});return true}}catch(e){return false}}
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:mime}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);return true}
+/* Automatic copy in the Android app. If a file from an earlier install is in the way, this install keeps its own file. */
+var bkTimer=0,bkPrev="";
+function autoBackup(){const F=FSP();if(!F||!hasData())return;clearTimeout(bkTimer);bkTimer=setTimeout(async()=>{
+  const body=JSON.stringify(DOCS);if(body===bkPrev)return;const info=bkInfo(),name=info.name||BKN,txt=backupText();
+  const w=n=>F.writeFile({path:"Kalenderkoll/"+n,data:txt,directory:"DOCUMENTS",encoding:"utf8",recursive:true});
+  try{await w(name)}catch(e){const n2="Kalenderkoll-sakerhetskopia-"+isoOf(new Date())+".json";try{await w(n2);info.name=n2}catch(e2){return}}
+  bkPrev=body;info.at=new Date().toISOString();try{localStorage.setItem(BKK,JSON.stringify(info))}catch(e){}if(tab==="c")renderSettings()},3000)}
+async function restoreFrom(file){let b;try{b=JSON.parse(await file.text())}catch(e){b=null}
+  if(!b||b.app!=="kalenderkoll"||typeof b.docs!=="object"){toast(tx("Det där är ingen säkerhetskopia från Kalenderkoll","That is not a Kalenderkoll backup"));return}
+  const n=Object.values(b.docs).filter(v=>v&&v.kind==="ev").length,when=b.at?fmtD(dnOf(new Date(b.at))):"";
+  if(!await ask(tx("Återställa kalendern?","Restore the calendar?"),tx(`Säkerhetskopian${when?" från "+when:""} har ${n} händelser. Är ni ihop kopplas du till er delade kalender igen.`,`The backup${when?" from "+when:""} has ${n} events. If you are a couple, you are connected to your shared calendar again.`),tx("Återställ","Restore")))return;
+  if(window.KK&&KK.restore)KK.restore(b)}
+document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("#bk_save,#bk_load,#cs_rs");if(!t)return;
+  if(t.id==="bk_save"){if(!hasData()){toast(tx("Det finns inget att spara än","There is nothing to save yet"));return}saveFile(NATIVE()?BKN.replace(".json","-"+isoOf(new Date())+".json"):"kalenderkoll-sakerhetskopia-"+isoOf(new Date())+".json",backupText(),"application/json")}
+  else{$("bk_in").value="";$("bk_in").click()}});
+$("bk_in").addEventListener("change",()=>{const f=$("bk_in").files[0];if(f)restoreFrom(f)});
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>

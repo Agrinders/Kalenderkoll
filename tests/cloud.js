@@ -52,5 +52,10 @@ await step('joining with a pasted link asks first',async()=>{await C1.click('#me
   await Promise.all([C1.waitForNavigation(),C1.click('#m_yes')]);await waitFor(C1,()=>KK.mode==='cloud');need(await waitFor(C1,()=>EV.some(e=>e.n==='Middag ihop')),'not joined');return C1.evaluate(()=>[EV.some(e=>e.n==='Gammal händelse'),ME])});
 const D1=await phone(false);
 await step('without a connection it still works on the phone',async()=>{await D1.goto(base);await waitFor(D1,()=>KK.mode!=='starting');await waitFor(D1,()=>cs.classList.contains('on'));await D1.fill('#cs_a','A');await D1.fill('#cs_b','B');await D1.click('#cs_ok');await w(D1);const r=await D1.evaluate(()=>[KK.mode,!!JSON.parse(localStorage.getItem('kalenderkoll.data.v1')||'{}').cal?.couple,(go('v'),v_inv.textContent.slice(0,25))]);need(r[0]==='local'&&r[1],'local '+r);return r});
+await step('a reinstalled phone gets everything back from a backup file',async()=>{const bk=await A1.evaluate(()=>backupText());const D1=await phone();await D1.goto(base);await waitFor(D1,()=>KK.mode!=='starting');await waitFor(D1,()=>cs.classList.contains('on'));
+  need(await D1.evaluate(()=>!cs_rs.classList.contains('hide')),'no restore button on the welcome sheet');
+  await D1.setInputFiles('#bk_in',{name:'Kalenderkoll-sakerhetskopia.json',mimeType:'application/json',buffer:Buffer.from(bk)});await w(D1);need(await D1.evaluate(()=>modal.classList.contains('on')),'did not ask');
+  await Promise.all([D1.waitForNavigation(),D1.click('#m_yes')]);await waitFor(D1,()=>KK.mode==='cloud');need(await waitFor(D1,()=>EV.some(e=>e.n==='Middag ihop')),'events not back');
+  const sa=await A1.evaluate(()=>KK.space());const r=await D1.evaluate(()=>[KK.space(),ME,cs.classList.contains('on'),CP.a]);need(r[0]===sa&&r[1]==='a'&&!r[2],'restore '+JSON.stringify(r));return r.slice(1)});
 console.log(errs.length?'PAGE ERRORS: '+errs.join(' | '):'no page errors');if(errs.length)fails++;
 await b.close();srv.close();console.log(fails?fails+' failed':'all passed');process.exit(fails?1:0)})();

@@ -69,7 +69,7 @@ async function firstRun(){if(firstDone)return;firstDone=true;if(!CP.a||!CP.b){op
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
     CP=cp||{a:"",b:"",ua:"",ub:"",since:""};
     if(MYID){if(CP.ua===MYID)setMe("a");else if(CP.ub===MYID)setMe("b")}
-    watchJoin();render();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
+    watchJoin();render();autoBackup();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
 }catch(e){}setTimeout(()=>{if(!ok&&!firstDone)firstRun()},col?10000:400)})();
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */

@@ -11,6 +11,5 @@ function icsText(evs,bds){const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Ka
   bds.forEach(b=>{const d=nd(bdOnYear(b,b.y||NOW.getFullYear()));L.push("BEGIN:VEVENT","UID:bd-"+b.id+"@kalenderkoll","DTSTAMP:"+stamp,"SUMMARY:"+icsEsc(b.ty==="b"?tx(b.n+" har födelsedag",b.n+"'s birthday"):b.n),"DTSTART;VALUE=DATE:"+icsD(d),"DTEND;VALUE=DATE:"+icsD(nd(dn(d)+1)),"RRULE:FREQ=YEARLY","TRANSP:TRANSPARENT","END:VEVENT")});
   L.push("END:VCALENDAR");return L.map(icsFold).join("\r\n")+"\r\n"}
 async function icsSave(evs,bds,name){const fn=String(name||"kalenderkoll").replace(/[^\wåäöÅÄÖ\- ]+/g,"").trim().replace(/\s+/g,"-").toLowerCase()+".ics",txt=icsText(evs,bds);
-  if(!LOCAL){try{const dl=await claude.use("downloads");if(dl){await dl.save({filename:fn,data:txt});return}}catch(e){return}}
-  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/calendar;charset=utf-8"}));a.download=fn;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+  saveFile(fn,txt,"text/calendar;charset=utf-8")}
 $("ics_out").onclick=()=>{if(!EV.length&&!BD.length){toast(tx("Det finns inget att spara än","There is nothing to save yet"));return}icsSave(EV,BD,"kalenderkoll-"+isoOf(new Date()))};
