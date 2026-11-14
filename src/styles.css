@@ -358,3 +358,13 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 .wvev.gl{border-left:0}
 :root[data-theme="dark"]{--gla:.2}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--gla:.2}}
+
+/* Striped events: set in from the edge, diagonal stripes in the event's colour, and a grey marker on the right. */
+.evr.stripe,.dvev.stripe,.cev u.sp,.wvev.sp,.dvall.sp,.wvad button.sp{--s1:color-mix(in srgb,var(--c) 36%,var(--card));--s2:color-mix(in srgb,var(--c) 17%,var(--card));--gr:color-mix(in srgb,var(--ink) 30%,var(--card));color:var(--ink)}
+.evr.stripe{position:relative;grid-template-columns:auto minmax(0,1fr) auto;margin:8px 0 8px 22px;width:calc(100% - 22px);padding:11px 26px 11px 12px;border-bottom:0;border-radius:16px;overflow:hidden;background:repeating-linear-gradient(135deg,var(--s1) 0 9px,var(--s2) 9px 18px);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 40%,transparent)}
+.evr.stripe::after{content:"";position:absolute;right:9px;top:10px;bottom:10px;width:5px;border-radius:3px;background:var(--gr)}
+.evr.stripe .et{color:color-mix(in srgb,var(--ink) 70%,transparent)}.evr.stripe small{color:color-mix(in srgb,var(--ink) 62%,transparent)}
+.dvev.stripe{overflow:hidden;padding-right:14px;background:repeating-linear-gradient(135deg,var(--s1) 0 7px,var(--s2) 7px 14px);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 40%,transparent)}
+.dvev.stripe::after{content:"";position:absolute;right:5px;top:6px;bottom:6px;width:4px;border-radius:2px;background:var(--gr)}
+.cev u.sp,.wvev.sp,.dvall.sp,.wvad button.sp{--bg:var(--s2);background:repeating-linear-gradient(135deg,var(--s1) 0 4px,var(--s2) 4px 8px);border-left:0;border-right:3px solid var(--gr)}
+.cev u.sp::after{display:none}

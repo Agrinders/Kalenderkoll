@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="d24743d8ce88">
+<meta name="kal-build" content="36494ffbede7">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -371,6 +371,16 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 .wvev.gl{border-left:0}
 :root[data-theme="dark"]{--gla:.2}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--gla:.2}}
+
+/* Striped events: set in from the edge, diagonal stripes in the event's colour, and a grey marker on the right. */
+.evr.stripe,.dvev.stripe,.cev u.sp,.wvev.sp,.dvall.sp,.wvad button.sp{--s1:color-mix(in srgb,var(--c) 36%,var(--card));--s2:color-mix(in srgb,var(--c) 17%,var(--card));--gr:color-mix(in srgb,var(--ink) 30%,var(--card));color:var(--ink)}
+.evr.stripe{position:relative;grid-template-columns:auto minmax(0,1fr) auto;margin:8px 0 8px 22px;width:calc(100% - 22px);padding:11px 26px 11px 12px;border-bottom:0;border-radius:16px;overflow:hidden;background:repeating-linear-gradient(135deg,var(--s1) 0 9px,var(--s2) 9px 18px);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 40%,transparent)}
+.evr.stripe::after{content:"";position:absolute;right:9px;top:10px;bottom:10px;width:5px;border-radius:3px;background:var(--gr)}
+.evr.stripe .et{color:color-mix(in srgb,var(--ink) 70%,transparent)}.evr.stripe small{color:color-mix(in srgb,var(--ink) 62%,transparent)}
+.dvev.stripe{overflow:hidden;padding-right:14px;background:repeating-linear-gradient(135deg,var(--s1) 0 7px,var(--s2) 7px 14px);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 40%,transparent)}
+.dvev.stripe::after{content:"";position:absolute;right:5px;top:6px;bottom:6px;width:4px;border-radius:2px;background:var(--gr)}
+.cev u.sp,.wvev.sp,.dvall.sp,.wvad button.sp{--bg:var(--s2);background:repeating-linear-gradient(135deg,var(--s1) 0 4px,var(--s2) 4px 8px);border-left:0;border-right:3px solid var(--gr)}
+.cev u.sp::after{display:none}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -537,6 +547,8 @@ const ICONS={heart:'<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4
   party:'<path d="m4 20 4.5-12 7.5 7.5z"/><path d="M14 4.5c.5 1.5-.5 2.5 1 3.5M18.5 9.5c1.5-.5 2.5.5 2-1M16.5 3.5v.01M20.5 5.5v.01M20 13v.01"/>'};
 const icon=k=>ICONS[k]?`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>`:"";
 /* Effects a day can have around it. In day view, that day's events get it too. */
+/* The three looks an event can have, and the short class used for its small labels. */
+const stOf=e=>e.st==="glass"||e.st==="stripe"?e.st:"fill",stMini=e=>e.st==="glass"?"gl":e.st==="stripe"?"sp":"";
 const FX=[["glow","Glöd","Glow"],["rainbow","Regnbåge","Rainbow"],["sparkle","Gnistor","Sparkle"],["hearts","Hjärtan","Hearts"]];
 const fxCls=k=>FX.some(x=>x[0]===k)?" fx fx-"+k:"";
 /* Event colours. Any colour works; these are the quick ones. */
@@ -628,7 +640,7 @@ const PEND=new Map();
 function later(key,fn,ms){const old=PEND.get(key);if(old)clearTimeout(old.t);PEND.set(key,{fn,t:setTimeout(()=>{PEND.delete(key);fn()},ms)})}
 function flushSaves(){PEND.forEach(e=>{clearTimeout(e.t);e.fn()});PEND.clear()}
 addEventListener("pagehide",flushSaves);document.addEventListener("visibilitychange",()=>{if(document.hidden)flushSaves()});
-const evDoc=e=>({kind:"ev",id:e.id,n:e.n,d:e.d,e:e.e||"",t:e.t||"",t2:e.t2||"",r:e.r||"o",u:e.u||"",skip:e.skip||[],pl:e.pl||"",o:e.o||"",w:["a","b","g"].includes(e.w)?e.w:"g",col:/^#[0-9a-f]{6}$/i.test(e.col||"")?e.col:"",st:e.st==="glass"?"glass":"fill",ic:ICONS[e.ic]?e.ic:"",fx:fxCls(e.fx)?e.fx:"",wd:e.r==="w"&&Array.isArray(e.wd)?e.wd:[],by:e.by==="a"||e.by==="b"?e.by:"",at:+e.at||0});
+const evDoc=e=>({kind:"ev",id:e.id,n:e.n,d:e.d,e:e.e||"",t:e.t||"",t2:e.t2||"",r:e.r||"o",u:e.u||"",skip:e.skip||[],pl:e.pl||"",o:e.o||"",w:["a","b","g"].includes(e.w)?e.w:"g",col:/^#[0-9a-f]{6}$/i.test(e.col||"")?e.col:"",st:e.st==="glass"||e.st==="stripe"?e.st:"fill",ic:ICONS[e.ic]?e.ic:"",fx:fxCls(e.fx)?e.fx:"",wd:e.r==="w"&&Array.isArray(e.wd)?e.wd:[],by:e.by==="a"||e.by==="b"?e.by:"",at:+e.at||0});
 const bdDoc=b=>({kind:"bd",id:b.id,n:b.n,md:b.md,y:b.y||0,ty:b.ty||"b"});
 const todoDoc=x=>({kind:"todo",id:x.id,n:x.n,w:x.w||"g",done:!!x.done,at:x.at||0,dt:x.dt||0});
 const noteDoc=x=>({kind:"note",id:x.id,f:x.f,txt:x.txt,at:x.at});
@@ -667,7 +679,7 @@ const evCol=e=>e.col||pvar(e.w||"g");
 /* An event in a list: a coloured block, or an indented glassy pill. Both can carry an icon. */
 function evRow(o,n,withDate){const e=o.e,on=n!=null&&n===todayN()&&live(o),past=n!=null&&n===todayN()&&!!e.t&&endMs(o)<=Date.now();
   const meta=[withDate?cap(fmtD(o.s,{weekday:"short",day:"numeric",month:"short"})):"",e.pl||"",e.r&&e.r!=="o"?(e.r==="w"&&e.wd&&e.wd.length>1?e.wd.map(i=>dshort(i).toLowerCase()).join(", "):repName(e.r).toLowerCase()):""].filter(Boolean).join(" · ");
-  return `<button class="evr ${e.st==="glass"?"glass":"fill"}${on?" now":""}${past?" past":""}" style="--c:${evCol(e)}" data-ev="${esc(e.id)}" data-on="${nd(o.s)}"><i class="ei${e.ic?fxCls(e.fx):""}">${e.ic?icon(e.ic):""}</i><span><b>${esc(e.n)}</b><small>${ava(e.w||"g")}<span>${esc(meta||pname(e.w||"g"))}</span></small></span><span class="et">${on?tx("Nu","Now"):esc(timeLbl(o,n))}</span></button>`}
+  return `<button class="evr ${stOf(e)}${on?" now":""}${past?" past":""}" style="--c:${evCol(e)}" data-ev="${esc(e.id)}" data-on="${nd(o.s)}"><i class="ei${e.ic?fxCls(e.fx):""}">${e.ic?icon(e.ic):""}</i><span><b>${esc(e.n)}</b><small>${ava(e.w||"g")}<span>${esc(meta||pname(e.w||"g"))}</span></small></span><span class="et">${on?tx("Nu","Now"):esc(timeLbl(o,n))}</span></button>`}
 function bdRow(b,s,when){const a=bdAge(b,s);return `<button class="evr bdr" data-bd="${esc(b.id)}"><span><b>${esc(bdText(b,s))}</b><small><span>${cap(fmtD(s,{weekday:"short",day:"numeric",month:"short"}))}</span></small></span><span class="et">${when?esc(inDays(s-todayN())):a&&b.ty==="b"?a+tx(" år"," yrs"):""}</span></button>`}
 const holRow=h=>`<div class="evr soft${h[3]?" red":""}"><span><b>${esc(h[1+li()])}</b></span><span class="et"></span></div>`;
 function dayRows(n){const h=S.hol?holOn(n):null;return (h?holRow(h):"")+bdOn(n).map(b=>`<button class="evr bdr" data-bd="${esc(b.id)}"><span><b>${esc(bdText(b,n))}</b></span><span class="et">♥</span></button>`).join("")+onDay(n).map(o=>evRow(o,n)).join("")}
@@ -699,7 +711,7 @@ function renderMonth(){const n=todayN(),first=dnOf(P.y,P.m,1),off=wdOf(first),ro
   let h="";for(let r=0;r<rows;r++){if(S.wkno)h+=`<span class="v">${isoWeek(start+r*7)}</span>`;
     for(let i=0;i<7;i++){const d=start+r*7+i,[,m,dd]=ymd(d),L=B.filter(o=>o.s<=d&&o.end>=d),ws=[...new Set(L.map(x=>x.e.w||"g"))];
       const cls=[m!==P.m?"out":"",dd%2?"":"alt",d===n?"t":"",d===SEL?"s":"",(wdOf(d)===6||(S.hol&&isRed(d)))?"red":""].filter(Boolean).join(" ");
-      h+=`<button data-cday="${d}" class="${cls}${fxCls(fxOf(L))}" aria-label="${esc(cap(fmtDay(d)))}"${d===SEL?' aria-pressed="true"':""}><b>${dd}</b>${dIc(d)?`<span class="dic"${L.length?` style="--dc:${evCol(L[0].e)}"`:""}>${icon(dIc(d))}</span>`:""}<span class="cev">${(()=>{const B=bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),E=L.map(o=>`<u class="${o.e.st==="glass"?"gl":""}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</u>`),A=[...B,...E],max=A.length>3?2:3;return A.slice(0,max).join("")+(A.length>max?`<em>+${A.length-max}</em>`:"")})()}</span></button>`}}
+      h+=`<button data-cday="${d}" class="${cls}${fxCls(fxOf(L))}" aria-label="${esc(cap(fmtDay(d)))}"${d===SEL?' aria-pressed="true"':""}><b>${dd}</b>${dIc(d)?`<span class="dic"${L.length?` style="--dc:${evCol(L[0].e)}"`:""}>${icon(dIc(d))}</span>`:""}<span class="cev">${(()=>{const B=bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),E=L.map(o=>`<u class="${stMini(o.e)}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</u>`),A=[...B,...E],max=A.length>3?2:3;return A.slice(0,max).join("")+(A.length>max?`<em>+${A.length-max}</em>`:"")})()}</span></button>`}}
   $("k_gr").innerHTML=h;
   $("kd_t").innerHTML=(dIc(SEL)?icon(dIc(SEL))+" ":"")+esc(SEL===n?tx("Idag","Today"):cap(fmtDay(SEL)));$("kd_ic").innerHTML=icon(dIc(SEL)||"star")+`<span>${dIc(SEL)?tx("Byt dagens ikon","Change the day's icon"):tx("Ikon för dagen","Icon for the day")}</span>`;
   renderKV();if(KV==="day")renderDayView();if(KV==="week")renderWeekView();$("k_now").textContent=tx("Till idag","To today");$("k_now").classList.toggle("hide",P.y===NOW.getFullYear()&&P.m===NOW.getMonth());
@@ -713,11 +725,11 @@ function renderWeekView(){const n=todayN(),mon=SEL-wdOf(SEL),B=between(mon,mon+6
   const h0=Math.min(7,...T.map(o=>Math.floor(st(o)/60))),h1=Math.min(24,Math.max(22,...T.map(o=>Math.ceil(en(o)/60)))),nowM=new Date().getHours()*60+new Date().getMinutes();
   const a=ymd(mon),z=ymd(mon+6);$("wv_t").textContent=tx("Vecka ","Week ")+isoWeek(mon)+" · "+(a[1]===z[1]?a[2]+"–"+fmtD(mon+6,{day:"numeric",month:"short"}):fmtD(mon,{day:"numeric",month:"short"})+" – "+fmtD(mon+6,{day:"numeric",month:"short"}));
   let h=`<div class="wvh"><span></span>${D.map(x=>`<button data-gwd="${x.d}" class="${x.d===n?"t":""}${x.i===6||(S.hol&&isRed(x.d))?" red":""}" aria-label="${esc(cap(fmtDay(x.d)))}"><small>${dshort(x.i)}</small><b class="${fxCls(fxOf([...x.timed,...x.all])).trim()}">${ymd(x.d)[2]}</b></button>`).join("")}</div>`;
-  if(D.some(x=>x.all.length||bdOn(x.d).length))h+=`<div class="wvad"><span class="adl">${tx("Heldag","All day")}</span>${D.map(x=>`<div>${bdOn(x.d).map(b=>`<button data-bd="${esc(b.id)}" style="--c:var(--acc)">♥ ${esc(b.n)}</button>`).join("")}${x.all.map(o=>`<button${o.e.st==="glass"?' class="gl"':""} data-ev="${esc(o.e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</button>`).join("")}</div>`).join("")}</div>`;
+  if(D.some(x=>x.all.length||bdOn(x.d).length))h+=`<div class="wvad"><span class="adl">${tx("Heldag","All day")}</span>${D.map(x=>`<div>${bdOn(x.d).map(b=>`<button data-bd="${esc(b.id)}" style="--c:var(--acc)">♥ ${esc(b.n)}</button>`).join("")}${x.all.map(o=>`<button class="${stMini(o.e)}" data-ev="${esc(o.e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</button>`).join("")}</div>`).join("")}</div>`;
   $("wv_head").innerHTML=h;
   h=`<div class="wvb" style="height:${(h1-h0)*WPX}px"><div class="dvg wvg">`;for(let k=h0;k<h1;k++)h+=`<i style="top:${(k-h0)*WPX}px"><s>${pad(k)}</s></i>`;h+=`</div>`;
   D.forEach(x=>{const items=[...x.timed].sort((p,q)=>st(p)-st(q)),lanes=[],pos=new Map();items.forEach(o=>{let i=lanes.findIndex(e=>e<=st(o));if(i<0){i=lanes.length;lanes.push(0)}lanes[i]=en(o);pos.set(o,i)});
-    h+=`<div class="wvcol${x.i%2?" alt":""}${x.d===n?" t":""}" data-d="${x.d}" data-h0="${h0}" style="grid-column:${x.i+2}">${items.map(o=>{const e=o.e,nl=lanes.length,top=(st(o)-h0*60)/60*WPX,ht=Math.max(20,(en(o)-st(o))/60*WPX-2);return `<button class="wvev${e.st==="glass"?" gl":""}${fxCls(e.fx)}" data-ev="${esc(e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(e)};top:${top+1}px;height:${ht}px;left:calc(${100/nl*pos.get(o)}% + 1px);width:calc(${100/nl}% - 2px)">${esc(e.n)}</button>`}).join("")}${x.d===n&&nowM>=h0*60&&nowM<=h1*60?`<i class="nowl" style="top:${(nowM-h0*60)/60*WPX}px"></i>`:""}</div>`});
+    h+=`<div class="wvcol${x.i%2?" alt":""}${x.d===n?" t":""}" data-d="${x.d}" data-h0="${h0}" style="grid-column:${x.i+2}">${items.map(o=>{const e=o.e,nl=lanes.length,top=(st(o)-h0*60)/60*WPX,ht=Math.max(20,(en(o)-st(o))/60*WPX-2);return `<button class="wvev ${stMini(e)}${fxCls(e.fx)}" data-ev="${esc(e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(e)};top:${top+1}px;height:${ht}px;left:calc(${100/nl*pos.get(o)}% + 1px);width:calc(${100/nl}% - 2px)">${esc(e.n)}</button>`}).join("")}${x.d===n&&nowM>=h0*60&&nowM<=h1*60?`<i class="nowl" style="top:${(nowM-h0*60)/60*WPX}px"></i>`:""}</div>`});
   $("wv_body").innerHTML=h+`</div>`;
   const first=T.length?Math.min(...T.map(st)):8*60;requestAnimationFrame(()=>{const b=$("wv_body");if(b&&b.dataset.n!==String(mon)){b.dataset.n=mon;b.scrollTop=Math.max(0,(first-h0*60)/60*WPX-14)}})}
 (()=>{let sx=0,sy=0;const g=$("k_wv");g.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});g.addEventListener("touchend",e=>{const p=e.changedTouches[0],dx=p.clientX-sx,dy=p.clientY-sy;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.6)pickDay(SEL+(dx<0?7:-7))},{passive:true})})();
@@ -732,8 +744,8 @@ function renderDayView(){const n=SEL,L=onDay(n),timed=L.filter(o=>o.e.t&&o.s===n
   $("dv_t").innerHTML=(dIc(n)?icon(dIc(n)):"")+`<span>${esc(n===todayN()?tx("Idag","Today")+", "+fmtD(n,{day:"numeric",month:"long"}):cap(fmtDay(n)))}</span>`;
   const col=w=>{const items=timed.filter(o=>(o.e.w||"g")===w||(o.e.w||"g")==="g").sort((a,b)=>st(a)-st(b)),lanes=[],pos=new Map();items.forEach(o=>{let i=lanes.findIndex(e=>e<=st(o));if(i<0){i=lanes.length;lanes.push(0)}lanes[i]=en(o);pos.set(o,i)});
     return items.map(o=>{const e=o.e,nl=lanes.length,i=pos.get(o),top=(st(o)-h0*60)/60*HPX,ht=Math.max(e.st==="glass"?30:34,(en(o)-st(o))/60*HPX-4);
-      return `<button class="dvev ${e.st==="glass"?"glass":"fill"}${(e.w||"g")==="g"?" both":""}${fxCls(e.fx)}" data-ev="${esc(e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(e)};top:${top+2}px;height:${e.st==="glass"?Math.min(ht,40):ht}px;left:calc(${100/nl*i}% + 3px);width:calc(${100/nl}% - ${e.st==="glass"?12:6}px)">${e.ic?icon(e.ic):""}<span><b>${esc(e.n)}</b>${ht>44&&e.st!=="glass"?`<small>${e.t}${e.t2?"–"+e.t2:""}</small>`:""}</span></button>`}).join("")};
-  const allDay=w=>all.filter(o=>(o.e.w||"g")===w||(o.e.w||"g")==="g").map(o=>`<button class="dvall${o.e.st==="glass"?" gl":""}${fxCls(o.e.fx)}" data-ev="${esc(o.e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(o.e)}">${o.e.ic?icon(o.e.ic):""}<span>${esc(o.e.n)}</span></button>`).join("");
+      return `<button class="dvev ${stOf(e)}${(e.w||"g")==="g"?" both":""}${fxCls(e.fx)}" data-ev="${esc(e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(e)};top:${top+2}px;height:${e.st==="glass"?Math.min(ht,40):ht}px;left:calc(${100/nl*i}% + 3px);width:calc(${100/nl}% - ${e.st==="glass"?12:6}px)">${e.ic?icon(e.ic):""}<span><b>${esc(e.n)}</b>${ht>44&&e.st!=="glass"?`<small>${e.t}${e.t2?"–"+e.t2:""}</small>`:""}</span></button>`}).join("")};
+  const allDay=w=>all.filter(o=>(o.e.w||"g")===w||(o.e.w||"g")==="g").map(o=>`<button class="dvall ${stMini(o.e)}${fxCls(o.e.fx)}" data-ev="${esc(o.e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(o.e)}">${o.e.ic?icon(o.e.ic):""}<span>${esc(o.e.n)}</span></button>`).join("");
   const bd=bdOn(n).map(b=>`<button class="dvall" data-bd="${esc(b.id)}" style="--c:var(--acc)">${icon("cake")}<span>${esc(bdText(b,n))}</span></button>`).join("");
   let h=`<div class="dvh"><span></span><b class="pa">${ava("a")}${esc(pname("a"))}</b><b class="pb">${ava("b")}${esc(pname("b"))}</b></div>`;
   const ad=[allDay("a"),allDay("b")];if(ad[0]||ad[1]||bd||hol)h+=`<div class="dvad">${hol||bd?`<div class="dvfull">${hol?`<span class="hol${hol[3]?" red":""}">${esc(hol[1+li()])}</span>`:""}${bd}</div>`:""}<span class="adl">${tx("Heldag","All day")}</span><div>${ad[0]}</div><div>${ad[1]}</div></div>`;
@@ -859,8 +871,8 @@ const esWd=()=>{const w=wdOf(dn($("es_d").value));return[...new Set([...ES.wd,w]
 function paintES(){const c=ES.col||pvar(ES.w),dd=ymd(dn($("es_d").value))[2],wdn=wdOf(dn($("es_d").value));
   $("es_wd").classList.toggle("hide",ES.r!=="w");$("es_wd").innerHTML=[0,1,2,3,4,5,6].map(i=>`<button type="button" class="${esWd().includes(i)?"on":""}${i===wdn?" base":""}" data-eswd="${i}" aria-pressed="${esWd().includes(i)}">${dshort(i)}</button>`).join("");
   $("es_fx").innerHTML=[["",tx("Ingen","None"),tx("Ingen","None")],...FX].map(([k,a,b])=>`<button type="button" class="${ES.fx===k?"on":""}" data-esfx="${k}"><span class="fxd${fxCls(k)}">${dd}</span><small>${li()?b:a}</small></button>`).join("");
-  $("es_st").innerHTML=[["fill",tx("Block","Block")],["glass",tx("Glas","Glass")]].map(([v,l])=>`<button type="button" class="${ES.st===v?"on":""}" data-est="${v}">${l}</button>`).join("");
-  $("es_pv").innerHTML=`<div class="evr ${ES.st==="glass"?"glass":"fill"}" style="--c:${c}"><i class="ei${ES.ic?fxCls(ES.fx):""}">${ES.ic?icon(ES.ic):""}</i><span><b>${esc($("es_n").value.trim()||tx("Så här ser den ut","This is how it looks"))}</b></span><span class="et">${ES.ad?tx("Heldag","All day"):esc($("es_t1").value||"")}</span></div>`;
+  $("es_st").innerHTML=[["fill",tx("Block","Block")],["glass",tx("Glas","Glass")],["stripe",tx("Ränder","Stripes")]].map(([v,l])=>`<button type="button" class="${ES.st===v?"on":""}" data-est="${v}">${l}</button>`).join("");
+  $("es_pv").innerHTML=`<div class="evr ${stOf(ES)}" style="--c:${c}"><i class="ei${ES.ic?fxCls(ES.fx):""}">${ES.ic?icon(ES.ic):""}</i><span><b>${esc($("es_n").value.trim()||tx("Så här ser den ut","This is how it looks"))}</b></span><span class="et">${ES.ad?tx("Heldag","All day"):esc($("es_t1").value||"")}</span></div>`;
   $("es_c").innerHTML=`<button type="button" class="swt auto${!ES.col?" on":""}" data-esc="" style="--c:${pvar(ES.w)}" aria-label="${esc(tx("Personens färg","The person's colour"))}"></button>`+COLORS.map(x=>`<button type="button" class="swt${ES.col===x?" on":""}" data-esc="${x}" style="--c:${x}" aria-label="${x}"></button>`).join("")+`<label class="swt cust${ES.col&&!COLORS.includes(ES.col)?" on":""}" style="--c:${ES.col&&!COLORS.includes(ES.col)?ES.col:"#ffffff"}" aria-label="${esc(tx("Valfri färg","Any colour"))}"><input type="color" id="es_cc" value="${ES.col||"#a996f7"}"></label>`;
   $("es_ic").innerHTML=`<button type="button" class="${!ES.ic?"on":""}" data-esi="" aria-label="${esc(tx("Ingen ikon","No icon"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"/></svg></button>`+Object.keys(ICONS).map(k=>`<button type="button" class="${ES.ic===k?"on":""}" data-esi="${k}" aria-label="${k}">${icon(k)}</button>`).join("");
 $("es_w").innerHTML=["g","a","b"].map(w=>`<button type="button" class="${ES.w===w?"on":""}" data-esw="${w}">${ava(w)}<span>${esc(w==="g"?tx("Båda","Both"):pname(w))}</span></button>`).join("");
@@ -1060,7 +1072,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
       if(d.id==="plan"){if(!PEND.has("plan")){if(typeof v.wkno==="boolean")S.wkno=v.wkno;if(typeof v.hol==="boolean")S.hol=v.hol}}
       else if(d.id==="couple")cp={a:String(v.a||""),b:String(v.b||""),ua:String(v.ua||""),ub:String(v.ub||""),since:iso(v.since)?v.since:"",ca:String(v.ca||""),cb:String(v.cb||"")};
       else if(v.kind==="pic"&&(v.w==="a"||v.w==="b")&&okPic(v.img))PICS[v.w]=v.img;
-      else if(v.kind==="ev"&&iso(v.d))EV.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),d:v.d,e:iso(v.e)&&v.e>v.d&&(v.r||"o")==="o"?v.e:"",t:/^\d\d:\d\d$/.test(v.t||"")?v.t:"",t2:/^\d\d:\d\d$/.test(v.t2||"")?v.t2:"",r:["o","d","wd","w","2w","m","y"].includes(v.r)?v.r:"o",u:iso(v.u)?v.u:(iso(v.e)&&v.e>v.d&&v.r&&v.r!=="o"?v.e:""),skip:Array.isArray(v.skip)?v.skip.filter(x=>typeof x==="string"):[],pl:String(v.pl||""),o:String(v.o||""),w:["a","b","g"].includes(v.w)?v.w:"g",col:/^#[0-9a-f]{6}$/i.test(v.col||"")?v.col:"",st:v.st==="glass"?"glass":"fill",ic:ICONS[v.ic]?v.ic:"",fx:fxCls(v.fx)?v.fx:"",wd:Array.isArray(v.wd)?[...new Set(v.wd.filter(x=>Number.isInteger(x)&&x>=0&&x<7))].sort():[],by:v.by==="a"||v.by==="b"?v.by:"",at:+v.at||0});
+      else if(v.kind==="ev"&&iso(v.d))EV.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),d:v.d,e:iso(v.e)&&v.e>v.d&&(v.r||"o")==="o"?v.e:"",t:/^\d\d:\d\d$/.test(v.t||"")?v.t:"",t2:/^\d\d:\d\d$/.test(v.t2||"")?v.t2:"",r:["o","d","wd","w","2w","m","y"].includes(v.r)?v.r:"o",u:iso(v.u)?v.u:(iso(v.e)&&v.e>v.d&&v.r&&v.r!=="o"?v.e:""),skip:Array.isArray(v.skip)?v.skip.filter(x=>typeof x==="string"):[],pl:String(v.pl||""),o:String(v.o||""),w:["a","b","g"].includes(v.w)?v.w:"g",col:/^#[0-9a-f]{6}$/i.test(v.col||"")?v.col:"",st:v.st==="glass"||v.st==="stripe"?v.st:"fill",ic:ICONS[v.ic]?v.ic:"",fx:fxCls(v.fx)?v.fx:"",wd:Array.isArray(v.wd)?[...new Set(v.wd.filter(x=>Number.isInteger(x)&&x>=0&&x<7))].sort():[],by:v.by==="a"||v.by==="b"?v.by:"",at:+v.at||0});
       else if(v.kind==="day"&&iso(v.d)&&ICONS[v.ic])DAYS[v.d]={ic:v.ic};
       else if(v.kind==="bd"&&/^\d\d-\d\d$/.test(v.md||""))BD.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),md:v.md,y:+v.y||0,ty:["b","a","o"].includes(v.ty)?v.ty:"b"});
       else if(v.kind==="todo"){const id=String(v.id||d.id.slice(5)),ae=document.activeElement,typing=ae&&ae.dataset&&ae.dataset.tn===id||PEND.has("todo_"+id);TODOS.push(typing&&prevT.find(z=>z.id===id)||{id,n:String(v.n||""),w:["a","b","g"].includes(v.w)?v.w:"g",done:!!v.done,at:+v.at||0,dt:+v.dt||0})}

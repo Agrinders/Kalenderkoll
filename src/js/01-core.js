@@ -49,6 +49,8 @@ const ICONS={heart:'<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4
   party:'<path d="m4 20 4.5-12 7.5 7.5z"/><path d="M14 4.5c.5 1.5-.5 2.5 1 3.5M18.5 9.5c1.5-.5 2.5.5 2-1M16.5 3.5v.01M20.5 5.5v.01M20 13v.01"/>'};
 const icon=k=>ICONS[k]?`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>`:"";
 /* Effects a day can have around it. In day view, that day's events get it too. */
+/* The three looks an event can have, and the short class used for its small labels. */
+const stOf=e=>e.st==="glass"||e.st==="stripe"?e.st:"fill",stMini=e=>e.st==="glass"?"gl":e.st==="stripe"?"sp":"";
 const FX=[["glow","Glöd","Glow"],["rainbow","Regnbåge","Rainbow"],["sparkle","Gnistor","Sparkle"],["hearts","Hjärtan","Hearts"]];
 const fxCls=k=>FX.some(x=>x[0]===k)?" fx fx-"+k:"";
 /* Event colours. Any colour works; these are the quick ones. */
