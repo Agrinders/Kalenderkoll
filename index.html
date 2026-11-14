@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="a08c2b984596">
+<meta name="kal-build" content="d24743d8ce88">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -363,6 +363,14 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 @keyframes fxheartq{0%{opacity:0;transform:translateY(5px) scale(.7)}30%{opacity:.6}100%{opacity:0;transform:translateY(-8px) scale(1)}}
 .cgr button.fx-glow{animation:fxglowbox 4s ease-in-out infinite}
 @keyframes fxglowbox{0%,100%{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fxc) 22%,transparent)}50%{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fxc) 45%,transparent),0 0 7px 0 color-mix(in srgb,var(--fxc) 22%,transparent)}}
+
+/* Glass events look like glass everywhere they show: month, week and the all-day rows too. */
+.cev u.gl,.wvev.gl,.dvall.gl,.wvad button.gl{--bg:color-mix(in srgb,var(--c) 30%,var(--card));border:0;
+  background:linear-gradient(180deg,rgba(255,255,255,var(--gla,.6)) 0%,rgba(255,255,255,calc(var(--gla,.6)*.25)) 46%,rgba(255,255,255,0) 48%,rgba(255,255,255,calc(var(--gla,.6)*.2)) 100%),linear-gradient(120deg,color-mix(in srgb,var(--c) 46%,var(--card)) 0%,color-mix(in srgb,var(--c) 24%,var(--card)) 55%,color-mix(in srgb,var(--c) 50%,var(--card)) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--gla,.6)*1.5)),inset 0 0 0 1px color-mix(in srgb,var(--c) 60%,transparent),0 2px 5px -2px color-mix(in srgb,var(--c) 70%,transparent)}
+.wvev.gl{border-left:0}
+:root[data-theme="dark"]{--gla:.2}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--gla:.2}}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -705,7 +713,7 @@ function renderWeekView(){const n=todayN(),mon=SEL-wdOf(SEL),B=between(mon,mon+6
   const h0=Math.min(7,...T.map(o=>Math.floor(st(o)/60))),h1=Math.min(24,Math.max(22,...T.map(o=>Math.ceil(en(o)/60)))),nowM=new Date().getHours()*60+new Date().getMinutes();
   const a=ymd(mon),z=ymd(mon+6);$("wv_t").textContent=tx("Vecka ","Week ")+isoWeek(mon)+" · "+(a[1]===z[1]?a[2]+"–"+fmtD(mon+6,{day:"numeric",month:"short"}):fmtD(mon,{day:"numeric",month:"short"})+" – "+fmtD(mon+6,{day:"numeric",month:"short"}));
   let h=`<div class="wvh"><span></span>${D.map(x=>`<button data-gwd="${x.d}" class="${x.d===n?"t":""}${x.i===6||(S.hol&&isRed(x.d))?" red":""}" aria-label="${esc(cap(fmtDay(x.d)))}"><small>${dshort(x.i)}</small><b class="${fxCls(fxOf([...x.timed,...x.all])).trim()}">${ymd(x.d)[2]}</b></button>`).join("")}</div>`;
-  if(D.some(x=>x.all.length||bdOn(x.d).length))h+=`<div class="wvad"><span class="adl">${tx("Heldag","All day")}</span>${D.map(x=>`<div>${bdOn(x.d).map(b=>`<button data-bd="${esc(b.id)}" style="--c:var(--acc)">♥ ${esc(b.n)}</button>`).join("")}${x.all.map(o=>`<button data-ev="${esc(o.e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</button>`).join("")}</div>`).join("")}</div>`;
+  if(D.some(x=>x.all.length||bdOn(x.d).length))h+=`<div class="wvad"><span class="adl">${tx("Heldag","All day")}</span>${D.map(x=>`<div>${bdOn(x.d).map(b=>`<button data-bd="${esc(b.id)}" style="--c:var(--acc)">♥ ${esc(b.n)}</button>`).join("")}${x.all.map(o=>`<button${o.e.st==="glass"?' class="gl"':""} data-ev="${esc(o.e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</button>`).join("")}</div>`).join("")}</div>`;
   $("wv_head").innerHTML=h;
   h=`<div class="wvb" style="height:${(h1-h0)*WPX}px"><div class="dvg wvg">`;for(let k=h0;k<h1;k++)h+=`<i style="top:${(k-h0)*WPX}px"><s>${pad(k)}</s></i>`;h+=`</div>`;
   D.forEach(x=>{const items=[...x.timed].sort((p,q)=>st(p)-st(q)),lanes=[],pos=new Map();items.forEach(o=>{let i=lanes.findIndex(e=>e<=st(o));if(i<0){i=lanes.length;lanes.push(0)}lanes[i]=en(o);pos.set(o,i)});
@@ -725,7 +733,7 @@ function renderDayView(){const n=SEL,L=onDay(n),timed=L.filter(o=>o.e.t&&o.s===n
   const col=w=>{const items=timed.filter(o=>(o.e.w||"g")===w||(o.e.w||"g")==="g").sort((a,b)=>st(a)-st(b)),lanes=[],pos=new Map();items.forEach(o=>{let i=lanes.findIndex(e=>e<=st(o));if(i<0){i=lanes.length;lanes.push(0)}lanes[i]=en(o);pos.set(o,i)});
     return items.map(o=>{const e=o.e,nl=lanes.length,i=pos.get(o),top=(st(o)-h0*60)/60*HPX,ht=Math.max(e.st==="glass"?30:34,(en(o)-st(o))/60*HPX-4);
       return `<button class="dvev ${e.st==="glass"?"glass":"fill"}${(e.w||"g")==="g"?" both":""}${fxCls(e.fx)}" data-ev="${esc(e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(e)};top:${top+2}px;height:${e.st==="glass"?Math.min(ht,40):ht}px;left:calc(${100/nl*i}% + 3px);width:calc(${100/nl}% - ${e.st==="glass"?12:6}px)">${e.ic?icon(e.ic):""}<span><b>${esc(e.n)}</b>${ht>44&&e.st!=="glass"?`<small>${e.t}${e.t2?"–"+e.t2:""}</small>`:""}</span></button>`}).join("")};
-  const allDay=w=>all.filter(o=>(o.e.w||"g")===w||(o.e.w||"g")==="g").map(o=>`<button class="dvall${fxCls(o.e.fx)}" data-ev="${esc(o.e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(o.e)}">${o.e.ic?icon(o.e.ic):""}<span>${esc(o.e.n)}</span></button>`).join("");
+  const allDay=w=>all.filter(o=>(o.e.w||"g")===w||(o.e.w||"g")==="g").map(o=>`<button class="dvall${o.e.st==="glass"?" gl":""}${fxCls(o.e.fx)}" data-ev="${esc(o.e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(o.e)}">${o.e.ic?icon(o.e.ic):""}<span>${esc(o.e.n)}</span></button>`).join("");
   const bd=bdOn(n).map(b=>`<button class="dvall" data-bd="${esc(b.id)}" style="--c:var(--acc)">${icon("cake")}<span>${esc(bdText(b,n))}</span></button>`).join("");
   let h=`<div class="dvh"><span></span><b class="pa">${ava("a")}${esc(pname("a"))}</b><b class="pb">${ava("b")}${esc(pname("b"))}</b></div>`;
   const ad=[allDay("a"),allDay("b")];if(ad[0]||ad[1]||bd||hol)h+=`<div class="dvad">${hol||bd?`<div class="dvfull">${hol?`<span class="hol${hol[3]?" red":""}">${esc(hol[1+li()])}</span>`:""}${bd}</div>`:""}<span class="adl">${tx("Heldag","All day")}</span><div>${ad[0]}</div><div>${ad[1]}</div></div>`;
