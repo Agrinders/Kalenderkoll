@@ -373,3 +373,21 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 .cev u.sp,.wvev.sp,.dvall.sp,.wvad button.sp{box-shadow:inset 0 2px 3px -1px color-mix(in srgb,var(--ink) 30%,transparent),inset 0 0 0 1px color-mix(in srgb,var(--c) 45%,var(--gr))}
 :root[data-theme="dark"] .evr.stripe,:root[data-theme="dark"] .dvev.stripe{box-shadow:inset 0 3px 6px -1px rgba(0,0,0,.55),inset 3px 0 5px -3px rgba(0,0,0,.35),inset 0 -2px 3px -1px rgba(255,255,255,.12)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .evr.stripe,:root:not([data-theme="light"]) .dvev.stripe{box-shadow:inset 0 3px 6px -1px rgba(0,0,0,.55),inset 3px 0 5px -3px rgba(0,0,0,.35),inset 0 -2px 3px -1px rgba(255,255,255,.12)}}
+
+/* ---------- Celebrations: Easter, Midsummer, Halloween, Lucia, Christmas, New Year ---------- */
+.fest-easter{--f1:#fff1b0;--f2:#d6f0c2;--fi:#d99a00;--ft:#4a3d10;--fp:radial-gradient(circle,#f7a8c4 0 3px,transparent 3.5px) 12% 30%/46px 34px,radial-gradient(circle,#8fcdf2 0 2.5px,transparent 3px) 70% 75%/52px 38px,radial-gradient(circle,#b79cf2 0 2px,transparent 2.5px) 40% 60%/40px 44px}
+.fest-mids{--f1:#d2efb8;--f2:#bde3f6;--fi:#2f8a3a;--ft:#1f3d22;--fp:radial-gradient(circle,#ffd84d 0 3px,transparent 3.5px) 15% 25%/48px 36px,radial-gradient(circle,#fff 0 2.5px,transparent 3px) 65% 70%/44px 40px,radial-gradient(circle,#5aa9e6 0 2.5px,transparent 3px) 85% 30%/56px 42px}
+.fest-hallo{--f1:#2a1f3f;--f2:#ff8a2a;--fi:#ffb45c;--ft:#fff;--fp:radial-gradient(circle,#ffcf7a 0 1.5px,transparent 2px) 20% 30%/38px 30px,radial-gradient(circle,#fff 0 1px,transparent 1.5px) 60% 70%/46px 34px;--fa:118deg}
+.fest-lucia{--f1:#fff9ea;--f2:#ffe09a;--fi:#e08a12;--ft:#4d3a12;--fp:radial-gradient(circle at 12% 50%,rgba(255,196,84,.55) 0,transparent 60px),radial-gradient(circle,#fff 0 1.5px,transparent 2px) 70% 40%/42px 32px}
+.fest-xmas{--f1:#c5303c;--f2:#1f7a4a;--fi:#ffe9a8;--ft:#fff;--fp:radial-gradient(circle,#fff 0 2px,transparent 2.5px) 10% 20%/36px 30px,radial-gradient(circle,rgba(255,255,255,.7) 0 1.5px,transparent 2px) 60% 70%/44px 36px,radial-gradient(circle,#fff 0 1px,transparent 1.5px) 85% 40%/28px 40px;--fa:118deg}
+.fest-ny{--f1:#161b40;--f2:#44307a;--fi:#ffd76a;--ft:#fff;--fp:radial-gradient(circle,#ffd76a 0 1.5px,transparent 2px) 15% 30%/34px 28px,radial-gradient(circle,#fff 0 1px,transparent 1.5px) 55% 65%/40px 32px,radial-gradient(circle,#ff9ec7 0 1.5px,transparent 2px) 80% 25%/52px 44px}
+.fest{position:relative;display:flex;align-items:center;gap:12px;margin:8px 0;padding:13px 16px 13px 12px;border-radius:18px;overflow:hidden;color:var(--ft);background:var(--fp),linear-gradient(var(--fa,100deg),var(--f1),var(--f2));box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),0 6px 16px -8px var(--f2)}
+.fest i{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:13px;background:rgba(255,255,255,.28);color:var(--fi);box-shadow:inset 0 0 0 1px rgba(255,255,255,.4)}
+.fest-easter i,.fest-mids i,.fest-lucia i{background:rgba(255,255,255,.65)}
+.fest i .ic{width:24px;height:24px}.fest b{font:500 18px/1.2 var(--serif);letter-spacing:-.005em;text-shadow:0 1px 0 rgba(0,0,0,.08)}
+.dvfull .fest{margin:0 0 6px;padding:8px 12px 8px 8px;border-radius:14px}.dvfull .fest i{width:30px;height:30px;border-radius:10px}.dvfull .fest i .ic{width:20px;height:20px}.dvfull .fest b{font-size:15.5px}
+/* In the month: the day's icon in the corner and a hint of the colours. */
+.cgr button.fst{position:relative;background:linear-gradient(160deg,color-mix(in srgb,var(--c1,var(--f1)) 20%,transparent),color-mix(in srgb,var(--c2,var(--f2)) 20%,transparent));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c2,var(--f2)) 38%,transparent)}
+.cgr .fest-xmas{--c1:#e8616b;--c2:#4fae7c}.cgr .fest-ny{--c1:#8f7df0;--c2:#ffd76a}.cgr .fest-hallo{--c1:#b79cf2;--c2:#ff9a3d}
+.cgr .fic{position:absolute;top:3px;left:3px;display:grid;color:color-mix(in srgb,var(--fi) 70%,var(--f2))}.cgr .fic .ic{width:13px;height:13px}
+.fest-hallo .fic,.fest-xmas .fic,.fest-ny .fic{color:var(--f2)}.cgr .fest-xmas .fic{color:#1f7a4a}.cgr .fest-ny .fic{color:#6a55c9}.cgr .fest-hallo .fic{color:#ef7a1a}

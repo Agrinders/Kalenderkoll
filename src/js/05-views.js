@@ -7,7 +7,8 @@ function evRow(o,n,withDate){const e=o.e,on=n!=null&&n===todayN()&&live(o),past=
   const meta=[withDate?cap(fmtD(o.s,{weekday:"short",day:"numeric",month:"short"})):"",e.pl||"",e.r&&e.r!=="o"?(e.r==="w"&&e.wd&&e.wd.length>1?e.wd.map(i=>dshort(i).toLowerCase()).join(", "):repName(e.r).toLowerCase()):""].filter(Boolean).join(" · ");
   return `<button class="evr ${stOf(e)}${on?" now":""}${past?" past":""}" style="--c:${evCol(e)}" data-ev="${esc(e.id)}" data-on="${nd(o.s)}"><i class="ei${e.ic?fxCls(e.fx):""}">${e.ic?icon(e.ic):""}</i><span><b>${esc(e.n)}</b><small>${ava(e.w||"g")}<span>${esc(meta||pname(e.w||"g"))}</span></small></span><span class="et">${on?tx("Nu","Now"):esc(timeLbl(o,n))}</span></button>`}
 function bdRow(b,s,when){const a=bdAge(b,s);return `<button class="evr bdr" data-bd="${esc(b.id)}"><span><b>${esc(bdText(b,s))}</b><small><span>${cap(fmtD(s,{weekday:"short",day:"numeric",month:"short"}))}</span></small></span><span class="et">${when?esc(inDays(s-todayN())):a&&b.ty==="b"?a+tx(" år"," yrs"):""}</span></button>`}
-const holRow=h=>`<div class="evr soft${h[3]?" red":""}"><span><b>${esc(h[1+li()])}</b></span><span class="et"></span></div>`;
+const festIc=k=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${FESTI[k]}</svg>`;
+const holRow=h=>festOf(h)?`<div class="fest fest-${festOf(h)}"><i>${festIc(festOf(h))}</i><b>${esc(h[1+li()])}</b></div>`:`<div class="evr soft${h[3]?" red":""}"><span><b>${esc(h[1+li()])}</b></span><span class="et"></span></div>`;
 function dayRows(n){const h=S.hol?holOn(n):null;return (h?holRow(h):"")+bdOn(n).map(b=>`<button class="evr bdr" data-bd="${esc(b.id)}"><span><b>${esc(bdText(b,n))}</b></span><span class="et">♥</span></button>`).join("")+onDay(n).map(o=>evRow(o,n)).join("")}
 
 /* ---------- Idag ---------- */
@@ -36,8 +37,9 @@ function renderMonth(){const n=todayN(),first=dnOf(P.y,P.m,1),off=wdOf(first),ro
   $("k_wk").innerHTML=(S.wkno?`<span class="v"></span>`:"")+[0,1,2,3,4,5,6].map(i=>`<span>${dshort(i)}</span>`).join("");
   let h="";for(let r=0;r<rows;r++){if(S.wkno)h+=`<span class="v">${isoWeek(start+r*7)}</span>`;
     for(let i=0;i<7;i++){const d=start+r*7+i,[,m,dd]=ymd(d),L=B.filter(o=>o.s<=d&&o.end>=d),ws=[...new Set(L.map(x=>x.e.w||"g"))];
-      const cls=[m!==P.m?"out":"",dd%2?"":"alt",d===n?"t":"",d===SEL?"s":"",(wdOf(d)===6||(S.hol&&isRed(d)))?"red":""].filter(Boolean).join(" ");
-      h+=`<button data-cday="${d}" class="${cls}${fxCls(fxOf(L))}" aria-label="${esc(cap(fmtDay(d)))}"${d===SEL?' aria-pressed="true"':""}><b>${dd}</b>${dIc(d)?`<span class="dic"${L.length?` style="--dc:${evCol(L[0].e)}"`:""}>${icon(dIc(d))}</span>`:""}<span class="cev">${(()=>{const B=bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),E=L.map(o=>`<u class="${stMini(o.e)}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</u>`),A=[...B,...E],max=A.length>3?2:3;return A.slice(0,max).join("")+(A.length>max?`<em>+${A.length-max}</em>`:"")})()}</span></button>`}}
+      const fk=S.hol?festOf(holOn(d)):"";
+      const cls=[fk?"fst fest-"+fk:"",m!==P.m?"out":"",dd%2?"":"alt",d===n?"t":"",d===SEL?"s":"",(wdOf(d)===6||(S.hol&&isRed(d)))?"red":""].filter(Boolean).join(" ");
+      h+=`<button data-cday="${d}" class="${cls}${fxCls(fxOf(L))}" aria-label="${esc(cap(fmtDay(d)))}"${d===SEL?' aria-pressed="true"':""}>${fk?`<span class="fic">${festIc(fk)}</span>`:""}<b>${dd}</b>${dIc(d)?`<span class="dic"${L.length?` style="--dc:${evCol(L[0].e)}"`:""}>${icon(dIc(d))}</span>`:""}<span class="cev">${(()=>{const B=bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),E=L.map(o=>`<u class="${stMini(o.e)}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</u>`),A=[...B,...E],max=A.length>3?2:3;return A.slice(0,max).join("")+(A.length>max?`<em>+${A.length-max}</em>`:"")})()}</span></button>`}}
   $("k_gr").innerHTML=h;
   $("kd_t").innerHTML=(dIc(SEL)?icon(dIc(SEL))+" ":"")+esc(SEL===n?tx("Idag","Today"):cap(fmtDay(SEL)));$("kd_ic").innerHTML=icon(dIc(SEL)||"star")+`<span>${dIc(SEL)?tx("Byt dagens ikon","Change the day's icon"):tx("Ikon för dagen","Icon for the day")}</span>`;
   renderKV();if(KV==="day")renderDayView();if(KV==="week")renderWeekView();$("k_now").textContent=tx("Till idag","To today");$("k_now").classList.toggle("hide",P.y===NOW.getFullYear()&&P.m===NOW.getMonth());
@@ -74,7 +76,7 @@ function renderDayView(){const n=SEL,L=onDay(n),timed=L.filter(o=>o.e.t&&o.s===n
   const allDay=w=>all.filter(o=>(o.e.w||"g")===w||(o.e.w||"g")==="g").map(o=>`<button class="dvall ${stMini(o.e)}${fxCls(o.e.fx)}" data-ev="${esc(o.e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(o.e)}">${o.e.ic?icon(o.e.ic):""}<span>${esc(o.e.n)}</span></button>`).join("");
   const bd=bdOn(n).map(b=>`<button class="dvall" data-bd="${esc(b.id)}" style="--c:var(--acc)">${icon("cake")}<span>${esc(bdText(b,n))}</span></button>`).join("");
   let h=`<div class="dvh"><span></span><b class="pa">${ava("a")}${esc(pname("a"))}</b><b class="pb">${ava("b")}${esc(pname("b"))}</b></div>`;
-  const ad=[allDay("a"),allDay("b")];if(ad[0]||ad[1]||bd||hol)h+=`<div class="dvad">${hol||bd?`<div class="dvfull">${hol?`<span class="hol${hol[3]?" red":""}">${esc(hol[1+li()])}</span>`:""}${bd}</div>`:""}<span class="adl">${tx("Heldag","All day")}</span><div>${ad[0]}</div><div>${ad[1]}</div></div>`;
+  const ad=[allDay("a"),allDay("b")];if(ad[0]||ad[1]||bd||hol)h+=`<div class="dvad">${hol||bd?`<div class="dvfull">${hol?(festOf(hol)?holRow(hol):`<span class="hol${hol[3]?" red":""}">${esc(hol[1+li()])}</span>`):""}${bd}</div>`:""}<span class="adl">${tx("Heldag","All day")}</span><div>${ad[0]}</div><div>${ad[1]}</div></div>`;
   if(!L.length&&!bd&&!hol)h+=`<p class="muted dvhint">${tx("Inget planerat. Tryck på en tid för att lägga till.","Nothing planned. Tap a time to add something.")}</p>`;
   $("dv_head").innerHTML=h;h="";
   h+=`<div class="dvb" style="height:${(h1-h0)*HPX}px"><div class="dvg">`;for(let k=h0;k<h1;k++)h+=`<i style="top:${(k-h0)*HPX}px"><s>${pad(k)}:00</s></i>`;h+=`</div>`;
