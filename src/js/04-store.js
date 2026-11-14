@@ -11,7 +11,8 @@ const noteDoc=x=>({kind:"note",id:x.id,f:x.f,txt:x.txt,at:x.at});
 const putIn=(L,x)=>{const i=L.findIndex(z=>z.id===x.id);if(i>=0)L[i]=x;else L.push(x)};
 /* The last saved copy of every record, so a delete can be undone. */
 let DOCS={};const copy=v=>v==null?null:JSON.parse(JSON.stringify(v));
-function put(id,v){DOCS[id]=copy(v);if(col)col.doc(id).set(v).catch(()=>toast(tx("Kunde inte spara. Försök igen.","Could not save. Try again.")))}
+const MINE=new Set();
+function put(id,v){MINE.add(id);DOCS[id]=copy(v);if(col)col.doc(id).set(v).catch(()=>toast(tx("Kunde inte spara. Försök igen.","Could not save. Try again.")))}
 function del(id){const before=copy(DOCS[id]);delete DOCS[id];if(col)col.doc(id).delete().catch(()=>{});return before}
 /* After a delete, the notice gets an Undo button that puts the record back. */
 function undoable(e,ids){const was=ids.map(id=>[id,del(id)]).filter(x=>x[1]);if(!e||!was.length)return;const b=document.createElement("button");b.className="tundo";b.textContent=tx("Ångra","Undo");

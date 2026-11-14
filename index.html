@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="b2b04b6e4194">
+<meta name="kal-build" content="e4d402c0d982">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -16,12 +16,12 @@
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15131a;--bg2:#1c1922;--card:#211d28;--ink:#f1ecf6;--soft:#a69daf;--faint:#6e6577;--rule:rgba(241,236,246,.09);--fill:rgba(241,236,246,.06);--acc:#a996ff;--pa:#74d6ad;--pb:#b3a2ff;--pg:#f4a8c3;--good:#7fd4a8;--bad:#f08a98;--red:#f08a98;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.28);color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#15131a;--bg2:#1c1922;--card:#211d28;--ink:#f1ecf6;--soft:#a69daf;--faint:#6e6577;--rule:rgba(241,236,246,.09);--fill:rgba(241,236,246,.06);--acc:#a996ff;--pa:#74d6ad;--pb:#b3a2ff;--pg:#f4a8c3;--good:#7fd4a8;--bad:#f08a98;--red:#f08a98;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.28);color-scheme:dark}
 /* Space for the phone's status bar and home bar. The Android app also passes these in as --safe-area-inset-*. */
-:root{--sat:max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,0px));--sab:max(env(safe-area-inset-bottom,0px),var(--safe-area-inset-bottom,0px));--topH:58px}
+:root{--sat:max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,0px));--sab:max(env(safe-area-inset-bottom,0px),var(--safe-area-inset-bottom,0px));--topH:50px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{height:100%;background:var(--bg)}
 body{min-height:100%;margin:0;color:var(--ink);font:16px/1.45 var(--ui);font-variant-numeric:tabular-nums;
   background:radial-gradient(80vmax 50vmax at 15% -10%,color-mix(in srgb,var(--pb) 16%,transparent),transparent 60%),radial-gradient(70vmax 45vmax at 105% 20%,color-mix(in srgb,var(--pg) 12%,transparent),transparent 60%),radial-gradient(70vmax 50vmax at 50% 115%,color-mix(in srgb,var(--pa) 11%,transparent),transparent 60%),var(--bg);background-attachment:fixed;
-  padding:calc(var(--topH) + var(--sat) + 8px) max(16px,env(safe-area-inset-right,0px)) calc(96px + var(--sab)) max(16px,env(safe-area-inset-left,0px));overflow-x:hidden}
+  padding:calc(var(--topH) + var(--sat) + 4px) max(16px,env(safe-area-inset-right,0px)) calc(96px + var(--sab)) max(16px,env(safe-area-inset-left,0px));overflow-x:hidden}
 button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
 input,textarea{font:inherit;color:var(--ink);min-width:0}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
@@ -32,11 +32,11 @@ section{display:flex;flex-direction:column;gap:12px;animation:in .35s ease}
 @keyframes in{from{opacity:0;transform:translateY(6px)}}
 /* Top bar */
 /* The bar is pinned to the very top of the screen and stays there while you scroll. */
-.top{position:fixed;top:0;left:0;right:0;z-index:15;display:flex;align-items:center;gap:4px;min-height:calc(var(--topH) + var(--sat));padding:calc(6px + var(--sat)) max(10px,calc((100% - 560px)/2 - 6px)) 6px;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border-bottom:1px solid transparent;transition:border-color .2s}
+.top{position:fixed;top:0;left:0;right:0;z-index:15;display:flex;align-items:center;gap:4px;min-height:calc(var(--topH) + var(--sat));padding:calc(3px + var(--sat)) max(10px,calc((100% - 560px)/2 - 6px)) 3px;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border-bottom:1px solid transparent;transition:border-color .2s}
 .top.sc{border-bottom-color:var(--rule)}
-h1{flex:1;margin:0;padding-left:2px;font:500 26px/1.1 var(--serif);letter-spacing:-.01em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+h1{flex:1;margin:0;padding-left:2px;font:500 25px/1.4 var(--serif);letter-spacing:-.01em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ib{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;color:var(--ink)}.ib svg{width:22px;height:22px}
-.ib.add{background:var(--acc);color:#fff;box-shadow:0 8px 20px color-mix(in srgb,var(--acc) 40%,transparent)}.ib.add svg{stroke-width:2.2}
+.ib.add{width:40px;height:40px;margin-left:6px;border-radius:13px;background:var(--acc);color:#fff;box-shadow:0 8px 20px color-mix(in srgb,var(--acc) 40%,transparent)}.ib.add svg{stroke-width:2.2}
 /* Cards and text */
 .card{background:var(--card);border:1px solid var(--rule);border-radius:20px;padding:18px;box-shadow:var(--shadow);min-width:0}
 .ch{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:4px}
@@ -73,6 +73,8 @@ textarea.field{padding:12px 14px;line-height:1.45;resize:vertical}
 .addb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;margin-top:12px;border-radius:16px;background:color-mix(in srgb,var(--acc) 10%,var(--fill));color:var(--acc);font-weight:650;font-size:15px}
 /* People */
 .ava{--p:var(--pg);display:inline-grid;place-items:center;flex:none;width:22px;height:22px;border-radius:50%;background:var(--p);color:#fff;font:600 11px/1 var(--ui);font-style:normal;box-shadow:0 0 0 2px var(--card)}
+.ava.pic{background:var(--p) var(--img) center/cover;color:transparent}
+.cspic{display:flex;align-items:center;gap:12px;margin-top:6px}.cspic .btn{min-height:42px;padding:0 16px}
 .ava.xl{width:64px;height:64px;font:400 28px/1 var(--serif)}
 .ava2{display:inline-flex;flex:none}.ava2 .ava+.ava{margin-left:-7px}
 /* Event rows */
@@ -185,12 +187,12 @@ html.boot main{opacity:0}main{transition:opacity .4s}
 
 /* Icons on days */
 .ic{width:20px;height:20px;flex:none}
-.dic{display:grid;place-items:center;height:14px;color:var(--acc)}.dic .ic{width:14px;height:14px;stroke-width:2}
-.cgr .s .dic,.wstrip .t .dic{color:inherit}
+.dic{display:grid;place-items:center;height:14px;color:var(--dc,var(--acc))}.dic .ic{width:14px;height:14px;stroke-width:2}
+.wstrip .t .dic{color:inherit}
 .dayic{display:inline-flex;align-items:center;gap:8px;margin:2px 0 6px;padding:7px 12px 7px 9px;border-radius:99px;background:var(--fill);font-size:13.5px;font-weight:600;color:var(--soft)}.dayic .ic{width:16px;height:16px;color:var(--acc)}
 h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 /* Month or day */
-.seg.kv{width:200px;align-self:center;background:var(--card);border:1px solid var(--rule);box-shadow:var(--shadow)}.seg.kv button.on{background:var(--acc);color:#fff;box-shadow:none}
+.seg.kv{flex:none;padding:3px;border-radius:12px;background:var(--card);border:1px solid var(--rule)}.seg.kv button{min-height:32px;padding:0 11px;font-size:13.5px;border-radius:9px}@media (max-width:359px){h1{font-size:21px}.seg.kv button{padding:0 8px}}.seg.kv button.on{background:var(--acc);color:#fff;box-shadow:none}
 /* Day view: both of you side by side */
 #k_dv{padding:14px 12px 10px}#k_dv .mnav{margin:-6px -4px 6px}#dv_t{display:flex;align-items:center;gap:8px;font:500 18px/1.2 var(--serif);cursor:pointer;text-transform:none}#dv_t .ic{color:var(--acc)}
 .dvh,.dvad{display:grid;grid-template-columns:44px 1fr 1fr;gap:6px}
@@ -298,14 +300,14 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 <div class="fl" id="es_dl"></div><div class="pair"><button type="button" class="field dbtn" id="es_d" value=""><span></span></button><button type="button" class="field tog" id="es_ad"></button></div>
 <div class="pair" id="es_tw"><button type="button" class="field tbtn" id="es_t1" value=""><span></span></button><button type="button" class="field tbtn" id="es_t2" value=""><span></span></button></div>
 <div class="fl" id="es_rl"></div><div class="chips" id="es_r"></div><div class="wds hide" id="es_wd"></div>
+<div id="es_uw"><div class="fl" id="es_ul"></div><button type="button" class="field dbtn" id="es_u" value=""><span></span></button></div>
 <div class="fl" id="es_sl"></div><div class="seg" id="es_st"></div><div class="pv" id="es_pv"></div>
 <div class="sw" id="es_c"></div>
 <div class="ics" id="es_ic"></div>
 <div class="fl" id="es_fl"></div><div class="fxs" id="es_fx"></div>
 <button type="button" class="more" id="es_more"></button>
 <div id="es_extra" class="hide">
-<div class="fl" id="es_el"></div><button type="button" class="field dbtn" id="es_e" value=""><span></span></button>
-<div id="es_uw"><div class="fl" id="es_ul"></div><button type="button" class="field dbtn" id="es_u" value=""><span></span></button></div>
+<div id="es_ew"><div class="fl" id="es_el"></div><button type="button" class="field dbtn" id="es_e" value=""><span></span></button></div>
 <div class="fl" id="es_pl"></div><input id="es_p" class="field" type="text" maxlength="80" autocomplete="off">
 <div class="fl" id="es_ol"></div><textarea id="es_o" class="field" rows="3" maxlength="600"></textarea>
 </div>
@@ -327,9 +329,10 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 
 <div id="cs" class="sh" role="dialog" aria-modal="true" aria-labelledby="cs_t"><div class="box"><b id="cs_t" class="title"></b><p class="muted" id="cs_p"></p>
 <div class="fl" id="cs_al"></div><input id="cs_a" class="field" type="text" maxlength="30" autocomplete="off">
+<div id="cs_prof"><div class="fl" id="cs_pl"></div><div class="cspic"><span id="cs_av"></span><button type="button" class="btn ghost" id="cs_pb"></button><button type="button" class="lnk bad hide" id="cs_px"></button></div><div class="fl" id="cs_cl"></div><div class="sw" id="cs_c"></div></div>
 <div class="fl" id="cs_sl"></div><button type="button" class="field dbtn" id="cs_s" value=""><span></span></button>
 <div class="acts"><button class="btn ghost hide" id="cs_no"></button><button class="btn" id="cs_ok"></button></div><button class="lnk wide hide" id="cs_rs" type="button"></button></div></div>
-<input type="file" id="bk_in" accept=".json,application/json,text/plain,*/*" class="hide">
+<input type="file" id="pic_in" accept="image/*" class="hide"><input type="file" id="bk_in" accept=".json,application/json,text/plain,*/*" class="hide">
 
 <div id="ip" class="sh" role="dialog" aria-modal="true" aria-labelledby="ip_t"><div class="box"><b id="ip_t" class="title"></b><div class="fl" id="ip_il"></div><div class="ics big" id="ip_l"></div><div class="acts"><button class="btn ghost" id="ip_no"></button><button class="btn" id="ip_ok"></button></div><button class="lnk hide wide" id="ip_none"></button></div></div>
 <div id="js" class="sh" role="dialog" aria-modal="true" aria-labelledby="js_t"><div class="box"><b id="js_t" class="title"></b><p class="muted" id="js_p"></p><input id="js_in" class="field" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" style="margin-top:12px"><div class="acts"><button class="btn ghost" id="js_no">Avbryt</button><button class="btn" id="js_ok"></button></div></div></div>
@@ -347,7 +350,7 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 <button class="di dset" data-go="c" id="dr_set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h2M11 17h9"/><circle cx="15.5" cy="7" r="2.5"/><circle cx="8.5" cy="17" r="2.5"/></svg><span></span></button>
 <div class="dlang" id="dr_lang"></div></aside>
 <main>
-<header class="top" id="main_top"><button class="ib" id="menu" type="button" aria-label="Meny"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h11M4 17h16"/></svg></button><h1 id="ttl"></h1><button class="ib add" id="tadd" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></header>
+<header class="top" id="main_top"><button class="ib" id="menu" type="button" aria-label="Meny"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h11M4 17h16"/></svg></button><h1 id="ttl"></h1><div class="seg kv hide" id="k_v"></div><button class="ib add" id="tadd" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></header>
 
 <section id="h">
 <div class="hello"><p class="eyebrow" id="h_date"></p><h2 id="h_hi"></h2></div>
@@ -359,7 +362,6 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 </section>
 
 <section id="k" class="hide">
-<div class="seg kv" id="k_v"></div>
 <div class="card hide" id="k_dv"><div class="mnav"><button data-dmv="-1" aria-label="‹"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button><b id="dv_t" role="button" tabindex="0"></b><button data-dmv="1" aria-label="›"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div><div id="dv_head"></div><div id="dv_body"></div></div>
 <div class="card" id="k_cal"><div class="mnav"><button data-mv="-1" id="k_prev"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg></button><b id="k_m"></b><button data-mv="1" id="k_next"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg></button></div><div class="cwk" id="k_wk"></div><div class="cgr" id="k_gr"></div><button class="lnk hide wide" data-now id="k_now"></button></div>
 </section>
@@ -405,13 +407,18 @@ const T={nH:["Idag","Today"],nK:["Kalender","Calendar"],nT:["Att göra","To do"]
 const t=k=>T[k][li()];
 
 /* The two of you: a and b, and g for things you do together. ua/ub tie a name to a signed-in person. */
-let CP={a:"",b:"",ua:"",ub:"",since:""},ME="",MYID="";
+let CP={a:"",b:"",ua:"",ub:"",since:"",ca:"",cb:""},ME="",MYID="";
 try{const m=localStorage.getItem("kalenderkoll.me");if(m==="a"||m==="b")ME=m}catch(e){}
 const other=w=>w==="a"?"b":"a",me=()=>ME||"a";
 const pname=w=>w==="g"?tx("Båda","Both"):(CP[w]||(w==="a"?tx("Du","You"):tx("Din partner","Your partner")));
 const initial=w=>(pname(w).trim()[0]||"?").toUpperCase();
 const pvar=w=>w==="a"?"var(--pa)":w==="b"?"var(--pb)":"var(--pg)";
-const ava=(w,sz)=>w==="g"?`<span class="ava2"><i class="ava" style="--p:var(--pa)">${esc(initial("a"))}</i><i class="ava" style="--p:var(--pb)">${esc(initial("b"))}</i></span>`:`<i class="ava${sz?" "+sz:""}" style="--p:${pvar(w)}">${esc(initial(w))}</i>`;
+/* Profile pictures (small, saved with the calendar) and each person's own colour. */
+let PICS={a:"",b:""};
+const okPic=s=>typeof s==="string"&&s.length<90000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(s);
+const ava1=(w,sz)=>`<i class="ava${sz?" "+sz:""}${PICS[w]?" pic":""}" style="--p:${pvar(w)}${PICS[w]?`;--img:var(--pic${w})`:""}">${esc(initial(w))}</i>`;
+const ava=(w,sz)=>w==="g"?`<span class="ava2">${ava1("a")}${ava1("b")}</span>`:ava1(w,sz);
+function applyPeople(){const r=document.documentElement.style;for(const w of["a","b"]){const c=CP["c"+w];if(/^#[0-9a-f]{6}$/i.test(c||""))r.setProperty("--p"+w,c);else r.removeProperty("--p"+w);if(PICS[w])r.setProperty("--pic"+w,`url("${PICS[w]}")`);else r.removeProperty("--pic"+w)}}
 function setMe(w){ME=w;try{localStorage.setItem("kalenderkoll.me",w)}catch(e){}}
 const RM=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;
 /* Icons for events and days: simple line drawings. */
@@ -461,8 +468,8 @@ const fmtT=s=>s||"";
    {id, n: title, d: start date, e: last date (several days), t/t2: start and end time ("" = all day),
     r: repeat o|d|wd|w|2w|m|y, u: repeat until, skip: dates left out, pl: place, o: note, w: whose, a|b|g} */
 let EV=[],BD=[],TODOS=[],NOTES=[];
-const REPS=[["o","Aldrig","Never"],["w","Varje vecka","Every week"],["2w","Varannan vecka","Every other week"],["m","Varje månad","Every month"],["y","Varje år","Every year"]];
-const REPALL=[...REPS,["d","Varje dag","Every day"],["wd","Vardagar","Weekdays"]];
+const REPS=[["o","Aldrig","Never"],["d","Varje dag","Every day"],["w","Varje vecka","Every week"],["2w","Varannan vecka","Every other week"],["m","Varje månad","Every month"],["y","Varje år","Every year"]];
+const REPALL=[...REPS,["wd","Vardagar","Weekdays"]];
 const repName=r=>{const x=REPALL.find(z=>z[0]===r)||REPS[0];return x[1+li()]};
 const evDur=e=>e.e?Math.max(0,dn(e.e)-dn(e.d)):0;
 /* Start days of every time an event happens that touches the days A..B. */
@@ -531,7 +538,8 @@ const noteDoc=x=>({kind:"note",id:x.id,f:x.f,txt:x.txt,at:x.at});
 const putIn=(L,x)=>{const i=L.findIndex(z=>z.id===x.id);if(i>=0)L[i]=x;else L.push(x)};
 /* The last saved copy of every record, so a delete can be undone. */
 let DOCS={};const copy=v=>v==null?null:JSON.parse(JSON.stringify(v));
-function put(id,v){DOCS[id]=copy(v);if(col)col.doc(id).set(v).catch(()=>toast(tx("Kunde inte spara. Försök igen.","Could not save. Try again.")))}
+const MINE=new Set();
+function put(id,v){MINE.add(id);DOCS[id]=copy(v);if(col)col.doc(id).set(v).catch(()=>toast(tx("Kunde inte spara. Försök igen.","Could not save. Try again.")))}
 function del(id){const before=copy(DOCS[id]);delete DOCS[id];if(col)col.doc(id).delete().catch(()=>{});return before}
 /* After a delete, the notice gets an Undo button that puts the record back. */
 function undoable(e,ids){const was=ids.map(id=>[id,del(id)]).filter(x=>x[1]);if(!e||!was.length)return;const b=document.createElement("button");b.className="tundo";b.textContent=tx("Ångra","Undo");
@@ -577,7 +585,7 @@ function renderHome(){const n=todayN(),now=Date.now(),o=nextUp(),big=$("h_big");
     else if(o.s===n){$("h_lbl").textContent=tx("Härnäst idag","Next today");big.textContent=mins<90?tx(`Om ${Math.max(1,mins)} min`,`In ${Math.max(1,mins)} min`):e.t;$("h_sub").textContent=e.n+(mins<90?" · "+e.t:"")+who}
     else{const d=o.s-n;$("h_lbl").textContent=tx("Härnäst","Next");big.textContent=d===1?tx("Imorgon","Tomorrow"):tx(`Om ${d} dagar`,`In ${d} days`);$("h_sub").textContent=e.n+" · "+cap(fmtD(o.s,{weekday:"short",day:"numeric",month:"short"}))+(e.t?" "+e.t:"")+who}}
   const mon=n-wdOf(n);
-  $("h_strip").innerHTML=[0,1,2,3,4,5,6].map(i=>{const d=mon+i,L=onDay(d);return `<button data-gday="${d}" class="${d===n?"t":""}${fxCls(fxOf(L))}${S.hol&&isRed(d)||wdOf(d)===6?" red":""}${d<n?" past":""}" aria-label="${esc(cap(fmtDay(d)))}"><small>${dshort(i)}</small><b>${ymd(d)[2]}</b>${dIc(d)?`<span class="dic">${icon(dIc(d))}</span>`:`<span class="dots">${[...new Set(L.map(x=>evCol(x.e)))].slice(0,3).map(c=>`<i style="--p:${c}"></i>`).join("")}${bdOn(d).length?'<i style="--p:var(--acc)"></i>':""}</span>`}</button>`}).join("");
+  $("h_strip").innerHTML=[0,1,2,3,4,5,6].map(i=>{const d=mon+i,L=onDay(d);return `<button data-gday="${d}" class="${d===n?"t":""}${fxCls(fxOf(L))}${S.hol&&isRed(d)||wdOf(d)===6?" red":""}${d<n?" past":""}" aria-label="${esc(cap(fmtDay(d)))}"><small>${dshort(i)}</small><b>${ymd(d)[2]}</b>${dIc(d)?`<span class="dic"${L.length?` style="--dc:${evCol(L[0].e)}"`:""}>${icon(dIc(d))}</span>`:`<span class="dots">${[...new Set(L.map(x=>evCol(x.e)))].slice(0,3).map(c=>`<i style="--p:${c}"></i>`).join("")}${bdOn(d).length?'<i style="--p:var(--acc)"></i>':""}</span>`}</button>`}).join("");
   $("ht_t").textContent=tx("Idag","Today");$("ht_list").innerHTML=dayRows(n)||`<p class="empty">${tx("Inget idag.","Nothing today.")}</p>`;
   let h="",cnt=0;for(let d=n+1;d<=n+7&&cnt<6;d++){const L=onDay(d).slice(0,6-cnt),hol=S.hol?holOn(d):null,B=bdOn(d);if(!L.length&&!hol&&!B.length)continue;cnt+=L.length+B.length;h+=`<p class="dayh">${esc(relDay(d))}</p>`+(hol?holRow(hol):"")+B.map(b=>bdRow(b,d)).join("")+L.map(o=>evRow(o,d)).join("")}
   if(h)h+=`<button class="lnk" data-go="k">${tx("Hela kalendern","Full calendar")}</button>`;
@@ -593,7 +601,7 @@ function renderMonth(){const n=todayN(),first=dnOf(P.y,P.m,1),off=wdOf(first),ro
   let h="";for(let r=0;r<rows;r++){if(S.wkno)h+=`<span class="v">${isoWeek(start+r*7)}</span>`;
     for(let i=0;i<7;i++){const d=start+r*7+i,[,m,dd]=ymd(d),L=B.filter(o=>o.s<=d&&o.end>=d),ws=[...new Set(L.map(x=>x.e.w||"g"))];
       const cls=[m!==P.m?"out":"",d===n?"t":"",d===SEL?"s":"",(wdOf(d)===6||(S.hol&&isRed(d)))?"red":""].filter(Boolean).join(" ");
-      h+=`<button data-cday="${d}" class="${cls}" aria-label="${esc(cap(fmtDay(d)))}"${d===SEL?' aria-pressed="true"':""}><b class="${fxCls(fxOf(L)).trim()}">${dd}</b>${dIc(d)?`<span class="dic">${icon(dIc(d))}</span>`:""}<span class="cev">${(()=>{const B=bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),E=L.map(o=>`<u class="${o.e.st==="glass"?"gl":""}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</u>`),A=[...B,...E],max=A.length>3?2:3;return A.slice(0,max).join("")+(A.length>max?`<em>+${A.length-max}</em>`:"")})()}</span></button>`}}
+      h+=`<button data-cday="${d}" class="${cls}" aria-label="${esc(cap(fmtDay(d)))}"${d===SEL?' aria-pressed="true"':""}><b class="${fxCls(fxOf(L)).trim()}">${dd}</b>${dIc(d)?`<span class="dic"${L.length?` style="--dc:${evCol(L[0].e)}"`:""}>${icon(dIc(d))}</span>`:""}<span class="cev">${(()=>{const B=bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),E=L.map(o=>`<u class="${o.e.st==="glass"?"gl":""}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</u>`),A=[...B,...E],max=A.length>3?2:3;return A.slice(0,max).join("")+(A.length>max?`<em>+${A.length-max}</em>`:"")})()}</span></button>`}}
   $("k_gr").innerHTML=h;
   $("kd_t").innerHTML=(dIc(SEL)?icon(dIc(SEL))+" ":"")+esc(SEL===n?tx("Idag","Today"):cap(fmtDay(SEL)));$("kd_ic").innerHTML=icon(dIc(SEL)||"star")+`<span>${dIc(SEL)?tx("Byt dagens ikon","Change the day's icon"):tx("Ikon för dagen","Icon for the day")}</span>`;
   renderKV();if(KV==="day")renderDayView();$("k_now").textContent=tx("Till idag","To today");$("k_now").classList.toggle("hide",P.y===NOW.getFullYear()&&P.m===NOW.getMonth());
@@ -677,7 +685,7 @@ function renderSettings(){
 
 /* ---------- Side menu ---------- */
 function renderDrawer(){$("dr_sub").textContent=CP.a&&CP.b?CP.a+" ♥ "+CP.b:tx("Er gemensamma kalender","Your shared calendar");
-  $("dr_join").classList.toggle("hide",!LOCAL);$("dr_join").lastElementChild.textContent=tx("Gå med med länk","Join with a link");$("dr_inv").lastElementChild.textContent=LOCAL&&!SHARED()?tx("Dela med varandra","Share with each other"):joined()?tx("Ni är båda med","You are both in"):tx("Bjud in ","Invite ")+pname(other(me()));$("dr_names").lastElementChild.textContent=tx("Ditt namn","Your name");
+  $("dr_join").classList.toggle("hide",!LOCAL);$("dr_join").lastElementChild.textContent=tx("Gå med med länk","Join with a link");$("dr_inv").lastElementChild.textContent=LOCAL&&!SHARED()?tx("Dela med varandra","Share with each other"):joined()?tx("Ansluten till ","Connected to ")+pname(other(me())):tx("Bjud in din partner","Invite your partner");$("dr_names").lastElementChild.textContent=tx("Din profil","Your profile");
   $("dr_set").lastElementChild.textContent=t("ttlC");$("dr_ics").lastElementChild.textContent=tx("Spara som .ics","Save as .ics");
   $("dr_lang").innerHTML=[["sv","🇸🇪","Svenska"],["en","🇬🇧","English"]].map(([v,f,l])=>`<button class="${S.lang===v?"on":""}" data-lg="${v}" aria-label="${l}" title="${l}" aria-pressed="${S.lang===v}">${f}</button>`).join("")}
 const openDrawer=()=>{$("drawer").classList.add("on");$("scrim").classList.add("on")},closeDrawer=()=>{$("drawer").classList.remove("on");$("scrim").classList.remove("on")};
@@ -685,7 +693,7 @@ const openDrawer=()=>{$("drawer").classList.add("on");$("scrim").classList.add("
 /* ---------- Drawing and moving between pages ---------- */
 function render(){NOW=new Date();$("ttl").textContent=t("ttl"+tab.toUpperCase());renderHome();renderMonth();renderTodo();renderUs();renderSettings()}
 const TABS=["h","k","t","v","c"];
-function go(x){if(!TABS.includes(x))x="h";tab=x;try{sessionStorage.setItem("kalenderkoll.tab",x)}catch(e){}TABS.forEach(s=>$(s).classList.toggle("hide",s!==x));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===x));$("dr_set").classList.toggle("on",x==="c");closeDrawer();closeDS();$("ttl").textContent=t("ttl"+x.toUpperCase());$("tadd").classList.toggle("hide",x!=="k");$("tadd").setAttribute("aria-label",x==="t"?tx("Ny uppgift","New task"):x==="v"?tx("Ny lapp","New note"):tx("Ny händelse","New event"));window.scrollTo(0,0)}
+function go(x){if(!TABS.includes(x))x="h";tab=x;try{sessionStorage.setItem("kalenderkoll.tab",x)}catch(e){}TABS.forEach(s=>$(s).classList.toggle("hide",s!==x));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===x));$("dr_set").classList.toggle("on",x==="c");closeDrawer();closeDS();$("ttl").textContent=t("ttl"+x.toUpperCase());$("tadd").classList.toggle("hide",x!=="k");$("k_v").classList.toggle("hide",x!=="k");$("tadd").setAttribute("aria-label",x==="t"?tx("Ny uppgift","New task"):x==="v"?tx("Ny lapp","New note"):tx("Ny händelse","New event"));window.scrollTo(0,0)}
 function applyTheme(){S.theme==="auto"?document.documentElement.removeAttribute("data-theme"):document.documentElement.setAttribute("data-theme",S.theme)}
 function applyLang(){document.documentElement.lang=S.lang;document.querySelectorAll("[data-i]").forEach(e=>{e.textContent=t(e.dataset.i)});$("es_n").placeholder=tx("Vad ska hända?","What's happening?");render()}
 /* ---------- Picking a date ---------- */
@@ -742,12 +750,12 @@ function paintES(){const c=ES.col||pvar(ES.w),dd=ymd(dn($("es_d").value))[2],wdn
 $("es_w").innerHTML=["g","a","b"].map(w=>`<button type="button" class="${ES.w===w?"on":""}" data-esw="${w}">${ava(w)}<span>${esc(w==="g"?tx("Båda","Both"):pname(w))}</span></button>`).join("");
   $("es_ad").textContent=tx("Heldag","All day");$("es_ad").classList.toggle("on",ES.ad);$("es_tw").classList.toggle("hide",ES.ad);
   $("es_r").innerHTML=(REPS.some(x=>x[0]===ES.r)?REPS:[...REPS,REPALL.find(x=>x[0]===ES.r)]).map(([v,a,b])=>`<button type="button" class="chip ${ES.r===v?"on":""}" data-esr="${v}">${li()?b:a}</button>`).join("");
-  $("es_uw").classList.toggle("hide",ES.r==="o");$("es_extra").classList.toggle("hide",!ES.more);$("es_more").classList.toggle("hide",ES.more);$("es_more").textContent=tx("＋ Slutdatum, plats och anteckning","＋ End date, place and note")}
+  $("es_uw").classList.toggle("hide",ES.r==="o");$("es_ew").classList.toggle("hide",ES.r!=="o");$("es_extra").classList.toggle("hide",!ES.more);$("es_more").classList.toggle("hide",ES.more);$("es_more").textContent=ES.r==="o"?tx("＋ Flera dagar, plats och anteckning","＋ Several days, place and note"):tx("＋ Plats och anteckning","＋ Place and note")}
 function openES(id,on,pre){const e=id?EV.find(z=>z.id===id):null;if(id&&!e)return;pre=pre||{};const n=todayN(),d=pre.d||nd(tab==="k"?SEL:n),nh=new Date().getHours()+1;
   const t1=e?e.t:pre.t||pad(dn(d)===n&&nh>=7&&nh<=22?nh:18)+":00";
   ES={id:e?e.id:null,on:e?(on||e.d):null,ad:e?!e.t:!!pre.ad,r:e?e.r||"o":"o",w:e?e.w||"g":pre.w||"g",col:e?e.col||"":pre.col||"",st:e?e.st||"fill":pre.st||"fill",ic:e?e.ic||"":pre.ic||"",fx:e?e.fx||"":"",wd:e&&e.r==="w"&&e.wd&&e.wd.length?[...e.wd]:[],more:!!(e&&(e.e||e.u||e.pl||e.o))};
   const sd=e?ES.on:d,dur=e?evDur(e):0;
-  $("es_t").textContent=e?tx("Ändra","Edit"):tx("Ny händelse","New event");$("es_wl").textContent=tx("Vems","Whose");$("es_sl").textContent=tx("Utseende","Look");$("es_fl").textContent=tx("Effekt (syns runt händelsen och runt dagen)","Effect (shows around the event and the day)");$("es_dl").textContent=tx("När","When");$("es_rl").textContent=tx("Upprepa","Repeat");$("es_el").textContent=tx("Slutdatum, om det pågår flera dagar","End date, if it lasts several days");$("es_ul").textContent=tx("Sista gången","Last time");$("es_pl").textContent=tx("Plats","Place");$("es_ol").textContent=tx("Anteckning","Note");
+  $("es_t").textContent=e?tx("Ändra","Edit"):tx("Ny händelse","New event");$("es_wl").textContent=tx("Vems","Whose");$("es_sl").textContent=tx("Utseende","Look");$("es_fl").textContent=tx("Effekt (syns runt händelsen och runt dagen)","Effect (shows around the event and the day)");$("es_dl").textContent=tx("När","When");$("es_rl").textContent=tx("Upprepa","Repeat");$("es_el").textContent=tx("Pågår flera dagar? Sista dagen","Lasts several days? The last day");$("es_ul").textContent=tx("Upprepa till och med","Repeat until");$("es_pl").textContent=tx("Plats","Place");$("es_ol").textContent=tx("Anteckning","Note");
   $("es_d").dataset.req="1";$("es_e").dataset.ph=tx("Samma dag","Same day");$("es_u").dataset.ph=tx("Tills vidare","Until further notice");$("es_t1").dataset.ph=tx("Börjar","Starts");$("es_t2").dataset.ph=tx("Slutar","Ends");
   $("es_n").value=e?e.n:pre.n||"";$("es_d").value=sd;$("es_e").value=dur?nd(dn(sd)+dur):"";$("es_e").dataset.base=$("es_u").dataset.base=sd;$("es_u").value=e?e.u||"":"";$("es_t1").value=e?e.t||"":t1;$("es_t2").value=e?e.t2||"":(t1?addMin(t1,60):"");$("es_p").value=e?e.pl||"":"";$("es_o").value=e?e.o||"":"";
   document.querySelectorAll("#es .tbtn").forEach(tpLabel);document.querySelectorAll("#es .dbtn").forEach(dpLabel);
@@ -757,10 +765,12 @@ const closeES=()=>{$("es").classList.remove("on");ES=null};
 $("es_x").onclick=closeES;
 $("es").addEventListener("click",e=>{if(e.target===$("es"))return closeES();if(!ES)return;const g=x=>e.target.closest(x);let b;
   if(g("#es_ad")){ES.ad=!ES.ad;if(!ES.ad&&!$("es_t1").value){$("es_t1").value="18:00";$("es_t2").value="19:00";tpLabel($("es_t1"));tpLabel($("es_t2"))}paintES();return}
-  if(b=g("[data-esw]")){ES.w=b.dataset.esw;paintES();return}if(b=g("[data-est]")){ES.st=b.dataset.est;paintES();return}if(b=g("[data-esc]")){ES.col=b.dataset.esc;paintES();return}if(b=g("[data-esfx]")){ES.fx=b.dataset.esfx;paintES();return}if(b=g("[data-eswd]")){const i=+b.dataset.eswd;if(i===wdOf(dn($("es_d").value))){toast(tx("Dagen du valde som datum är alltid med","The day you picked as the date is always included"));return}ES.wd=esWd().includes(i)?esWd().filter(x=>x!==i):[...esWd(),i];paintES();return}if(b=g("[data-esi]")){ES.ic=b.dataset.esi;paintES();return}if(b=g("[data-esr]")){ES.r=b.dataset.esr;paintES();return}if(g("#es_more")){ES.more=true;paintES();return}});
+  if(b=g("[data-esw]")){ES.w=b.dataset.esw;paintES();return}if(b=g("[data-est]")){ES.st=b.dataset.est;paintES();return}if(b=g("[data-esc]")){ES.col=b.dataset.esc;paintES();return}if(b=g("[data-esfx]")){ES.fx=b.dataset.esfx;paintES();return}if(b=g("[data-eswd]")){const i=+b.dataset.eswd;if(i===wdOf(dn($("es_d").value))){toast(tx("Dagen du valde som datum är alltid med","The day you picked as the date is always included"));return}ES.wd=esWd().includes(i)?esWd().filter(x=>x!==i):[...esWd(),i];paintES();return}if(b=g("[data-esi]")){ES.ic=b.dataset.esi;paintES();return}if(b=g("[data-esr]")){ES.r=b.dataset.esr;
+    /* A repeating event has a last time instead of an end date, so a date picked as the end moves there. */
+    if(ES.r!=="o"&&$("es_e").value){if(!$("es_u").value){$("es_u").value=$("es_e").value;dpLabel($("es_u"))}$("es_e").value="";dpLabel($("es_e"))}paintES();return}if(g("#es_more")){ES.more=true;paintES();return}});
 $("es_d").addEventListener("change",()=>{if(ES){if(ES.wd.length<=1)ES.wd=[];paintES()}$("es_e").dataset.base=$("es_u").dataset.base=$("es_d").value;if($("es_e").value&&$("es_e").value<$("es_d").value){$("es_e").value="";dpLabel($("es_e"))}});
 const shiftIso=(iso,k)=>iso?nd(dn(iso)+k):"";
-function esVals(){const d=$("es_d").value,e=$("es_e").value,u=$("es_u").value;return{n:$("es_n").value.trim(),d,e:e&&e>d?e:"",t:ES.ad?"":$("es_t1").value,t2:ES.ad?"":$("es_t2").value,r:ES.r,u:ES.r!=="o"&&u&&u>=d?u:"",pl:$("es_p").value.trim(),o:$("es_o").value.trim(),w:ES.w,col:ES.col,st:ES.st,ic:ES.ic,fx:ES.fx,wd:ES.r==="w"?esWd():[]}}
+function esVals(){const d=$("es_d").value,e=$("es_e").value,u=$("es_u").value;return{n:$("es_n").value.trim(),d,e:ES.r==="o"&&e&&e>d?e:"",t:ES.ad?"":$("es_t1").value,t2:ES.ad?"":$("es_t2").value,r:ES.r,u:ES.r!=="o"&&u&&u>=d?u:"",pl:$("es_p").value.trim(),o:$("es_o").value.trim(),w:ES.w,col:ES.col,st:ES.st,ic:ES.ic,fx:ES.fx,wd:ES.r==="w"?esWd():[]}}
 function saved(e,n,isNew){toast((isNew?tx("Tillagd","Added"):tx("Sparad","Saved"))+" · "+e.n+", "+relDay(n).toLowerCase()+(e.t?" "+e.t:""));if(tab==="k")pickDay(n);render()}
 $("es_ok").onclick=async()=>{if(!ES)return;const v=esVals();if(!v.n){$("es_n").focus();toast(tx("Skriv vad det är först","Write what it is first"));return}if(!ES.ad&&!v.t){toast(tx("Välj en tid, eller Heldag","Pick a time, or All day"));return}
   const old=ES.id&&EV.find(z=>z.id===ES.id),on=ES.on;
@@ -812,11 +822,23 @@ function openCS(mode){if(mode===true)mode="new";CSM=mode;const m=me(),o=other(m)
   $("cs_al").textContent=tx("Ditt namn","Your name");$("cs_sl").textContent=tx("Tillsammans sedan (valfritt)","Together since (optional)");
   $("cs_a").value=mode==="join"?"":CP[m]||"";$("cs_s").dataset.ph=tx("Välj datum","Pick a date");$("cs_s").dataset.base=CP.since||isoOf(new Date(NOW.getFullYear()-1,NOW.getMonth(),1));$("cs_s").value=CP.since||"";dpLabel($("cs_s"));
   $("cs_sl").classList.toggle("hide",mode==="join");$("cs_s").classList.toggle("hide",mode==="join");
+  CSP={col:CP["c"+m]||"",img:PICS[m]||""};$("cs_pl").textContent=tx("Din bild (valfritt)","Your picture (optional)");$("cs_cl").textContent=tx("Din färg","Your colour");paintCSP();
   const first=mode==="new"||mode==="join";$("cs_no").textContent=tx("Avbryt","Cancel");$("cs_no").classList.toggle("hide",first);$("cs_ok").textContent=mode==="new"?tx("Börja","Start"):mode==="join"?tx("Gå med","Join"):tx("Spara","Save");$("cs_rs").textContent=tx("Har du en säkerhetskopia? Återställ den","Have a backup? Restore it");$("cs_rs").classList.toggle("hide",!(mode==="new"&&LOCAL));$("cs").classList.add("on");setTimeout(()=>$("cs_a").focus(),80)}
+let CSP={col:"",img:""};
+function paintCSP(){const m=me(),c=CSP.col||(m==="a"?"var(--pa)":"var(--pb)"),nm=$("cs_a").value.trim()||pname(m);
+  $("cs_av").innerHTML=`<i class="ava xl${CSP.img?" pic":""}" style="--p:${c}${CSP.img?`;--img:url('${CSP.img}')`:""}">${esc((nm[0]||"?").toUpperCase())}</i>`;
+  $("cs_pb").textContent=CSP.img?tx("Byt bild","Change picture"):tx("Välj bild","Pick a picture");$("cs_px").textContent=tx("Ta bort","Remove");$("cs_px").classList.toggle("hide",!CSP.img);
+  $("cs_c").innerHTML=COLORS.map(x=>`<button type="button" class="swt${CSP.col.toLowerCase()===x.toLowerCase()?" on":""}" data-csc="${x}" style="--c:${x}" aria-label="${x}"></button>`).join("")+`<label class="swt cust${CSP.col&&!COLORS.includes(CSP.col)?" on":""}" style="--c:${CSP.col&&!COLORS.includes(CSP.col)?CSP.col:"#ffffff"}" aria-label="${esc(tx("Valfri färg","Any colour"))}"><input type="color" id="cs_cc" value="${CSP.col||"#a996f7"}"></label>`}
+$("cs").addEventListener("click",e=>{const b=e.target.closest("[data-csc]");if(b){CSP.col=b.dataset.csc;paintCSP()}else if(e.target.closest("#cs_pb")){$("pic_in").value="";$("pic_in").click()}else if(e.target.closest("#cs_px")){CSP.img="";paintCSP()}});
+$("cs").addEventListener("input",e=>{if(e.target.id==="cs_cc"){CSP.col=e.target.value;paintCSP()}else if(e.target.id==="cs_a"&&!CSP.img)paintCSP()});
+/* The picture is cut to a square and shrunk, so it is small enough to save with the calendar. */
+$("pic_in").addEventListener("change",()=>{const f=$("pic_in").files[0];if(!f)return;const u=URL.createObjectURL(f),im=new Image();
+  im.onload=()=>{const S2=160,c=document.createElement("canvas");c.width=c.height=S2;const s=Math.min(im.width,im.height);c.getContext("2d").drawImage(im,(im.width-s)/2,(im.height-s)/2,s,s,0,0,S2,S2);URL.revokeObjectURL(u);const d=c.toDataURL("image/jpeg",.82);if(okPic(d)){CSP.img=d;paintCSP()}else toast(tx("Bilden gick inte att använda","That picture could not be used"))};
+  im.onerror=()=>{URL.revokeObjectURL(u);toast(tx("Bilden gick inte att använda","That picture could not be used"))};im.src=u});
 const closeCS=()=>$("cs").classList.remove("on");
 $("cs_no").onclick=closeCS;$("cs").addEventListener("click",e=>{if(e.target===$("cs")&&!$("cs_no").classList.contains("hide"))closeCS()});
 $("cs_ok").onclick=()=>{const a=$("cs_a").value.trim();if(!a){toast(tx("Skriv ditt namn","Write your name"));$("cs_a").focus();return}
-  const m=me();setMe(m);CP[m]=a;if(CSM!=="join")CP.since=$("cs_s").value||"";if(MYID)CP["u"+m]=MYID;if(CSM==="new"&&col)put("started",{kind:"started"});saveCouple();closeCS();if(window.KK&&KK.joinDone)KK.joinDone();render()};
+  const m=me();setMe(m);CP[m]=a;CP["c"+m]=CSP.col||"";if(CSP.img!==(PICS[m]||"")){PICS[m]=CSP.img;if(CSP.img)put("pic_"+m,{kind:"pic",w:m,img:CSP.img});else del("pic_"+m)}applyPeople();askNotify();if(CSM!=="join")CP.since=$("cs_s").value||"";if(MYID)CP["u"+m]=MYID;if(CSM==="new"&&col)put("started",{kind:"started"});saveCouple();closeCS();if(window.KK&&KK.joinDone)KK.joinDone();render()};
 $("es").addEventListener("input",e=>{if(!ES)return;if(e.target.id==="es_cc"){ES.col=e.target.value;paintES()}else if(e.target.id==="es_n"){const b=$("es_pv").querySelector("b");if(b)b.textContent=$("es_n").value.trim()||tx("Så här ser den ut","This is how it looks")}});
 
 /* ---------- A day's icon ---------- */
@@ -876,7 +898,7 @@ document.addEventListener("input",e=>{const id=e.target.dataset&&e.target.datase
 document.addEventListener("focusout",e=>{const id=e.target.dataset&&e.target.dataset.tn;if(!id)return;const x=TODOS.find(z=>z.id===id);if(x&&!x.n.trim())dropTodo(x,true);setTimeout(()=>{renderTodo();renderHome()},0)});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.tn)e.target.blur()});
 $("reset").onclick=async()=>{if(!await ask(tx("Radera allt?","Delete everything?"),!SHARED()?tx("Alla händelser, uppgifter, lappar och namn tas bort från den här telefonen.","All events, tasks, notes and names are removed from this phone."):tx("Alla händelser, uppgifter, lappar och namn tas bort, för er båda.","All events, tasks, notes and names are removed, for both of you."),tx("Radera","Delete")))return;
-  const ids=allIds.filter(id=>id!=="plan");EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};CP={a:"",b:"",ua:"",ub:"",since:""};if(col)await Promise.all(ids.map(id=>col.doc(id).delete().catch(()=>{})));render();go("h");setTimeout(()=>openCS(true),300)};
+  const ids=allIds.filter(id=>id!=="plan");EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};CP={a:"",b:"",ua:"",ub:"",since:"",ca:"",cb:""};PICS={a:"",b:""};applyPeople();if(col)await Promise.all(ids.map(id=>col.doc(id).delete().catch(()=>{})));render();go("h");setTimeout(()=>openCS(true),300)};
 
 /* ---------- Start ---------- */
 try{const l=JSON.parse(localStorage.getItem("kalenderkoll.look")||"null");if(l){if(l.lang==="sv"||l.lang==="en")S.lang=l.lang;if(["auto","light","dark"].includes(l.theme))S.theme=l.theme}}catch(e){}
@@ -914,20 +936,21 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
   const db=await claude.use("db");if(!db)throw 0;
   try{const u=await claude.use("user");if(u&&u.id)MYID=await u.id()||""}catch(e){}
   col=db.collection("cal");let first=true;
-  col.onSnapshot(snap=>{if(first&&snap.metadata&&snap.metadata.fromCache&&!snap.docs.length){setTimeout(()=>{if(!firstDone)firstRun()},6000);return}ok=true;allIds=snap.docs.map(d=>d.id);DOCS={};const prevT=TODOS;EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};let cp=null;
+  col.onSnapshot(snap=>{if(first&&snap.metadata&&snap.metadata.fromCache&&!snap.docs.length){setTimeout(()=>{if(!firstDone)firstRun()},6000);return}ok=true;allIds=snap.docs.map(d=>d.id);DOCS={};const prevT=TODOS;EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};PICS={a:"",b:""};let cp=null;
     snap.docs.forEach(d=>{const v=d.data()||{};DOCS[d.id]=copy(v);const iso=x=>/^\d{4}-\d\d-\d\d$/.test(x||"");
       if(d.id==="plan"){if(!PEND.has("plan")){if(typeof v.wkno==="boolean")S.wkno=v.wkno;if(typeof v.hol==="boolean")S.hol=v.hol}}
-      else if(d.id==="couple")cp={a:String(v.a||""),b:String(v.b||""),ua:String(v.ua||""),ub:String(v.ub||""),since:iso(v.since)?v.since:""};
-      else if(v.kind==="ev"&&iso(v.d))EV.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),d:v.d,e:iso(v.e)&&v.e>v.d?v.e:"",t:/^\d\d:\d\d$/.test(v.t||"")?v.t:"",t2:/^\d\d:\d\d$/.test(v.t2||"")?v.t2:"",r:["o","d","wd","w","2w","m","y"].includes(v.r)?v.r:"o",u:iso(v.u)?v.u:"",skip:Array.isArray(v.skip)?v.skip.filter(x=>typeof x==="string"):[],pl:String(v.pl||""),o:String(v.o||""),w:["a","b","g"].includes(v.w)?v.w:"g",col:/^#[0-9a-f]{6}$/i.test(v.col||"")?v.col:"",st:v.st==="glass"?"glass":"fill",ic:ICONS[v.ic]?v.ic:"",fx:fxCls(v.fx)?v.fx:"",wd:Array.isArray(v.wd)?[...new Set(v.wd.filter(x=>Number.isInteger(x)&&x>=0&&x<7))].sort():[]});
+      else if(d.id==="couple")cp={a:String(v.a||""),b:String(v.b||""),ua:String(v.ua||""),ub:String(v.ub||""),since:iso(v.since)?v.since:"",ca:String(v.ca||""),cb:String(v.cb||"")};
+      else if(v.kind==="pic"&&(v.w==="a"||v.w==="b")&&okPic(v.img))PICS[v.w]=v.img;
+      else if(v.kind==="ev"&&iso(v.d))EV.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),d:v.d,e:iso(v.e)&&v.e>v.d&&(v.r||"o")==="o"?v.e:"",t:/^\d\d:\d\d$/.test(v.t||"")?v.t:"",t2:/^\d\d:\d\d$/.test(v.t2||"")?v.t2:"",r:["o","d","wd","w","2w","m","y"].includes(v.r)?v.r:"o",u:iso(v.u)?v.u:(iso(v.e)&&v.e>v.d&&v.r&&v.r!=="o"?v.e:""),skip:Array.isArray(v.skip)?v.skip.filter(x=>typeof x==="string"):[],pl:String(v.pl||""),o:String(v.o||""),w:["a","b","g"].includes(v.w)?v.w:"g",col:/^#[0-9a-f]{6}$/i.test(v.col||"")?v.col:"",st:v.st==="glass"?"glass":"fill",ic:ICONS[v.ic]?v.ic:"",fx:fxCls(v.fx)?v.fx:"",wd:Array.isArray(v.wd)?[...new Set(v.wd.filter(x=>Number.isInteger(x)&&x>=0&&x<7))].sort():[]});
       else if(v.kind==="day"&&iso(v.d)&&ICONS[v.ic])DAYS[v.d]={ic:v.ic};
       else if(v.kind==="bd"&&/^\d\d-\d\d$/.test(v.md||""))BD.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),md:v.md,y:+v.y||0,ty:["b","a","o"].includes(v.ty)?v.ty:"b"});
       else if(v.kind==="todo"){const id=String(v.id||d.id.slice(5)),ae=document.activeElement,typing=ae&&ae.dataset&&ae.dataset.tn===id||PEND.has("todo_"+id);TODOS.push(typing&&prevT.find(z=>z.id===id)||{id,n:String(v.n||""),w:["a","b","g"].includes(v.w)?v.w:"g",done:!!v.done,at:+v.at||0,dt:+v.dt||0})}
       else if(v.kind==="note"&&typeof v.txt==="string")NOTES.push({id:String(v.id||d.id.slice(5)),f:v.f==="b"?"b":"a",txt:v.txt,at:+v.at||0})});
     /* Tasks added on this phone but not saved yet stay in the list. */
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
-    CP=cp||{a:"",b:"",ua:"",ub:"",since:""};
+    CP=cp||{a:"",b:"",ua:"",ub:"",since:"",ca:"",cb:""};applyPeople();
     if(MYID){if(CP.ua===MYID)setMe("a");else if(CP.ub===MYID)setMe("b")}
-    watchJoin();render();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
+    watchJoin();watchNew();render();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
 }catch(e){}setTimeout(()=>{if(!ok&&!firstDone)firstRun()},col?10000:400)})();
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
@@ -972,6 +995,24 @@ function watchJoin(){if(!SHARED()||!ME||!CP[ME]||!MYID||CP["u"+ME]!==MYID)return
   /* Only tell you about a change you did not already see: a partner who joins after you started. */
   if(seen!==null&&id!=="none"&&id!==MYID){const p=pname(o),msg=tx(`${p} har gått med i er kalender`,`${p} has joined your calendar`);
     toast("💞 "+msg+" · "+tx("Nu ser ni samma kalender.","Now you see the same calendar."),6000);notify("Kalenderkoll",msg)}}
+
+/* A notice when your partner adds something. This phone keeps a list of what it has already seen;
+   anything new that this phone did not write itself comes from your partner. */
+const SK="kalenderkoll.seen";let askedN=false;
+function watchNew(){const ids=Object.keys(DOCS).filter(id=>/^(ev|note|todo|bd)_/.test(id));let seen=null;
+  try{const r=localStorage.getItem(SK);if(r)seen=new Set(JSON.parse(r))}catch(e){}
+  const fresh=seen?ids.filter(id=>!seen.has(id)):[];if(seen&&!fresh.length)return;
+  try{localStorage.setItem(SK,JSON.stringify([...new Set([...(seen||[]),...ids])].slice(-4000)))}catch(e){}
+  const news=fresh.filter(id=>!MINE.has(id));if(!seen||!news.length||!SHARED()||!ME)return;
+  const p=pname(other(ME)),v=DOCS[news[0]]||{},q=s=>String(s||"").slice(0,60);
+  const msg=news.length>1?tx(`${p} har lagt till ${news.length} nya saker`,`${p} added ${news.length} new things`):
+    v.kind==="ev"?tx(`${p} lade till: ${q(v.n)}`,`${p} added: ${q(v.n)}`)+(v.d?" ("+fmtD(dn(v.d),{day:"numeric",month:"short"})+")":""):
+    v.kind==="note"?tx(`${p} skrev en lapp: ${q(v.txt)}`,`${p} wrote a note: ${q(v.txt)}`):
+    v.kind==="todo"?tx(`${p} lade till en uppgift: ${q(v.n)}`,`${p} added a task: ${q(v.n)}`):
+    tx(`${p} lade till en speciell dag: ${q(v.n)}`,`${p} added a special day: ${q(v.n)}`);
+  toast(msg,5000);notify("Kalenderkoll",msg)}
+/* The phone asks once whether the app may show notifications, the first time you tap something in a shared calendar. */
+document.addEventListener("click",()=>{if(askedN||!SHARED()||!ME)return;askedN=true;askNotify()});
 /* Installed version: when a newer build is published, offer to update. */
 const BUILD=(document.querySelector('meta[name="kal-build"]')||{}).content||"";
 async function checkUpdate(){if(!LOCAL||!BUILD||!navigator.onLine)return;try{const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const j=await r.json();

@@ -16,13 +16,18 @@ const T={nH:["Idag","Today"],nK:["Kalender","Calendar"],nT:["Att göra","To do"]
 const t=k=>T[k][li()];
 
 /* The two of you: a and b, and g for things you do together. ua/ub tie a name to a signed-in person. */
-let CP={a:"",b:"",ua:"",ub:"",since:""},ME="",MYID="";
+let CP={a:"",b:"",ua:"",ub:"",since:"",ca:"",cb:""},ME="",MYID="";
 try{const m=localStorage.getItem("kalenderkoll.me");if(m==="a"||m==="b")ME=m}catch(e){}
 const other=w=>w==="a"?"b":"a",me=()=>ME||"a";
 const pname=w=>w==="g"?tx("Båda","Both"):(CP[w]||(w==="a"?tx("Du","You"):tx("Din partner","Your partner")));
 const initial=w=>(pname(w).trim()[0]||"?").toUpperCase();
 const pvar=w=>w==="a"?"var(--pa)":w==="b"?"var(--pb)":"var(--pg)";
-const ava=(w,sz)=>w==="g"?`<span class="ava2"><i class="ava" style="--p:var(--pa)">${esc(initial("a"))}</i><i class="ava" style="--p:var(--pb)">${esc(initial("b"))}</i></span>`:`<i class="ava${sz?" "+sz:""}" style="--p:${pvar(w)}">${esc(initial(w))}</i>`;
+/* Profile pictures (small, saved with the calendar) and each person's own colour. */
+let PICS={a:"",b:""};
+const okPic=s=>typeof s==="string"&&s.length<90000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(s);
+const ava1=(w,sz)=>`<i class="ava${sz?" "+sz:""}${PICS[w]?" pic":""}" style="--p:${pvar(w)}${PICS[w]?`;--img:var(--pic${w})`:""}">${esc(initial(w))}</i>`;
+const ava=(w,sz)=>w==="g"?`<span class="ava2">${ava1("a")}${ava1("b")}</span>`:ava1(w,sz);
+function applyPeople(){const r=document.documentElement.style;for(const w of["a","b"]){const c=CP["c"+w];if(/^#[0-9a-f]{6}$/i.test(c||""))r.setProperty("--p"+w,c);else r.removeProperty("--p"+w);if(PICS[w])r.setProperty("--pic"+w,`url("${PICS[w]}")`);else r.removeProperty("--pic"+w)}}
 function setMe(w){ME=w;try{localStorage.setItem("kalenderkoll.me",w)}catch(e){}}
 const RM=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;
 /* Icons for events and days: simple line drawings. */

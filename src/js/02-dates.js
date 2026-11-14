@@ -22,8 +22,8 @@ const fmtT=s=>s||"";
    {id, n: title, d: start date, e: last date (several days), t/t2: start and end time ("" = all day),
     r: repeat o|d|wd|w|2w|m|y, u: repeat until, skip: dates left out, pl: place, o: note, w: whose, a|b|g} */
 let EV=[],BD=[],TODOS=[],NOTES=[];
-const REPS=[["o","Aldrig","Never"],["w","Varje vecka","Every week"],["2w","Varannan vecka","Every other week"],["m","Varje månad","Every month"],["y","Varje år","Every year"]];
-const REPALL=[...REPS,["d","Varje dag","Every day"],["wd","Vardagar","Weekdays"]];
+const REPS=[["o","Aldrig","Never"],["d","Varje dag","Every day"],["w","Varje vecka","Every week"],["2w","Varannan vecka","Every other week"],["m","Varje månad","Every month"],["y","Varje år","Every year"]];
+const REPALL=[...REPS,["wd","Vardagar","Weekdays"]];
 const repName=r=>{const x=REPALL.find(z=>z[0]===r)||REPS[0];return x[1+li()]};
 const evDur=e=>e.e?Math.max(0,dn(e.e)-dn(e.d)):0;
 /* Start days of every time an event happens that touches the days A..B. */
