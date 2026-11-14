@@ -24,7 +24,8 @@
   if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
 
   const KK=window.KK={mode:"starting",uid:"",space:()=>space,
-    inviteUrl:()=>location.origin+location.pathname+"#join="+space,
+    /* Inside the Android app the page lives on the phone, so the link points to the website. */
+    inviteUrl:()=>(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform()?"https://agrinders.github.io/Kalenderkoll/":location.origin+location.pathname)+"#join="+space,
     codeIn,
     /* Switch this phone to another calendar (from a pasted link or code). */
     join(c){c=codeIn(c);if(!c)return false;ls.set(SKEY,c);ls.del(KEY);location.replace(location.pathname);return true}};
