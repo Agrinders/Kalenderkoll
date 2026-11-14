@@ -337,3 +337,6 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
   .cev u{font-size:9px;line-height:1.25;padding:1px 0 1px 3px;border-radius:5px}.cev em{font-size:9px;line-height:1.1}
   .cgr .v{padding-top:8px}
 }
+/* Event names in the month and week follow the days' own gently rounded corners. */
+.cev u,.wvad button{border-radius:3px}.wvev{border-radius:4px}
+@media (max-width:559px){.cev u{border-radius:3px}}
