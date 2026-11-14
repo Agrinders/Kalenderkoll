@@ -12,25 +12,26 @@ const dim=(y,m)=>new Date(y,m+1,0).getDate();
 function isoWeek(n){const th=n-wdOf(n)+3,y=new Date(th*864e5).getUTCFullYear();return 1+Math.floor((th-dnOf(y,0,1))/7)}
 const fmtD=(n,o)=>dOf(n).toLocaleDateString(loc(),o||{day:"numeric",month:"long"});
 const fmtDay=n=>{const[y]=ymd(n);return dOf(n).toLocaleDateString(loc(),{weekday:"long",day:"numeric",month:"long",...(y!==NOW.getFullYear()?{year:"numeric"}:{})})};
-const cap=s=>s?s[0].toUpperCase()+s.slice(1):s;
 const relDay=n=>{const d=n-todayN();return d===0?tx("Idag","Today"):d===1?tx("Imorgon","Tomorrow"):d===-1?tx("Igår","Yesterday"):cap(fmtDay(n))};
 const inDays=d=>d===0?tx("idag","today"):d===1?tx("imorgon","tomorrow"):d<0?tx(`för ${-d} dagar sedan`,`${-d} days ago`):tx(`om ${d} dagar`,`in ${d} days`);
 const tmin=s=>{if(!s)return -1;const[h,m]=s.split(":").map(Number);return h*60+m};
 const fmtT=s=>s||"";
 
+
 /* ---------- Events ----------
-   {id, n: title, d: start date, e: last date (several days, optional), t/t2: start and end time ("" = all day),
-    r: repeat o|d|wd|w|2w|m|y, u: repeat until (optional), skip: dates left out, c: category, pl: place, o: note,
-    rem: minutes before to remind (-1 = none), cd: show in Countdown} */
-let EV=[],BD=[],exampleMode=false;
-const REPS=[["o","Aldrig","Never"],["d","Varje dag","Every day"],["wd","Vardagar","Weekdays"],["w","Varje vecka","Every week"],["2w","Varannan vecka","Every other week"],["m","Varje månad","Every month"],["y","Varje år","Every year"]];
-const repName=r=>{const x=REPS.find(z=>z[0]===r)||REPS[0];return x[1+li()]};
+   {id, n: title, d: start date, e: last date (several days), t/t2: start and end time ("" = all day),
+    r: repeat o|d|wd|w|2w|m|y, u: repeat until, skip: dates left out, pl: place, o: note, w: whose, a|b|g} */
+let EV=[],BD=[],TODOS=[],NOTES=[];
+const REPS=[["o","Aldrig","Never"],["w","Varje vecka","Every week"],["2w","Varannan vecka","Every other week"],["m","Varje månad","Every month"],["y","Varje år","Every year"]];
+const REPALL=[...REPS,["d","Varje dag","Every day"],["wd","Vardagar","Weekdays"]];
+const repName=r=>{const x=REPALL.find(z=>z[0]===r)||REPS[0];return x[1+li()]};
 const evDur=e=>e.e?Math.max(0,dn(e.e)-dn(e.d)):0;
 /* Start days of every time an event happens that touches the days A..B. */
 function occ(e,A,B){const s0=dn(e.d),dur=evDur(e),U=e.u?dn(e.u):Infinity,lo=A-dur,hi=Math.min(B,U),out=[],sk=e.skip&&e.skip.length?new Set(e.skip):null;
   if(hi<s0)return out;const push=s=>{if(s>=lo&&s<=hi&&s>=s0&&!(sk&&sk.has(nd(s))))out.push(s)};const r=e.r||"o";
   if(r==="o")push(s0);
   else if(r==="d"||r==="wd"){for(let s=Math.max(s0,lo);s<=hi;s++){if(r==="wd"&&wdOf(s)>4)continue;push(s)}}
+  else if(r==="w"&&e.wd&&e.wd.length>1){for(let s=Math.max(s0,lo);s<=hi;s++)if(e.wd.includes(wdOf(s)))push(s)}
   else if(r==="w"||r==="2w"){const st=r==="w"?7:14;for(let s=s0+Math.max(0,Math.ceil((lo-s0)/st))*st;s<=hi;s+=st)push(s)}
   else{const[y,m,d]=e.d.split("-").map(Number),step=r==="m"?1:12,[ly,lm]=ymd(Math.max(lo,s0));let i=Math.max(0,Math.floor(((ly-y)*12+(lm-(m-1)))/step)-1);
     for(;i<6000;i++){const k=m-1+i*step,Y=y+Math.floor(k/12),M=k%12,s=dnOf(Y,M,Math.min(d,dim(Y,M)));if(s>hi)break;push(s)}}
@@ -62,40 +63,4 @@ function holidays(y){if(HOLC[y])return HOLC[y];const E=easter(y),sat=(m,d1)=>{fo
   return HOLC[y]=L.sort((a,b)=>a[0]-b[0])}
 const holOn=n=>holidays(ymd(n)[0]).find(h=>h[0]===n)||null;
 const isRed=n=>{if(wdOf(n)===6)return true;const h=holOn(n);return !!(h&&h[3])};
-const EVES=["Midsommarafton","Julafton","Nyårsafton"];
-const offDay=n=>wdOf(n)>4||isRed(n)||(()=>{const h=holOn(n);return !!(h&&EVES.includes(h[1]))})();
-/* A bridge day: a weekday squeezed between a day off and a weekend or another day off. */
-function bridges(y){const out=[];for(let n=dnOf(y,0,1);n<=dnOf(y,11,31);n++){if(offDay(n))continue;if(offDay(n-1)&&offDay(n+1)&&(holOn(n-1)||holOn(n+1)))out.push(n)}return out}
 
-/* ---------- Saving ---------- */
-const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-const PEND=new Map();
-function later(key,fn,ms){const old=PEND.get(key);if(old)clearTimeout(old.t);const e={fn,t:setTimeout(()=>{PEND.delete(key);fn()},ms)};PEND.set(key,e)}
-function flushSaves(){PEND.forEach(e=>{clearTimeout(e.t);e.fn()});PEND.clear()}
-addEventListener("pagehide",flushSaves);addEventListener("beforeunload",flushSaves);document.addEventListener("visibilitychange",()=>{if(document.hidden)flushSaves()});
-const evDoc=e=>({kind:"ev",id:e.id,n:e.n,d:e.d,e:e.e||"",t:e.t||"",t2:e.t2||"",r:e.r||"o",u:e.u||"",skip:e.skip||[],c:e.c||"o",pl:e.pl||"",o:e.o||"",rem:typeof e.rem==="number"?e.rem:-1,cd:!!e.cd});
-const bdDoc=b=>({kind:"bd",id:b.id,n:b.n,md:b.md,y:b.y||0,ty:b.ty||"b"});
-function saveEv(e){leaveExample();const i=EV.findIndex(z=>z.id===e.id);if(i>=0)EV[i]=e;else EV.push(e);if(col)col.doc("ev_"+e.id).set(evDoc(e)).catch(()=>toast(t("tFail")))}
-function dropEv(e){leaveExample();EV=EV.filter(z=>z.id!==e.id);if(col)col.doc("ev_"+e.id).delete().catch(()=>{})}
-function saveBd(b){leaveExample();const i=BD.findIndex(z=>z.id===b.id);if(i>=0)BD[i]=b;else BD.push(b);if(col)col.doc("bd_"+b.id).set(bdDoc(b)).catch(()=>toast(t("tFail")))}
-function dropBd(b){leaveExample();BD=BD.filter(z=>z.id!==b.id);if(col)col.doc("bd_"+b.id).delete().catch(()=>{})}
-/* The example becomes your own calendar the moment you change something in it. */
-function leaveExample(){if(!exampleMode)return;exampleMode=false;if(!col)return;histMute++;try{col.doc("started").set({kind:"started"}).catch(()=>{});EV.forEach(e=>col.doc("ev_"+e.id).set(evDoc(e)).catch(()=>{}));BD.forEach(b=>col.doc("bd_"+b.id).set(bdDoc(b)).catch(()=>{}))}finally{histMute--}}
-const hasData=()=>!exampleMode&&(EV.length>0||BD.length>0);
-
-/* ---------- The example: a believable week around today ---------- */
-function seedExample(){const n=todayN(),wd=wdOf(n),mon=n-wd,sv=!li(),I=x=>nd(x),[y,m]=ymd(n),md=x=>{const[,mm,dd]=ymd(x);return pad(mm+1)+"-"+pad(dd)};
-  const nextWd=k=>{let s=mon+k;if(s<n)s+=7;return s};
-  EV=[
-    {id:"x1",n:sv?"Teammöte":"Team meeting",d:I(mon),t:"09:00",t2:"09:30",r:"wd",c:"w",pl:sv?"Konferensrum Ek":"Room Oak",rem:10},
-    {id:"x2",n:sv?"Gym":"Gym",d:I(nextWd(1)),t:"18:00",t2:"19:00",r:"w",c:"p",rem:-1},
-    {id:"x3",n:sv?"Fika med Sara":"Coffee with Sara",d:I(n+1),t:"15:00",t2:"16:00",r:"o",c:"l",pl:sv?"Café Saturnus":"Café Saturnus",rem:60},
-    {id:"x4",n:sv?"Tandläkare":"Dentist",d:I(n+3),t:"10:30",t2:"11:15",r:"o",c:"p",rem:1440,o:sv?"Ta med frikortet.":"Bring the card."},
-    {id:"x5",n:sv?"Lönedag":"Payday",d:y+"-"+pad(m+1)+"-25",r:"m",c:"o",rem:-1},
-    {id:"x6",n:sv?"Städa":"Cleaning",d:I(nextWd(5)),t:"10:00",t2:"11:00",r:"2w",c:"h",rem:-1},
-    {id:"x7",n:sv?"Föräldramöte":"Parents' evening",d:I(n+9),t:"18:30",t2:"20:00",r:"o",c:"f",pl:sv?"Skolan":"The school",rem:60},
-    {id:"x8",n:sv?"Konsert":"Concert",d:I(n+23),t:"19:30",r:"o",c:"l",cd:true,rem:1440},
-    {id:"x9",n:sv?"Fjällresa":"Mountain trip",d:I(n+52),e:I(n+57),r:"o",c:"l",cd:true,rem:-1}
-  ].map(e=>({e:"",t:"",t2:"",u:"",skip:[],pl:"",o:"",...e}));
-  BD=[{id:"b1",n:sv?"Mamma":"Mum",md:md(n+12),y:y-61,ty:"b"},{id:"b2",n:"Erik",md:md(n+40),y:y-8,ty:"b"},{id:"b3",n:sv?"Bröllopsdag":"Wedding day",md:md(n+70),y:y-6,ty:"a"},{id:"b4",n:"Lina",md:md(n+150),y:0,ty:"b"}];
-  exampleMode=true}

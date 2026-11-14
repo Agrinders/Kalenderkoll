@@ -5,7 +5,7 @@ const srv=http.createServer((q,r)=>{let u=decodeURIComponent(q.url.split('?')[0]
 let fails=0;const norm=v=>JSON.stringify(v);const check=(name,got,want)=>{const ok=norm(got)===norm(want);if(!ok)fails++;console.log(ok?'ok  ':'FAIL',name,ok?'':`got ${JSON.stringify(got)}, want ${JSON.stringify(want)}`)};
 (async()=>{await new Promise(r=>srv.listening?r():srv.on('listening',r));
 const b=await chromium.launch({executablePath:process.env.CHROME||undefined});const c=await b.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});const p=await c.newPage();
-await p.route(/fonts\.(googleapis|gstatic)\.com/,r=>r.abort());await p.addInitScript(()=>{try{localStorage.setItem('kalenderkoll.welcome','1')}catch(e){}});
+await p.route(/fonts\.(googleapis|gstatic)\.com/,r=>r.abort());await p.addInitScript(()=>{try{localStorage.setItem('kalenderkoll.me','a')}catch(e){}});
 await p.goto('http://localhost:'+srv.address().port+'/');await p.waitForTimeout(900);const ev=(f,a)=>p.evaluate(f,a);
 const days=(e,a,b)=>ev(([e,a,b])=>occ({skip:[],e:"",u:"",...e},dn(a),dn(b)).map(nd),[e,a,b]);
 // Repeats
@@ -22,11 +22,8 @@ check('week numbers',await ev(()=>['2026-01-01','2026-11-14','2026-12-31','2027-
 const hol=y=>ev(y=>holidays(y).filter(h=>h[3]).map(h=>nd(h[0])+' '+h[1]),y);
 check('red days 2026',await hol(2026),['2026-01-01 Nyårsdagen','2026-01-06 Trettondedag jul','2026-04-03 Långfredagen','2026-04-05 Påskdagen','2026-04-06 Annandag påsk','2026-05-01 Första maj','2026-05-14 Kristi himmelsfärdsdag','2026-05-24 Pingstdagen','2026-06-06 Sveriges nationaldag','2026-06-20 Midsommardagen','2026-10-31 Alla helgons dag','2026-12-25 Juldagen','2026-12-26 Annandag jul']);
 check('Easter and Midsummer 2027',await ev(()=>{const h=holidays(2027);const f=n=>nd(h.find(x=>x[1]===n)[0]);return[f('Påskdagen'),f('Midsommarafton'),f('Alla helgons dag'),f('Kristi himmelsfärdsdag')]}),['2027-03-28','2027-06-25','2027-11-06','2027-05-06']);
-check('bridge days 2026',await ev(()=>bridges(2026).map(nd)),['2026-01-02','2026-01-05','2026-05-15']);
 // Birthdays
 check('age and next birthday',await ev(()=>{const b={id:'t',n:'A',md:'02-29',y:2000,ty:'b'},s=bdNext(b,dn('2027-01-10'));return[nd(s),bdAge(b,s)]}),['2027-02-28',27]);
-// Reminder time for an all-day event the day before
-check('all-day reminder the day before at 08',await ev(()=>{const o={e:{t:'',rem:1440},s:dn('2026-12-24'),end:dn('2026-12-24')};const d=new Date(remAt(o));return[d.getDate(),d.getHours()]}),[23,8]);
-// .ics round trip keeps repeats, skips and times
-check('ics round trip',await ev(()=>{const e={id:'r1',n:'Kör; test, ok',d:'2026-11-17',e:'',t:'18:00',t2:'19:30',r:'2w',u:'2027-01-31',skip:['2026-12-01'],c:'l',pl:'Kyrkan',o:'Rad 1\nRad 2',rem:60,cd:false};const x=icsToEv(icsParse(icsText([e],[]))[0]);return[x.n,x.d,x.t,x.t2,x.r,x.u,x.skip,x.pl,x.o,x.rem]}),['Kör; test, ok','2026-11-17','18:00','19:30','2w','2027-01-31',['2026-12-01'],'Kyrkan','Rad 1\nRad 2',60]);
+// .ics export keeps repeats, skips and times
+check('ics export',await ev(()=>{const t=icsText([{id:'r1',n:'Kör; test',d:'2026-11-17',e:'',t:'18:00',t2:'19:30',r:'2w',u:'2027-01-31',skip:['2026-12-01'],pl:'Kyrkan',o:'',w:'g'}],[{id:'b',n:'Maya',md:'04-13',y:1997,ty:'b'}]);return['DTSTART:20261117T180000','DTEND:20261117T193000','RRULE:FREQ=WEEKLY;INTERVAL=2;UNTIL=20270131T235959','EXDATE:20261201T180000','SUMMARY:Kör\\; test','SUMMARY:Maya har födelsedag','DTSTART;VALUE=DATE:19970413'].map(x=>t.includes(x))}),[true,true,true,true,true,true,true]);
 await b.close();srv.close();console.log(fails?fails+' failed':'all passed');process.exit(fails?1:0)})();

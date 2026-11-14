@@ -6,7 +6,7 @@ src/styles.css    all styles
 src/body.html     the page markup
 src/js/*.js       the app script, joined in file-name order into one script
 """
-import hashlib,pathlib
+import hashlib,pathlib,sys
 d=pathlib.Path(__file__).parent;s=d/'src'
 rd=lambda p:p.read_text(encoding='utf8')
 def page():
@@ -16,7 +16,7 @@ if __name__=='__main__':
     src=page();cut=src.index('</style>')+len('</style>')
     head,body=src[:cut],src[cut:].lstrip('\n')
     extra='''<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b1020"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
 '''
     # A build id from the code only , so an open app can tell when a newer version is published.
@@ -29,3 +29,8 @@ if __name__=='__main__':
     ver=hashlib.sha256(b''.join((d/f).read_bytes() for f in files)).hexdigest()[:12]
     sw=(d/'sw.template.js').read_text(encoding='utf8').replace('__VERSION__',ver).replace('__FILES__',repr(['./']+files))
     (d/'sw.js').write_text(sw,encoding='utf8');print('built',ver)
+    # python3 build.py --artifact FILE also writes a version for a Claude artifact: shared storage, no service worker or local backup.
+    if '--artifact' in sys.argv:
+        out=pathlib.Path(sys.argv[sys.argv.index('--artifact')+1])
+        art='<!DOCTYPE html>\n<html lang="sv">\n<head>\n<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n<link rel="icon" href="icons/icon-192.png">\n<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>\n'+head+'\n</head>\n<body>\n'+body+'\n</body>\n</html>\n'
+        out.write_text(art,encoding='utf8');print('artifact',out)

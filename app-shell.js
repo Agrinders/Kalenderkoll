@@ -15,7 +15,7 @@
   const col=p=>({path:p,doc:id=>({id,set:async d=>{fresh();(data[p]=data[p]||{})[id]=copy(d);write();fire(p)},update:async d=>{fresh();data[p][id]={...data[p][id],...copy(d)};write();fire(p)},delete:async()=>{fresh();if(data[p])delete data[p][id];write();fire(p)}}),get:async()=>snap(p),onSnapshot:n=>{(subs[p]=subs[p]||[]).push(n);setTimeout(()=>n(snap(p)),0);return()=>{subs[p]=subs[p].filter(f=>f!==n)}}});
   addEventListener("storage",e=>{if(e.key===KEY){fresh();Object.keys(subs).forEach(fire)}});
   const db={collection:col};
-  window.claude={use:async n=>n==="db"?db:null};
+  window.claude={use:async n=>n==="db"?db:null};window.KK_LOCAL=true;
   function backup(){const r=document.getElementById("reset");if(!r)return;
     const box=document.createElement("div");box.style.cssText="display:grid;gap:8px;margin-bottom:8px";
     box.innerHTML=`<button class="btn" id="bk_save">${L.save}</button><button class="btn out" id="bk_load">${L.load}</button><input id="bk_file" type="file" accept=".json,application/json" hidden>`;

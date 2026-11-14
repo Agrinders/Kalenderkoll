@@ -1,26 +1,15 @@
-/* Each message key has a kind, which picks its icon, color and sound. */
-const KIND={tAdd:"ok",tSave:"ok",tRem:"del",tNeedName:"warn",tNeedDate:"warn",tFail:"bad",tDelFail:"bad",tDel:"del",tRemind:"rem"};
-const TICON={save:'<path d="M12 19V5M6 11l6-6 6 6"/>',ok:'<path d="m5 12.5 4.5 4.5L19 7"/>',win:'<path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/>',out:'<path d="M12 5v14M6 13l6 6 6-6"/>',warn:'<path d="M12 4 2.8 20h18.4z"/><path d="M12 10v4.5M12 17.5h.01"/>',bad:'<circle cx="12" cy="12" r="8.5"/><path d="M12 8v5M12 16h.01"/>',del:'<path d="M5 7h14M10 7V4.5h4V7M7 7l1 13h8l1-13M10.5 11v5M13.5 11v5"/>',rem:'<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/>',info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11.5V16M12 8h.01"/>'};
-const TUNE={save:[[659,0],[988,.09]],ok:[[784,0],[1047,.08]],win:[[523,0],[659,.1],[784,.2],[1047,.3]],out:[[587,0],[440,.1]],warn:[[494,0],[494,.13]],bad:[[330,0],[247,.13]],del:[[392,0],[294,.09]],info:[[880,0]],rem:[[784,0],[988,.12],[784,.24],[988,.36]]};
-let AC=null;
-function chime(kind){if(!S.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();const t0=AC.currentTime+.01;(TUNE[kind]||TUNE.info).forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type="triangle";o.frequency.value=f;g.gain.setValueAtTime(.0001,t0+d);g.gain.exponentialRampToValueAtTime(.13,t0+d+.012);g.gain.exponentialRampToValueAtTime(.0001,t0+d+.26);o.connect(g).connect(AC.destination);o.start(t0+d);o.stop(t0+d+.28)})}catch(e){}}
-const TAPSEL=".dgr button,.cgr button,.wstrip button,.tgr button,.evr,.tadd,.addb,.bdr,.btn,.chip,nav button,.opt,.mini,.x,.mnav button,.gnav button,.ynav button,.seg button,.pick,.lnk[data-add],#g_add,#yr_list button,#drawer>button,summary,.lnk,.freq";
-/* A very short, quiet tick and a light buzz when a button is pressed. */
-function tick(el){if(!S.click)return;try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();const f=el.closest("nav")?520:el.matches(".x,.bad")?430:el.matches(".btn:not(.out),.mini")?880:680,t0=AC.currentTime+.003,o=AC.createOscillator(),g=AC.createGain();o.type="triangle";o.frequency.setValueAtTime(f*1.5,t0);o.frequency.exponentialRampToValueAtTime(f,t0+.03);g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(.075,t0+.004);g.gain.exponentialRampToValueAtTime(.0001,t0+.055);o.connect(g).connect(AC.destination);o.start(t0);o.stop(t0+.07)}catch(e){}}
-document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest(TAPSEL);if(b)tick(b)},true);
-document.addEventListener("pointerdown",e=>{const b=e.target.closest&&e.target.closest(".btn,.chip,nav button,.opt,.mini,.x,.mnav button,.gnav button,.ynav button,.seg button,.pick,.lnk[data-add],#g_add,#yr_list button,#drawer>button");if(!b)return;const r=b.getBoundingClientRect(),s=Math.max(r.width,r.height)*2.2,x=document.createElement("span");x.className="rp";x.style.cssText=`width:${s}px;height:${s}px;left:${e.clientX-r.left-s/2}px;top:${e.clientY-r.top-s/2}px`;b.appendChild(x);setTimeout(()=>x.remove(),520)},{passive:true});
-/* Notifications form a list at the top. A new one goes below the others; the same message again replaces the old one and shows at the top.
-   Leaving, a notification fades and then folds its own height to zero, so the ones below always slide up. */
-let lastToast=null;const RM=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;
-function growIn(e){if(RM()||!e.animate)return;const h=e.offsetHeight;e.animate([{height:"0px",marginBottom:"0px",opacity:0,transform:"translateY(-6px)"},{height:h+"px",marginBottom:"8px",opacity:1,transform:"none"}],{duration:240,easing:"cubic-bezier(.2,.8,.2,1)"})}
-function dropToast(e){if(!e||e._going)return;e._going=1;clearTimeout(e._t);const done=()=>{if(e.isConnected)e.remove()};
-  if(RM()||!e.animate||!e.isConnected)return done();e.style.pointerEvents="none";const h=e.offsetHeight;
-  e.animate([{height:h+"px",marginBottom:"8px",opacity:1,transform:"none"},{height:h+"px",marginBottom:"8px",opacity:0,transform:"translateY(-6px) scale(.97)",offset:.45},{height:"0px",marginBottom:"0px",opacity:0,transform:"translateY(-6px) scale(.97)"}],{duration:380,easing:"ease-in-out",fill:"forwards"});
-  setTimeout(done,400)}
-function toast(msg,kind){if(!S.toasts)return null;kind=kind||KIND[lastKey]||"info";const box=$("toasts"),key=kind+"|"+msg;const[a,...b]=String(msg).split(" · "),e=document.createElement("div");
-  e.className="toast "+kind;e.dataset.k=key;e.setAttribute("role","status");e.innerHTML=`<i><svg viewBox="0 0 24 24" aria-hidden="true">${TICON[kind]||TICON.info}</svg></i><span><b>${esc(a)}</b>${b.length?`<small>${esc(b.join(" · "))}</small>`:""}</span>`;e.onclick=()=>dropToast(e);
-  const live=()=>[...box.querySelectorAll(".toast")].filter(x=>!x._going),same=live().find(x=>x.dataset.k===key);
-  if(same){dropToast(same);box.insertBefore(e,box.querySelector(".toast"))}else{const L=live();if(L.length>=3)dropToast(L[0]);box.appendChild(e)}
-  growIn(e);lastToast=e;chime(kind);e._t=setTimeout(()=>dropToast(e),3500);return e}
-function ask(title,text){return new Promise(res=>{$("m_t").textContent=title;$("m_p").textContent=text;$("m_yes").textContent=t("pYes");$("m_no").textContent=t("pNo");$("modal").classList.add("on");const done=v=>{$("modal").classList.remove("on");$("m_yes").onclick=$("m_no").onclick=null;res(v)};$("m_yes").onclick=()=>done(true);$("m_no").onclick=()=>done(false)})}
-
+/* ---------- Short notices at the top. A second line goes after " · ". ---------- */
+let lastToast=null;
+function dropToast(e){if(!e||e._going)return;e._going=1;clearTimeout(e._t);if(RM()||!e.animate){e.remove();return}e.animate([{opacity:1},{opacity:0,transform:"translateY(-8px)"}],{duration:220,fill:"forwards"}).onfinish=()=>e.remove()}
+function toast(msg,ms){const box=$("toasts"),[a,...b]=String(msg).split(" · "),e=document.createElement("div");e.className="toast";e.setAttribute("role","status");
+  e.innerHTML=`<span>${esc(a)}${b.length?`<small>${esc(b.join(" · "))}</small>`:""}</span>`;e.onclick=()=>dropToast(e);
+  const live=[...box.querySelectorAll(".toast")].filter(x=>!x._going);if(live.length>=2)dropToast(live[0]);box.appendChild(e);lastToast=e;e._t=setTimeout(()=>dropToast(e),ms||3200);return e}
+/* A question with two answers, in the page's own dialog. */
+function ask(title,text,yes){return new Promise(res=>{$("m_t").textContent=title;$("m_p").textContent=text;$("m_yes").textContent=yes||tx("Ja","Yes");$("m_no").textContent=tx("Avbryt","Cancel");$("modal").classList.add("on");const done=v=>{$("modal").classList.remove("on");$("m_yes").onclick=$("m_no").onclick=null;res(v)};$("m_yes").onclick=()=>done(true);$("m_no").onclick=()=>done(false)})}
+/* A row slides away before it is removed. */
+function animOut(el,fn){if(!el||RM()||!el.animate){fn();return}el.style.pointerEvents="none";const h=el.offsetHeight;el.style.overflow="hidden";
+  el.animate([{opacity:1,transform:"none"},{opacity:0,transform:"translateX(-24px)"}],{duration:180,fill:"forwards"}).onfinish=()=>{el.animate([{height:h+"px"},{height:"0px"}],{duration:160,fill:"forwards"}).onfinish=fn}}
+/* Delete in two taps: the first tap turns the cross red, the second deletes. */
+let armK=null,armT=0;
+document.addEventListener("click",e=>{const x=e.target.closest&&e.target.closest(".x");if(!x){if(armK){armK=null;document.querySelectorAll(".x.arm").forEach(z=>z.classList.remove("arm"))}return}
+  const k=x.dataset.tdel||"";if(k===armK){armK=null;return}e.stopImmediatePropagation();e.preventDefault();document.querySelectorAll(".x.arm").forEach(z=>z.classList.remove("arm"));armK=k;x.classList.add("arm");clearTimeout(armT);armT=setTimeout(()=>{armK=null;x.classList.remove("arm")},4000)},true);
