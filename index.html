@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="3c32d805bfda">
+<meta name="kal-build" content="9cead9d5e400">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -354,13 +354,15 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 .cev u,.wvad button{border-radius:3px}.wvev{border-radius:4px}
 @media (max-width:559px){.cev u{border-radius:3px}}
 
-/* In the month, an event's effect sits around the whole day box. */
+/* In the month, an event's effect sits around the whole day box, kept quiet so it does not shout. */
 .cgr button.fx{z-index:1}
-.cgr button.fx-rainbow{box-shadow:0 0 10px 1px color-mix(in srgb,#a996f7 30%,transparent)}.cgr button.fx-rainbow::before{inset:-1px;padding:2px}
-.cgr button.fx-sparkle{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fxc) 55%,transparent),0 0 10px 1px color-mix(in srgb,var(--fxc) 30%,transparent)}.cgr button.fx-sparkle::before,.cgr button.fx-sparkle::after{inset:-5px}
-.cgr button.fx-hearts{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fxc) 55%,transparent),0 0 10px 1px color-mix(in srgb,var(--fxc) 30%,transparent)}.cgr button.fx-hearts::before{top:-6px;right:-3px}.cgr button.fx-hearts::after{left:-3px;top:60%}
-.cgr button.fx-glow{animation-name:fxglowbox}
-@keyframes fxglowbox{0%,100%{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fxc) 35%,transparent),0 0 6px 0 color-mix(in srgb,var(--fxc) 30%,transparent)}50%{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fxc) 70%,transparent),0 0 16px 3px color-mix(in srgb,var(--fxc) 50%,transparent)}}
+.cgr button.fx-rainbow{box-shadow:none}.cgr button.fx-rainbow::before{inset:0;padding:1.2px;opacity:.6;animation-duration:7s}
+.cgr button.fx-sparkle{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fxc) 38%,transparent)}.cgr button.fx-sparkle::before,.cgr button.fx-sparkle::after{inset:-3px;opacity:.6;animation-name:fxtwq;animation-duration:3.4s}.cgr button.fx-sparkle::after{animation-delay:1.7s}
+@keyframes fxtwq{0%,100%{opacity:0;transform:scale(.9)}50%{opacity:.6;transform:scale(1)}}
+.cgr button.fx-hearts{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fxc) 38%,transparent)}.cgr button.fx-hearts::before{top:-5px;right:-2px;font-size:9px;animation-name:fxheartq;animation-duration:4.2s}.cgr button.fx-hearts::after{left:-2px;top:60%;font-size:7px;animation-name:fxheartq;animation-duration:4.2s;animation-delay:2.1s}
+@keyframes fxheartq{0%{opacity:0;transform:translateY(5px) scale(.7)}30%{opacity:.6}100%{opacity:0;transform:translateY(-8px) scale(1)}}
+.cgr button.fx-glow{animation:fxglowbox 4s ease-in-out infinite}
+@keyframes fxglowbox{0%,100%{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fxc) 22%,transparent)}50%{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fxc) 45%,transparent),0 0 7px 0 color-mix(in srgb,var(--fxc) 22%,transparent)}}
 </style>
 <script src="app-shell.js"></script>
 </head>
