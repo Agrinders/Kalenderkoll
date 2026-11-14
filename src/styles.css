@@ -7,7 +7,7 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{height:100%;background:var(--bg)}
 body{min-height:100%;margin:0;color:var(--ink);font:16px/1.45 var(--ui);font-variant-numeric:tabular-nums;
-  background:radial-gradient(80vmax 50vmax at 15% -10%,color-mix(in srgb,var(--pb) 16%,transparent),transparent 60%),radial-gradient(70vmax 45vmax at 105% 20%,color-mix(in srgb,var(--pg) 12%,transparent),transparent 60%),radial-gradient(70vmax 50vmax at 50% 115%,color-mix(in srgb,var(--pa) 11%,transparent),transparent 60%),var(--bg);background-attachment:fixed;
+  background:transparent;
   padding:calc(var(--topH) + var(--sat) + 4px) max(16px,env(safe-area-inset-right,0px)) calc(96px + var(--sab)) max(16px,env(safe-area-inset-left,0px));overflow-x:hidden}
 button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
 input,textarea{font:inherit;color:var(--ink);min-width:0}
@@ -290,3 +290,41 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 .sh{padding-top:calc(28px + var(--sat))}.box{max-height:calc(100dvh - 38px - var(--sat) - var(--sab))}
 /* Room above the first hour so its time label is not cut off. */
 .dvb{margin-top:10px}
+
+/* Background: soft clouds of colour that drift slowly behind everything. */
+.sky{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.sky i{position:absolute;border-radius:50%;background:radial-gradient(circle,var(--k) 0,color-mix(in srgb,var(--k) 55%,transparent) 38%,transparent 70%);opacity:.42;will-change:transform;animation:drift var(--t) ease-in-out infinite alternate}
+.sky i:nth-child(1){--k:var(--pb);--t:26s;width:78vmax;height:78vmax;left:-30vmax;top:-26vmax;--x:14vmax;--y:10vmax;--s:1.15}
+.sky i:nth-child(2){--k:var(--pg);--t:32s;width:66vmax;height:66vmax;right:-28vmax;top:8vmax;--x:-12vmax;--y:14vmax;--s:.9}
+.sky i:nth-child(3){--k:var(--pa);--t:38s;width:72vmax;height:72vmax;left:-12vmax;bottom:-34vmax;--x:16vmax;--y:-10vmax;--s:1.1}
+.sky i:nth-child(4){--k:var(--acc);--t:29s;width:44vmax;height:44vmax;right:-8vmax;bottom:4vmax;--x:-14vmax;--y:-12vmax;--s:1.25;opacity:.2}
+.sky i:nth-child(5){--k:var(--pg);--t:35s;width:36vmax;height:36vmax;left:18vmax;top:30vmax;--x:10vmax;--y:-16vmax;--s:.8;opacity:.22}
+@keyframes drift{to{transform:translate(var(--x),var(--y)) scale(var(--s))}}
+:root[data-theme="dark"] .sky i{opacity:.2}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sky i{opacity:.2}}
+/* Everything you can tap answers: it dips a little when pressed and eases between states. */
+button,[role="button"],.chip,.swt,.opt,.lapp{transition:transform .16s cubic-bezier(.3,.7,.4,1),background-color .2s,color .2s,border-color .2s,box-shadow .2s,opacity .2s,filter .2s}
+button:active,[role="button"]:active,.swt:active,.lapp:active{transform:scale(.95)}
+.btn:active,.opt:active,.cgr button:active,.evr:active,.dvev:active,.field:active,#drawer>button.di:active{transform:scale(.975);filter:brightness(.96)}
+.ib:active{transform:scale(.88)}.ib.add:active{transform:scale(.9) rotate(90deg)}
+nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%{transform:scale(.8)}60%{transform:scale(1.16)}}
+#k_cal,#k_dv,#k_wv{animation:in .32s ease}
+.chk:active,.tog:active{transform:scale(.92)}
+/* Every other day a shade darker, so the days are easier to tell apart. */
+.cgr button.alt{background:color-mix(in srgb,var(--ink) 3.5%,transparent)}.cgr button.alt.s{background:color-mix(in srgb,var(--acc) 13%,transparent)}
+/* Three view choices in the top bar. */
+.seg.kv{grid-template-columns:repeat(3,auto)}.seg.kv button{padding:0 9px}
+@media (max-width:459px){.top:has(#k_v:not(.hide)) h1{font-size:0}}
+/* Week view */
+#k_wv{padding:14px 6px 10px}#k_wv .mnav{margin:-6px 4px 6px}#wv_t{font:500 17px/1.2 var(--serif);text-transform:none}
+@media (max-width:559px){#k_wv{margin:0 -12px}}
+.wvh,.wvad,.wvb{display:grid;grid-template-columns:26px repeat(7,minmax(0,1fr));gap:2px}
+.wvh button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;border-radius:12px}.wvh small{font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--soft)}.wvh b{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;font-weight:500;font-size:14.5px}.wvh .red b{color:var(--red)}.wvh .t b{background:var(--acc);color:#fff}
+.wvad{margin-top:4px}.wvad>div{display:flex;flex-direction:column;gap:2px;min-width:0}.wvad button,.wvev{font-size:10.5px;font-weight:600;letter-spacing:-.01em;line-height:1.25;text-align:left;overflow:hidden;background:color-mix(in srgb,var(--c) 40%,var(--card));color:var(--ink)}
+.wvad button{padding:2px 3px;border-radius:6px;white-space:nowrap}.wvad .adl{font-size:9px}
+#wv_body{position:relative;max-height:max(240px,calc(100dvh - 330px - var(--sat) - var(--sab)));overflow-y:auto;margin-top:8px;border-radius:12px;overscroll-behavior:contain}
+.wvb{position:relative;margin-top:8px}.wvg i{left:26px}.wvg s{left:-26px;width:22px;font-size:10px}
+.wvcol{position:relative;height:100%;border-radius:8px;cursor:copy}.wvcol.alt{background:color-mix(in srgb,var(--ink) 3.5%,transparent)}.wvcol.t{background:color-mix(in srgb,var(--acc) 9%,transparent)}
+.wvev{position:absolute;padding:3px 3px;border-radius:7px;border-left:3px solid var(--c);overflow-wrap:anywhere;cursor:pointer}.wvev.gl{background:color-mix(in srgb,var(--c) 14%,var(--card));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 55%,transparent)}
+.wvcol .nowl{position:absolute;left:0;right:0;z-index:3;height:2px;background:var(--acc);border-radius:2px;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.sky i{animation:none}}

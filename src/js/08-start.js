@@ -9,6 +9,9 @@ document.addEventListener("click",e=>{const g=x=>e.target.closest&&e.target.clos
   if(b=g("[data-mv]")){moveMonth(+b.dataset.mv);return}
   if(b=g("[data-kv]")){KV=b.dataset.kv;try{localStorage.setItem("kalenderkoll.kv",KV)}catch(err){}renderMonth();return}
   if(b=g("[data-dmv]")){pickDay(SEL+ +b.dataset.dmv);return}
+  if(b=g("[data-wmv]")){pickDay(SEL+ +b.dataset.wmv);return}
+  if(b=g("[data-gwd]")){KV="day";try{localStorage.setItem("kalenderkoll.kv",KV)}catch(err){}pickDay(+b.dataset.gwd);return}
+  if((b=g(".wvcol"))&&!g("[data-ev]")){const r=b.getBoundingClientRect(),m=Math.max(0,Math.floor(((e.clientY-r.top)/WPX*60+ +b.dataset.h0*60)/30)*30);openES(null,null,{d:nd(+b.dataset.d),t:pad(Math.min(23,Math.floor(m/60)))+":"+pad(m%60)});return}
   if(g("#dv_t")||g("#kd_ic")){pickDayIcon(SEL);return}
   if((b=g(".dvcol"))&&!g("[data-ev]")){const r=b.getBoundingClientRect(),m=Math.max(0,Math.floor(((e.clientY-r.top)/HPX*60+ +b.dataset.h0*60)/30)*30);openES(null,null,{d:nd(SEL),w:b.dataset.slot,t:pad(Math.min(23,Math.floor(m/60)))+":"+pad(m%60)});return}
   if(g("[data-now]")){pickDay(todayN());return}

@@ -36,21 +36,36 @@ function renderMonth(){const n=todayN(),first=dnOf(P.y,P.m,1),off=wdOf(first),ro
   $("k_wk").innerHTML=(S.wkno?`<span class="v"></span>`:"")+[0,1,2,3,4,5,6].map(i=>`<span>${dshort(i)}</span>`).join("");
   let h="";for(let r=0;r<rows;r++){if(S.wkno)h+=`<span class="v">${isoWeek(start+r*7)}</span>`;
     for(let i=0;i<7;i++){const d=start+r*7+i,[,m,dd]=ymd(d),L=B.filter(o=>o.s<=d&&o.end>=d),ws=[...new Set(L.map(x=>x.e.w||"g"))];
-      const cls=[m!==P.m?"out":"",d===n?"t":"",d===SEL?"s":"",(wdOf(d)===6||(S.hol&&isRed(d)))?"red":""].filter(Boolean).join(" ");
+      const cls=[m!==P.m?"out":"",dd%2?"":"alt",d===n?"t":"",d===SEL?"s":"",(wdOf(d)===6||(S.hol&&isRed(d)))?"red":""].filter(Boolean).join(" ");
       /* Days from the month before and after are left empty, so the month itself reads clearly. */
       if(m!==P.m){h+=`<span class="outd"></span>`;continue}
       h+=`<button data-cday="${d}" class="${cls}" aria-label="${esc(cap(fmtDay(d)))}"${d===SEL?' aria-pressed="true"':""}><b class="${fxCls(fxOf(L)).trim()}">${dd}</b>${dIc(d)?`<span class="dic"${L.length?` style="--dc:${evCol(L[0].e)}"`:""}>${icon(dIc(d))}</span>`:""}<span class="cev">${(()=>{const B=bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),E=L.map(o=>`<u class="${o.e.st==="glass"?"gl":""}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</u>`),A=[...B,...E],max=A.length>3?2:3;return A.slice(0,max).join("")+(A.length>max?`<em>+${A.length-max}</em>`:"")})()}</span></button>`}}
   $("k_gr").innerHTML=h;
   $("kd_t").innerHTML=(dIc(SEL)?icon(dIc(SEL))+" ":"")+esc(SEL===n?tx("Idag","Today"):cap(fmtDay(SEL)));$("kd_ic").innerHTML=icon(dIc(SEL)||"star")+`<span>${dIc(SEL)?tx("Byt dagens ikon","Change the day's icon"):tx("Ikon för dagen","Icon for the day")}</span>`;
-  renderKV();if(KV==="day")renderDayView();$("k_now").textContent=tx("Till idag","To today");$("k_now").classList.toggle("hide",P.y===NOW.getFullYear()&&P.m===NOW.getMonth());
+  renderKV();if(KV==="day")renderDayView();if(KV==="week")renderWeekView();$("k_now").textContent=tx("Till idag","To today");$("k_now").classList.toggle("hide",P.y===NOW.getFullYear()&&P.m===NOW.getMonth());
   $("kd_list").innerHTML=dayRows(SEL)||`<p class="empty">${tx("Inget den här dagen.","Nothing on this day.")}</p>`;$("kd_add").textContent=tx("＋ Lägg till ","＋ Add on ")+fmtD(SEL,{day:"numeric",month:"short"})}
 /* The chosen day's events open in a sheet. */
 const openDS=()=>$("ds").classList.add("on"),closeDS=()=>$("ds").classList.remove("on");
+/* Week view: seven days side by side on a time grid. Tap a day's name to open that day. */
+const WPX=46;
+function renderWeekView(){const n=todayN(),mon=SEL-wdOf(SEL),B=between(mon,mon+6),D=[0,1,2,3,4,5,6].map(i=>{const d=mon+i,L=B.filter(o=>o.s<=d&&o.end>=d);return{d,i,timed:L.filter(o=>o.e.t&&o.s===d),all:L.filter(o=>!(o.e.t&&o.s===d))}});
+  const st=o=>tmin(o.e.t),en=o=>Math.max(st(o)+30,o.e.t2&&tmin(o.e.t2)>st(o)?tmin(o.e.t2):st(o)+60),T=D.flatMap(x=>x.timed);
+  const h0=Math.min(7,...T.map(o=>Math.floor(st(o)/60))),h1=Math.min(24,Math.max(22,...T.map(o=>Math.ceil(en(o)/60)))),nowM=new Date().getHours()*60+new Date().getMinutes();
+  const a=ymd(mon),z=ymd(mon+6);$("wv_t").textContent=tx("Vecka ","Week ")+isoWeek(mon)+" · "+(a[1]===z[1]?a[2]+"–"+fmtD(mon+6,{day:"numeric",month:"short"}):fmtD(mon,{day:"numeric",month:"short"})+" – "+fmtD(mon+6,{day:"numeric",month:"short"}));
+  let h=`<div class="wvh"><span></span>${D.map(x=>`<button data-gwd="${x.d}" class="${x.d===n?"t":""}${x.i===6||(S.hol&&isRed(x.d))?" red":""}" aria-label="${esc(cap(fmtDay(x.d)))}"><small>${dshort(x.i)}</small><b class="${fxCls(fxOf([...x.timed,...x.all])).trim()}">${ymd(x.d)[2]}</b></button>`).join("")}</div>`;
+  if(D.some(x=>x.all.length||bdOn(x.d).length))h+=`<div class="wvad"><span class="adl">${tx("Heldag","All day")}</span>${D.map(x=>`<div>${bdOn(x.d).map(b=>`<button data-bd="${esc(b.id)}" style="--c:var(--acc)">♥ ${esc(b.n)}</button>`).join("")}${x.all.map(o=>`<button data-ev="${esc(o.e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</button>`).join("")}</div>`).join("")}</div>`;
+  $("wv_head").innerHTML=h;
+  h=`<div class="wvb" style="height:${(h1-h0)*WPX}px"><div class="dvg wvg">`;for(let k=h0;k<h1;k++)h+=`<i style="top:${(k-h0)*WPX}px"><s>${pad(k)}</s></i>`;h+=`</div>`;
+  D.forEach(x=>{const items=[...x.timed].sort((p,q)=>st(p)-st(q)),lanes=[],pos=new Map();items.forEach(o=>{let i=lanes.findIndex(e=>e<=st(o));if(i<0){i=lanes.length;lanes.push(0)}lanes[i]=en(o);pos.set(o,i)});
+    h+=`<div class="wvcol${x.i%2?" alt":""}${x.d===n?" t":""}" data-d="${x.d}" data-h0="${h0}" style="grid-column:${x.i+2}">${items.map(o=>{const e=o.e,nl=lanes.length,top=(st(o)-h0*60)/60*WPX,ht=Math.max(20,(en(o)-st(o))/60*WPX-2);return `<button class="wvev${e.st==="glass"?" gl":""}${fxCls(e.fx)}" data-ev="${esc(e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(e)};top:${top+1}px;height:${ht}px;left:calc(${100/nl*pos.get(o)}% + 1px);width:calc(${100/nl}% - 2px)">${esc(e.n)}</button>`}).join("")}${x.d===n&&nowM>=h0*60&&nowM<=h1*60?`<i class="nowl" style="top:${(nowM-h0*60)/60*WPX}px"></i>`:""}</div>`});
+  $("wv_body").innerHTML=h+`</div>`;
+  const first=T.length?Math.min(...T.map(st)):8*60;requestAnimationFrame(()=>{const b=$("wv_body");if(b&&b.dataset.n!==String(mon)){b.dataset.n=mon;b.scrollTop=Math.max(0,(first-h0*60)/60*WPX-14)}})}
+(()=>{let sx=0,sy=0;const g=$("k_wv");g.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});g.addEventListener("touchend",e=>{const p=e.changedTouches[0],dx=p.clientX-sx,dy=p.clientY-sy;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.6)pickDay(SEL+(dx<0?7:-7))},{passive:true})})();
 function pickDay(d){SEL=d;const[y,m]=ymd(d);P={y,m};renderMonth()}
 
 /* ---------- Day view: both of you side by side ---------- */
-let KV="month";try{const v=localStorage.getItem("kalenderkoll.kv");if(v==="day"||v==="month")KV=v}catch(e){}
-function renderKV(){$("k_v").innerHTML=[["month",tx("Månad","Month")],["day",tx("Dag","Day")]].map(([v,l])=>`<button class="${KV===v?"on":""}" data-kv="${v}">${l}</button>`).join("");$("k_cal").classList.toggle("hide",KV==="day");if(KV==="day")closeDS();$("k_dv").classList.toggle("hide",KV!=="day")}
+let KV="month";try{const v=localStorage.getItem("kalenderkoll.kv");if(v==="day"||v==="month"||v==="week")KV=v}catch(e){}
+function renderKV(){$("k_v").innerHTML=[["month",tx("Månad","Month")],["week",tx("Vecka","Week")],["day",tx("Dag","Day")]].map(([v,l])=>`<button class="${KV===v?"on":""}" data-kv="${v}">${l}</button>`).join("");$("k_cal").classList.toggle("hide",KV!=="month");if(KV!=="month")closeDS();$("k_wv").classList.toggle("hide",KV!=="week");$("k_dv").classList.toggle("hide",KV!=="day")}
 const HPX=58;
 function renderDayView(){const n=SEL,L=onDay(n),timed=L.filter(o=>o.e.t&&o.s===n),all=L.filter(o=>!(o.e.t&&o.s===n)),st=o=>tmin(o.e.t),en=o=>Math.max(st(o)+30,o.e.t2&&tmin(o.e.t2)>st(o)?tmin(o.e.t2):st(o)+60);
   const h0=Math.min(7,...timed.map(o=>Math.floor(st(o)/60))),h1=Math.min(24,Math.max(22,...timed.map(o=>Math.ceil(en(o)/60)))),nowM=n===todayN()?new Date().getHours()*60+new Date().getMinutes():-1,hol=S.hol?holOn(n):null;
