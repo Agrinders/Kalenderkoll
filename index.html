@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="563fcf2269f2">
+<meta name="kal-build" content="495a45bba205">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -341,6 +341,15 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 .wvev{position:absolute;padding:3px 3px;border-radius:7px;border-left:3px solid var(--c);overflow-wrap:anywhere;cursor:pointer}.wvev.gl{background:color-mix(in srgb,var(--c) 14%,var(--card));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 55%,transparent)}
 .wvcol .nowl{position:absolute;left:0;right:0;z-index:3;height:2px;background:var(--acc);border-radius:2px;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.sky i{animation:none}}
+
+/* Phones: the whole month fits on the screen. Row height follows the screen; event names are a size smaller. */
+@media (max-width:559px){
+  .cgr button{min-height:clamp(52px,calc((100dvh - 262px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px);height:clamp(52px,calc((100dvh - 262px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px);padding:3px 0 3px;gap:2px}
+  .cgr button b{width:25px;height:25px;font-size:13.5px}
+  .cev{flex:1;min-height:0;overflow:hidden;gap:1.5px}
+  .cev u{font-size:9px;line-height:1.25;padding:1px 0 1px 3px;border-radius:5px}.cev em{font-size:9px;line-height:1.1}
+  .cgr .v{padding-top:8px}
+}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -664,7 +673,7 @@ function renderHome(){const n=todayN(),now=Date.now(),o=nextUp(),big=$("h_big");
 /* ---------- Kalender ---------- */
 let P={y:NOW.getFullYear(),m:NOW.getMonth()},SEL=todayN();
 function renderMonth(){const n=todayN(),first=dnOf(P.y,P.m,1),off=wdOf(first),rows=Math.ceil((off+dim(P.y,P.m))/7),start=first-off,B=between(start,start+rows*7-1);
-  $("k_m").textContent=mn(P.m)+" "+P.y;["k_wk","k_gr"].forEach(id=>$(id).classList.toggle("wkn",S.wkno));
+  $("k_m").textContent=mn(P.m)+" "+P.y;$("k_gr").style.setProperty("--rows",rows);["k_wk","k_gr"].forEach(id=>$(id).classList.toggle("wkn",S.wkno));
   $("k_wk").innerHTML=(S.wkno?`<span class="v"></span>`:"")+[0,1,2,3,4,5,6].map(i=>`<span>${dshort(i)}</span>`).join("");
   let h="";for(let r=0;r<rows;r++){if(S.wkno)h+=`<span class="v">${isoWeek(start+r*7)}</span>`;
     for(let i=0;i<7;i++){const d=start+r*7+i,[,m,dd]=ymd(d),L=B.filter(o=>o.s<=d&&o.end>=d),ws=[...new Set(L.map(x=>x.e.w||"g"))];

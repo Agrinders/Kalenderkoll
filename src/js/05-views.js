@@ -32,7 +32,7 @@ function renderHome(){const n=todayN(),now=Date.now(),o=nextUp(),big=$("h_big");
 /* ---------- Kalender ---------- */
 let P={y:NOW.getFullYear(),m:NOW.getMonth()},SEL=todayN();
 function renderMonth(){const n=todayN(),first=dnOf(P.y,P.m,1),off=wdOf(first),rows=Math.ceil((off+dim(P.y,P.m))/7),start=first-off,B=between(start,start+rows*7-1);
-  $("k_m").textContent=mn(P.m)+" "+P.y;["k_wk","k_gr"].forEach(id=>$(id).classList.toggle("wkn",S.wkno));
+  $("k_m").textContent=mn(P.m)+" "+P.y;$("k_gr").style.setProperty("--rows",rows);["k_wk","k_gr"].forEach(id=>$(id).classList.toggle("wkn",S.wkno));
   $("k_wk").innerHTML=(S.wkno?`<span class="v"></span>`:"")+[0,1,2,3,4,5,6].map(i=>`<span>${dshort(i)}</span>`).join("");
   let h="";for(let r=0;r<rows;r++){if(S.wkno)h+=`<span class="v">${isoWeek(start+r*7)}</span>`;
     for(let i=0;i<7;i++){const d=start+r*7+i,[,m,dd]=ymd(d),L=B.filter(o=>o.s<=d&&o.end>=d),ws=[...new Set(L.map(x=>x.e.w||"g"))];
