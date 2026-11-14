@@ -30,6 +30,7 @@ const dIc=n=>(DAYS[nd(n)]||{}).ic||"";
 /* A day gets its effect from the first event that day that has one. */
 const fxOf=L=>{const o=L.find(x=>x.e.fx);return o?o.e.fx:""};
 function setDay(iso,ic){if(ic){DAYS[iso]={ic};put("day_"+iso,{kind:"day",d:iso,ic})}else{delete DAYS[iso];del("day_"+iso)}}
+const hasData=()=>EV.length+BD.length+TODOS.length+NOTES.length>0;
 function saveCouple(){put("couple",{kind:"couple",...CP})}
 function persist(){try{localStorage.setItem("kalenderkoll.look",JSON.stringify({lang:S.lang,theme:S.theme}))}catch(e){}if(col)later("plan",()=>put("plan",{kind:"plan",wkno:S.wkno,hol:S.hol}),150)}
 /* Rebuild the lists from the saved copies (used after Undo when there is no storage). */

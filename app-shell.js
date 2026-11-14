@@ -1,31 +1,52 @@
-/* Keeps all data on this device (browser storage), with a backup file the user can save and load. */
+/* Storage for the installed app. The calendar is kept in Firebase so two phones share it.
+   Each calendar has a long secret code (the "space"); the invite link carries it to the other phone.
+   If Firebase cannot be reached at all, everything is kept on this phone and sent up the next time it can. */
 (function(){
-  const KEY="kalenderkoll.data.v1";
-  const LS={save:"Spara säkerhetskopia",load:"Läs in säkerhetskopia",why:"Allt sparas bara på den här enheten. Spara en säkerhetskopia ibland, annars försvinner det om du byter telefon eller rensar webbläsaren.",askT:"Ersätt allt på den här enheten?",ask:"Säkerhetskopian ersätter det som finns sparat nu.",bad:"Filen kunde inte läsas. Välj en säkerhetskopia från Kalenderkoll.",saved:"Säkerhetskopian är sparad"},LE={save:"Save a backup",load:"Load a backup",why:"Everything is saved on this device only. Save a backup now and then, or it is lost if you change phone or clear the browser.",askT:"Replace everything on this device?",ask:"The backup replaces what is saved now.",bad:"The file could not be read. Choose a Kalenderkoll backup.",saved:"Backup saved"};
-  /* Texts follow the language chosen in the app, not the phone. */
-  const L=new Proxy({},{get:(_,k)=>((document.documentElement.lang||"sv").startsWith("en")?LE:LS)[k]});
-  const read=()=>{try{return JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){return {}}};
-  /* Always starts from what is saved right now, so a second open copy of the app can never overwrite newer changes. */
-  let data=read();const fresh=()=>{data=read()};
-  const write=()=>{localStorage.setItem(KEY,JSON.stringify(data))};
-  if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+  const CFG={apiKey:"AIzaSyB8eRlAhEDJywi1MzBDC55-J1TwLLwqa0c",authDomain:"kalenderkoll.firebaseapp.com",projectId:"kalenderkoll",storageBucket:"kalenderkoll.firebasestorage.app",messagingSenderId:"1050992291700",appId:"1:1050992291700:web:9165f1d2364e1c3e618621"};
+  const SDK="https://www.gstatic.com/firebasejs/13.3.0/";
+  const KEY="kalenderkoll.data.v1",SKEY="kalenderkoll.space";
+  const ls={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},del:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+  const okCode=c=>typeof c==="string"&&/^[A-Za-z0-9_-]{20,64}$/.test(c);
+  const newCode=()=>{const a="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789",r=new Uint32Array(24);crypto.getRandomValues(r);return Array.from(r,x=>a[x%a.length]).join("")};
+  /* A code from an invite link (…#join=CODE) or pasted on its own. */
+  const codeIn=s=>{s=String(s||"").trim();const m=s.match(/join=([A-Za-z0-9_-]{20,64})/);return m?m[1]:okCode(s)?s:""};
+  let joinCode="";{const c=codeIn(location.hash);if(c){joinCode=c;history.replaceState(history.state,"",location.pathname+location.search)}}
+  let space=okCode(ls.get(SKEY))?ls.get(SKEY):"";
+
+  /* On this phone only: the same shape as the shared storage, kept in the browser. */
+  const read=()=>{try{return JSON.parse(ls.get(KEY)||"{}")||{}}catch(e){return{}}};
+  let data=read();const fresh=()=>{data=read()},write=()=>ls.set(KEY,JSON.stringify(data));
   const subs={},copy=v=>JSON.parse(JSON.stringify(v));
-  const snap=p=>{const m=data[p]||{},docs=Object.keys(m).sort().map(id=>({id,exists:true,data:()=>copy(m[id]),metadata:{fromCache:false,hasPendingWrites:false}}));return{docs,size:docs.length,empty:!docs.length,metadata:{fromCache:false,hasPendingWrites:false}}};
+  const snap=p=>{const m=data[p]||{},docs=Object.keys(m).sort().map(id=>({id,exists:true,data:()=>copy(m[id])}));return{docs,size:docs.length,empty:!docs.length}};
   const fire=p=>setTimeout(()=>(subs[p]||[]).forEach(f=>f(snap(p))),0);
-  const col=p=>({path:p,doc:id=>({id,set:async d=>{fresh();(data[p]=data[p]||{})[id]=copy(d);write();fire(p)},update:async d=>{fresh();data[p][id]={...data[p][id],...copy(d)};write();fire(p)},delete:async()=>{fresh();if(data[p])delete data[p][id];write();fire(p)}}),get:async()=>snap(p),onSnapshot:n=>{(subs[p]=subs[p]||[]).push(n);setTimeout(()=>n(snap(p)),0);return()=>{subs[p]=subs[p].filter(f=>f!==n)}}});
+  const localDb={collection:p=>({doc:id=>({id,set:async d=>{fresh();(data[p]=data[p]||{})[id]=copy(d);write();fire(p)},update:async d=>{fresh();data[p][id]={...data[p][id],...copy(d)};write();fire(p)},delete:async()=>{fresh();if(data[p])delete data[p][id];write();fire(p)}}),onSnapshot:n=>{(subs[p]=subs[p]||[]).push(n);setTimeout(()=>n(snap(p)),0);return()=>{subs[p]=subs[p].filter(f=>f!==n)}}})};
   addEventListener("storage",e=>{if(e.key===KEY){fresh();Object.keys(subs).forEach(fire)}});
-  const db={collection:col};
-  window.claude={use:async n=>n==="db"?db:null};window.KK_LOCAL=true;
-  function backup(){const r=document.getElementById("reset");if(!r)return;
-    const box=document.createElement("div");box.style.cssText="display:grid;gap:8px;margin-bottom:8px";
-    box.innerHTML=`<button class="btn" id="bk_save">${L.save}</button><button class="btn out" id="bk_load">${L.load}</button><input id="bk_file" type="file" accept=".json,application/json" hidden>`;
-    r.before(box);
-    document.getElementById("bk_save").onclick=()=>{fresh();const d=new Date().toISOString().slice(0,10),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({app:"kalenderkoll",saved:new Date().toISOString(),data},null,1)],{type:"application/json"}));a.download=`kalenderkoll-backup-${d}.json`;try{localStorage.setItem("kalenderkoll.backupAt",Date.now())}catch(e){}dispatchEvent(new Event("kalenderkoll-backup"));document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);toast(L.saved,"ok")};
-    const f=document.getElementById("bk_file");document.getElementById("bk_load").onclick=()=>f.click();
-    f.onchange=async()=>{const x=f.files[0];f.value="";if(!x)return;try{const v=JSON.parse(await x.text());if(v.app!=="kalenderkoll"||!v.data||typeof v.data!=="object")throw 0;if(!await ask(L.askT,L.ask))return;data=v.data;write();try{localStorage.setItem("kalenderkoll.backupAt",Date.now())}catch(e){}location.reload()}catch(e){toast(L.bad,"bad")}};
-    const st=setInterval(()=>{const c=document.getElementById("c_st");if(c){c.textContent=L.why;clearInterval(st)}},200);
-    new MutationObserver(()=>{document.getElementById("bk_save").textContent=L.save;document.getElementById("bk_load").textContent=L.load;const c=document.getElementById("c_st");if(c)c.textContent=L.why}).observe(document.documentElement,{attributes:true,attributeFilter:["lang"]});
-    new MutationObserver(()=>{const c=document.getElementById("c_st");if(c&&c.textContent!==L.why)c.textContent=L.why}).observe(document.getElementById("c_st"),{childList:true,characterData:true,subtree:true});
-  }
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",backup);else backup();
+  if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+
+  const KK=window.KK={mode:"starting",uid:"",space:()=>space,
+    inviteUrl:()=>location.origin+location.pathname+"#join="+space,
+    codeIn,
+    /* Switch this phone to another calendar (from a pasted link or code). */
+    join(c){c=codeIn(c);if(!c)return false;ls.set(SKEY,c);ls.del(KEY);location.replace(location.pathname);return true}};
+  const timeout=ms=>new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")),ms));
+  const ready=(async()=>{
+    if(window.KK_NO_CLOUD)throw new Error("off");
+    const[A,Au,F]=await Promise.race([Promise.all([import(SDK+"firebase-app.js"),import(SDK+"firebase-auth.js"),import(SDK+"firebase-firestore.js")]),timeout(12000)]);
+    const app=A.initializeApp(CFG),auth=Au.getAuth(app);
+    const user=await Promise.race([new Promise((res,rej)=>{const un=Au.onAuthStateChanged(auth,u=>{if(u){un();res(u)}});Au.signInAnonymously(auth).catch(rej)}),timeout(15000)]);
+    let fs;try{fs=F.initializeFirestore(app,{localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})})}catch(e){fs=F.getFirestore(app)}
+    /* Joining from a link. If this phone already has its own calendar, the app asks first. */
+    if(joinCode&&joinCode!==space){const ok=!space||(window.KK_askJoin?await window.KK_askJoin():true);if(ok){space=joinCode;ls.set(SKEY,space)}}
+    const fresh2=!space;if(!space){space=newCode();ls.set(SKEY,space)}
+    const ref=p=>F.collection(fs,"spaces",space,p);
+    /* Anything saved only on this phone is sent up, without overwriting what is already shared. */
+    const local=(read().cal)||{},ids=Object.keys(local);
+    if(ids.length&&!joinCode){try{const have=new Set((await F.getDocs(ref("cal"))).docs.map(d=>d.id));await Promise.all(ids.filter(id=>!have.has(id)||fresh2).map(id=>F.setDoc(F.doc(fs,"spaces",space,"cal",id),local[id])));ls.set("kalenderkoll.data.sent",JSON.stringify(local));ls.del(KEY)}catch(e){}}
+    else if(ids.length&&joinCode){ls.set("kalenderkoll.data.sent",JSON.stringify(local));ls.del(KEY)}
+    KK.mode="cloud";KK.uid=user.uid;
+    return{collection:p=>({doc:id=>{const r=F.doc(fs,"spaces",space,p,id);return{id,set:d=>F.setDoc(r,d),update:d=>F.updateDoc(r,d),delete:()=>F.deleteDoc(r)}},
+      onSnapshot:(n,err)=>F.onSnapshot(ref(p),s=>n({docs:s.docs.map(x=>({id:x.id,exists:true,data:()=>x.data()})),size:s.size,empty:s.empty,metadata:{fromCache:s.metadata.fromCache}}),err)})}
+  })().catch(()=>{KK.mode="local";return localDb});
+  window.claude={use:async n=>n==="db"?ready:n==="user"?(await ready,KK.uid?{id:async()=>KK.uid}:null):null};
+  window.KK_LOCAL=true;
 })();

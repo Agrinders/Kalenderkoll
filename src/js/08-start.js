@@ -31,7 +31,7 @@ $("t_f").addEventListener("submit",e=>{e.preventDefault();const n=$("t_q").value
 document.addEventListener("input",e=>{const id=e.target.dataset&&e.target.dataset.tn;if(!id)return;const x=TODOS.find(z=>z.id===id);if(x){x.n=e.target.value;saveTodo(x,true)}});
 document.addEventListener("focusout",e=>{const id=e.target.dataset&&e.target.dataset.tn;if(!id)return;const x=TODOS.find(z=>z.id===id);if(x&&!x.n.trim())dropTodo(x,true);setTimeout(()=>{renderTodo();renderHome()},0)});
 document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.tn)e.target.blur()});
-$("reset").onclick=async()=>{if(!await ask(tx("Radera allt?","Delete everything?"),LOCAL?tx("Alla händelser, uppgifter, lappar och namn tas bort från den här telefonen.","All events, tasks, notes and names are removed from this phone."):tx("Alla händelser, uppgifter, lappar och namn tas bort, för er båda.","All events, tasks, notes and names are removed, for both of you."),tx("Radera","Delete")))return;
+$("reset").onclick=async()=>{if(!await ask(tx("Radera allt?","Delete everything?"),!SHARED()?tx("Alla händelser, uppgifter, lappar och namn tas bort från den här telefonen.","All events, tasks, notes and names are removed from this phone."):tx("Alla händelser, uppgifter, lappar och namn tas bort, för er båda.","All events, tasks, notes and names are removed, for both of you."),tx("Radera","Delete")))return;
   const ids=allIds.filter(id=>id!=="plan");EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};CP={a:"",b:"",ua:"",ub:"",since:""};if(col)await Promise.all(ids.map(id=>col.doc(id).delete().catch(()=>{})));render();go("h");setTimeout(()=>openCS(true),300)};
 
 /* ---------- Start ---------- */
@@ -46,14 +46,17 @@ let firstDone=false;
 async function firstRun(){if(firstDone)return;firstDone=true;if(!CP.a||!CP.b){openCS(true);return}
   if(MYID){if(CP.ua===MYID){setMe("a");return}if(CP.ub===MYID){setMe("b");return}}
   if(ME&&!MYID)return;
-  const free=["a","b"].filter(w=>!CP["u"+w]);if(ME&&!free.length)return;
-  const w=await askOpts(tx("Vem är du?","Who are you?"),tx("Så vet appen vad som är ditt.","So the app knows what is yours."),[["a",CP.a,""],["b",CP.b,""]]);if(!w)return;setMe(w);if(MYID&&!CP["u"+w]){CP["u"+w]=MYID;saveCouple()}render()}
+  /* This phone already knows who it is: claim that name for this sign-in. */
+  if(ME&&!CP["u"+ME]){CP["u"+ME]=MYID;saveCouple();render();return}
+  /* A phone that lost its sign-in (cleared browser) can claim its name again. */
+  const free0=["a","b"].filter(w=>!CP["u"+w]),free=free0.length?free0:["a","b"];
+  const w=await askOpts(tx("Vem är du?","Who are you?"),tx("Så vet appen vad som är ditt.","So the app knows what is yours."),free.map(x=>[x,CP[x],""]));if(!w)return;setMe(w);if(MYID&&CP["u"+w]!==MYID){CP["u"+w]=MYID;saveCouple()}render()}
 /* Everything is saved in shared storage (or on this phone in the installed version). */
 (async()=>{let ok=false;try{
   const db=await claude.use("db");if(!db)throw 0;
-  if(!LOCAL){try{const u=await claude.use("user");if(u&&u.id)MYID=await u.id()||""}catch(e){}}
+  try{const u=await claude.use("user");if(u&&u.id)MYID=await u.id()||""}catch(e){}
   col=db.collection("cal");let first=true;
-  col.onSnapshot(snap=>{ok=true;allIds=snap.docs.map(d=>d.id);DOCS={};const prevT=TODOS;EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};let cp=null;
+  col.onSnapshot(snap=>{if(first&&snap.metadata&&snap.metadata.fromCache&&!snap.docs.length){setTimeout(()=>{if(!firstDone)firstRun()},6000);return}ok=true;allIds=snap.docs.map(d=>d.id);DOCS={};const prevT=TODOS;EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};let cp=null;
     snap.docs.forEach(d=>{const v=d.data()||{};DOCS[d.id]=copy(v);const iso=x=>/^\d{4}-\d\d-\d\d$/.test(x||"");
       if(d.id==="plan"){if(!PEND.has("plan")){if(typeof v.wkno==="boolean")S.wkno=v.wkno;if(typeof v.hol==="boolean")S.hol=v.hol}}
       else if(d.id==="couple")cp={a:String(v.a||""),b:String(v.b||""),ua:String(v.ua||""),ub:String(v.ub||""),since:iso(v.since)?v.since:""};
@@ -71,6 +74,23 @@ async function firstRun(){if(firstDone)return;firstDone=true;if(!CP.a||!CP.b){op
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
 (()=>{const on=id=>$(id).classList.contains("on");
-  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}return false}
+  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
   const guard=()=>history.pushState({kk:1},"");try{history.replaceState({kk:0},"");guard()}catch(e){return}
   addEventListener("popstate",()=>{if(closeTop())return guard();if(tab!=="h"){go("h");return guard()}history.back()})})();
+
+/* Inviting and joining (installed version, shared through Firebase). */
+async function shareInvite(){const url=KK.inviteUrl(),p=pname(other(me())),text=tx(`Hej ${p}! Gå med i vår gemensamma kalender:`,`Hi ${p}! Join our shared calendar:`);
+  if(navigator.share){try{await navigator.share({title:"Kalenderkoll",text,url});return}catch(e){if(e&&e.name==="AbortError")return}}
+  try{await navigator.clipboard.writeText(url);toast(tx("Länken är kopierad","The link is copied")+" · "+tx(`Klistra in den i ett meddelande till ${p}`,`Paste it into a message to ${p}`),5000)}catch(e){openJS(url)}}
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#v_share")){shareInvite()}});
+$("dr_join").onclick=()=>{closeDrawer();openJS("")};
+function openJS(show){$("js_t").textContent=show?tx("Din inbjudningslänk","Your invite link"):tx("Gå med i en kalender","Join a calendar");$("js_p").textContent=show?tx("Kopiera länken och skicka den till din partner.","Copy the link and send it to your partner."):tx("Klistra in länken du har fått. Kalendern på den här telefonen byts mot er gemensamma.","Paste the link you got. The calendar on this phone is replaced by your shared one.");
+  $("js_in").value=show||"";$("js_in").readOnly=!!show;$("js_ok").textContent=show?tx("Klar","Done"):tx("Gå med","Join");$("js").classList.add("on");if(show)setTimeout(()=>$("js_in").select(),60);else setTimeout(()=>$("js_in").focus(),60)}
+const closeJS=()=>$("js").classList.remove("on");
+$("js_no").onclick=closeJS;$("js").addEventListener("click",e=>{if(e.target===$("js"))closeJS()});
+$("js_ok").onclick=async()=>{if($("js_in").readOnly){closeJS();return}const c=KK.codeIn($("js_in").value);if(!c){toast(tx("Det ser inte ut som en inbjudningslänk","That does not look like an invite link"));return}
+  if(c===KK.space()){closeJS();toast(tx("Du är redan med i den här kalendern","You are already in this calendar"));return}
+  if(hasData()&&!await ask(tx("Byta kalender?","Switch calendar?"),tx("Det du har lagt in på den här telefonen syns inte längre. Du ser i stället er gemensamma kalender.","What you added on this phone will no longer show. You will see your shared calendar instead."),tx("Gå med","Join")))return;
+  try{localStorage.removeItem("kalenderkoll.me")}catch(err){}KK.join(c)};
+/* A link opened on a phone that already has its own calendar: ask before switching. */
+window.KK_askJoin=()=>ask(tx("Gå med i er gemensamma kalender?","Join your shared calendar?"),tx("Kalendern på den här telefonen byts mot den du blev inbjuden till.","The calendar on this phone is replaced by the one you were invited to."),tx("Gå med","Join")).then(ok=>{if(ok){try{localStorage.removeItem("kalenderkoll.me")}catch(e){}ME=""}return ok});

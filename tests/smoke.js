@@ -5,7 +5,7 @@ const srv=http.createServer((q,r)=>{let u=decodeURIComponent(q.url.split('?')[0]
 (async()=>{await new Promise(r=>srv.listening?r():srv.on('listening',r));
 const b=await chromium.launch({executablePath:process.env.CHROME||undefined});
 const c=await b.newContext({viewport:{width:390,height:844},serviceWorkers:'block',acceptDownloads:true});const p=await c.newPage();
-await p.route(/fonts\.(googleapis|gstatic)\.com/,r=>r.abort());
+await p.route(/fonts\.(googleapis|gstatic)\.com|www\.gstatic\.com\/firebasejs/,r=>r.abort());
 const errs=[];p.on('pageerror',e=>errs.push(e.message));p.setDefaultTimeout(6000);
 await p.goto('http://localhost:'+srv.address().port+'/');await p.waitForTimeout(900);
 let fails=0;const step=async(n,f)=>{try{const r=await f();console.log('ok  ',n,r===undefined?'':JSON.stringify(r))}catch(e){fails++;console.log('FAIL',n,e.message.split('\n')[0])}};

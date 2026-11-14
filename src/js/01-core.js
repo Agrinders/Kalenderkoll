@@ -3,6 +3,8 @@ const $=id=>document.getElementById(id);
 const S={lang:"sv",theme:"auto",wkno:true,hol:true};
 let NOW=new Date(),col=null,tab="h",allIds=[];
 const LOCAL=!!window.KK_LOCAL;
+/* Shared between the two of you: the Claude version always, the installed version when Firebase is reachable. */
+const SHARED=()=>!LOCAL||!!(window.KK&&KK.mode==="cloud");
 /* The shared version of the app, for inviting each other. */
 const ART_URL="https://claude.ai/artifact/8vDeWGtrcxYDKvrjkKX1cj";
 const MNS=[["januari","februari","mars","april","maj","juni","juli","augusti","september","oktober","november","december"],["January","February","March","April","May","June","July","August","September","October","November","December"]];

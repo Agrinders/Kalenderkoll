@@ -5,7 +5,7 @@ const srv=http.createServer((q,r)=>{let u=decodeURIComponent(q.url.split('?')[0]
 let fails=0;const norm=v=>JSON.stringify(v);const check=(name,got,want)=>{const ok=norm(got)===norm(want);if(!ok)fails++;console.log(ok?'ok  ':'FAIL',name,ok?'':`got ${JSON.stringify(got)}, want ${JSON.stringify(want)}`)};
 (async()=>{await new Promise(r=>srv.listening?r():srv.on('listening',r));
 const b=await chromium.launch({executablePath:process.env.CHROME||undefined});const c=await b.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});const p=await c.newPage();
-await p.route(/fonts\.(googleapis|gstatic)\.com/,r=>r.abort());await p.addInitScript(()=>{try{localStorage.setItem('kalenderkoll.me','a')}catch(e){}});
+await p.route(/fonts\.(googleapis|gstatic)\.com|www\.gstatic\.com\/firebasejs/,r=>r.abort());await p.addInitScript(()=>{try{localStorage.setItem('kalenderkoll.me','a')}catch(e){}});
 await p.goto('http://localhost:'+srv.address().port+'/');await p.waitForTimeout(900);const ev=(f,a)=>p.evaluate(f,a);
 const days=(e,a,b)=>ev(([e,a,b])=>occ({skip:[],e:"",u:"",...e},dn(a),dn(b)).map(nd),[e,a,b]);
 // Repeats

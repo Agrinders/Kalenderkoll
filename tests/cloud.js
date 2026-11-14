@@ -1,0 +1,54 @@
+/* Two phones sharing one calendar through a stand-in for Firebase. Run: node tests/cloud.js
+   The stand-in keeps the shared data in this test's server, so separate browsers see the same calendar. */
+const {chromium}=require('playwright');const http=require('http'),fs=require('fs'),path=require('path');
+const A=path.resolve(__dirname,'..');const T={'.html':'text/html','.js':'text/javascript','.json':'application/json','.png':'image/png','.webmanifest':'application/manifest+json'};
+let STORE={},writes=0;
+const srv=http.createServer((q,r)=>{
+  if(q.url.startsWith('/__fs')){if(q.method==='GET'){r.writeHead(200,{'content-type':'application/json'});return r.end(JSON.stringify({v:writes,s:STORE}))}
+    let b='';q.on('data',c=>b+=c);q.on('end',()=>{const{op,path:p,data}=JSON.parse(b);if(p.split('/')[1].length<20){r.writeHead(403);return r.end()}if(op==='set')STORE[p]=data;else if(op==='update')STORE[p]={...STORE[p],...data};else delete STORE[p];writes++;r.writeHead(200);r.end('{}')});return}
+  let u=decodeURIComponent(q.url.split('?')[0]);if(u.endsWith('/'))u+='index.html';fs.readFile(path.join(A,u),(e,d)=>{if(e){r.writeHead(404);return r.end()}r.writeHead(200,{'content-type':T[path.extname(u)]||'application/octet-stream'});r.end(d)})}).listen(0);
+const FAKE={
+'firebase-app.js':`export function initializeApp(c){return{c}}`,
+'firebase-auth.js':`export function getAuth(a){return{a,user:null,ls:[]}}
+export function onAuthStateChanged(au,cb){au.ls.push(cb);if(au.user)setTimeout(()=>cb(au.user),0);return()=>{au.ls=au.ls.filter(f=>f!==cb)}}
+export async function signInAnonymously(au){let id=localStorage.getItem('fakeuid');if(!id){id='u'+Math.random().toString(36).slice(2,10);localStorage.setItem('fakeuid',id)}au.user={uid:id};au.ls.forEach(f=>f(au.user));return{user:au.user}}`,
+'firebase-firestore.js':`const B=location.origin+'/__fs';
+export const persistentLocalCache=o=>o,persistentMultipleTabManager=()=>({});
+export function initializeFirestore(app){return{app}}export function getFirestore(app){return{app}}
+export const collection=(f,...s)=>({path:s.join('/')}),doc=(f,...s)=>({path:s.join('/')});
+const send=(op,p,data)=>fetch(B,{method:'POST',body:JSON.stringify({op,path:p,data})}).then(r=>{if(!r.ok)throw new Error('denied')});
+export const setDoc=(r,d)=>send('set',r.path,d),updateDoc=(r,d)=>send('update',r.path,d),deleteDoc=r=>send('del',r.path);
+const list=(s,p)=>Object.keys(s).filter(k=>k.startsWith(p+'/')&&!k.slice(p.length+1).includes('/')).sort().map(k=>({id:k.slice(p.length+1),data:()=>JSON.parse(JSON.stringify(s[k]))}));
+export async function getDocs(c){const j=await (await fetch(B)).json();const d=list(j.s,c.path);return{docs:d,size:d.length,empty:!d.length}}
+export function onSnapshot(c,cb){let last=-1,on=true;const tick=async()=>{if(!on)return;try{const j=await (await fetch(B)).json();if(j.v!==last){last=j.v;const d=list(j.s,c.path);cb({docs:d,size:d.length,empty:!d.length,metadata:{fromCache:false}})}}catch(e){}setTimeout(tick,150)};tick();return()=>{on=false}}`};
+(async()=>{await new Promise(r=>srv.listening?r():srv.on('listening',r));const base='http://localhost:'+srv.address().port+'/';
+const b=await chromium.launch({executablePath:process.env.CHROME||undefined});let fails=0;const errs=[];
+const phone=async(cloud=true)=>{const c=await b.newContext({viewport:{width:390,height:844},serviceWorkers:'block'});const p=await c.newPage();p.setDefaultTimeout(6000);p.on('pageerror',e=>errs.push(e.message));
+  await p.route(/fonts\.(googleapis|gstatic)\.com/,r=>r.abort());
+  await p.route(/www\.gstatic\.com\/firebasejs\/[\d.]+\/(firebase-[a-z]+\.js)/,r=>{if(!cloud)return r.abort();const f=r.request().url().match(/(firebase-[a-z]+\.js)/)[1];r.fulfill({contentType:'text/javascript',headers:{'access-control-allow-origin':'*'},body:FAKE[f]})});return p};
+const step=async(n,f)=>{try{const r=await f();console.log('ok  ',n,r===undefined?'':JSON.stringify(r))}catch(e){fails++;console.log('FAIL',n,e.message.split('\n')[0])}};
+const w=(p,m=300)=>p.waitForTimeout(m),need=(c,m)=>{if(!c)throw new Error(m)};
+const waitFor=async(p,fn,arg,ms=5000)=>{const t=Date.now();while(Date.now()-t<ms){if(await p.evaluate(fn,arg))return true;await w(p,150)}return false};
+
+const A1=await phone();let invite='';
+await step('phone 1 starts in the cloud with a new calendar',async()=>{await A1.goto(base);await waitFor(A1,()=>KK.mode!=='starting');await waitFor(A1,()=>cs.classList.contains('on'));const r=await A1.evaluate(()=>[KK.mode,KK.space().length,!!KK.uid,cs.classList.contains('on')]);need(r[0]==='cloud'&&r[1]>=20&&r[2]&&r[3],'start '+r);return r});
+await step('phone 1 sets names and adds an event',async()=>{await A1.fill('#cs_a','Alex');await A1.fill('#cs_b','Maya');await A1.click('#cs_ok');await w(A1,500);await A1.evaluate(()=>go('k'));await A1.click('#tadd');await w(A1);await A1.fill('#es_n','Middag ihop');await A1.click('#es_ok');await w(A1,600);
+  const sp=await A1.evaluate(()=>KK.space());const keys=Object.keys(STORE).filter(k=>k.includes(sp));need(keys.some(k=>k.endsWith('/couple'))&&keys.some(k=>k.includes('/ev_')),'not in the cloud '+keys);return[keys.length,STORE['spaces/'+sp+'/cal/couple'].ua?'claimed':'unclaimed']});
+await step('phone 1 invite card and link',async()=>{await A1.evaluate(()=>go('v'));await w(A1);const r=await A1.evaluate(()=>[!!document.querySelector('#v_share'),v_inv.textContent.slice(0,40),KK.inviteUrl()]);invite=r[2];need(r[0]&&/#join=/.test(r[2]),'invite '+r);return r.slice(0,2)});
+await step('the invite opens the share sheet or copies the link',async()=>{await A1.evaluate(()=>{navigator.share=async d=>{window.__shared=d}});await A1.click('#v_share');await w(A1);const d=await A1.evaluate(()=>window.__shared);need(d&&d.url===invite,'share '+JSON.stringify(d));return d.text});
+const B1=await phone();
+await step('phone 2 opens the link and picks their name',async()=>{await B1.goto(invite);await waitFor(B1,()=>KK.mode==='cloud');need(await waitFor(B1,()=>sc.classList.contains('on')),'not asked who');const opts=await B1.evaluate(()=>[...sc_o.querySelectorAll('[data-sco]')].map(b=>b.textContent));await B1.click('[data-sco="b"]');await w(B1,600);
+  const r=await B1.evaluate(()=>[location.hash,KK.space()===KK.inviteUrl().split('#join=')[1],ME,EV.some(e=>e.n==='Middag ihop'),h_hi.textContent]);need(!r[0]&&r[2]==='b'&&r[3],'join '+JSON.stringify(r));return[opts,...r]});
+await step('both are in',async()=>{need(await waitFor(A1,()=>joined()),'phone 1 does not see phone 2 joined');need(await waitFor(B1,()=>joined()),'phone 2');return await A1.evaluate(()=>v_inv.textContent.slice(0,30))});
+await step('a task from phone 2 shows on phone 1',async()=>{await B1.evaluate(()=>go('t'));await B1.fill('#t_q','Köp blommor');await B1.click('#t_add');need(await waitFor(A1,()=>TODOS.some(x=>x.n==='Köp blommor')),'not synced');return true});
+await step('a note from phone 1 shows on phone 2',async()=>{await A1.click('#v_ladd');await w(A1);await A1.fill('#ns_tx','Hej ♥');await A1.click('#ns_ok');need(await waitFor(B1,()=>NOTES.some(x=>x.txt==='Hej ♥'&&x.f==='a')),'note');return true});
+await step('opening the link again on phone 1 changes nothing',async()=>{await A1.goto(invite);await waitFor(A1,()=>KK.mode==='cloud');await w(A1,600);return A1.evaluate(()=>[ME,sc.classList.contains('on'),modal.classList.contains('on')])});
+const C1=await phone();
+await step('old data on a phone is moved up to the cloud',async()=>{await C1.goto(base);await C1.evaluate(()=>{localStorage.setItem('kalenderkoll.data.v1',JSON.stringify({cal:{couple:{kind:'couple',a:'Kim',b:'Lo',ua:'',ub:'',since:''},ev_old:{kind:'ev',id:'old',n:'Gammal händelse',d:'2026-11-20',e:'',t:'',t2:'',r:'o',u:'',skip:[],pl:'',o:'',w:'g'}}}));localStorage.setItem('kalenderkoll.me','a')});await C1.reload();await waitFor(C1,()=>KK.mode==='cloud');await w(C1,800);
+  const sp=await C1.evaluate(()=>KK.space());const r=[!!STORE['spaces/'+sp+'/cal/ev_old'],await C1.evaluate(()=>localStorage.getItem('kalenderkoll.data.v1')),await C1.evaluate(()=>EV.some(e=>e.n==='Gammal händelse'))];need(r[0]&&r[1]===null&&r[2],'migrate '+JSON.stringify(r));return r});
+await step('joining with a pasted link asks first',async()=>{await C1.click('#menu');await w(C1,400);await C1.click('#dr_join');await w(C1);await C1.fill('#js_in','hello');await C1.click('#js_ok');await w(C1,200);need(await C1.evaluate(()=>js.classList.contains('on')),'took a bad link');await C1.fill('#js_in','Here: '+invite);await C1.click('#js_ok');await w(C1);need(await C1.evaluate(()=>modal.classList.contains('on')),'did not ask');
+  await Promise.all([C1.waitForNavigation(),C1.click('#m_yes')]);await waitFor(C1,()=>KK.mode==='cloud');need(await waitFor(C1,()=>EV.some(e=>e.n==='Middag ihop')),'not joined');return C1.evaluate(()=>[EV.some(e=>e.n==='Gammal händelse'),ME])});
+const D1=await phone(false);
+await step('without a connection it still works on the phone',async()=>{await D1.goto(base);await waitFor(D1,()=>KK.mode!=='starting');await waitFor(D1,()=>cs.classList.contains('on'));await D1.fill('#cs_a','A');await D1.fill('#cs_b','B');await D1.click('#cs_ok');await w(D1);const r=await D1.evaluate(()=>[KK.mode,!!JSON.parse(localStorage.getItem('kalenderkoll.data.v1')||'{}').cal?.couple,(go('v'),v_inv.textContent.slice(0,25))]);need(r[0]==='local'&&r[1],'local '+r);return r});
+console.log(errs.length?'PAGE ERRORS: '+errs.join(' | '):'no page errors');if(errs.length)fails++;
+await b.close();srv.close();console.log(fails?fails+' failed':'all passed');process.exit(fails?1:0)})();
