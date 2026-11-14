@@ -309,7 +309,7 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 #k_cal,#k_dv,#k_wv{animation:in .32s ease}
 .chk:active,.tog:active{transform:scale(.92)}
 /* Every other day a shade darker, so the days are easier to tell apart. */
-.cgr button.alt{background:color-mix(in srgb,var(--ink) 3.5%,transparent)}.cgr button.alt.s{background:color-mix(in srgb,var(--acc) 13%,transparent)}
+.cgr button{border-radius:7px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 7%,transparent)}.cgr button.s{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--acc) 35%,transparent)}
 /* Three view choices in the top bar. */
 .seg.kv{grid-template-columns:repeat(3,auto)}.seg.kv button{padding:0 9px}
 @media (max-width:459px){.top:has(#k_v:not(.hide)) h1{font-size:22px}.seg.kv button{padding:0 7px;font-size:13px}}
@@ -324,7 +324,7 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 .wvad button{padding:2px 3px;border-radius:6px;white-space:nowrap}.wvad .adl{font-size:9px}
 #wv_body{position:relative;max-height:max(240px,calc(100dvh - 330px - var(--sat) - var(--sab)));overflow-y:auto;margin-top:8px;border-radius:12px;overscroll-behavior:contain}
 .wvb{position:relative;margin-top:8px}.wvg i{left:26px}.wvg s{left:-26px;width:22px;font-size:10px}
-.wvcol{position:relative;height:100%;border-radius:8px;cursor:copy}.wvcol.alt{background:color-mix(in srgb,var(--ink) 3.5%,transparent)}.wvcol.t{background:color-mix(in srgb,var(--acc) 9%,transparent)}
+.wvcol{position:relative;height:100%;border-radius:8px;cursor:copy}.wvcol{border-radius:7px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 7%,transparent)}.wvcol.t{background:color-mix(in srgb,var(--acc) 9%,transparent)}
 .wvev{position:absolute;padding:3px 3px;border-radius:7px;border-left:3px solid var(--c);overflow-wrap:anywhere;cursor:pointer}.wvev.gl{background:color-mix(in srgb,var(--c) 14%,var(--card));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 55%,transparent)}
 .wvcol .nowl{position:absolute;left:0;right:0;z-index:3;height:2px;background:var(--acc);border-radius:2px;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.sky i{animation:none}}
