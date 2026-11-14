@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="e4d402c0d982">
+<meta name="kal-build" content="8cc1fe0b31e7">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -212,13 +212,21 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 .dvev.both.fill{background:color-mix(in srgb,var(--c) 26%,var(--card));border-top:3px solid var(--c)}
 .dvb .nowl{position:absolute;left:44px;right:0;z-index:3;height:2px;background:var(--acc);border-radius:2px;font-style:normal;pointer-events:none}.dvb .nowl::before{content:"";position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--acc)}
 /* Look of an event: style, colour, icon */
+/* The look of an event is folded away behind its preview, so the Add button is never far. */
+.lookrow{display:flex;align-items:center;gap:10px;cursor:pointer}.lookrow .pv{flex:1;min-width:0;margin-top:0}.lookrow>span{flex:none;font-size:14.5px;font-weight:600;color:var(--acc)}
+#es_look{margin-top:10px;padding:12px;border-radius:16px;background:var(--fill)}#es_look .fl:first-child{margin-top:0}#es_look .sw{margin-top:6px}#es_look .ics button{background:var(--card)}#es_look .ics button.on{background:var(--acc)}
+.acts.stick{position:sticky;bottom:-20px;z-index:2;margin:14px -20px -20px;padding:12px 20px 20px;background:linear-gradient(to bottom,transparent,var(--card) 14px)}
+#es_by{font-size:13px;text-align:center;margin-top:16px}
+.nudge{display:flex;flex-direction:column;gap:10px;background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 14%,var(--card)),color-mix(in srgb,var(--pg) 14%,var(--card)))}.nudge p{margin:0}.nudge .row2{display:flex;align-items:center;gap:14px}.nudge .btn{flex:1}
+.tempty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:26px 8px 18px;text-align:center}.tempty svg{width:44px;height:44px;color:var(--acc);opacity:.8}.tempty b{font:500 19px/1.3 var(--serif)}.tempty p{margin:0;font-size:14.5px;color:var(--soft)}.tempty .chips{justify-content:center;margin-top:10px}
+.adl{align-self:center;font-size:10.5px;font-weight:600;color:var(--soft);text-align:right;padding-right:2px}.dvhint{text-align:center;margin:10px 0 0}
 .pv{margin-top:10px}.pv .evr{margin:0;pointer-events:none}
 .sw{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .swt{position:relative;width:34px;height:34px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}.swt.on{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--c)}
 .swt.auto{background:conic-gradient(var(--pa) 0 50%,var(--pb) 0)}.swt.auto.on{box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--soft)}
 .swt.cust{background:conic-gradient(#f2928a,#f3d679,#7dd6b0,#82c3f5,#a996f7,#f5a3c7,#f2928a);cursor:pointer;overflow:hidden}.swt.cust.on{background:var(--c);box-shadow:0 0 0 2px var(--card),0 0 0 4px var(--c)}
 .swt.cust input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0}
-.ics{display:flex;gap:6px;margin-top:12px;overflow-x:auto;padding:2px 2px 4px;scrollbar-width:none}.ics::-webkit-scrollbar{display:none}
+.ics{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
 .ics button{flex:none;display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--fill);color:var(--ink)}.ics button.on{background:var(--acc);color:#fff}.ics .ic,.ics svg{width:20px;height:20px}
 .ics.big{flex-wrap:wrap;overflow:visible;justify-content:center;margin:14px 0 4px}.ics.big button{width:48px;height:48px;border-radius:14px}
 @media (min-width:860px){#k_dv{grid-column:1/-1}.seg.kv{grid-column:1/-1;justify-self:center}#dv_body{max-height:max(280px,calc(100dvh - 270px))}}
@@ -276,9 +284,11 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 .cgr button b{width:28px;height:28px;font-size:14.5px;flex:none}
 .cgr .dic{position:absolute;top:3px;right:1px;height:auto}.cgr .dic .ic{width:11px;height:11px}
 .cev{display:flex;flex-direction:column;gap:2px;width:100%;padding:0 1px;min-width:0}
-.cev u{display:block;text-decoration:none;font-size:9.5px;font-weight:650;line-height:1.25;padding:1.5px 3px;border-radius:5px;background:color-mix(in srgb,var(--c) 38%,var(--card));color:var(--ink);white-space:nowrap;overflow:hidden;text-align:left}
-.cev u.gl{background:color-mix(in srgb,var(--c) 14%,var(--card));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 60%,transparent)}
-.cev em{font-style:normal;font-size:9.5px;font-weight:650;color:var(--soft);text-align:left;padding-left:3px;line-height:1.2}
+/* Event names in a month cell: readable size, and a long name fades out instead of being chopped. */
+.cev u{--bg:color-mix(in srgb,var(--c) 38%,var(--card));position:relative;display:block;text-decoration:none;font-size:10.5px;font-weight:600;letter-spacing:-.01em;line-height:1.3;padding:2px 0 2px 4px;border-radius:6px;background:var(--bg);color:var(--ink);white-space:nowrap;overflow:hidden;text-align:left}
+.cev u::after{content:"";position:absolute;top:0;right:0;bottom:0;width:9px;background:linear-gradient(90deg,transparent,var(--bg) 85%)}
+.cev u.gl{--bg:color-mix(in srgb,var(--c) 14%,var(--card));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 60%,transparent)}
+.cev em{font-style:normal;font-size:10.5px;font-weight:650;color:var(--soft);text-align:left;padding-left:3px;line-height:1.2}
 .cgr .v{place-items:start center;padding-top:11px}
 .cgr .s{background:color-mix(in srgb,var(--acc) 9%,transparent)}
 @media (min-width:560px){.cgr button{min-height:108px}.cev u{font-size:11.5px;padding:2px 5px}.cev em{font-size:11px}}
@@ -301,18 +311,20 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 <div class="pair" id="es_tw"><button type="button" class="field tbtn" id="es_t1" value=""><span></span></button><button type="button" class="field tbtn" id="es_t2" value=""><span></span></button></div>
 <div class="fl" id="es_rl"></div><div class="chips" id="es_r"></div><div class="wds hide" id="es_wd"></div>
 <div id="es_uw"><div class="fl" id="es_ul"></div><button type="button" class="field dbtn" id="es_u" value=""><span></span></button></div>
-<div class="fl" id="es_sl"></div><div class="seg" id="es_st"></div><div class="pv" id="es_pv"></div>
-<div class="sw" id="es_c"></div>
-<div class="ics" id="es_ic"></div>
-<div class="fl" id="es_fl"></div><div class="fxs" id="es_fx"></div>
+<div class="fl" id="es_sl"></div><div class="lookrow" id="es_lk" role="button" tabindex="0"><div class="pv" id="es_pv"></div><span id="es_lkt"></span></div>
+<div id="es_look" class="hide"><div class="seg" id="es_st"></div>
+<div class="fl" id="es_cl"></div><div class="sw" id="es_c"></div>
+<div class="fl" id="es_il"></div><div class="ics" id="es_ic"></div>
+<div class="fl" id="es_fl"></div><div class="fxs" id="es_fx"></div></div>
 <button type="button" class="more" id="es_more"></button>
 <div id="es_extra" class="hide">
 <div id="es_ew"><div class="fl" id="es_el"></div><button type="button" class="field dbtn" id="es_e" value=""><span></span></button></div>
 <div class="fl" id="es_pl"></div><input id="es_p" class="field" type="text" maxlength="80" autocomplete="off">
 <div class="fl" id="es_ol"></div><textarea id="es_o" class="field" rows="3" maxlength="600"></textarea>
 </div>
-<div class="acts"><button class="btn" id="es_ok"></button></div>
-<div class="links"><button class="lnk hide" id="es_ics"></button><button class="lnk bad hide" id="es_del"></button></div></div></div>
+<p class="muted hide" id="es_by"></p>
+<div class="links"><button class="lnk hide" id="es_ics"></button><button class="lnk bad hide" id="es_del"></button></div>
+<div class="acts stick"><button class="btn" id="es_ok"></button></div></div></div>
 
 <div id="bs" class="sh" role="dialog" aria-modal="true" aria-labelledby="bs_t"><div class="box"><div class="bh"><b id="bs_t"></b><button class="ib" id="bs_x" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
 <input id="bs_n" class="big-in" type="text" maxlength="60" autocomplete="off">
@@ -344,7 +356,7 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 <div id="scrim"></div>
 <aside id="drawer" aria-label="Meny"><div class="dbrand"><span><b>Kalenderkoll</b><small id="dr_sub"></small></span></div>
 <button class="di" id="dr_inv" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.5"/><path d="M3 19.5c.7-3.3 3.2-5 6-5s5.3 1.7 6 5M18.5 8v6M15.5 11h6"/></svg><span></span></button>
-<button class="di hide" id="dr_join" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg><span></span></button>
+<button class="di hide" id="dr_join" hidden type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg><span></span></button>
 <button class="di" id="dr_names" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg><span></span></button>
 <button class="di" id="dr_ics" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.5 15.5 12 18l2.5-2.5"/></svg><span></span></button>
 <button class="di dset" data-go="c" id="dr_set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h2M11 17h9"/><circle cx="15.5" cy="7" r="2.5"/><circle cx="8.5" cy="17" r="2.5"/></svg><span></span></button>
@@ -354,6 +366,7 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 
 <section id="h">
 <div class="hello"><p class="eyebrow" id="h_date"></p><h2 id="h_hi"></h2></div>
+<div class="card nudge hide" id="h_inv"></div>
 <div class="card" id="h_next"><p class="eyebrow" id="h_lbl"></p><div class="big" id="h_big"></div><p class="muted" id="h_sub"></p></div>
 <div class="card" id="h_wk"><div class="wstrip" id="h_strip"></div></div>
 <div class="card" id="h_today"><div class="ch"><h3 id="ht_t"></h3></div><div id="ht_list"></div></div>
@@ -383,7 +396,8 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 <div class="srow"><span id="c_lgl"></span><div class="seg" id="c_lg"></div></div>
 <div class="srow"><span id="c_wnl"></span><div class="seg" id="c_wn"></div></div>
 <div class="srow"><span id="c_hol"></span><div class="seg" id="c_ho"></div></div></div>
-<div class="card set"><h3 id="c_h2"></h3><p class="muted" id="c_st"></p><p class="muted" id="c_bk"></p><div id="c_bkb"></div><button class="btn ghost wide" id="ics_out"></button><button class="btn ghost wide bad" id="reset"></button></div>
+<div class="card set"><h3 id="c_h2"></h3><p class="muted" id="c_st"></p><p class="muted" id="c_bk"></p><div id="c_bkb"></div><button class="btn ghost wide" id="ics_out"></button></div>
+<div class="card set"><h3 id="c_h3"></h3><p class="muted" id="c_rs"></p><button class="lnk bad" id="reset" style="margin-top:8px"></button></div>
 </section>
 </main>
 <nav><button data-go="h"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19z"/><path d="M9.5 20.5v-5h5v5"/></svg><em data-i="nH"></em></button><button data-go="k"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><em data-i="nK"></em></button><button data-go="t"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="m8.5 12.2 2.4 2.4 4.6-5"/></svg><em data-i="nT"></em></button><button data-go="v"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg><em data-i="nV"></em></button></nav>
@@ -531,7 +545,7 @@ const PEND=new Map();
 function later(key,fn,ms){const old=PEND.get(key);if(old)clearTimeout(old.t);PEND.set(key,{fn,t:setTimeout(()=>{PEND.delete(key);fn()},ms)})}
 function flushSaves(){PEND.forEach(e=>{clearTimeout(e.t);e.fn()});PEND.clear()}
 addEventListener("pagehide",flushSaves);document.addEventListener("visibilitychange",()=>{if(document.hidden)flushSaves()});
-const evDoc=e=>({kind:"ev",id:e.id,n:e.n,d:e.d,e:e.e||"",t:e.t||"",t2:e.t2||"",r:e.r||"o",u:e.u||"",skip:e.skip||[],pl:e.pl||"",o:e.o||"",w:["a","b","g"].includes(e.w)?e.w:"g",col:/^#[0-9a-f]{6}$/i.test(e.col||"")?e.col:"",st:e.st==="glass"?"glass":"fill",ic:ICONS[e.ic]?e.ic:"",fx:fxCls(e.fx)?e.fx:"",wd:e.r==="w"&&Array.isArray(e.wd)?e.wd:[]});
+const evDoc=e=>({kind:"ev",id:e.id,n:e.n,d:e.d,e:e.e||"",t:e.t||"",t2:e.t2||"",r:e.r||"o",u:e.u||"",skip:e.skip||[],pl:e.pl||"",o:e.o||"",w:["a","b","g"].includes(e.w)?e.w:"g",col:/^#[0-9a-f]{6}$/i.test(e.col||"")?e.col:"",st:e.st==="glass"?"glass":"fill",ic:ICONS[e.ic]?e.ic:"",fx:fxCls(e.fx)?e.fx:"",wd:e.r==="w"&&Array.isArray(e.wd)?e.wd:[],by:e.by==="a"||e.by==="b"?e.by:"",at:+e.at||0});
 const bdDoc=b=>({kind:"bd",id:b.id,n:b.n,md:b.md,y:b.y||0,ty:b.ty||"b"});
 const todoDoc=x=>({kind:"todo",id:x.id,n:x.n,w:x.w||"g",done:!!x.done,at:x.at||0,dt:x.dt||0});
 const noteDoc=x=>({kind:"note",id:x.id,f:x.f,txt:x.txt,at:x.at});
@@ -579,6 +593,7 @@ function dayRows(n){const h=S.hol?holOn(n):null;return (h?holRow(h):"")+bdOn(n).
 const nextUp=()=>{const now=Date.now(),n=todayN();return between(n,n+180).find(o=>o.e.t?endMs(o)>now:o.s>n)||null};
 function renderHome(){const n=todayN(),now=Date.now(),o=nextUp(),big=$("h_big");
   $("h_date").textContent=tx("Vecka ","Week ")+isoWeek(n);$("h_hi").textContent=cap(fmtDay(n));big.classList.remove("word");
+  {let off=false;try{off=localStorage.getItem("kalenderkoll.nudge")==="0"}catch(e){}const show=LOCAL&&SHARED()&&!!ME&&!!CP[ME]&&!joined()&&!off;$("h_inv").classList.toggle("hide",!show);if(show)$("h_inv").innerHTML=`<h3>${tx("Bjud in din partner","Invite your partner")}</h3><p class="muted">${tx("Skicka en länk, så ser ni samma kalender på båda telefonerna.","Send a link and you both see the same calendar on your phones.")}</p><div class="row2"><button class="btn" data-share>${tx("Skicka inbjudan","Send the invite")}</button><button class="lnk" data-nudgex>${tx("Inte nu","Not now")}</button></div>`}
   if(!o){$("h_lbl").textContent=tx("Härnäst","Next");big.textContent=tx("Inget planerat","Nothing planned");big.classList.add("word");$("h_sub").textContent=tx("Lägg till något under Kalender.","Add something under Calendar.")}
   else{const e=o.e,mins=Math.round((startMs(o)-now)/6e4),who=" · "+((e.w||"g")==="g"?tx("Ni båda","Both of you"):pname(e.w));
     if(live(o)){$("h_lbl").textContent=tx("Pågår nu","Now");big.textContent=e.n;big.classList.add("word");$("h_sub").textContent=(e.t2?tx("Till ","Until ")+e.t2:"")+who}
@@ -623,7 +638,8 @@ function renderDayView(){const n=SEL,L=onDay(n),timed=L.filter(o=>o.e.t&&o.s===n
   const allDay=w=>all.filter(o=>(o.e.w||"g")===w||(o.e.w||"g")==="g").map(o=>`<button class="dvall${fxCls(o.e.fx)}" data-ev="${esc(o.e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(o.e)}">${o.e.ic?icon(o.e.ic):""}<span>${esc(o.e.n)}</span></button>`).join("");
   const bd=bdOn(n).map(b=>`<button class="dvall" data-bd="${esc(b.id)}" style="--c:var(--acc)">${icon("cake")}<span>${esc(bdText(b,n))}</span></button>`).join("");
   let h=`<div class="dvh"><span></span><b class="pa">${ava("a")}${esc(pname("a"))}</b><b class="pb">${ava("b")}${esc(pname("b"))}</b></div>`;
-  const ad=[allDay("a"),allDay("b")];if(ad[0]||ad[1]||bd||hol)h+=`<div class="dvad">${hol||bd?`<div class="dvfull">${hol?`<span class="hol${hol[3]?" red":""}">${esc(hol[1+li()])}</span>`:""}${bd}</div>`:""}<span></span><div>${ad[0]}</div><div>${ad[1]}</div></div>`;
+  const ad=[allDay("a"),allDay("b")];if(ad[0]||ad[1]||bd||hol)h+=`<div class="dvad">${hol||bd?`<div class="dvfull">${hol?`<span class="hol${hol[3]?" red":""}">${esc(hol[1+li()])}</span>`:""}${bd}</div>`:""}<span class="adl">${tx("Heldag","All day")}</span><div>${ad[0]}</div><div>${ad[1]}</div></div>`;
+  if(!L.length&&!bd&&!hol)h+=`<p class="muted dvhint">${tx("Inget planerat. Tryck på en tid för att lägga till.","Nothing planned. Tap a time to add something.")}</p>`;
   $("dv_head").innerHTML=h;h="";
   h+=`<div class="dvb" style="height:${(h1-h0)*HPX}px"><div class="dvg">`;for(let k=h0;k<h1;k++)h+=`<i style="top:${(k-h0)*HPX}px"><s>${pad(k)}:00</s></i>`;h+=`</div>`;
   h+=`<div class="dvcol pa" data-slot="a" data-h0="${h0}">${col("a")}</div><div class="dvcol pb" data-slot="b" data-h0="${h0}">${col("b")}</div>`;
@@ -641,7 +657,7 @@ let TDOPEN=false;
 function renderTodo(){const cnt=w=>TODOS.filter(x=>x.w===w&&!x.done).length;
   $("t_seg").innerHTML=["g","a","b"].map(w=>`<button class="${TF===w?"on":""}" data-tf="${w}"><span>${esc(w==="g"?tx("Båda","Both"):pname(w))}</span>${cnt(w)?`<small>${cnt(w)}</small>`:""}</button>`).join("");
   const ae=document.activeElement,typing=ae&&ae.dataset&&ae.dataset.tn&&$("t_list").contains(ae),open=TODOS.filter(x=>x.w===TF&&!x.done).sort((a,b)=>a.at-b.at),done=TODOS.filter(x=>x.w===TF&&x.done).sort((a,b)=>(b.dt||0)-(a.dt||0));
-  if(!typing)$("t_list").innerHTML=open.length?open.map(x=>todoRow(x)).join(""):`<p class="empty" style="margin:12px 2px">${tx("Inget att göra här.","Nothing to do here.")}</p>`;
+  if(!typing)$("t_list").innerHTML=open.length?open.map(x=>todoRow(x)).join(""):`<div class="tempty"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="m8.5 12.2 2.4 2.4 4.6-5"/></svg><b>${done.length?tx("Allt klart!","All done!"):tx("Inget på listan än","Nothing on the list yet")}</b><p>${TF==="g"?tx("Skriv något ni ska göra, eller börja med ett förslag.","Write something to do together, or start with a suggestion."):tx(`Skriv något för ${esc(pname(TF))}, eller börja med ett förslag.`,`Write something for ${esc(pname(TF))}, or start with a suggestion.`)}</p><div class="chips">${(li()?["Buy groceries","Plan the weekend","Book laundry time"]:["Handla mat","Planera helgen","Boka tvättid"]).map(x=>`<button type="button" class="chip" data-tsug="${x}">＋ ${x}</button>`).join("")}</div></div>`;
   $("t_q").placeholder=TF==="g"?tx("Något ni ska göra…","Something to do together…"):tx(`Något för ${pname(TF)}…`,`Something for ${pname(TF)}…`);$("t_add").setAttribute("aria-label",tx("Lägg till","Add"));
   $("t_done").innerHTML=done.length?`<details class="tdone"${TDOPEN?" open":""}><summary>${tx("Klara","Done")} (${done.length})</summary>${done.map(x=>todoRow(x)).join("")}<button class="lnk" id="t_clear">${tx("Rensa klara","Clear done")}</button></details>`:""}
 document.addEventListener("toggle",e=>{if(e.target.classList&&e.target.classList.contains("tdone"))TDOPEN=e.target.open},true);
@@ -663,6 +679,7 @@ function renderUs(){const dt=togetherDays(),an=annNext(),n=todayN();
   else if(LOCAL)inv=`<h3>${tx(`Bjud in ${esc(p)}`,`Invite ${esc(p)}`)}</h3><ol><li>${tx(`Skicka länken till ${esc(p)}.`,`Send the link to ${esc(p)}.`)}</li><li>${tx(`${esc(p)} öppnar den på sin telefon och väljer sitt namn.`,`${esc(p)} opens it on their phone and picks their name.`)}</li><li>${tx("Sedan ser ni samma kalender, och ändringar syns direkt.","Then you see the same calendar, and changes show up right away.")}</li></ol><button class="btn wide" id="v_share">${tx("Skicka inbjudan","Send the invite")}</button><p class="muted" style="margin-top:10px">${tx(`Har ${esc(p)} redan appen? Öppna den, tryck på menyn och välj Gå med med länk. Du får en notis när ${esc(p)} har gått med.`,`Does ${esc(p)} already have the app? Open it, tap the menu and choose Join with a link. You get a notification when ${esc(p)} has joined.`)}</p>`;
   else if(joined())inv=`<div class="ok">${IOK}<span>${tx(`Ni är båda med. Allt ni lägger in syns hos den andra.`,`You are both in. Everything you add shows up for the other.`)}</span></div>`;
   else inv=`<h3>${tx(`Bjud in ${p}`,`Invite ${p}`)}</h3><ol><li>${tx("Tryck på <b>Dela</b> för den här sidan i Claude.","Tap <b>Share</b> for this page in Claude.")}</li><li>${tx(`Lägg till ${esc(p)}s e-post och låt hen <b>redigera</b>.`,`Add ${esc(p)}'s email and let them <b>edit</b>.`)}</li><li>${tx(`Skicka länken. ${esc(p)} öppnar den i Claude-appen på telefonen och väljer sitt namn.`,`Send the link. ${esc(p)} opens it in the Claude app on their phone and picks their name.`)}</li></ol><button class="btn ghost wide" id="v_copy">${tx("Kopiera länken","Copy the link")}</button><p class="muted hide" id="v_link" style="user-select:all;word-break:break-all">${ART_URL}</p>`;
+  if(LOCAL)inv+=`<button class="lnk wide" data-join>${joined()?tx("Gå med i en annan kalender","Join another calendar"):tx("Har du fått en länk? Gå med","Got a link? Join")}</button>`;
   $("v_inv").className="card inv";$("v_inv").innerHTML=inv;
   $("v_lh").textContent=tx("Lappar","Notes");$("v_ladd").textContent=tx("＋ Skriv","＋ Write");
   const N=[...NOTES].sort((a,b)=>b.at-a.at).slice(0,6);
@@ -681,12 +698,12 @@ function renderSettings(){
   $("c_wn").innerHTML=segOf("wn",[["1",tx("Visa","Show")],["0",tx("Dölj","Hide")]],S.wkno?1:0);$("c_ho").innerHTML=segOf("ho",[["1",tx("Visa","Show")],["0",tx("Dölj","Hide")]],S.hol?1:0);
   $("c_h2").textContent=tx("Er data","Your data");$("c_st").textContent=!col?tx("Inte ansluten: inget sparas när sidan stängs.","Not connected: nothing is saved when the page closes."):!SHARED()?tx("Allt sparas bara på den här telefonen.","Everything is saved on this phone only."):tx("Kalendern är delad. Ändringar syns direkt hos den andra.","The calendar is shared. Changes show up for the other right away.");
   $("c_bk").classList.toggle("hide",!LOCAL);$("c_bk").textContent=NATIVE()?tx("En säkerhetskopia sparas automatiskt i Dokument › Kalenderkoll på telefonen. Om du installerar om appen trycker du på Återställ och väljer filen.","A backup is saved automatically in Documents › Kalenderkoll on the phone. If you reinstall the app, tap Restore and pick the file.")+(bkLast()?" "+tx("Senast sparad ","Last saved ")+bkLast()+".":""):tx("Spara en säkerhetskopia ibland. Om du byter telefon eller installerar om appen kan du hämta tillbaka allt från filen.","Save a backup now and then. If you change phones or reinstall the app, you can bring everything back from the file.");
-  $("c_bkb").innerHTML=`<button class="btn wide" id="bk_save">${tx("Spara säkerhetskopia","Save a backup")}</button>`+(LOCAL?`<button class="btn ghost wide" id="bk_load">${tx("Återställ från säkerhetskopia","Restore from a backup")}</button>`:"");$("ics_out").textContent=tx("Spara som .ics (till telefonens kalender)","Save as .ics (for your phone's calendar)");$("reset").textContent=tx("Radera allt","Delete everything")}
+  $("c_bkb").innerHTML=`<button class="btn wide" id="bk_save">${tx("Spara säkerhetskopia","Save a backup")}</button>`+(LOCAL?`<button class="btn ghost wide" id="bk_load">${tx("Återställ från säkerhetskopia","Restore from a backup")}</button>`:"");$("ics_out").textContent=tx("Exportera till telefonens kalender","Export to your phone's calendar");$("c_h3").textContent=tx("Börja om","Start over");$("c_rs").textContent=tx("Tar bort alla händelser, uppgifter och lappar för er båda. Det går inte att ångra.","Removes all events, tasks and notes for both of you. This cannot be undone.");$("reset").textContent=tx("Radera allt","Delete everything")}
 
 /* ---------- Side menu ---------- */
 function renderDrawer(){$("dr_sub").textContent=CP.a&&CP.b?CP.a+" ♥ "+CP.b:tx("Er gemensamma kalender","Your shared calendar");
-  $("dr_join").classList.toggle("hide",!LOCAL);$("dr_join").lastElementChild.textContent=tx("Gå med med länk","Join with a link");$("dr_inv").lastElementChild.textContent=LOCAL&&!SHARED()?tx("Dela med varandra","Share with each other"):joined()?tx("Ansluten till ","Connected to ")+pname(other(me())):tx("Bjud in din partner","Invite your partner");$("dr_names").lastElementChild.textContent=tx("Din profil","Your profile");
-  $("dr_set").lastElementChild.textContent=t("ttlC");$("dr_ics").lastElementChild.textContent=tx("Spara som .ics","Save as .ics");
+  $("dr_join").lastElementChild.textContent=tx("Gå med med länk","Join with a link");$("dr_inv").lastElementChild.textContent=LOCAL&&!SHARED()?tx("Dela med varandra","Share with each other"):joined()?tx("Ansluten till ","Connected to ")+pname(other(me())):tx("Dela kalendern med din partner","Share the calendar with your partner");$("dr_names").lastElementChild.textContent=tx("Din profil","Your profile");
+  $("dr_set").lastElementChild.textContent=t("ttlC");$("dr_ics").lastElementChild.textContent=tx("Exportera till telefonens kalender","Export to your phone's calendar");
   $("dr_lang").innerHTML=[["sv","🇸🇪","Svenska"],["en","🇬🇧","English"]].map(([v,f,l])=>`<button class="${S.lang===v?"on":""}" data-lg="${v}" aria-label="${l}" title="${l}" aria-pressed="${S.lang===v}">${f}</button>`).join("")}
 const openDrawer=()=>{$("drawer").classList.add("on");$("scrim").classList.add("on")},closeDrawer=()=>{$("drawer").classList.remove("on");$("scrim").classList.remove("on")};
 
@@ -750,16 +767,16 @@ function paintES(){const c=ES.col||pvar(ES.w),dd=ymd(dn($("es_d").value))[2],wdn
 $("es_w").innerHTML=["g","a","b"].map(w=>`<button type="button" class="${ES.w===w?"on":""}" data-esw="${w}">${ava(w)}<span>${esc(w==="g"?tx("Båda","Both"):pname(w))}</span></button>`).join("");
   $("es_ad").textContent=tx("Heldag","All day");$("es_ad").classList.toggle("on",ES.ad);$("es_tw").classList.toggle("hide",ES.ad);
   $("es_r").innerHTML=(REPS.some(x=>x[0]===ES.r)?REPS:[...REPS,REPALL.find(x=>x[0]===ES.r)]).map(([v,a,b])=>`<button type="button" class="chip ${ES.r===v?"on":""}" data-esr="${v}">${li()?b:a}</button>`).join("");
-  $("es_uw").classList.toggle("hide",ES.r==="o");$("es_ew").classList.toggle("hide",ES.r!=="o");$("es_extra").classList.toggle("hide",!ES.more);$("es_more").classList.toggle("hide",ES.more);$("es_more").textContent=ES.r==="o"?tx("＋ Flera dagar, plats och anteckning","＋ Several days, place and note"):tx("＋ Plats och anteckning","＋ Place and note")}
+  $("es_look").classList.toggle("hide",!ES.look);$("es_lkt").textContent=ES.look?tx("Klar","Done"):tx("Ändra","Change");$("es_cl").textContent=tx("Färg","Colour");$("es_il").textContent=tx("Ikon","Icon");$("es_uw").classList.toggle("hide",ES.r==="o");$("es_ew").classList.toggle("hide",ES.r!=="o");$("es_extra").classList.toggle("hide",!ES.more);$("es_more").classList.toggle("hide",ES.more);$("es_more").textContent=ES.r==="o"?tx("＋ Flera dagar, plats och anteckning","＋ Several days, place and note"):tx("＋ Plats och anteckning","＋ Place and note")}
 function openES(id,on,pre){const e=id?EV.find(z=>z.id===id):null;if(id&&!e)return;pre=pre||{};const n=todayN(),d=pre.d||nd(tab==="k"?SEL:n),nh=new Date().getHours()+1;
   const t1=e?e.t:pre.t||pad(dn(d)===n&&nh>=7&&nh<=22?nh:18)+":00";
   ES={id:e?e.id:null,on:e?(on||e.d):null,ad:e?!e.t:!!pre.ad,r:e?e.r||"o":"o",w:e?e.w||"g":pre.w||"g",col:e?e.col||"":pre.col||"",st:e?e.st||"fill":pre.st||"fill",ic:e?e.ic||"":pre.ic||"",fx:e?e.fx||"":"",wd:e&&e.r==="w"&&e.wd&&e.wd.length?[...e.wd]:[],more:!!(e&&(e.e||e.u||e.pl||e.o))};
   const sd=e?ES.on:d,dur=e?evDur(e):0;
-  $("es_t").textContent=e?tx("Ändra","Edit"):tx("Ny händelse","New event");$("es_wl").textContent=tx("Vems","Whose");$("es_sl").textContent=tx("Utseende","Look");$("es_fl").textContent=tx("Effekt (syns runt händelsen och runt dagen)","Effect (shows around the event and the day)");$("es_dl").textContent=tx("När","When");$("es_rl").textContent=tx("Upprepa","Repeat");$("es_el").textContent=tx("Pågår flera dagar? Sista dagen","Lasts several days? The last day");$("es_ul").textContent=tx("Upprepa till och med","Repeat until");$("es_pl").textContent=tx("Plats","Place");$("es_ol").textContent=tx("Anteckning","Note");
+  $("es_t").textContent=e?tx("Ändra","Edit"):tx("Ny händelse","New event");$("es_wl").textContent=tx("Vems","Whose");$("es_sl").textContent=tx("Utseende","Look");$("es_fl").textContent=tx("Effekt","Effect");$("es_dl").textContent=tx("När","When");$("es_rl").textContent=tx("Upprepa","Repeat");$("es_el").textContent=tx("Pågår flera dagar? Sista dagen","Lasts several days? The last day");$("es_ul").textContent=tx("Upprepa till och med","Repeat until");$("es_pl").textContent=tx("Plats","Place");$("es_ol").textContent=tx("Anteckning","Note");
   $("es_d").dataset.req="1";$("es_e").dataset.ph=tx("Samma dag","Same day");$("es_u").dataset.ph=tx("Tills vidare","Until further notice");$("es_t1").dataset.ph=tx("Börjar","Starts");$("es_t2").dataset.ph=tx("Slutar","Ends");
   $("es_n").value=e?e.n:pre.n||"";$("es_d").value=sd;$("es_e").value=dur?nd(dn(sd)+dur):"";$("es_e").dataset.base=$("es_u").dataset.base=sd;$("es_u").value=e?e.u||"":"";$("es_t1").value=e?e.t||"":t1;$("es_t2").value=e?e.t2||"":(t1?addMin(t1,60):"");$("es_p").value=e?e.pl||"":"";$("es_o").value=e?e.o||"":"";
   document.querySelectorAll("#es .tbtn").forEach(tpLabel);document.querySelectorAll("#es .dbtn").forEach(dpLabel);
-  $("es_ok").textContent=e?tx("Spara","Save"):tx("Lägg till","Add");$("es_del").textContent=tx("Ta bort","Delete");$("es_ics").textContent=tx("Lägg i telefonens kalender","Add to your phone's calendar");$("es_del").classList.toggle("hide",!e);$("es_ics").classList.toggle("hide",!e);
+  $("es_ok").textContent=e?tx("Spara","Save"):tx("Lägg till","Add");$("es_del").textContent=tx("Ta bort","Delete");$("es_ics").textContent=tx("Exportera till telefonens kalender","Export to your phone's calendar");$("es_by").classList.toggle("hide",!(e&&e.by&&e.at));if(e&&e.by&&e.at)$("es_by").textContent=tx("Tillagd av ","Added by ")+pname(e.by)+" · "+fmtD(dnOf(new Date(e.at)),{day:"numeric",month:"short"});$("es_del").classList.toggle("hide",!e);$("es_ics").classList.toggle("hide",!e);
   paintES();$("es").classList.add("on");$("es").querySelector(".box").scrollTop=0;if(!e&&!pre.n)setTimeout(()=>$("es_n").focus(),60)}
 const closeES=()=>{$("es").classList.remove("on");ES=null};
 $("es_x").onclick=closeES;
@@ -767,14 +784,14 @@ $("es").addEventListener("click",e=>{if(e.target===$("es"))return closeES();if(!
   if(g("#es_ad")){ES.ad=!ES.ad;if(!ES.ad&&!$("es_t1").value){$("es_t1").value="18:00";$("es_t2").value="19:00";tpLabel($("es_t1"));tpLabel($("es_t2"))}paintES();return}
   if(b=g("[data-esw]")){ES.w=b.dataset.esw;paintES();return}if(b=g("[data-est]")){ES.st=b.dataset.est;paintES();return}if(b=g("[data-esc]")){ES.col=b.dataset.esc;paintES();return}if(b=g("[data-esfx]")){ES.fx=b.dataset.esfx;paintES();return}if(b=g("[data-eswd]")){const i=+b.dataset.eswd;if(i===wdOf(dn($("es_d").value))){toast(tx("Dagen du valde som datum är alltid med","The day you picked as the date is always included"));return}ES.wd=esWd().includes(i)?esWd().filter(x=>x!==i):[...esWd(),i];paintES();return}if(b=g("[data-esi]")){ES.ic=b.dataset.esi;paintES();return}if(b=g("[data-esr]")){ES.r=b.dataset.esr;
     /* A repeating event has a last time instead of an end date, so a date picked as the end moves there. */
-    if(ES.r!=="o"&&$("es_e").value){if(!$("es_u").value){$("es_u").value=$("es_e").value;dpLabel($("es_u"))}$("es_e").value="";dpLabel($("es_e"))}paintES();return}if(g("#es_more")){ES.more=true;paintES();return}});
+    if(ES.r!=="o"&&$("es_e").value){if(!$("es_u").value){$("es_u").value=$("es_e").value;dpLabel($("es_u"))}$("es_e").value="";dpLabel($("es_e"))}paintES();return}if(g("#es_more")){ES.more=true;paintES();return}if(g("#es_lk")){ES.look=!ES.look;paintES();return}});
 $("es_d").addEventListener("change",()=>{if(ES){if(ES.wd.length<=1)ES.wd=[];paintES()}$("es_e").dataset.base=$("es_u").dataset.base=$("es_d").value;if($("es_e").value&&$("es_e").value<$("es_d").value){$("es_e").value="";dpLabel($("es_e"))}});
 const shiftIso=(iso,k)=>iso?nd(dn(iso)+k):"";
 function esVals(){const d=$("es_d").value,e=$("es_e").value,u=$("es_u").value;return{n:$("es_n").value.trim(),d,e:ES.r==="o"&&e&&e>d?e:"",t:ES.ad?"":$("es_t1").value,t2:ES.ad?"":$("es_t2").value,r:ES.r,u:ES.r!=="o"&&u&&u>=d?u:"",pl:$("es_p").value.trim(),o:$("es_o").value.trim(),w:ES.w,col:ES.col,st:ES.st,ic:ES.ic,fx:ES.fx,wd:ES.r==="w"?esWd():[]}}
 function saved(e,n,isNew){toast((isNew?tx("Tillagd","Added"):tx("Sparad","Saved"))+" · "+e.n+", "+relDay(n).toLowerCase()+(e.t?" "+e.t:""));if(tab==="k")pickDay(n);render()}
 $("es_ok").onclick=async()=>{if(!ES)return;const v=esVals();if(!v.n){$("es_n").focus();toast(tx("Skriv vad det är först","Write what it is first"));return}if(!ES.ad&&!v.t){toast(tx("Välj en tid, eller Heldag","Pick a time, or All day"));return}
   const old=ES.id&&EV.find(z=>z.id===ES.id),on=ES.on;
-  if(!old){const e={id:newId(),skip:[],...v};saveEv(e);closeES();saved(e,dn(v.d),true);return}
+  if(!old){const e={id:newId(),skip:[],...v,by:ME||"",at:Date.now()};saveEv(e);closeES();saved(e,dn(v.d),true);return}
   const cur={n:old.n,d:on,e:evDur(old)?shiftIso(on,evDur(old)):"",t:old.t||"",t2:old.t2||"",r:old.r||"o",u:old.u||"",pl:old.pl||"",o:old.o||"",w:old.w||"g",col:old.col||"",st:old.st||"fill",ic:old.ic||"",fx:old.fx||"",wd:old.r==="w"?[...new Set([...(old.wd||[]),wdOf(dn(on))])].sort():[]};
   if(JSON.stringify(cur)===JSON.stringify(v)){closeES();return}
   let sc="all";if((old.r||"o")!=="o"){sc=await askOpts(old.n,tx("Det här upprepas. Vad vill du ändra?","This repeats. What do you want to change?"),scopeOpts(on,false));if(!sc)return}
@@ -941,7 +958,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
       if(d.id==="plan"){if(!PEND.has("plan")){if(typeof v.wkno==="boolean")S.wkno=v.wkno;if(typeof v.hol==="boolean")S.hol=v.hol}}
       else if(d.id==="couple")cp={a:String(v.a||""),b:String(v.b||""),ua:String(v.ua||""),ub:String(v.ub||""),since:iso(v.since)?v.since:"",ca:String(v.ca||""),cb:String(v.cb||"")};
       else if(v.kind==="pic"&&(v.w==="a"||v.w==="b")&&okPic(v.img))PICS[v.w]=v.img;
-      else if(v.kind==="ev"&&iso(v.d))EV.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),d:v.d,e:iso(v.e)&&v.e>v.d&&(v.r||"o")==="o"?v.e:"",t:/^\d\d:\d\d$/.test(v.t||"")?v.t:"",t2:/^\d\d:\d\d$/.test(v.t2||"")?v.t2:"",r:["o","d","wd","w","2w","m","y"].includes(v.r)?v.r:"o",u:iso(v.u)?v.u:(iso(v.e)&&v.e>v.d&&v.r&&v.r!=="o"?v.e:""),skip:Array.isArray(v.skip)?v.skip.filter(x=>typeof x==="string"):[],pl:String(v.pl||""),o:String(v.o||""),w:["a","b","g"].includes(v.w)?v.w:"g",col:/^#[0-9a-f]{6}$/i.test(v.col||"")?v.col:"",st:v.st==="glass"?"glass":"fill",ic:ICONS[v.ic]?v.ic:"",fx:fxCls(v.fx)?v.fx:"",wd:Array.isArray(v.wd)?[...new Set(v.wd.filter(x=>Number.isInteger(x)&&x>=0&&x<7))].sort():[]});
+      else if(v.kind==="ev"&&iso(v.d))EV.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),d:v.d,e:iso(v.e)&&v.e>v.d&&(v.r||"o")==="o"?v.e:"",t:/^\d\d:\d\d$/.test(v.t||"")?v.t:"",t2:/^\d\d:\d\d$/.test(v.t2||"")?v.t2:"",r:["o","d","wd","w","2w","m","y"].includes(v.r)?v.r:"o",u:iso(v.u)?v.u:(iso(v.e)&&v.e>v.d&&v.r&&v.r!=="o"?v.e:""),skip:Array.isArray(v.skip)?v.skip.filter(x=>typeof x==="string"):[],pl:String(v.pl||""),o:String(v.o||""),w:["a","b","g"].includes(v.w)?v.w:"g",col:/^#[0-9a-f]{6}$/i.test(v.col||"")?v.col:"",st:v.st==="glass"?"glass":"fill",ic:ICONS[v.ic]?v.ic:"",fx:fxCls(v.fx)?v.fx:"",wd:Array.isArray(v.wd)?[...new Set(v.wd.filter(x=>Number.isInteger(x)&&x>=0&&x<7))].sort():[],by:v.by==="a"||v.by==="b"?v.by:"",at:+v.at||0});
       else if(v.kind==="day"&&iso(v.d)&&ICONS[v.ic])DAYS[v.d]={ic:v.ic};
       else if(v.kind==="bd"&&/^\d\d-\d\d$/.test(v.md||""))BD.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),md:v.md,y:+v.y||0,ty:["b","a","o"].includes(v.ty)?v.ty:"b"});
       else if(v.kind==="todo"){const id=String(v.id||d.id.slice(5)),ae=document.activeElement,typing=ae&&ae.dataset&&ae.dataset.tn===id||PEND.has("todo_"+id);TODOS.push(typing&&prevT.find(z=>z.id===id)||{id,n:String(v.n||""),w:["a","b","g"].includes(v.w)?v.w:"g",done:!!v.done,at:+v.at||0,dt:+v.dt||0})}
@@ -963,7 +980,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
 async function shareInvite(){askNotify();const url=KK.inviteUrl(),p=pname(other(me())),text=tx(`Hej ${p}! Gå med i vår gemensamma kalender:`,`Hi ${p}! Join our shared calendar:`);
   if(navigator.share){try{await navigator.share({title:"Kalenderkoll",text,url});return}catch(e){if(e&&e.name==="AbortError")return}}
   try{await navigator.clipboard.writeText(url);toast(tx("Länken är kopierad","The link is copied")+" · "+tx(`Klistra in den i ett meddelande till ${p}`,`Paste it into a message to ${p}`),5000)}catch(e){openJS(url)}}
-document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#v_share")){shareInvite()}});
+document.addEventListener("click",e=>{if(!e.target.closest)return;if(e.target.closest("#v_share,[data-share]"))shareInvite();else if(e.target.closest("[data-join]"))openJS("");else if(e.target.closest("[data-nudgex]")){try{localStorage.setItem("kalenderkoll.nudge","0")}catch(err){}renderHome()}else{const s=e.target.closest("[data-tsug]");if(s){saveTodo({id:newId(),n:s.dataset.tsug,w:TF,done:false,at:Date.now()});renderTodo();renderHome()}}});
 $("dr_join").onclick=()=>{closeDrawer();openJS("")};
 function openJS(show){$("js_t").textContent=show?tx("Din inbjudningslänk","Your invite link"):tx("Gå med i en kalender","Join a calendar");$("js_p").textContent=show?tx("Kopiera länken och skicka den till din partner.","Copy the link and send it to your partner."):tx("Klistra in länken du har fått. Kalendern på den här telefonen byts mot er gemensamma.","Paste the link you got. The calendar on this phone is replaced by your shared one.");
   $("js_in").value=show||"";$("js_in").readOnly=!!show;$("js_ok").textContent=show?tx("Klar","Done"):tx("Gå med","Join");$("js").classList.add("on");if(show)setTimeout(()=>$("js_in").select(),60);else setTimeout(()=>$("js_in").focus(),60)}

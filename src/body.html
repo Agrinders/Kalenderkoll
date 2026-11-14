@@ -10,18 +10,20 @@
 <div class="pair" id="es_tw"><button type="button" class="field tbtn" id="es_t1" value=""><span></span></button><button type="button" class="field tbtn" id="es_t2" value=""><span></span></button></div>
 <div class="fl" id="es_rl"></div><div class="chips" id="es_r"></div><div class="wds hide" id="es_wd"></div>
 <div id="es_uw"><div class="fl" id="es_ul"></div><button type="button" class="field dbtn" id="es_u" value=""><span></span></button></div>
-<div class="fl" id="es_sl"></div><div class="seg" id="es_st"></div><div class="pv" id="es_pv"></div>
-<div class="sw" id="es_c"></div>
-<div class="ics" id="es_ic"></div>
-<div class="fl" id="es_fl"></div><div class="fxs" id="es_fx"></div>
+<div class="fl" id="es_sl"></div><div class="lookrow" id="es_lk" role="button" tabindex="0"><div class="pv" id="es_pv"></div><span id="es_lkt"></span></div>
+<div id="es_look" class="hide"><div class="seg" id="es_st"></div>
+<div class="fl" id="es_cl"></div><div class="sw" id="es_c"></div>
+<div class="fl" id="es_il"></div><div class="ics" id="es_ic"></div>
+<div class="fl" id="es_fl"></div><div class="fxs" id="es_fx"></div></div>
 <button type="button" class="more" id="es_more"></button>
 <div id="es_extra" class="hide">
 <div id="es_ew"><div class="fl" id="es_el"></div><button type="button" class="field dbtn" id="es_e" value=""><span></span></button></div>
 <div class="fl" id="es_pl"></div><input id="es_p" class="field" type="text" maxlength="80" autocomplete="off">
 <div class="fl" id="es_ol"></div><textarea id="es_o" class="field" rows="3" maxlength="600"></textarea>
 </div>
-<div class="acts"><button class="btn" id="es_ok"></button></div>
-<div class="links"><button class="lnk hide" id="es_ics"></button><button class="lnk bad hide" id="es_del"></button></div></div></div>
+<p class="muted hide" id="es_by"></p>
+<div class="links"><button class="lnk hide" id="es_ics"></button><button class="lnk bad hide" id="es_del"></button></div>
+<div class="acts stick"><button class="btn" id="es_ok"></button></div></div></div>
 
 <div id="bs" class="sh" role="dialog" aria-modal="true" aria-labelledby="bs_t"><div class="box"><div class="bh"><b id="bs_t"></b><button class="ib" id="bs_x" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
 <input id="bs_n" class="big-in" type="text" maxlength="60" autocomplete="off">
@@ -53,7 +55,7 @@
 <div id="scrim"></div>
 <aside id="drawer" aria-label="Meny"><div class="dbrand"><span><b>Kalenderkoll</b><small id="dr_sub"></small></span></div>
 <button class="di" id="dr_inv" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.5"/><path d="M3 19.5c.7-3.3 3.2-5 6-5s5.3 1.7 6 5M18.5 8v6M15.5 11h6"/></svg><span></span></button>
-<button class="di hide" id="dr_join" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg><span></span></button>
+<button class="di hide" id="dr_join" hidden type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg><span></span></button>
 <button class="di" id="dr_names" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg><span></span></button>
 <button class="di" id="dr_ics" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.5 15.5 12 18l2.5-2.5"/></svg><span></span></button>
 <button class="di dset" data-go="c" id="dr_set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h2M11 17h9"/><circle cx="15.5" cy="7" r="2.5"/><circle cx="8.5" cy="17" r="2.5"/></svg><span></span></button>
@@ -63,6 +65,7 @@
 
 <section id="h">
 <div class="hello"><p class="eyebrow" id="h_date"></p><h2 id="h_hi"></h2></div>
+<div class="card nudge hide" id="h_inv"></div>
 <div class="card" id="h_next"><p class="eyebrow" id="h_lbl"></p><div class="big" id="h_big"></div><p class="muted" id="h_sub"></p></div>
 <div class="card" id="h_wk"><div class="wstrip" id="h_strip"></div></div>
 <div class="card" id="h_today"><div class="ch"><h3 id="ht_t"></h3></div><div id="ht_list"></div></div>
@@ -92,7 +95,8 @@
 <div class="srow"><span id="c_lgl"></span><div class="seg" id="c_lg"></div></div>
 <div class="srow"><span id="c_wnl"></span><div class="seg" id="c_wn"></div></div>
 <div class="srow"><span id="c_hol"></span><div class="seg" id="c_ho"></div></div></div>
-<div class="card set"><h3 id="c_h2"></h3><p class="muted" id="c_st"></p><p class="muted" id="c_bk"></p><div id="c_bkb"></div><button class="btn ghost wide" id="ics_out"></button><button class="btn ghost wide bad" id="reset"></button></div>
+<div class="card set"><h3 id="c_h2"></h3><p class="muted" id="c_st"></p><p class="muted" id="c_bk"></p><div id="c_bkb"></div><button class="btn ghost wide" id="ics_out"></button></div>
+<div class="card set"><h3 id="c_h3"></h3><p class="muted" id="c_rs"></p><button class="lnk bad" id="reset" style="margin-top:8px"></button></div>
 </section>
 </main>
 <nav><button data-go="h"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19z"/><path d="M9.5 20.5v-5h5v5"/></svg><em data-i="nH"></em></button><button data-go="k"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><em data-i="nK"></em></button><button data-go="t"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="m8.5 12.2 2.4 2.4 4.6-5"/></svg><em data-i="nT"></em></button><button data-go="v"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg><em data-i="nV"></em></button></nav>
