@@ -1,7 +1,7 @@
 /* ---------- Taps ---------- */
 function addHere(){openES(null,null,{d:nd(SEL)})}
 $("tadd").onclick=addHere;$("kd_add").onclick=()=>openES(null,null,{d:nd(SEL)});$("menu").onclick=openDrawer;$("scrim").onclick=closeDrawer;
-$("dr_who").onclick=()=>{closeDrawer();setTimeout(()=>pickWho(true),250)};$("dr_names").onclick=()=>{closeDrawer();openCS(false)};$("dr_ics").onclick=()=>{closeDrawer();$("ics_out").click()};$("dr_inv").onclick=()=>{go("v");setTimeout(()=>$("v_inv").scrollIntoView({block:"center",behavior:RM()?"auto":"smooth"}),80)};
+$("dr_names").onclick=()=>{closeDrawer();openCS(false)};$("dr_ics").onclick=()=>{closeDrawer();$("ics_out").click()};$("dr_inv").onclick=()=>{go("v");setTimeout(()=>$("v_inv").scrollIntoView({block:"center",behavior:RM()?"auto":"smooth"}),80)};
 addEventListener("scroll",()=>$("main_top").classList.toggle("sc",scrollY>4),{passive:true});$("v_ladd").onclick=()=>openNS(null);$("v_dadd").onclick=()=>openBS(null);
 $("k_m").onclick=()=>openPK(tx("Välj år","Pick a year"),Array.from({length:21},(_,i)=>{const y=NOW.getFullYear()-10+i;return[y,String(y)]}).reverse(),P.y,v=>{P.y=+v;const[,,sd]=ymd(SEL);SEL=dnOf(P.y,P.m,Math.min(sd,dim(P.y,P.m)));renderMonth()});
 document.addEventListener("click",e=>{const g=x=>e.target.closest&&e.target.closest(x);let b;
@@ -43,27 +43,28 @@ function tick(){const n=todayN();if(n!==lastDay){if(SEL===lastDay){SEL=n;const[y
 setInterval(()=>{if(!document.hidden)tick()},6e4);document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick()});
 /* First time: your names. On a partner's phone: which of the two names is yours. */
 let firstDone=false,firstTry=0,whoOpen=false;
+/* Who this phone is comes from its sign-in: the name slot that holds this phone's id is yours.
+   The person who starts the calendar is "a"; the partner who joins takes the empty slot "b". */
 async function firstRun(){if(firstDone)return;firstDone=true;const joining=!!(window.KK&&KK.joining&&KK.joining());
-  /* A phone that just joined waits for the shared names instead of starting a calendar of its own. */
-  if(!CP.a||!CP.b){if(joining&&firstTry++<40){firstDone=false;setTimeout(firstRun,500);return}openCS(true);return}
-  if(window.KK&&KK.joinDone)KK.joinDone();
   if(MYID){if(CP.ua===MYID){setMe("a");return}if(CP.ub===MYID){setMe("b");return}}
-  if(ME&&!MYID)return;
-  /* This phone already knows who it is: claim that name for this sign-in. */
-  if(ME&&!joining&&!CP["u"+ME]){claimAs(ME);return}
+  if(!CP.a&&!CP.ua){
+    /* A phone that just joined waits for the shared calendar instead of starting one of its own. */
+    if(joining&&firstTry++<40){firstDone=false;setTimeout(firstRun,500);return}
+    setMe("a");openCS("new");return}
+  if(!MYID)return;
   /* Restored from a backup: the name in the file is yours, even if your old install still holds it. */
   let rc=false;try{rc=localStorage.getItem("kalenderkoll.reclaim")==="1";localStorage.removeItem("kalenderkoll.reclaim")}catch(e){}
   if(ME&&rc){claimAs(ME);return}
-  pickWho()}
-/* Which of the two names is mine. Both names are offered; one already on another phone says so. */
-async function pickWho(again){if(whoOpen||!CP.a||!CP.b)return;whoOpen=true;
-  const taken=x=>CP["u"+x]&&CP["u"+x]!==MYID,order=["a","b"].sort((x,y)=>taken(x)-taken(y));
-  const w=await askOpts(tx("Vem är du?","Who are you?"),again?tx("Allt du skriver märks med ditt namn.","Everything you write is marked with your name."):tx("Så vet appen vad som är ditt. Välj ditt eget namn.","So the app knows what is yours. Pick your own name."),order.map(x=>[x,CP[x],taken(x)?tx("Används redan på en annan telefon","Already used on another phone"):(x===ME?tx("Du nu","You now"):"")]));
-  whoOpen=false;if(w)claimAs(w)}
+  whoAmI()}
+function whoAmI(){if(whoOpen)return;const free=["a","b"].find(x=>!CP["u"+x]);
+  /* The free place is yours: write your own name. */
+  if(free){if(free==="a"&&CP.a&&ME==="a"&&!joiningNow()){setMe("a");claimAs("a");return}setMe(free);openCS("join");return}
+  /* Both places are taken by other phones: this is one of you after a reinstall without a backup. */
+  whoOpen=true;askOpts(tx("Har du installerat om appen?","Did you reinstall the app?"),tx("Välj ditt eget namn för att fortsätta.","Pick your own name to carry on."),["a","b"].map(x=>[x,CP[x],""])).then(w=>{whoOpen=false;if(w)claimAs(w)})}
+const joiningNow=()=>!!(window.KK&&KK.joining&&KK.joining());
 function claimAs(w){setMe(w);if(MYID&&CP["u"+w]!==MYID){const o=other(w);if(CP["u"+o]===MYID)CP["u"+o]="";CP["u"+w]=MYID;saveCouple()}render()}
-/* Two phones on the same name (or a phone that never picked): ask again so each of you gets your own. */
-function checkWho(){if(!firstDone||!SHARED()||!MYID||!CP.a||!CP.b||CP.ua===MYID||CP.ub===MYID)return;
-  if(!ME||(CP["u"+ME]&&CP["u"+ME]!==MYID))pickWho();else if(!CP["u"+ME])claimAs(ME)}
+/* Later snapshots: a phone that is not in the couple yet gets its place. */
+function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains("on")||CP.ua===MYID||CP.ub===MYID||(!CP.a&&!CP.ua))return;whoAmI()}
 /* Everything is saved in shared storage (or on this phone in the installed version). */
 (async()=>{let ok=false;try{
   const db=await claude.use("db");if(!db)throw 0;
@@ -121,7 +122,7 @@ async function askNotify(){
   try{const N=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications;
     if(N){const p=await N.checkPermissions();if(p.display!=="granted")await N.requestPermissions();return}
     if("Notification"in window&&Notification.permission==="default")await Notification.requestPermission()}catch(e){}}
-function watchJoin(){if(!SHARED()||!ME||!CP.a||!CP.b)return;const o=other(ME),id=CP["u"+o]||"none";let seen=null;
+function watchJoin(){if(!SHARED()||!ME||!CP[ME]||!MYID||CP["u"+ME]!==MYID)return;const o=other(ME),id=CP["u"+o]||"none";let seen=null;
   try{seen=localStorage.getItem(JK)}catch(e){}
   if(seen===id)return;try{localStorage.setItem(JK,id)}catch(e){}
   /* Only tell you about a change you did not already see: a partner who joins after you started. */

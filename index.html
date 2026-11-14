@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="e2382a453e8d">
+<meta name="kal-build" content="b2b04b6e4194">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -327,7 +327,6 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 
 <div id="cs" class="sh" role="dialog" aria-modal="true" aria-labelledby="cs_t"><div class="box"><b id="cs_t" class="title"></b><p class="muted" id="cs_p"></p>
 <div class="fl" id="cs_al"></div><input id="cs_a" class="field" type="text" maxlength="30" autocomplete="off">
-<div class="fl" id="cs_bl"></div><input id="cs_b" class="field" type="text" maxlength="30" autocomplete="off">
 <div class="fl" id="cs_sl"></div><button type="button" class="field dbtn" id="cs_s" value=""><span></span></button>
 <div class="acts"><button class="btn ghost hide" id="cs_no"></button><button class="btn" id="cs_ok"></button></div><button class="lnk wide hide" id="cs_rs" type="button"></button></div></div>
 <input type="file" id="bk_in" accept=".json,application/json,text/plain,*/*" class="hide">
@@ -343,7 +342,6 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 <aside id="drawer" aria-label="Meny"><div class="dbrand"><span><b>Kalenderkoll</b><small id="dr_sub"></small></span></div>
 <button class="di" id="dr_inv" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8.5" r="3.5"/><path d="M3 19.5c.7-3.3 3.2-5 6-5s5.3 1.7 6 5M18.5 8v6M15.5 11h6"/></svg><span></span></button>
 <button class="di hide" id="dr_join" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg><span></span></button>
-<button class="di" id="dr_who" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg><span></span></button>
 <button class="di" id="dr_names" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg><span></span></button>
 <button class="di" id="dr_ics" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.5 15.5 12 18l2.5-2.5"/></svg><span></span></button>
 <button class="di dset" data-go="c" id="dr_set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h2M11 17h9"/><circle cx="15.5" cy="7" r="2.5"/><circle cx="8.5" cy="17" r="2.5"/></svg><span></span></button>
@@ -679,7 +677,7 @@ function renderSettings(){
 
 /* ---------- Side menu ---------- */
 function renderDrawer(){$("dr_sub").textContent=CP.a&&CP.b?CP.a+" ♥ "+CP.b:tx("Er gemensamma kalender","Your shared calendar");
-  $("dr_join").classList.toggle("hide",!LOCAL);$("dr_join").lastElementChild.textContent=tx("Gå med med länk","Join with a link");$("dr_inv").lastElementChild.textContent=LOCAL&&!SHARED()?tx("Dela med varandra","Share with each other"):joined()?tx("Ni är båda med","You are both in"):tx("Bjud in ","Invite ")+pname(other(me()));$("dr_who").classList.toggle("hide",!(CP.a&&CP.b));$("dr_who").lastElementChild.textContent=ME?tx("Jag är ","I am ")+pname(ME):tx("Välj vem du är","Pick who you are");$("dr_names").lastElementChild.textContent=tx("Ändra namn och datum","Change names and date");
+  $("dr_join").classList.toggle("hide",!LOCAL);$("dr_join").lastElementChild.textContent=tx("Gå med med länk","Join with a link");$("dr_inv").lastElementChild.textContent=LOCAL&&!SHARED()?tx("Dela med varandra","Share with each other"):joined()?tx("Ni är båda med","You are both in"):tx("Bjud in ","Invite ")+pname(other(me()));$("dr_names").lastElementChild.textContent=tx("Ditt namn","Your name");
   $("dr_set").lastElementChild.textContent=t("ttlC");$("dr_ics").lastElementChild.textContent=tx("Spara som .ics","Save as .ics");
   $("dr_lang").innerHTML=[["sv","🇸🇪","Svenska"],["en","🇬🇧","English"]].map(([v,f,l])=>`<button class="${S.lang===v?"on":""}" data-lg="${v}" aria-label="${l}" title="${l}" aria-pressed="${S.lang===v}">${f}</button>`).join("")}
 const openDrawer=()=>{$("drawer").classList.add("on");$("scrim").classList.add("on")},closeDrawer=()=>{$("drawer").classList.remove("on");$("scrim").classList.remove("on")};
@@ -805,14 +803,20 @@ $("ns_ok").onclick=()=>{if(!NS)return;const txt=$("ns_tx").value.trim();if(!txt)
 $("ns_del").onclick=()=>{const x=NS&&NOTES.find(z=>z.id===NS.id);closeNS();if(x){dropNote(x);render()}};
 
 /* ---------- Your names, and when you got together ---------- */
-function openCS(first){const m=me();$("cs_t").textContent=first?tx("Välkommen till Kalenderkoll","Welcome to Kalenderkoll"):tx("Ni två","The two of you");$("cs_p").textContent=first?tx("En kalender för er två. Börja med era namn.","A calendar for the two of you. Start with your names."):tx("Namnen syns i kalendern och på listorna.","The names show in the calendar and on the lists.");
-  $("cs_al").textContent=tx("Ditt namn","Your name");$("cs_bl").textContent=tx("Din partners namn","Your partner's name");$("cs_sl").textContent=tx("Tillsammans sedan (valfritt)","Together since (optional)");
-  $("cs_a").value=CP[m]||"";$("cs_b").value=CP[other(m)]||"";$("cs_s").dataset.ph=tx("Välj datum","Pick a date");$("cs_s").dataset.base=CP.since||isoOf(new Date(NOW.getFullYear()-1,NOW.getMonth(),1));$("cs_s").value=CP.since||"";dpLabel($("cs_s"));
-  $("cs_no").textContent=tx("Avbryt","Cancel");$("cs_no").classList.toggle("hide",!!first);$("cs_ok").textContent=first?tx("Börja","Start"):tx("Spara","Save");$("cs_rs").textContent=tx("Har du en säkerhetskopia? Återställ den","Have a backup? Restore it");$("cs_rs").classList.toggle("hide",!(first&&LOCAL));$("cs").classList.add("on");setTimeout(()=>$("cs_a").focus(),80)}
+/* Names: each of you only writes your own. Your partner's name arrives when they join.
+   mode "new" starts a calendar, "join" is a partner joining, false edits your own name. */
+let CSM=false;
+function openCS(mode){if(mode===true)mode="new";CSM=mode;const m=me(),o=other(m);
+  $("cs_t").textContent=mode==="new"?tx("Välkommen till Kalenderkoll","Welcome to Kalenderkoll"):mode==="join"?tx("Välkommen!","Welcome!"):tx("Ditt namn","Your name");
+  $("cs_p").textContent=mode==="new"?tx("En kalender för er två. Börja med ditt namn, din partner skriver sitt när hen går med.","A calendar for the two of you. Start with your name; your partner writes theirs when they join."):mode==="join"?(CP[o]?tx(`Du går med i kalendern du delar med ${CP[o]}. Vad heter du?`,`You are joining the calendar you share with ${CP[o]}. What is your name?`):tx("Vad heter du?","What is your name?")):tx("Ditt namn syns i kalendern och på listorna.","Your name shows in the calendar and on the lists.");
+  $("cs_al").textContent=tx("Ditt namn","Your name");$("cs_sl").textContent=tx("Tillsammans sedan (valfritt)","Together since (optional)");
+  $("cs_a").value=mode==="join"?"":CP[m]||"";$("cs_s").dataset.ph=tx("Välj datum","Pick a date");$("cs_s").dataset.base=CP.since||isoOf(new Date(NOW.getFullYear()-1,NOW.getMonth(),1));$("cs_s").value=CP.since||"";dpLabel($("cs_s"));
+  $("cs_sl").classList.toggle("hide",mode==="join");$("cs_s").classList.toggle("hide",mode==="join");
+  const first=mode==="new"||mode==="join";$("cs_no").textContent=tx("Avbryt","Cancel");$("cs_no").classList.toggle("hide",first);$("cs_ok").textContent=mode==="new"?tx("Börja","Start"):mode==="join"?tx("Gå med","Join"):tx("Spara","Save");$("cs_rs").textContent=tx("Har du en säkerhetskopia? Återställ den","Have a backup? Restore it");$("cs_rs").classList.toggle("hide",!(mode==="new"&&LOCAL));$("cs").classList.add("on");setTimeout(()=>$("cs_a").focus(),80)}
 const closeCS=()=>$("cs").classList.remove("on");
 $("cs_no").onclick=closeCS;$("cs").addEventListener("click",e=>{if(e.target===$("cs")&&!$("cs_no").classList.contains("hide"))closeCS()});
-$("cs_ok").onclick=()=>{const a=$("cs_a").value.trim(),b=$("cs_b").value.trim();if(!a||!b){toast(tx("Skriv båda namnen","Write both names"));(a?$("cs_b"):$("cs_a")).focus();return}
-  const m=me();setMe(m);CP[m]=a;CP[other(m)]=b;CP.since=$("cs_s").value||"";if(MYID)CP["u"+m]=MYID;if(col)put("started",{kind:"started"});saveCouple();closeCS();render()};
+$("cs_ok").onclick=()=>{const a=$("cs_a").value.trim();if(!a){toast(tx("Skriv ditt namn","Write your name"));$("cs_a").focus();return}
+  const m=me();setMe(m);CP[m]=a;if(CSM!=="join")CP.since=$("cs_s").value||"";if(MYID)CP["u"+m]=MYID;if(CSM==="new"&&col)put("started",{kind:"started"});saveCouple();closeCS();if(window.KK&&KK.joinDone)KK.joinDone();render()};
 $("es").addEventListener("input",e=>{if(!ES)return;if(e.target.id==="es_cc"){ES.col=e.target.value;paintES()}else if(e.target.id==="es_n"){const b=$("es_pv").querySelector("b");if(b)b.textContent=$("es_n").value.trim()||tx("Så här ser den ut","This is how it looks")}});
 
 /* ---------- A day's icon ---------- */
@@ -841,7 +845,7 @@ $("ics_out").onclick=()=>{if(!EV.length&&!BD.length){toast(tx("Det finns inget a
 /* ---------- Taps ---------- */
 function addHere(){openES(null,null,{d:nd(SEL)})}
 $("tadd").onclick=addHere;$("kd_add").onclick=()=>openES(null,null,{d:nd(SEL)});$("menu").onclick=openDrawer;$("scrim").onclick=closeDrawer;
-$("dr_who").onclick=()=>{closeDrawer();setTimeout(()=>pickWho(true),250)};$("dr_names").onclick=()=>{closeDrawer();openCS(false)};$("dr_ics").onclick=()=>{closeDrawer();$("ics_out").click()};$("dr_inv").onclick=()=>{go("v");setTimeout(()=>$("v_inv").scrollIntoView({block:"center",behavior:RM()?"auto":"smooth"}),80)};
+$("dr_names").onclick=()=>{closeDrawer();openCS(false)};$("dr_ics").onclick=()=>{closeDrawer();$("ics_out").click()};$("dr_inv").onclick=()=>{go("v");setTimeout(()=>$("v_inv").scrollIntoView({block:"center",behavior:RM()?"auto":"smooth"}),80)};
 addEventListener("scroll",()=>$("main_top").classList.toggle("sc",scrollY>4),{passive:true});$("v_ladd").onclick=()=>openNS(null);$("v_dadd").onclick=()=>openBS(null);
 $("k_m").onclick=()=>openPK(tx("Välj år","Pick a year"),Array.from({length:21},(_,i)=>{const y=NOW.getFullYear()-10+i;return[y,String(y)]}).reverse(),P.y,v=>{P.y=+v;const[,,sd]=ymd(SEL);SEL=dnOf(P.y,P.m,Math.min(sd,dim(P.y,P.m)));renderMonth()});
 document.addEventListener("click",e=>{const g=x=>e.target.closest&&e.target.closest(x);let b;
@@ -883,27 +887,28 @@ function tick(){const n=todayN();if(n!==lastDay){if(SEL===lastDay){SEL=n;const[y
 setInterval(()=>{if(!document.hidden)tick()},6e4);document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick()});
 /* First time: your names. On a partner's phone: which of the two names is yours. */
 let firstDone=false,firstTry=0,whoOpen=false;
+/* Who this phone is comes from its sign-in: the name slot that holds this phone's id is yours.
+   The person who starts the calendar is "a"; the partner who joins takes the empty slot "b". */
 async function firstRun(){if(firstDone)return;firstDone=true;const joining=!!(window.KK&&KK.joining&&KK.joining());
-  /* A phone that just joined waits for the shared names instead of starting a calendar of its own. */
-  if(!CP.a||!CP.b){if(joining&&firstTry++<40){firstDone=false;setTimeout(firstRun,500);return}openCS(true);return}
-  if(window.KK&&KK.joinDone)KK.joinDone();
   if(MYID){if(CP.ua===MYID){setMe("a");return}if(CP.ub===MYID){setMe("b");return}}
-  if(ME&&!MYID)return;
-  /* This phone already knows who it is: claim that name for this sign-in. */
-  if(ME&&!joining&&!CP["u"+ME]){claimAs(ME);return}
+  if(!CP.a&&!CP.ua){
+    /* A phone that just joined waits for the shared calendar instead of starting one of its own. */
+    if(joining&&firstTry++<40){firstDone=false;setTimeout(firstRun,500);return}
+    setMe("a");openCS("new");return}
+  if(!MYID)return;
   /* Restored from a backup: the name in the file is yours, even if your old install still holds it. */
   let rc=false;try{rc=localStorage.getItem("kalenderkoll.reclaim")==="1";localStorage.removeItem("kalenderkoll.reclaim")}catch(e){}
   if(ME&&rc){claimAs(ME);return}
-  pickWho()}
-/* Which of the two names is mine. Both names are offered; one already on another phone says so. */
-async function pickWho(again){if(whoOpen||!CP.a||!CP.b)return;whoOpen=true;
-  const taken=x=>CP["u"+x]&&CP["u"+x]!==MYID,order=["a","b"].sort((x,y)=>taken(x)-taken(y));
-  const w=await askOpts(tx("Vem är du?","Who are you?"),again?tx("Allt du skriver märks med ditt namn.","Everything you write is marked with your name."):tx("Så vet appen vad som är ditt. Välj ditt eget namn.","So the app knows what is yours. Pick your own name."),order.map(x=>[x,CP[x],taken(x)?tx("Används redan på en annan telefon","Already used on another phone"):(x===ME?tx("Du nu","You now"):"")]));
-  whoOpen=false;if(w)claimAs(w)}
+  whoAmI()}
+function whoAmI(){if(whoOpen)return;const free=["a","b"].find(x=>!CP["u"+x]);
+  /* The free place is yours: write your own name. */
+  if(free){if(free==="a"&&CP.a&&ME==="a"&&!joiningNow()){setMe("a");claimAs("a");return}setMe(free);openCS("join");return}
+  /* Both places are taken by other phones: this is one of you after a reinstall without a backup. */
+  whoOpen=true;askOpts(tx("Har du installerat om appen?","Did you reinstall the app?"),tx("Välj ditt eget namn för att fortsätta.","Pick your own name to carry on."),["a","b"].map(x=>[x,CP[x],""])).then(w=>{whoOpen=false;if(w)claimAs(w)})}
+const joiningNow=()=>!!(window.KK&&KK.joining&&KK.joining());
 function claimAs(w){setMe(w);if(MYID&&CP["u"+w]!==MYID){const o=other(w);if(CP["u"+o]===MYID)CP["u"+o]="";CP["u"+w]=MYID;saveCouple()}render()}
-/* Two phones on the same name (or a phone that never picked): ask again so each of you gets your own. */
-function checkWho(){if(!firstDone||!SHARED()||!MYID||!CP.a||!CP.b||CP.ua===MYID||CP.ub===MYID)return;
-  if(!ME||(CP["u"+ME]&&CP["u"+ME]!==MYID))pickWho();else if(!CP["u"+ME])claimAs(ME)}
+/* Later snapshots: a phone that is not in the couple yet gets its place. */
+function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains("on")||CP.ua===MYID||CP.ub===MYID||(!CP.a&&!CP.ua))return;whoAmI()}
 /* Everything is saved in shared storage (or on this phone in the installed version). */
 (async()=>{let ok=false;try{
   const db=await claude.use("db");if(!db)throw 0;
@@ -961,7 +966,7 @@ async function askNotify(){
   try{const N=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications;
     if(N){const p=await N.checkPermissions();if(p.display!=="granted")await N.requestPermissions();return}
     if("Notification"in window&&Notification.permission==="default")await Notification.requestPermission()}catch(e){}}
-function watchJoin(){if(!SHARED()||!ME||!CP.a||!CP.b)return;const o=other(ME),id=CP["u"+o]||"none";let seen=null;
+function watchJoin(){if(!SHARED()||!ME||!CP[ME]||!MYID||CP["u"+ME]!==MYID)return;const o=other(ME),id=CP["u"+o]||"none";let seen=null;
   try{seen=localStorage.getItem(JK)}catch(e){}
   if(seen===id)return;try{localStorage.setItem(JK,id)}catch(e){}
   /* Only tell you about a change you did not already see: a partner who joins after you started. */

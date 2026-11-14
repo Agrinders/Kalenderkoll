@@ -113,14 +113,20 @@ $("ns_ok").onclick=()=>{if(!NS)return;const txt=$("ns_tx").value.trim();if(!txt)
 $("ns_del").onclick=()=>{const x=NS&&NOTES.find(z=>z.id===NS.id);closeNS();if(x){dropNote(x);render()}};
 
 /* ---------- Your names, and when you got together ---------- */
-function openCS(first){const m=me();$("cs_t").textContent=first?tx("Välkommen till Kalenderkoll","Welcome to Kalenderkoll"):tx("Ni två","The two of you");$("cs_p").textContent=first?tx("En kalender för er två. Börja med era namn.","A calendar for the two of you. Start with your names."):tx("Namnen syns i kalendern och på listorna.","The names show in the calendar and on the lists.");
-  $("cs_al").textContent=tx("Ditt namn","Your name");$("cs_bl").textContent=tx("Din partners namn","Your partner's name");$("cs_sl").textContent=tx("Tillsammans sedan (valfritt)","Together since (optional)");
-  $("cs_a").value=CP[m]||"";$("cs_b").value=CP[other(m)]||"";$("cs_s").dataset.ph=tx("Välj datum","Pick a date");$("cs_s").dataset.base=CP.since||isoOf(new Date(NOW.getFullYear()-1,NOW.getMonth(),1));$("cs_s").value=CP.since||"";dpLabel($("cs_s"));
-  $("cs_no").textContent=tx("Avbryt","Cancel");$("cs_no").classList.toggle("hide",!!first);$("cs_ok").textContent=first?tx("Börja","Start"):tx("Spara","Save");$("cs_rs").textContent=tx("Har du en säkerhetskopia? Återställ den","Have a backup? Restore it");$("cs_rs").classList.toggle("hide",!(first&&LOCAL));$("cs").classList.add("on");setTimeout(()=>$("cs_a").focus(),80)}
+/* Names: each of you only writes your own. Your partner's name arrives when they join.
+   mode "new" starts a calendar, "join" is a partner joining, false edits your own name. */
+let CSM=false;
+function openCS(mode){if(mode===true)mode="new";CSM=mode;const m=me(),o=other(m);
+  $("cs_t").textContent=mode==="new"?tx("Välkommen till Kalenderkoll","Welcome to Kalenderkoll"):mode==="join"?tx("Välkommen!","Welcome!"):tx("Ditt namn","Your name");
+  $("cs_p").textContent=mode==="new"?tx("En kalender för er två. Börja med ditt namn, din partner skriver sitt när hen går med.","A calendar for the two of you. Start with your name; your partner writes theirs when they join."):mode==="join"?(CP[o]?tx(`Du går med i kalendern du delar med ${CP[o]}. Vad heter du?`,`You are joining the calendar you share with ${CP[o]}. What is your name?`):tx("Vad heter du?","What is your name?")):tx("Ditt namn syns i kalendern och på listorna.","Your name shows in the calendar and on the lists.");
+  $("cs_al").textContent=tx("Ditt namn","Your name");$("cs_sl").textContent=tx("Tillsammans sedan (valfritt)","Together since (optional)");
+  $("cs_a").value=mode==="join"?"":CP[m]||"";$("cs_s").dataset.ph=tx("Välj datum","Pick a date");$("cs_s").dataset.base=CP.since||isoOf(new Date(NOW.getFullYear()-1,NOW.getMonth(),1));$("cs_s").value=CP.since||"";dpLabel($("cs_s"));
+  $("cs_sl").classList.toggle("hide",mode==="join");$("cs_s").classList.toggle("hide",mode==="join");
+  const first=mode==="new"||mode==="join";$("cs_no").textContent=tx("Avbryt","Cancel");$("cs_no").classList.toggle("hide",first);$("cs_ok").textContent=mode==="new"?tx("Börja","Start"):mode==="join"?tx("Gå med","Join"):tx("Spara","Save");$("cs_rs").textContent=tx("Har du en säkerhetskopia? Återställ den","Have a backup? Restore it");$("cs_rs").classList.toggle("hide",!(mode==="new"&&LOCAL));$("cs").classList.add("on");setTimeout(()=>$("cs_a").focus(),80)}
 const closeCS=()=>$("cs").classList.remove("on");
 $("cs_no").onclick=closeCS;$("cs").addEventListener("click",e=>{if(e.target===$("cs")&&!$("cs_no").classList.contains("hide"))closeCS()});
-$("cs_ok").onclick=()=>{const a=$("cs_a").value.trim(),b=$("cs_b").value.trim();if(!a||!b){toast(tx("Skriv båda namnen","Write both names"));(a?$("cs_b"):$("cs_a")).focus();return}
-  const m=me();setMe(m);CP[m]=a;CP[other(m)]=b;CP.since=$("cs_s").value||"";if(MYID)CP["u"+m]=MYID;if(col)put("started",{kind:"started"});saveCouple();closeCS();render()};
+$("cs_ok").onclick=()=>{const a=$("cs_a").value.trim();if(!a){toast(tx("Skriv ditt namn","Write your name"));$("cs_a").focus();return}
+  const m=me();setMe(m);CP[m]=a;if(CSM!=="join")CP.since=$("cs_s").value||"";if(MYID)CP["u"+m]=MYID;if(CSM==="new"&&col)put("started",{kind:"started"});saveCouple();closeCS();if(window.KK&&KK.joinDone)KK.joinDone();render()};
 $("es").addEventListener("input",e=>{if(!ES)return;if(e.target.id==="es_cc"){ES.col=e.target.value;paintES()}else if(e.target.id==="es_n"){const b=$("es_pv").querySelector("b");if(b)b.textContent=$("es_n").value.trim()||tx("Så här ser den ut","This is how it looks")}});
 
 /* ---------- A day's icon ---------- */
