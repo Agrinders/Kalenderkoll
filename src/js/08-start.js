@@ -69,7 +69,7 @@ async function firstRun(){if(firstDone)return;firstDone=true;if(!CP.a||!CP.b){op
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
     CP=cp||{a:"",b:"",ua:"",ub:"",since:""};
     if(MYID){if(CP.ua===MYID)setMe("a");else if(CP.ub===MYID)setMe("b")}
-    render();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
+    watchJoin();render();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
 }catch(e){}setTimeout(()=>{if(!ok&&!firstDone)firstRun()},col?10000:400)})();
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
@@ -79,7 +79,7 @@ async function firstRun(){if(firstDone)return;firstDone=true;if(!CP.a||!CP.b){op
   addEventListener("popstate",()=>{if(closeTop())return guard();if(tab!=="h"){go("h");return guard()}history.back()})})();
 
 /* Inviting and joining (installed version, shared through Firebase). */
-async function shareInvite(){const url=KK.inviteUrl(),p=pname(other(me())),text=tx(`Hej ${p}! Gå med i vår gemensamma kalender:`,`Hi ${p}! Join our shared calendar:`);
+async function shareInvite(){askNotify();const url=KK.inviteUrl(),p=pname(other(me())),text=tx(`Hej ${p}! Gå med i vår gemensamma kalender:`,`Hi ${p}! Join our shared calendar:`);
   if(navigator.share){try{await navigator.share({title:"Kalenderkoll",text,url});return}catch(e){if(e&&e.name==="AbortError")return}}
   try{await navigator.clipboard.writeText(url);toast(tx("Länken är kopierad","The link is copied")+" · "+tx(`Klistra in den i ett meddelande till ${p}`,`Paste it into a message to ${p}`),5000)}catch(e){openJS(url)}}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#v_share")){shareInvite()}});
@@ -94,3 +94,23 @@ $("js_ok").onclick=async()=>{if($("js_in").readOnly){closeJS();return}const c=KK
   try{localStorage.removeItem("kalenderkoll.me")}catch(err){}KK.join(c)};
 /* A link opened on a phone that already has its own calendar: ask before switching. */
 window.KK_askJoin=()=>ask(tx("Gå med i er gemensamma kalender?","Join your shared calendar?"),tx("Kalendern på den här telefonen byts mot den du blev inbjuden till.","The calendar on this phone is replaced by the one you were invited to."),tx("Gå med","Join")).then(ok=>{if(ok){try{localStorage.removeItem("kalenderkoll.me")}catch(e){}ME=""}return ok});
+
+/* A notice when your partner joins. This phone remembers who the partner was last time;
+   when someone new claims the other name, you get a toast and a phone notification. */
+const JK="kalenderkoll.partner";
+function notify(title,body){
+  try{const N=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications;
+    if(N){N.schedule({notifications:[{id:Math.floor(Date.now()/1000)%2000000000,title,body}]}).catch(()=>{});return}
+    if("Notification"in window&&Notification.permission==="granted"){
+      if(navigator.serviceWorker&&navigator.serviceWorker.controller)navigator.serviceWorker.ready.then(r=>r.showNotification(title,{body,icon:"icons/icon-192.png"})).catch(()=>{});
+      else new Notification(title,{body,icon:"icons/icon-192.png"})}}catch(e){}}
+async function askNotify(){
+  try{const N=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications;
+    if(N){const p=await N.checkPermissions();if(p.display!=="granted")await N.requestPermissions();return}
+    if("Notification"in window&&Notification.permission==="default")await Notification.requestPermission()}catch(e){}}
+function watchJoin(){if(!SHARED()||!ME||!CP.a||!CP.b)return;const o=other(ME),id=CP["u"+o]||"none";let seen=null;
+  try{seen=localStorage.getItem(JK)}catch(e){}
+  if(seen===id)return;try{localStorage.setItem(JK,id)}catch(e){}
+  /* Only tell you about a change you did not already see: a partner who joins after you started. */
+  if(seen!==null&&id!=="none"&&id!==MYID){const p=pname(o),msg=tx(`${p} har gått med i er kalender`,`${p} has joined your calendar`);
+    toast("💞 "+msg+" · "+tx("Nu ser ni samma kalender.","Now you see the same calendar."),6000);notify("Kalenderkoll",msg)}}

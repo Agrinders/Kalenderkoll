@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="5ef5c45d2500">
+<meta name="kal-build" content="bfce0e8bb7ff">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -15,11 +15,13 @@
 :root{--bg:#f8f3f4;--bg2:#efe7ea;--card:#fffcfd;--ink:#2a2530;--soft:#867d8c;--faint:#bdb4c0;--rule:rgba(42,37,48,.08);--fill:rgba(42,37,48,.045);--acc:#8a72ee;--pa:#5cc79f;--pb:#9d86f4;--pg:#f19ab9;--good:#4fb488;--bad:#d4586a;--red:#d4586a;--shadow:0 1px 2px rgba(60,40,70,.04),0 10px 28px rgba(90,60,110,.07);--serif:Fraunces,Georgia,"Times New Roman",serif;--ui:Figtree,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#15131a;--bg2:#1c1922;--card:#211d28;--ink:#f1ecf6;--soft:#a69daf;--faint:#6e6577;--rule:rgba(241,236,246,.09);--fill:rgba(241,236,246,.06);--acc:#a996ff;--pa:#74d6ad;--pb:#b3a2ff;--pg:#f4a8c3;--good:#7fd4a8;--bad:#f08a98;--red:#f08a98;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.28);color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#15131a;--bg2:#1c1922;--card:#211d28;--ink:#f1ecf6;--soft:#a69daf;--faint:#6e6577;--rule:rgba(241,236,246,.09);--fill:rgba(241,236,246,.06);--acc:#a996ff;--pa:#74d6ad;--pb:#b3a2ff;--pg:#f4a8c3;--good:#7fd4a8;--bad:#f08a98;--red:#f08a98;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.28);color-scheme:dark}
+/* Space for the phone's status bar and home bar. The Android app also passes these in as --safe-area-inset-*. */
+:root{--sat:max(env(safe-area-inset-top,0px),var(--safe-area-inset-top,0px));--sab:max(env(safe-area-inset-bottom,0px),var(--safe-area-inset-bottom,0px));--topH:58px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{height:100%;background:var(--bg)}
 body{min-height:100%;margin:0;color:var(--ink);font:16px/1.45 var(--ui);font-variant-numeric:tabular-nums;
   background:radial-gradient(80vmax 50vmax at 15% -10%,color-mix(in srgb,var(--pb) 16%,transparent),transparent 60%),radial-gradient(70vmax 45vmax at 105% 20%,color-mix(in srgb,var(--pg) 12%,transparent),transparent 60%),radial-gradient(70vmax 50vmax at 50% 115%,color-mix(in srgb,var(--pa) 11%,transparent),transparent 60%),var(--bg);background-attachment:fixed;
-  padding:max(10px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(96px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));overflow-x:hidden}
+  padding:calc(var(--topH) + var(--sat) + 8px) max(16px,env(safe-area-inset-right,0px)) calc(96px + var(--sab)) max(16px,env(safe-area-inset-left,0px));overflow-x:hidden}
 button{font:inherit;color:inherit;cursor:pointer;background:none;border:0;padding:0}
 input,textarea{font:inherit;color:var(--ink);min-width:0}
 :focus-visible{outline:2px solid var(--acc);outline-offset:2px}
@@ -29,7 +31,8 @@ main{max-width:560px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
 section{display:flex;flex-direction:column;gap:12px;animation:in .35s ease}
 @keyframes in{from{opacity:0;transform:translateY(6px)}}
 /* Top bar */
-.top{position:sticky;top:0;z-index:15;display:flex;align-items:center;gap:4px;min-height:58px;margin:0 -16px;padding:6px 10px;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border-bottom:1px solid transparent;transition:border-color .2s}
+/* The bar is pinned to the very top of the screen and stays there while you scroll. */
+.top{position:fixed;top:0;left:0;right:0;z-index:15;display:flex;align-items:center;gap:4px;min-height:calc(var(--topH) + var(--sat));padding:calc(6px + var(--sat)) max(10px,calc((100% - 560px)/2 - 6px)) 6px;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(16px) saturate(160%);-webkit-backdrop-filter:blur(16px) saturate(160%);border-bottom:1px solid transparent;transition:border-color .2s}
 .top.sc{border-bottom-color:var(--rule)}
 h1{flex:1;margin:0;padding-left:2px;font:500 26px/1.1 var(--serif);letter-spacing:-.01em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ib{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;color:var(--ink)}.ib svg{width:22px;height:22px}
@@ -123,7 +126,7 @@ textarea.field{padding:12px 14px;line-height:1.45;resize:vertical}
 .tgr{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px;margin-bottom:12px}.tgr button{height:42px;border-radius:12px;background:var(--fill);font-weight:600;font-size:15px}.tgr .s{background:var(--acc);color:#fff}
 #pk_l{max-height:52vh;overflow-y:auto;margin:10px 0}.pko{display:block;width:100%;padding:12px 14px;border-radius:12px;text-align:left;font-size:16px}.pko.on{background:var(--acc);color:#fff}
 /* Sheets */
-.sh{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;padding:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));background:rgba(30,25,22,.4);opacity:0;pointer-events:none;transition:opacity .2s}
+.sh{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center;padding:10px;padding-bottom:calc(10px + var(--sab));background:rgba(30,25,22,.4);opacity:0;pointer-events:none;transition:opacity .2s}
 .sh.on{opacity:1;pointer-events:auto}.sh.mid{align-items:center}
 .box{width:min(100%,460px);max-height:calc(100dvh - 20px);overflow-y:auto;overscroll-behavior:contain;background:var(--card);border-radius:24px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.18);transform:translateY(20px);transition:transform .28s cubic-bezier(.2,.9,.3,1)}
 .sh.on .box{transform:none}
@@ -154,11 +157,11 @@ textarea.field{padding:12px 14px;line-height:1.45;resize:vertical}
 .set h3{margin-bottom:6px}.srow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;padding:10px 0;border-bottom:1px solid var(--rule)}.srow:last-child{border-bottom:0}.srow>span{font-weight:500}.srow .seg{flex:0 1 220px;min-width:180px}
 #c_bkb{display:grid;gap:8px;margin-top:10px}
 /* Bottom tabs */
-nav{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:20;display:flex;gap:2px;width:min(calc(100% - 24px),420px);padding:6px;border-radius:22px;background:color-mix(in srgb,var(--card) 92%,transparent);border:1px solid var(--rule);box-shadow:0 10px 30px rgba(43,38,34,.12);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+nav{position:fixed;left:50%;bottom:calc(10px + var(--sab));transform:translateX(-50%);z-index:20;display:flex;gap:2px;width:min(calc(100% - 24px),420px);padding:6px;border-radius:22px;background:color-mix(in srgb,var(--card) 92%,transparent);border:1px solid var(--rule);box-shadow:0 10px 30px rgba(43,38,34,.12);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;min-height:52px;padding-top:6px;border-radius:16px;color:var(--soft);font-size:11.5px;font-weight:600}
 nav svg{width:22px;height:22px}nav em{font-style:normal}nav button.on{color:var(--ink);background:var(--fill)}
 /* Notices */
-#toasts{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:70;display:flex;flex-direction:column;gap:8px;width:min(calc(100% - 24px),440px);pointer-events:none}
+#toasts{position:fixed;left:50%;top:calc(10px + var(--sat));transform:translateX(-50%);z-index:70;display:flex;flex-direction:column;gap:8px;width:min(calc(100% - 24px),440px);pointer-events:none}
 .toast{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:var(--ink);color:var(--card);font-size:15px;font-weight:500;pointer-events:auto;box-shadow:0 10px 30px rgba(0,0,0,.18);animation:tin .3s cubic-bezier(.2,1.2,.35,1)}.toast span{flex:1;min-width:0}.toast small{display:block;opacity:.7;font-size:13px}
 @keyframes tin{from{transform:translateY(-10px);opacity:0}}
 .tundo{padding:6px 12px;border-radius:99px;background:color-mix(in srgb,var(--card) 18%,transparent);color:inherit;font-weight:700;font-size:14px}
@@ -170,6 +173,7 @@ html.boot main{opacity:0}main{transition:opacity .4s}
 @media (min-width:860px){
   body{padding-left:calc(120px + env(safe-area-inset-left,0px));padding-bottom:32px}
   main{max-width:980px}
+  .top{left:calc(120px + env(safe-area-inset-left,0px));padding-left:max(10px,calc((100% - 980px)/2 - 6px));padding-right:max(10px,calc((100% - 980px)/2 - 6px))}
   section{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}section>*{grid-column:span 1}
   .hello,#h_next{grid-column:1/-1}
   #k_cal{grid-column:1/-1;max-width:640px;width:100%;justify-self:center}#t_main{grid-column:1/-1;max-width:640px;width:100%;justify-self:center}
@@ -195,7 +199,7 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 .dvad{margin-top:8px}.dvad>div{display:flex;flex-direction:column;gap:4px;min-width:0}.dvfull{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;padding-left:50px}
 .dvfull .hol{font-size:13px;font-weight:600;color:var(--soft);padding:5px 0}.dvfull .hol.red{color:var(--red)}
 .dvall{display:flex;align-items:center;gap:6px;min-width:0;padding:6px 10px;border-radius:12px;background:color-mix(in srgb,var(--c) 30%,var(--card));font-size:13px;font-weight:600;text-align:left}.dvall span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dvall .ic{width:15px;height:15px}
-#dv_body{position:relative;max-height:max(240px,calc(100dvh - 372px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)));padding-bottom:10px;overflow-y:auto;margin-top:10px;border-radius:12px;overscroll-behavior:contain}
+#dv_body{position:relative;max-height:max(240px,calc(100dvh - 372px - var(--sat) - var(--sab)));padding-bottom:10px;overflow-y:auto;margin-top:10px;border-radius:12px;overscroll-behavior:contain}
 .dvb{position:relative;display:grid;grid-template-columns:44px 1fr 1fr;gap:6px}
 .dvg{position:absolute;inset:0;pointer-events:none}.dvg i{position:absolute;left:44px;right:0;border-top:1px solid var(--rule);font-style:normal}.dvg s{position:absolute;left:-44px;top:-8px;width:38px;text-align:right;text-decoration:none;font-size:11px;font-weight:600;color:var(--faint)}
 .dvcol{grid-column:2;position:relative;height:100%;border-radius:12px;cursor:copy}.dvcol.pb{grid-column:3}
@@ -248,14 +252,14 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 
 /* Side menu */
 #scrim{position:fixed;inset:0;z-index:40;background:rgba(30,22,40,.35);opacity:0;pointer-events:none;transition:opacity .25s}#scrim.on{opacity:1;pointer-events:auto}
-#drawer{position:fixed;top:0;bottom:0;left:0;z-index:45;display:flex;flex-direction:column;width:min(300px,84vw);padding:calc(18px + env(safe-area-inset-top,0px)) 14px calc(18px + env(safe-area-inset-bottom,0px));background:var(--card);border-radius:0 26px 26px 0;box-shadow:0 20px 60px rgba(40,20,60,.2);transform:translateX(-105%);transition:transform .3s cubic-bezier(.2,.9,.3,1);overflow-y:auto}
+#drawer{position:fixed;top:0;bottom:0;left:0;z-index:45;display:flex;flex-direction:column;width:min(300px,84vw);padding:calc(18px + var(--sat)) 14px calc(18px + var(--sab));background:var(--card);border-radius:0 26px 26px 0;box-shadow:0 20px 60px rgba(40,20,60,.2);transform:translateX(-105%);transition:transform .3s cubic-bezier(.2,.9,.3,1);overflow-y:auto}
 #drawer.on{transform:none}
 .dbrand{display:flex;align-items:center;gap:12px;padding:4px 8px 16px}.dbrand img{width:44px;height:44px;border-radius:12px}.dbrand b{display:block;font:500 21px/1.1 var(--serif)}.dbrand small{display:block;font-size:13px;color:var(--soft);margin-top:2px}
 .dsec{margin:14px 10px 6px;font-size:12px;font-weight:650;letter-spacing:.06em;text-transform:uppercase;color:var(--soft)}
 #drawer>button.di{display:flex;align-items:center;gap:12px;width:100%;min-height:50px;padding:0 12px;border-radius:14px;font-weight:600;text-align:left}
 #drawer>button.di svg{width:21px;height:21px;color:var(--acc)}#drawer>button.di.on{background:color-mix(in srgb,var(--acc) 12%,var(--fill))}
 @media (hover:hover){#drawer>button.di:hover{background:var(--fill)}}
-.dlang{display:flex;gap:8px;margin:auto 8px 0;padding-top:18px}.dlang button{flex:1;min-height:44px;border-radius:12px;background:var(--fill);font-weight:600;font-size:14px;color:var(--soft)}.dlang button.on{background:var(--acc);color:#fff}
+.dlang{display:flex;gap:10px;margin:10px 12px 0}.dlang button{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;font-size:24px;line-height:1;background:var(--fill);border:2px solid transparent;opacity:.55;transition:opacity .2s,border-color .2s}.dlang button.on{opacity:1;border-color:var(--acc)}
 
 /* Weekdays for a weekly repeat */
 .wds{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-top:10px}
@@ -278,7 +282,7 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 @media (min-width:560px){.cgr button{min-height:108px}.cev u{font-size:11.5px;padding:2px 5px}.cev em{font-size:11px}}
 @media (min-width:860px){#k_cal{max-width:none}.cgr button{min-height:124px}.cev u{font-size:12.5px;text-overflow:ellipsis}}
 
-#drawer>button.dset{margin-top:10px;border-top:1px solid var(--rule);border-radius:0 0 14px 14px;padding-top:4px}
+#drawer>button.dset{margin-top:auto;border-top:1px solid var(--rule);border-radius:0 0 14px 14px;padding-top:4px}
 .dbrand{padding:6px 12px 18px}
 </style>
 <script src="app-shell.js"></script>
@@ -340,8 +344,8 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 <button class="di hide" id="dr_join" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg><span></span></button>
 <button class="di" id="dr_names" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg><span></span></button>
 <button class="di" id="dr_ics" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.5 15.5 12 18l2.5-2.5"/></svg><span></span></button>
-<div class="dlang" id="dr_lang"></div>
-<button class="di dset" data-go="c" id="dr_set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h2M11 17h9"/><circle cx="15.5" cy="7" r="2.5"/><circle cx="8.5" cy="17" r="2.5"/></svg><span></span></button></aside>
+<button class="di dset" data-go="c" id="dr_set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h2M11 17h9"/><circle cx="15.5" cy="7" r="2.5"/><circle cx="8.5" cy="17" r="2.5"/></svg><span></span></button>
+<div class="dlang" id="dr_lang"></div></aside>
 <main>
 <header class="top" id="main_top"><button class="ib" id="menu" type="button" aria-label="Meny"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h11M4 17h16"/></svg></button><h1 id="ttl"></h1><button class="ib add" id="tadd" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></header>
 
@@ -564,10 +568,9 @@ const holRow=h=>`<div class="evr soft${h[3]?" red":""}"><span><b>${esc(h[1+li()]
 function dayRows(n){const h=S.hol?holOn(n):null;return (h?holRow(h):"")+bdOn(n).map(b=>`<button class="evr bdr" data-bd="${esc(b.id)}"><span><b>${esc(bdText(b,n))}</b></span><span class="et">♥</span></button>`).join("")+onDay(n).map(o=>evRow(o,n)).join("")}
 
 /* ---------- Idag ---------- */
-function greet(){const h=new Date().getHours(),g=h<5?tx("God natt","Good night"):h<10?tx("God morgon","Good morning"):h<17?tx("Hej","Hi"):tx("God kväll","Good evening");return CP[me()]?g+", "+CP[me()]:g}
 const nextUp=()=>{const now=Date.now(),n=todayN();return between(n,n+180).find(o=>o.e.t?endMs(o)>now:o.s>n)||null};
 function renderHome(){const n=todayN(),now=Date.now(),o=nextUp(),big=$("h_big");
-  $("h_date").textContent=cap(fmtDay(n))+" · "+tx("vecka ","week ")+isoWeek(n);$("h_hi").textContent=greet();big.classList.remove("word");
+  $("h_date").textContent=tx("Vecka ","Week ")+isoWeek(n);$("h_hi").textContent=cap(fmtDay(n));big.classList.remove("word");
   if(!o){$("h_lbl").textContent=tx("Härnäst","Next");big.textContent=tx("Inget planerat","Nothing planned");big.classList.add("word");$("h_sub").textContent=tx("Lägg till något under Kalender.","Add something under Calendar.")}
   else{const e=o.e,mins=Math.round((startMs(o)-now)/6e4),who=" · "+((e.w||"g")==="g"?tx("Ni båda","Both of you"):pname(e.w));
     if(live(o)){$("h_lbl").textContent=tx("Pågår nu","Now");big.textContent=e.n;big.classList.add("word");$("h_sub").textContent=(e.t2?tx("Till ","Until ")+e.t2:"")+who}
@@ -649,7 +652,7 @@ function renderUs(){const dt=togetherDays(),an=annNext(),n=todayN();
   const p=pname(other(me()));let inv="";
   if(LOCAL&&!SHARED())inv=`<h3>${tx("Inte ansluten just nu","Not connected right now")}</h3><p class="muted">${tx("Det du lägger in sparas på telefonen och delas så fort appen får kontakt igen.","What you add is saved on this phone and shared as soon as the app can connect again.")}</p>`;
   else if(LOCAL&&joined())inv=`<div class="ok">${IOK}<span>${tx("Ni är båda med. Allt ni lägger in syns hos den andra.","You are both in. Everything you add shows up for the other.")}</span></div><button class="lnk" id="v_share">${tx("Skicka inbjudan igen","Send the invite again")}</button>`;
-  else if(LOCAL)inv=`<h3>${tx(`Bjud in ${esc(p)}`,`Invite ${esc(p)}`)}</h3><ol><li>${tx(`Skicka länken till ${esc(p)}.`,`Send the link to ${esc(p)}.`)}</li><li>${tx(`${esc(p)} öppnar den på sin telefon och väljer sitt namn.`,`${esc(p)} opens it on their phone and picks their name.`)}</li><li>${tx("Sedan ser ni samma kalender, och ändringar syns direkt.","Then you see the same calendar, and changes show up right away.")}</li></ol><button class="btn wide" id="v_share">${tx("Skicka inbjudan","Send the invite")}</button><p class="muted" style="margin-top:10px">${tx(`Har ${esc(p)} redan lagt appen på hemskärmen? Öppna den, tryck på menyn och välj Gå med med länk.`,`Has ${esc(p)} already added the app to the home screen? Open it, tap the menu and choose Join with a link.`)}</p>`;
+  else if(LOCAL)inv=`<h3>${tx(`Bjud in ${esc(p)}`,`Invite ${esc(p)}`)}</h3><ol><li>${tx(`Skicka länken till ${esc(p)}.`,`Send the link to ${esc(p)}.`)}</li><li>${tx(`${esc(p)} öppnar den på sin telefon och väljer sitt namn.`,`${esc(p)} opens it on their phone and picks their name.`)}</li><li>${tx("Sedan ser ni samma kalender, och ändringar syns direkt.","Then you see the same calendar, and changes show up right away.")}</li></ol><button class="btn wide" id="v_share">${tx("Skicka inbjudan","Send the invite")}</button><p class="muted" style="margin-top:10px">${tx(`Har ${esc(p)} redan appen? Öppna den, tryck på menyn och välj Gå med med länk. Du får en notis när ${esc(p)} har gått med.`,`Does ${esc(p)} already have the app? Open it, tap the menu and choose Join with a link. You get a notification when ${esc(p)} has joined.`)}</p>`;
   else if(joined())inv=`<div class="ok">${IOK}<span>${tx(`Ni är båda med. Allt ni lägger in syns hos den andra.`,`You are both in. Everything you add shows up for the other.`)}</span></div>`;
   else inv=`<h3>${tx(`Bjud in ${p}`,`Invite ${p}`)}</h3><ol><li>${tx("Tryck på <b>Dela</b> för den här sidan i Claude.","Tap <b>Share</b> for this page in Claude.")}</li><li>${tx(`Lägg till ${esc(p)}s e-post och låt hen <b>redigera</b>.`,`Add ${esc(p)}'s email and let them <b>edit</b>.`)}</li><li>${tx(`Skicka länken. ${esc(p)} öppnar den i Claude-appen på telefonen och väljer sitt namn.`,`Send the link. ${esc(p)} opens it in the Claude app on their phone and picks their name.`)}</li></ol><button class="btn ghost wide" id="v_copy">${tx("Kopiera länken","Copy the link")}</button><p class="muted hide" id="v_link" style="user-select:all;word-break:break-all">${ART_URL}</p>`;
   $("v_inv").className="card inv";$("v_inv").innerHTML=inv;
@@ -675,7 +678,7 @@ function renderSettings(){
 function renderDrawer(){$("dr_sub").textContent=CP.a&&CP.b?CP.a+" ♥ "+CP.b:tx("Er gemensamma kalender","Your shared calendar");
   $("dr_join").classList.toggle("hide",!LOCAL);$("dr_join").lastElementChild.textContent=tx("Gå med med länk","Join with a link");$("dr_inv").lastElementChild.textContent=LOCAL&&!SHARED()?tx("Dela med varandra","Share with each other"):joined()?tx("Ni är båda med","You are both in"):tx("Bjud in ","Invite ")+pname(other(me()));$("dr_names").lastElementChild.textContent=tx("Ändra namn och datum","Change names and date");
   $("dr_set").lastElementChild.textContent=t("ttlC");$("dr_ics").lastElementChild.textContent=tx("Spara som .ics","Save as .ics");
-  $("dr_lang").innerHTML=[["sv","Svenska"],["en","English"]].map(([v,l])=>`<button class="${S.lang===v?"on":""}" data-lg="${v}">${l}</button>`).join("")}
+  $("dr_lang").innerHTML=[["sv","🇸🇪","Svenska"],["en","🇬🇧","English"]].map(([v,f,l])=>`<button class="${S.lang===v?"on":""}" data-lg="${v}" aria-label="${l}" title="${l}" aria-pressed="${S.lang===v}">${f}</button>`).join("")}
 const openDrawer=()=>{$("drawer").classList.add("on");$("scrim").classList.add("on")},closeDrawer=()=>{$("drawer").classList.remove("on");$("scrim").classList.remove("on")};
 
 /* ---------- Drawing and moving between pages ---------- */
@@ -904,7 +907,7 @@ async function firstRun(){if(firstDone)return;firstDone=true;if(!CP.a||!CP.b){op
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
     CP=cp||{a:"",b:"",ua:"",ub:"",since:""};
     if(MYID){if(CP.ua===MYID)setMe("a");else if(CP.ub===MYID)setMe("b")}
-    render();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
+    watchJoin();render();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
 }catch(e){}setTimeout(()=>{if(!ok&&!firstDone)firstRun()},col?10000:400)})();
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
@@ -914,7 +917,7 @@ async function firstRun(){if(firstDone)return;firstDone=true;if(!CP.a||!CP.b){op
   addEventListener("popstate",()=>{if(closeTop())return guard();if(tab!=="h"){go("h");return guard()}history.back()})})();
 
 /* Inviting and joining (installed version, shared through Firebase). */
-async function shareInvite(){const url=KK.inviteUrl(),p=pname(other(me())),text=tx(`Hej ${p}! Gå med i vår gemensamma kalender:`,`Hi ${p}! Join our shared calendar:`);
+async function shareInvite(){askNotify();const url=KK.inviteUrl(),p=pname(other(me())),text=tx(`Hej ${p}! Gå med i vår gemensamma kalender:`,`Hi ${p}! Join our shared calendar:`);
   if(navigator.share){try{await navigator.share({title:"Kalenderkoll",text,url});return}catch(e){if(e&&e.name==="AbortError")return}}
   try{await navigator.clipboard.writeText(url);toast(tx("Länken är kopierad","The link is copied")+" · "+tx(`Klistra in den i ett meddelande till ${p}`,`Paste it into a message to ${p}`),5000)}catch(e){openJS(url)}}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#v_share")){shareInvite()}});
@@ -929,6 +932,26 @@ $("js_ok").onclick=async()=>{if($("js_in").readOnly){closeJS();return}const c=KK
   try{localStorage.removeItem("kalenderkoll.me")}catch(err){}KK.join(c)};
 /* A link opened on a phone that already has its own calendar: ask before switching. */
 window.KK_askJoin=()=>ask(tx("Gå med i er gemensamma kalender?","Join your shared calendar?"),tx("Kalendern på den här telefonen byts mot den du blev inbjuden till.","The calendar on this phone is replaced by the one you were invited to."),tx("Gå med","Join")).then(ok=>{if(ok){try{localStorage.removeItem("kalenderkoll.me")}catch(e){}ME=""}return ok});
+
+/* A notice when your partner joins. This phone remembers who the partner was last time;
+   when someone new claims the other name, you get a toast and a phone notification. */
+const JK="kalenderkoll.partner";
+function notify(title,body){
+  try{const N=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications;
+    if(N){N.schedule({notifications:[{id:Math.floor(Date.now()/1000)%2000000000,title,body}]}).catch(()=>{});return}
+    if("Notification"in window&&Notification.permission==="granted"){
+      if(navigator.serviceWorker&&navigator.serviceWorker.controller)navigator.serviceWorker.ready.then(r=>r.showNotification(title,{body,icon:"icons/icon-192.png"})).catch(()=>{});
+      else new Notification(title,{body,icon:"icons/icon-192.png"})}}catch(e){}}
+async function askNotify(){
+  try{const N=window.Capacitor&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications;
+    if(N){const p=await N.checkPermissions();if(p.display!=="granted")await N.requestPermissions();return}
+    if("Notification"in window&&Notification.permission==="default")await Notification.requestPermission()}catch(e){}}
+function watchJoin(){if(!SHARED()||!ME||!CP.a||!CP.b)return;const o=other(ME),id=CP["u"+o]||"none";let seen=null;
+  try{seen=localStorage.getItem(JK)}catch(e){}
+  if(seen===id)return;try{localStorage.setItem(JK,id)}catch(e){}
+  /* Only tell you about a change you did not already see: a partner who joins after you started. */
+  if(seen!==null&&id!=="none"&&id!==MYID){const p=pname(o),msg=tx(`${p} har gått med i er kalender`,`${p} has joined your calendar`);
+    toast("💞 "+msg+" · "+tx("Nu ser ni samma kalender.","Now you see the same calendar."),6000);notify("Kalenderkoll",msg)}}
 /* Installed version: when a newer build is published, offer to update. */
 const BUILD=(document.querySelector('meta[name="kal-build"]')||{}).content||"";
 async function checkUpdate(){if(!LOCAL||!BUILD||!navigator.onLine)return;try{const r=await fetch("version.json?t="+Date.now(),{cache:"no-store"});if(!r.ok)return;const j=await r.json();

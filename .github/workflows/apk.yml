@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir -p app && cd app
           npm init -y >/dev/null
-          npm i @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8 @capacitor/assets@4
+          npm i @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8 @capacitor/local-notifications@8 @capacitor/assets@4
           cp -r ../www ./www
           cat > capacitor.config.json <<'JSON'
           {"appId":"se.agrinders.kalenderkoll","appName":"Kalenderkoll","webDir":"www","android":{"backgroundColor":"#f8f3f4"}}
