@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/kk_root" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@drawable/kk_bg" android:padding="12dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+        <TextView android:id="@+id/kk_prev" android:layout_width="44dp" android:layout_height="40dp" android:gravity="center" android:text="‹" android:textSize="26sp" android:textColor="@color/kk_ink" />
+        <TextView android:id="@+id/kk_title" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:gravity="center" android:textSize="17sp" android:textStyle="bold" android:textColor="@color/kk_ink" android:maxLines="1" />
+        <TextView android:id="@+id/kk_next" android:layout_width="44dp" android:layout_height="40dp" android:gravity="center" android:text="›" android:textSize="26sp" android:textColor="@color/kk_ink" />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/kk_strip" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="2dp" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="8dp">
+        <TextView android:id="@+id/kk_na" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginEnd="3dp" android:gravity="center" android:background="@drawable/kk_chip" android:paddingTop="5dp" android:paddingBottom="5dp" android:textSize="13sp" android:textStyle="bold" android:maxLines="1" android:ellipsize="end" />
+        <TextView android:id="@+id/kk_nb" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="3dp" android:gravity="center" android:background="@drawable/kk_chip" android:paddingTop="5dp" android:paddingBottom="5dp" android:textSize="13sp" android:textStyle="bold" android:maxLines="1" android:ellipsize="end" />
+    </LinearLayout>
+    <FrameLayout android:id="@+id/kk_body" android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="6dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal" android:baselineAligned="false">
+            <LinearLayout android:id="@+id/kk_col_a" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="3dp" android:orientation="vertical" />
+            <LinearLayout android:id="@+id/kk_col_b" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginStart="3dp" android:orientation="vertical" />
+        </LinearLayout>
+        <TextView android:id="@+id/kk_empty" android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:textSize="14sp" android:textColor="@color/kk_soft" android:visibility="gone" />
+        <TextView android:id="@+id/kk_add" android:layout_width="40dp" android:layout_height="40dp" android:layout_gravity="bottom|end" android:gravity="center" android:background="@drawable/kk_add" android:text="+" android:textSize="24sp" android:textColor="#FFFFFF" />
+    </FrameLayout>
+</LinearLayout>

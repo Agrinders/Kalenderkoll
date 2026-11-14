@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="kk_bg">#F7FFFCFD</color>
+    <color name="kk_ink">#2A2530</color>
+    <color name="kk_soft">#867D8C</color>
+    <color name="kk_acc">#8A72EE</color>
+    <color name="kk_red">#D4586A</color>
+    <color name="kk_fill">#0F2A2530</color>
+    <color name="kk_selbg">#268A72EE</color>
+    <string name="kk_widget_name">Kalenderkoll – dagen</string>
+</resources>

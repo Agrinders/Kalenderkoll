@@ -47,6 +47,21 @@ jobs:
           # Older phones (Android 10 and earlier) need permission to write the backup to Documents.
           sed -i 's#<uses-permission android:name="android.permission.INTERNET" />#<uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />#' android/app/src/main/AndroidManifest.xml
           grep -q WRITE_EXTERNAL_STORAGE android/app/src/main/AndroidManifest.xml
+          # The home-screen widget: its code, its looks, and its entry in the app's manifest.
+          cp ../android-native/java/*.java android/app/src/main/java/se/agrinders/kalenderkoll/
+          cp -r ../android-native/res/. android/app/src/main/res/
+          python3 - <<'PY'
+          import pathlib
+          p=pathlib.Path('android/app/src/main/AndroidManifest.xml');s=p.read_text()
+          r='''        <receiver android:name=".WidgetProvider" android:exported="true" android:label="@string/kk_widget_name">
+                      <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+                      <meta-data android:name="android.appwidget.provider" android:resource="@xml/kk_widget_info" />
+                  </receiver>
+              </application>'''
+          assert '</application>' in s
+          p.write_text(s.replace('</application>',r,1))
+          PY
+          ls android/app/src/main/java/se/agrinders/kalenderkoll/
           # Every build gets a higher number, so a new version installs over the old one.
           sed -i -E "s/versionCode [0-9]+/versionCode ${{ github.run_number }}/; s/versionName \"[^\"]*\"/versionName \"2.${{ github.run_number }}\"/" android/app/build.gradle
       - name: Build and sign the apk

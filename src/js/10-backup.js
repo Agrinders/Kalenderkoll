@@ -31,3 +31,14 @@ document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest
   if(t.id==="bk_save"){if(!hasData()){toast(tx("Det finns inget att spara än","There is nothing to save yet"));return}saveFile(NATIVE()?BKN.replace(".json","-"+isoOf(new Date())+".json"):"kalenderkoll-sakerhetskopia-"+isoOf(new Date())+".json",backupText(),"application/json")}
   else{$("bk_in").value="";$("bk_in").click()}});
 $("bk_in").addEventListener("change",()=>{const f=$("bk_in").files[0];if(f)restoreFrom(f)});
+
+/* ---------- Home-screen widget (Android app) ----------
+   The widget cannot run the app, so the app writes a small file with the coming days for it to read. */
+var wgTimer=0,wgPrev="";
+function widgetSync(){const F=FSP();if(!F)return;clearTimeout(wgTimer);wgTimer=setTimeout(()=>{
+  const n=todayN(),def={a:"#5cc79f",b:"#9d86f4",g:"#f19ab9"},hex=x=>/^#[0-9a-f]{6}$/i.test(x||"")?x:"",pc=w=>w==="g"?def.g:hex(CP["c"+w])||def[w],days={};
+  for(const o of between(n-21,n+120))for(let d=Math.max(o.s,n-21);d<=Math.min(o.end,n+120);d++){const e=o.e,first=d===o.s;(days[nd(d)]=days[nd(d)]||[]).push({n:e.n,t:e.t&&first?e.t+(e.t2?"–"+e.t2:""):"",w:e.w||"g",c:hex(e.col)||pc(e.w||"g")})}
+  for(let d=n-21;d<=n+120;d++){const B=bdOn(d);if(B.length)(days[nd(d)]=days[nd(d)]||[]).unshift(...B.map(b=>({n:"♥ "+bdText(b,d),t:"",w:"g",c:"#8a72ee"})))}
+  for(const k in days)days[k].sort((x,y)=>(x.t||"")<(y.t||"")?-1:(x.t||"")>(y.t||"")?1:0);
+  const txt=JSON.stringify({v:1,lang:S.lang,names:{a:CP.a||"",b:CP.b||""},cols:{a:pc("a"),b:pc("b")},days});
+  if(txt===wgPrev)return;F.writeFile({path:"widget.json",data:txt,directory:"DATA",encoding:"utf8"}).then(()=>{wgPrev=txt}).catch(()=>{})},500)}

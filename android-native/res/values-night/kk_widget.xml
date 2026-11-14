@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="kk_bg">#F21A171F</color>
+    <color name="kk_ink">#F1ECF6</color>
+    <color name="kk_soft">#A69DAF</color>
+    <color name="kk_acc">#A996FF</color>
+    <color name="kk_red">#F08A98</color>
+    <color name="kk_fill">#17F1ECF6</color>
+    <color name="kk_selbg">#33A996FF</color>
+</resources>
