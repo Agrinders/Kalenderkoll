@@ -391,3 +391,14 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 .cgr .fest-xmas{--c1:#e8616b;--c2:#4fae7c}.cgr .fest-ny{--c1:#8f7df0;--c2:#ffd76a}.cgr .fest-hallo{--c1:#b79cf2;--c2:#ff9a3d}
 .cgr .fic{position:absolute;top:3px;left:3px;display:grid;color:color-mix(in srgb,var(--fi) 70%,var(--f2))}.cgr .fic .ic{width:13px;height:13px}
 .fest-hallo .fic,.fest-xmas .fic,.fest-ny .fic{color:var(--f2)}.cgr .fest-xmas .fic{color:#1f7a4a}.cgr .fest-ny .fic{color:#6a55c9}.cgr .fest-hallo .fic{color:#ef7a1a}
+
+/* Decorations: each celebration's drawing sits translucent behind the day, and large on its banner. */
+.fart{position:absolute;pointer-events:none;display:block}.fart svg{display:block;width:100%;height:100%}
+.cgr button.fst{overflow:hidden}.cgr button.fst>b,.cgr button.fst>.cev,.cgr button.fst>.dic{position:relative;z-index:1}
+.cgr .fart{left:50%;bottom:1px;width:min(92%,46px);aspect-ratio:1;transform:translateX(-50%);opacity:.5}
+.cgr button.fst:has(.cev u) .fart{opacity:.3}
+.fest{min-height:66px;padding-right:86px}.fest>i,.fest>b{position:relative;z-index:1}
+.fest .fart{right:6px;top:50%;width:74px;height:74px;transform:translateY(-50%) rotate(-6deg);filter:drop-shadow(0 4px 8px rgba(0,0,0,.18))}
+.fest::after{content:"";position:absolute;right:-30px;top:-30px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.28),transparent 65%);pointer-events:none}
+.dvfull .fest{min-height:46px;padding-right:58px}.dvfull .fest .fart{width:48px;height:48px;right:4px}
+.fart svg{fill:none;stroke:none;stroke-width:1}
