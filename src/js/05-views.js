@@ -37,8 +37,6 @@ function renderMonth(){const n=todayN(),first=dnOf(P.y,P.m,1),off=wdOf(first),ro
   let h="";for(let r=0;r<rows;r++){if(S.wkno)h+=`<span class="v">${isoWeek(start+r*7)}</span>`;
     for(let i=0;i<7;i++){const d=start+r*7+i,[,m,dd]=ymd(d),L=B.filter(o=>o.s<=d&&o.end>=d),ws=[...new Set(L.map(x=>x.e.w||"g"))];
       const cls=[m!==P.m?"out":"",dd%2?"":"alt",d===n?"t":"",d===SEL?"s":"",(wdOf(d)===6||(S.hol&&isRed(d)))?"red":""].filter(Boolean).join(" ");
-      /* Days from the month before and after are left empty, so the month itself reads clearly. */
-      if(m!==P.m){h+=`<span class="outd"></span>`;continue}
       h+=`<button data-cday="${d}" class="${cls}" aria-label="${esc(cap(fmtDay(d)))}"${d===SEL?' aria-pressed="true"':""}><b class="${fxCls(fxOf(L)).trim()}">${dd}</b>${dIc(d)?`<span class="dic"${L.length?` style="--dc:${evCol(L[0].e)}"`:""}>${icon(dIc(d))}</span>`:""}<span class="cev">${(()=>{const B=bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),E=L.map(o=>`<u class="${o.e.st==="glass"?"gl":""}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</u>`),A=[...B,...E],max=A.length>3?2:3;return A.slice(0,max).join("")+(A.length>max?`<em>+${A.length-max}</em>`:"")})()}</span></button>`}}
   $("k_gr").innerHTML=h;
   $("kd_t").innerHTML=(dIc(SEL)?icon(dIc(SEL))+" ":"")+esc(SEL===n?tx("Idag","Today"):cap(fmtDay(SEL)));$("kd_ic").innerHTML=icon(dIc(SEL)||"star")+`<span>${dIc(SEL)?tx("Byt dagens ikon","Change the day's icon"):tx("Ikon för dagen","Icon for the day")}</span>`;

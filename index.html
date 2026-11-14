@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="54e87bc17136">
+<meta name="kal-build" content="563fcf2269f2">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -304,17 +304,15 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 /* Room above the first hour so its time label is not cut off. */
 .dvb{margin-top:10px}
 
-/* Background: soft clouds of colour that drift slowly behind everything. */
+/* Background: a faint mist in the app's own soft tones that drifts slowly behind everything. */
 .sky{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
-.sky i{position:absolute;border-radius:50%;background:radial-gradient(circle,var(--k) 0,color-mix(in srgb,var(--k) 55%,transparent) 38%,transparent 70%);opacity:.42;will-change:transform;animation:drift var(--t) ease-in-out infinite alternate}
-.sky i:nth-child(1){--k:var(--pb);--t:26s;width:78vmax;height:78vmax;left:-30vmax;top:-26vmax;--x:14vmax;--y:10vmax;--s:1.15}
-.sky i:nth-child(2){--k:var(--pg);--t:32s;width:66vmax;height:66vmax;right:-28vmax;top:8vmax;--x:-12vmax;--y:14vmax;--s:.9}
-.sky i:nth-child(3){--k:var(--pa);--t:38s;width:72vmax;height:72vmax;left:-12vmax;bottom:-34vmax;--x:16vmax;--y:-10vmax;--s:1.1}
-.sky i:nth-child(4){--k:var(--acc);--t:29s;width:44vmax;height:44vmax;right:-8vmax;bottom:4vmax;--x:-14vmax;--y:-12vmax;--s:1.25;opacity:.2}
-.sky i:nth-child(5){--k:var(--pg);--t:35s;width:36vmax;height:36vmax;left:18vmax;top:30vmax;--x:10vmax;--y:-16vmax;--s:.8;opacity:.22}
+.sky i{--k:color-mix(in srgb,var(--acc) 16%,var(--card));position:absolute;border-radius:50%;background:radial-gradient(closest-side,var(--k) 0,color-mix(in srgb,var(--k) 60%,transparent) 45%,transparent 100%);opacity:.75;will-change:transform;animation:drift var(--t) ease-in-out infinite alternate}
+.sky i:nth-child(1){--t:34s;width:120vmax;height:60vmax;left:-50vmax;top:-22vmax;--x:30vmax;--y:6vmax;--s:1.1}
+.sky i:nth-child(2){--k:var(--card);--t:41s;width:110vmax;height:52vmax;right:-55vmax;top:14vmax;--x:-34vmax;--y:8vmax;--s:1.15}
+.sky i:nth-child(3){--k:color-mix(in srgb,var(--pg) 14%,var(--card));--t:47s;width:130vmax;height:58vmax;left:-40vmax;top:48vmax;--x:26vmax;--y:-8vmax;--s:.95}
+.sky i:nth-child(4){--k:var(--card);--t:38s;width:100vmax;height:46vmax;right:-30vmax;bottom:-12vmax;--x:-28vmax;--y:-6vmax;--s:1.2}
+.sky i:nth-child(5){--k:color-mix(in srgb,var(--ink) 5%,var(--bg));--t:52s;width:90vmax;height:40vmax;left:-10vmax;top:22vmax;--x:22vmax;--y:12vmax;--s:1.1}
 @keyframes drift{to{transform:translate(var(--x),var(--y)) scale(var(--s))}}
-:root[data-theme="dark"] .sky i{opacity:.2}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sky i{opacity:.2}}
 /* Everything you can tap answers: it dips a little when pressed and eases between states. */
 button,[role="button"],.chip,.swt,.opt,.lapp{transition:transform .16s cubic-bezier(.3,.7,.4,1),background-color .2s,color .2s,border-color .2s,box-shadow .2s,opacity .2s,filter .2s}
 button:active,[role="button"]:active,.swt:active,.lapp:active{transform:scale(.95)}
@@ -327,7 +325,9 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 .cgr button.alt{background:color-mix(in srgb,var(--ink) 3.5%,transparent)}.cgr button.alt.s{background:color-mix(in srgb,var(--acc) 13%,transparent)}
 /* Three view choices in the top bar. */
 .seg.kv{grid-template-columns:repeat(3,auto)}.seg.kv button{padding:0 9px}
-@media (max-width:459px){.top:has(#k_v:not(.hide)) h1{font-size:0}}
+@media (max-width:459px){.top:has(#k_v:not(.hide)) h1{font-size:22px}.seg.kv button{padding:0 7px;font-size:13px}}
+@media (max-width:379px){.top:has(#k_v:not(.hide)) h1{font-size:19px}.seg.kv button{padding:0 5px;font-size:12.5px}.top .ib.add{margin-left:3px}}
+@media (max-width:339px){.top:has(#k_v:not(.hide)) h1{font-size:0}}
 /* Week view */
 #k_wv{padding:14px 6px 10px}#k_wv .mnav{margin:-6px 4px 6px}#wv_t{font:500 17px/1.2 var(--serif);text-transform:none}
 @media (max-width:559px){#k_wv{margin:0 -12px}}
@@ -669,8 +669,6 @@ function renderMonth(){const n=todayN(),first=dnOf(P.y,P.m,1),off=wdOf(first),ro
   let h="";for(let r=0;r<rows;r++){if(S.wkno)h+=`<span class="v">${isoWeek(start+r*7)}</span>`;
     for(let i=0;i<7;i++){const d=start+r*7+i,[,m,dd]=ymd(d),L=B.filter(o=>o.s<=d&&o.end>=d),ws=[...new Set(L.map(x=>x.e.w||"g"))];
       const cls=[m!==P.m?"out":"",dd%2?"":"alt",d===n?"t":"",d===SEL?"s":"",(wdOf(d)===6||(S.hol&&isRed(d)))?"red":""].filter(Boolean).join(" ");
-      /* Days from the month before and after are left empty, so the month itself reads clearly. */
-      if(m!==P.m){h+=`<span class="outd"></span>`;continue}
       h+=`<button data-cday="${d}" class="${cls}" aria-label="${esc(cap(fmtDay(d)))}"${d===SEL?' aria-pressed="true"':""}><b class="${fxCls(fxOf(L)).trim()}">${dd}</b>${dIc(d)?`<span class="dic"${L.length?` style="--dc:${evCol(L[0].e)}"`:""}>${icon(dIc(d))}</span>`:""}<span class="cev">${(()=>{const B=bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),E=L.map(o=>`<u class="${o.e.st==="glass"?"gl":""}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</u>`),A=[...B,...E],max=A.length>3?2:3;return A.slice(0,max).join("")+(A.length>max?`<em>+${A.length-max}</em>`:"")})()}</span></button>`}}
   $("k_gr").innerHTML=h;
   $("kd_t").innerHTML=(dIc(SEL)?icon(dIc(SEL))+" ":"")+esc(SEL===n?tx("Idag","Today"):cap(fmtDay(SEL)));$("kd_ic").innerHTML=icon(dIc(SEL)||"star")+`<span>${dIc(SEL)?tx("Byt dagens ikon","Change the day's icon"):tx("Ikon för dagen","Icon for the day")}</span>`;
