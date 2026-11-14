@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="c3adf3315eee">
+<meta name="kal-build" content="3c32d805bfda">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -353,6 +353,14 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 /* Event names in the month and week follow the days' own gently rounded corners. */
 .cev u,.wvad button{border-radius:3px}.wvev{border-radius:4px}
 @media (max-width:559px){.cev u{border-radius:3px}}
+
+/* In the month, an event's effect sits around the whole day box. */
+.cgr button.fx{z-index:1}
+.cgr button.fx-rainbow{box-shadow:0 0 10px 1px color-mix(in srgb,#a996f7 30%,transparent)}.cgr button.fx-rainbow::before{inset:-1px;padding:2px}
+.cgr button.fx-sparkle{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fxc) 55%,transparent),0 0 10px 1px color-mix(in srgb,var(--fxc) 30%,transparent)}.cgr button.fx-sparkle::before,.cgr button.fx-sparkle::after{inset:-5px}
+.cgr button.fx-hearts{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fxc) 55%,transparent),0 0 10px 1px color-mix(in srgb,var(--fxc) 30%,transparent)}.cgr button.fx-hearts::before{top:-6px;right:-3px}.cgr button.fx-hearts::after{left:-3px;top:60%}
+.cgr button.fx-glow{animation-name:fxglowbox}
+@keyframes fxglowbox{0%,100%{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fxc) 35%,transparent),0 0 6px 0 color-mix(in srgb,var(--fxc) 30%,transparent)}50%{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--fxc) 70%,transparent),0 0 16px 3px color-mix(in srgb,var(--fxc) 50%,transparent)}}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -681,7 +689,7 @@ function renderMonth(){const n=todayN(),first=dnOf(P.y,P.m,1),off=wdOf(first),ro
   let h="";for(let r=0;r<rows;r++){if(S.wkno)h+=`<span class="v">${isoWeek(start+r*7)}</span>`;
     for(let i=0;i<7;i++){const d=start+r*7+i,[,m,dd]=ymd(d),L=B.filter(o=>o.s<=d&&o.end>=d),ws=[...new Set(L.map(x=>x.e.w||"g"))];
       const cls=[m!==P.m?"out":"",dd%2?"":"alt",d===n?"t":"",d===SEL?"s":"",(wdOf(d)===6||(S.hol&&isRed(d)))?"red":""].filter(Boolean).join(" ");
-      h+=`<button data-cday="${d}" class="${cls}" aria-label="${esc(cap(fmtDay(d)))}"${d===SEL?' aria-pressed="true"':""}><b class="${fxCls(fxOf(L)).trim()}">${dd}</b>${dIc(d)?`<span class="dic"${L.length?` style="--dc:${evCol(L[0].e)}"`:""}>${icon(dIc(d))}</span>`:""}<span class="cev">${(()=>{const B=bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),E=L.map(o=>`<u class="${o.e.st==="glass"?"gl":""}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</u>`),A=[...B,...E],max=A.length>3?2:3;return A.slice(0,max).join("")+(A.length>max?`<em>+${A.length-max}</em>`:"")})()}</span></button>`}}
+      h+=`<button data-cday="${d}" class="${cls}${fxCls(fxOf(L))}" aria-label="${esc(cap(fmtDay(d)))}"${d===SEL?' aria-pressed="true"':""}><b>${dd}</b>${dIc(d)?`<span class="dic"${L.length?` style="--dc:${evCol(L[0].e)}"`:""}>${icon(dIc(d))}</span>`:""}<span class="cev">${(()=>{const B=bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),E=L.map(o=>`<u class="${o.e.st==="glass"?"gl":""}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</u>`),A=[...B,...E],max=A.length>3?2:3;return A.slice(0,max).join("")+(A.length>max?`<em>+${A.length-max}</em>`:"")})()}</span></button>`}}
   $("k_gr").innerHTML=h;
   $("kd_t").innerHTML=(dIc(SEL)?icon(dIc(SEL))+" ":"")+esc(SEL===n?tx("Idag","Today"):cap(fmtDay(SEL)));$("kd_ic").innerHTML=icon(dIc(SEL)||"star")+`<span>${dIc(SEL)?tx("Byt dagens ikon","Change the day's icon"):tx("Ikon för dagen","Icon for the day")}</span>`;
   renderKV();if(KV==="day")renderDayView();if(KV==="week")renderWeekView();$("k_now").textContent=tx("Till idag","To today");$("k_now").classList.toggle("hide",P.y===NOW.getFullYear()&&P.m===NOW.getMonth());
