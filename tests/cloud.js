@@ -57,5 +57,6 @@ await step('a reinstalled phone gets everything back from a backup file',async()
   await D1.setInputFiles('#bk_in',{name:'Kalenderkoll-sakerhetskopia.json',mimeType:'application/json',buffer:Buffer.from(bk)});await w(D1);need(await D1.evaluate(()=>modal.classList.contains('on')),'did not ask');
   await Promise.all([D1.waitForNavigation(),D1.click('#m_yes')]);await waitFor(D1,()=>KK.mode==='cloud');need(await waitFor(D1,()=>EV.some(e=>e.n==='Middag ihop')),'events not back');
   const sa=await A1.evaluate(()=>KK.space());const r=await D1.evaluate(()=>[KK.space(),ME,cs.classList.contains('on'),CP.a]);need(r[0]===sa&&r[1]==='a'&&!r[2],'restore '+JSON.stringify(r));return r.slice(1)});
+await step('when another phone takes your name, you are asked who you are',async()=>{need(await waitFor(A1,()=>sc.classList.contains('on')),'phone 1 was not asked');const o=await A1.evaluate(()=>[...sc_o.querySelectorAll('[data-sco]')].map(b=>b.textContent));await A1.click('#sc_o [data-sco="a"]');await w(A1,400);const r=await A1.evaluate(()=>[ME,CP.ua===MYID,dr_who.textContent]);need(r[0]==='a'&&r[1]&&/Alex/.test(r[2]),'who '+r);return[o,r]});
 console.log(errs.length?'PAGE ERRORS: '+errs.join(' | '):'no page errors');if(errs.length)fails++;
 await b.close();srv.close();console.log(fails?fails+' failed':'all passed');process.exit(fails?1:0)})();

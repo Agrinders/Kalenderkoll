@@ -120,7 +120,7 @@ function renderSettings(){
 
 /* ---------- Side menu ---------- */
 function renderDrawer(){$("dr_sub").textContent=CP.a&&CP.b?CP.a+" ♥ "+CP.b:tx("Er gemensamma kalender","Your shared calendar");
-  $("dr_join").classList.toggle("hide",!LOCAL);$("dr_join").lastElementChild.textContent=tx("Gå med med länk","Join with a link");$("dr_inv").lastElementChild.textContent=LOCAL&&!SHARED()?tx("Dela med varandra","Share with each other"):joined()?tx("Ni är båda med","You are both in"):tx("Bjud in ","Invite ")+pname(other(me()));$("dr_names").lastElementChild.textContent=tx("Ändra namn och datum","Change names and date");
+  $("dr_join").classList.toggle("hide",!LOCAL);$("dr_join").lastElementChild.textContent=tx("Gå med med länk","Join with a link");$("dr_inv").lastElementChild.textContent=LOCAL&&!SHARED()?tx("Dela med varandra","Share with each other"):joined()?tx("Ni är båda med","You are both in"):tx("Bjud in ","Invite ")+pname(other(me()));$("dr_who").classList.toggle("hide",!(CP.a&&CP.b));$("dr_who").lastElementChild.textContent=ME?tx("Jag är ","I am ")+pname(ME):tx("Välj vem du är","Pick who you are");$("dr_names").lastElementChild.textContent=tx("Ändra namn och datum","Change names and date");
   $("dr_set").lastElementChild.textContent=t("ttlC");$("dr_ics").lastElementChild.textContent=tx("Spara som .ics","Save as .ics");
   $("dr_lang").innerHTML=[["sv","🇸🇪","Svenska"],["en","🇬🇧","English"]].map(([v,f,l])=>`<button class="${S.lang===v?"on":""}" data-lg="${v}" aria-label="${l}" title="${l}" aria-pressed="${S.lang===v}">${f}</button>`).join("")}
 const openDrawer=()=>{$("drawer").classList.add("on");$("scrim").classList.add("on")},closeDrawer=()=>{$("drawer").classList.remove("on");$("scrim").classList.remove("on")};

@@ -1,7 +1,7 @@
 /* ---------- Taps ---------- */
 function addHere(){openES(null,null,{d:nd(SEL)})}
 $("tadd").onclick=addHere;$("kd_add").onclick=()=>openES(null,null,{d:nd(SEL)});$("menu").onclick=openDrawer;$("scrim").onclick=closeDrawer;
-$("dr_names").onclick=()=>{closeDrawer();openCS(false)};$("dr_ics").onclick=()=>{closeDrawer();$("ics_out").click()};$("dr_inv").onclick=()=>{go("v");setTimeout(()=>$("v_inv").scrollIntoView({block:"center",behavior:RM()?"auto":"smooth"}),80)};
+$("dr_who").onclick=()=>{closeDrawer();setTimeout(()=>pickWho(true),250)};$("dr_names").onclick=()=>{closeDrawer();openCS(false)};$("dr_ics").onclick=()=>{closeDrawer();$("ics_out").click()};$("dr_inv").onclick=()=>{go("v");setTimeout(()=>$("v_inv").scrollIntoView({block:"center",behavior:RM()?"auto":"smooth"}),80)};
 addEventListener("scroll",()=>$("main_top").classList.toggle("sc",scrollY>4),{passive:true});$("v_ladd").onclick=()=>openNS(null);$("v_dadd").onclick=()=>openBS(null);
 $("k_m").onclick=()=>openPK(tx("Välj år","Pick a year"),Array.from({length:21},(_,i)=>{const y=NOW.getFullYear()-10+i;return[y,String(y)]}).reverse(),P.y,v=>{P.y=+v;const[,,sd]=ymd(SEL);SEL=dnOf(P.y,P.m,Math.min(sd,dim(P.y,P.m)));renderMonth()});
 document.addEventListener("click",e=>{const g=x=>e.target.closest&&e.target.closest(x);let b;
@@ -42,15 +42,28 @@ let lastDay=todayN();
 function tick(){const n=todayN();if(n!==lastDay){if(SEL===lastDay){SEL=n;const[y,m]=ymd(n);P={y,m}}lastDay=n}const ae=document.activeElement;if(!(ae&&ae.dataset&&ae.dataset.tn))render()}
 setInterval(()=>{if(!document.hidden)tick()},6e4);document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick()});
 /* First time: your names. On a partner's phone: which of the two names is yours. */
-let firstDone=false;
-async function firstRun(){if(firstDone)return;firstDone=true;if(!CP.a||!CP.b){openCS(true);return}
+let firstDone=false,firstTry=0,whoOpen=false;
+async function firstRun(){if(firstDone)return;firstDone=true;const joining=!!(window.KK&&KK.joining&&KK.joining());
+  /* A phone that just joined waits for the shared names instead of starting a calendar of its own. */
+  if(!CP.a||!CP.b){if(joining&&firstTry++<40){firstDone=false;setTimeout(firstRun,500);return}openCS(true);return}
+  if(window.KK&&KK.joinDone)KK.joinDone();
   if(MYID){if(CP.ua===MYID){setMe("a");return}if(CP.ub===MYID){setMe("b");return}}
   if(ME&&!MYID)return;
   /* This phone already knows who it is: claim that name for this sign-in. */
-  if(ME&&!CP["u"+ME]){CP["u"+ME]=MYID;saveCouple();render();return}
-  /* A phone that lost its sign-in (cleared browser) can claim its name again. */
-  const free0=["a","b"].filter(w=>!CP["u"+w]),free=free0.length?free0:["a","b"];
-  const w=await askOpts(tx("Vem är du?","Who are you?"),tx("Så vet appen vad som är ditt.","So the app knows what is yours."),free.map(x=>[x,CP[x],""]));if(!w)return;setMe(w);if(MYID&&CP["u"+w]!==MYID){CP["u"+w]=MYID;saveCouple()}render()}
+  if(ME&&!joining&&!CP["u"+ME]){claimAs(ME);return}
+  /* Restored from a backup: the name in the file is yours, even if your old install still holds it. */
+  let rc=false;try{rc=localStorage.getItem("kalenderkoll.reclaim")==="1";localStorage.removeItem("kalenderkoll.reclaim")}catch(e){}
+  if(ME&&rc){claimAs(ME);return}
+  pickWho()}
+/* Which of the two names is mine. Both names are offered; one already on another phone says so. */
+async function pickWho(again){if(whoOpen||!CP.a||!CP.b)return;whoOpen=true;
+  const taken=x=>CP["u"+x]&&CP["u"+x]!==MYID,order=["a","b"].sort((x,y)=>taken(x)-taken(y));
+  const w=await askOpts(tx("Vem är du?","Who are you?"),again?tx("Allt du skriver märks med ditt namn.","Everything you write is marked with your name."):tx("Så vet appen vad som är ditt. Välj ditt eget namn.","So the app knows what is yours. Pick your own name."),order.map(x=>[x,CP[x],taken(x)?tx("Används redan på en annan telefon","Already used on another phone"):(x===ME?tx("Du nu","You now"):"")]));
+  whoOpen=false;if(w)claimAs(w)}
+function claimAs(w){setMe(w);if(MYID&&CP["u"+w]!==MYID){const o=other(w);if(CP["u"+o]===MYID)CP["u"+o]="";CP["u"+w]=MYID;saveCouple()}render()}
+/* Two phones on the same name (or a phone that never picked): ask again so each of you gets your own. */
+function checkWho(){if(!firstDone||!SHARED()||!MYID||!CP.a||!CP.b||CP.ua===MYID||CP.ub===MYID)return;
+  if(!ME||(CP["u"+ME]&&CP["u"+ME]!==MYID))pickWho();else if(!CP["u"+ME])claimAs(ME)}
 /* Everything is saved in shared storage (or on this phone in the installed version). */
 (async()=>{let ok=false;try{
   const db=await claude.use("db");if(!db)throw 0;
@@ -69,7 +82,7 @@ async function firstRun(){if(firstDone)return;firstDone=true;if(!CP.a||!CP.b){op
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
     CP=cp||{a:"",b:"",ua:"",ub:"",since:""};
     if(MYID){if(CP.ua===MYID)setMe("a");else if(CP.ub===MYID)setMe("b")}
-    watchJoin();render();autoBackup();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
+    watchJoin();render();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
 }catch(e){}setTimeout(()=>{if(!ok&&!firstDone)firstRun()},col?10000:400)})();
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */

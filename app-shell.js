@@ -28,11 +28,13 @@
     inviteUrl:()=>(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform()?"https://agrinders.github.io/Kalenderkoll/":location.origin+location.pathname)+"#join="+space,
     codeIn,
     /* Switch this phone to another calendar (from a pasted link or code). */
-    join(c){c=codeIn(c);if(!c)return false;ls.set(SKEY,c);ls.del(KEY);location.replace(location.pathname);return true},
+    /* Set while a phone has just joined and not yet picked which of the two names is theirs. */
+    joining:()=>ls.get("kalenderkoll.joining")==="1",joinDone:()=>ls.del("kalenderkoll.joining"),
+    join(c){c=codeIn(c);if(!c)return false;ls.set(SKEY,c);ls.del(KEY);ls.set("kalenderkoll.joining","1");location.replace(location.pathname);return true},
     /* Bring back a calendar from a backup file: which calendar it was, who you are, and everything in it. */
     restore(b){if(!b||typeof b.docs!=="object")return false;const sp=okCode(b.space)?b.space:"";
       if(sp)ls.set(SKEY,sp);else ls.del(SKEY);ls.set(KEY,JSON.stringify({cal:b.docs}));ls.set("kalenderkoll.restore","1");
-      if(b.me==="a"||b.me==="b")ls.set("kalenderkoll.me",b.me);ls.del("kalenderkoll.partner");location.replace(location.pathname);return true}};
+      if(b.me==="a"||b.me==="b"){ls.set("kalenderkoll.me",b.me);ls.set("kalenderkoll.reclaim","1")}ls.del("kalenderkoll.partner");location.replace(location.pathname);return true}};
   const timeout=ms=>new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")),ms));
   const ready=(async()=>{
     if(window.KK_NO_CLOUD)throw new Error("off");
@@ -41,7 +43,7 @@
     const user=await Promise.race([new Promise((res,rej)=>{const un=Au.onAuthStateChanged(auth,u=>{if(u){un();res(u)}});Au.signInAnonymously(auth).catch(rej)}),timeout(15000)]);
     let fs;try{fs=F.initializeFirestore(app,{localCache:F.persistentLocalCache({tabManager:F.persistentMultipleTabManager()})})}catch(e){fs=F.getFirestore(app)}
     /* Joining from a link. If this phone already has its own calendar, the app asks first. */
-    if(joinCode&&joinCode!==space){const ok=!space||(window.KK_askJoin?await window.KK_askJoin():true);if(ok){space=joinCode;ls.set(SKEY,space)}}
+    if(joinCode&&joinCode!==space){const ok=!space||(window.KK_askJoin?await window.KK_askJoin():true);if(ok){space=joinCode;ls.set(SKEY,space);ls.set("kalenderkoll.joining","1")}}
     const fresh2=!space;if(!space){space=newCode();ls.set(SKEY,space)}
     const ref=p=>F.collection(fs,"spaces",space,p);
     /* Anything saved only on this phone is sent up, without overwriting what is already shared. */
