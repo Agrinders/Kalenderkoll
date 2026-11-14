@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="690c0c5befc2">
+<meta name="kal-build" content="8e5356d6ac81">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -296,6 +296,13 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 
 #drawer>button.dset{margin-top:auto;border-top:1px solid var(--rule);border-radius:0 0 14px 14px;padding-top:4px}
 .dbrand{padding:6px 12px 18px}
+
+/* Phones: the month runs almost edge to edge so each day is as wide as possible. */
+@media (max-width:559px){#k_cal{margin:0 -12px;padding:14px 4px 10px;border-radius:22px}#k_cal .mnav{padding:0 10px}.cwk.wkn,.cgr.wkn{grid-template-columns:15px repeat(7,minmax(0,1fr))}.cgr{gap:3px 1px}.cgr .v{font-size:9.5px}}
+/* Sheets keep clear of the status bar at the top. */
+.sh{padding-top:calc(28px + var(--sat))}.box{max-height:calc(100dvh - 38px - var(--sat) - var(--sab))}
+/* Room above the first hour so its time label is not cut off. */
+.dvb{margin-top:10px}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -621,6 +628,8 @@ function renderMonth(){const n=todayN(),first=dnOf(P.y,P.m,1),off=wdOf(first),ro
   let h="";for(let r=0;r<rows;r++){if(S.wkno)h+=`<span class="v">${isoWeek(start+r*7)}</span>`;
     for(let i=0;i<7;i++){const d=start+r*7+i,[,m,dd]=ymd(d),L=B.filter(o=>o.s<=d&&o.end>=d),ws=[...new Set(L.map(x=>x.e.w||"g"))];
       const cls=[m!==P.m?"out":"",d===n?"t":"",d===SEL?"s":"",(wdOf(d)===6||(S.hol&&isRed(d)))?"red":""].filter(Boolean).join(" ");
+      /* Days from the month before and after are left empty, so the month itself reads clearly. */
+      if(m!==P.m){h+=`<span class="outd"></span>`;continue}
       h+=`<button data-cday="${d}" class="${cls}" aria-label="${esc(cap(fmtDay(d)))}"${d===SEL?' aria-pressed="true"':""}><b class="${fxCls(fxOf(L)).trim()}">${dd}</b>${dIc(d)?`<span class="dic"${L.length?` style="--dc:${evCol(L[0].e)}"`:""}>${icon(dIc(d))}</span>`:""}<span class="cev">${(()=>{const B=bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),E=L.map(o=>`<u class="${o.e.st==="glass"?"gl":""}" style="--c:${evCol(o.e)}">${esc(o.e.n)}</u>`),A=[...B,...E],max=A.length>3?2:3;return A.slice(0,max).join("")+(A.length>max?`<em>+${A.length-max}</em>`:"")})()}</span></button>`}}
   $("k_gr").innerHTML=h;
   $("kd_t").innerHTML=(dIc(SEL)?icon(dIc(SEL))+" ":"")+esc(SEL===n?tx("Idag","Today"):cap(fmtDay(SEL)));$("kd_ic").innerHTML=icon(dIc(SEL)||"star")+`<span>${dIc(SEL)?tx("Byt dagens ikon","Change the day's icon"):tx("Ikon för dagen","Icon for the day")}</span>`;

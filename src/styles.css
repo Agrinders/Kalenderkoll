@@ -283,3 +283,10 @@ h3 .ic{width:18px;height:18px;vertical-align:-3px;color:var(--acc)}
 
 #drawer>button.dset{margin-top:auto;border-top:1px solid var(--rule);border-radius:0 0 14px 14px;padding-top:4px}
 .dbrand{padding:6px 12px 18px}
+
+/* Phones: the month runs almost edge to edge so each day is as wide as possible. */
+@media (max-width:559px){#k_cal{margin:0 -12px;padding:14px 4px 10px;border-radius:22px}#k_cal .mnav{padding:0 10px}.cwk.wkn,.cgr.wkn{grid-template-columns:15px repeat(7,minmax(0,1fr))}.cgr{gap:3px 1px}.cgr .v{font-size:9.5px}}
+/* Sheets keep clear of the status bar at the top. */
+.sh{padding-top:calc(28px + var(--sat))}.box{max-height:calc(100dvh - 38px - var(--sat) - var(--sab))}
+/* Room above the first hour so its time label is not cut off. */
+.dvb{margin-top:10px}
