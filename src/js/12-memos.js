@@ -179,7 +179,8 @@ addEventListener("pagehide",()=>{if(MM.open)mmSave()});document.addEventListener
 /* ---------- Headings, colours and separate lists ---------- */
 /* Each list name shows how many of the items under it are done. */
 function mmProg(){$("mm_body").querySelectorAll(".mb-lh").forEach(h=>{let n=0,dn=0;for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling){n++;if(x.classList.contains("done"))dn++;x.classList.add("inl")}
-  h.querySelector("em").textContent=n?dn+"/"+n:"";h.querySelector("i").style.width=n?(dn/n*100)+"%":"0";h.classList.toggle("all",n>0&&dn===n)});
+  h.querySelector("em").textContent=n?dn+"/"+n:"";/* The bar is 46px wide, so the filled part is measured in pixels of that, not of the whole row. */
+  h.querySelector("i").style.width=n?Math.round(dn/n*46)+"px":"0";h.classList.toggle("all",n>0&&dn===n)});
   $("mm_body").querySelectorAll(".mb-c").forEach(c=>{let p=c.previousElementSibling;while(p&&p.dataset.t==="c")p=p.previousElementSibling;c.classList.toggle("inl",!!(p&&p.dataset.t==="lh"));c.classList.toggle("lastl",!(c.nextElementSibling&&c.nextElementSibling.dataset.t==="c"))})}
 let mmLast=null;$("mm_body").addEventListener("focusin",e=>{const d=e.target.closest(".mb");if(d)mmLast=d});
 const mmTarget=()=>{const d=mmCur()||mmLast;return d&&d.isConnected?d:null};
