@@ -7,7 +7,7 @@ function FSP(){return NATIVE()&&Capacitor.Plugins&&Capacitor.Plugins.Filesystem|
 /* Plain var and function so the settings page can use these while the app is still starting. */
 var BKN="Kalenderkoll-sakerhetskopia.json",BKK="kalenderkoll.backup";
 function bkInfo(){try{return JSON.parse(localStorage.getItem(BKK)||"{}")||{}}catch(e){return{}}}
-function bkLast(){const t=bkInfo().at;if(!t)return"";const d=new Date(t);return isNaN(d)?"":fmtD(dnOf(d))+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
+function bkLast(){const t=bkInfo().at;if(!t)return"";const d=new Date(t);return isNaN(d)?"":fmtD(dnD(d))+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
 function backupText(){return JSON.stringify({app:"kalenderkoll",v:1,at:new Date().toISOString(),space:window.KK&&KK.space?KK.space():"",me:ME||"",docs:DOCS},null,1)}
 /* Saves a file where the person can find it: Documents › Kalenderkoll in the Android app, a download elsewhere. */
 async function saveFile(name,text,mime){const F=FSP();
@@ -24,7 +24,7 @@ function autoBackup(){const F=FSP();if(!F||!hasData())return;clearTimeout(bkTime
   bkPrev=body;info.at=new Date().toISOString();try{localStorage.setItem(BKK,JSON.stringify(info))}catch(e){}if(tab==="c")renderSettings()},3000)}
 async function restoreFrom(file){let b;try{b=JSON.parse(await file.text())}catch(e){b=null}
   if(!b||b.app!=="kalenderkoll"||typeof b.docs!=="object"){toast(tx("Det där är ingen säkerhetskopia från Kalenderkoll","That is not a Kalenderkoll backup"));return}
-  const n=Object.values(b.docs).filter(v=>v&&v.kind==="ev").length,when=b.at?fmtD(dnOf(new Date(b.at))):"";
+  const n=Object.values(b.docs).filter(v=>v&&v.kind==="ev").length,when=b.at?fmtD(dnD(new Date(b.at))):"";
   if(!await ask(tx("Återställa kalendern?","Restore the calendar?"),tx(`Säkerhetskopian${when?" från "+when:""} har ${n} händelser. Är ni ihop kopplas du till er delade kalender igen.`,`The backup${when?" from "+when:""} has ${n} events. If you are a couple, you are connected to your shared calendar again.`),tx("Återställ","Restore")))return;
   if(window.KK&&KK.restore)KK.restore(b)}
 document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("#bk_save,#bk_load,#cs_rs");if(!t)return;

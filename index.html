@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="4cb812d5c62a">
+<meta name="kal-build" content="20d774c36d6e">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -415,6 +415,55 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 .fest::after{content:"";position:absolute;right:-30px;top:-30px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.28),transparent 65%);pointer-events:none}
 .dvfull .fest{min-height:46px;padding-right:58px}.dvfull .fest .fart{width:48px;height:48px;right:4px}
 .fart svg{fill:none;stroke:none;stroke-width:1}
+
+/* ---------- Anteckningar ---------- */
+#t_memos{margin-top:14px}
+.mmlh{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.btn.sm{min-height:36px;padding:0 14px 0 10px;font-size:14px;border-radius:12px;display:inline-flex;align-items:center;gap:4px}.btn.sm svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round}
+.mmempty{display:flex;align-items:center;gap:12px;padding:6px 2px}.mmempty svg{flex:none;width:34px;height:34px;color:var(--acc);opacity:.75;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.mmempty p{margin:0;font-size:14.5px;color:var(--soft)}
+.mml{display:flex;flex-direction:column;margin:0 -6px}
+.mmi{display:flex;align-items:center;gap:12px;width:100%;padding:11px 6px;text-align:left;border-radius:14px;border-top:1px solid var(--rule)}.mmi:first-child{border-top:0}
+.mmi:active{background:var(--fill)}
+.mmit{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.mmit b{font-size:16px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mmit small{font-size:13.5px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mmit small em{font-style:normal;font-weight:600;color:color-mix(in srgb,var(--ink) 70%,transparent);margin-right:8px}
+.mmtags{display:flex;gap:6px;margin-top:3px}.mmtags i{font-style:normal;font-size:11.5px;font-weight:600;padding:2px 7px;border-radius:7px;background:var(--fill);color:var(--soft);white-space:nowrap;max-width:60%;overflow:hidden;text-overflow:ellipsis}.mmtags i.ok{background:color-mix(in srgb,var(--pa) 22%,transparent);color:color-mix(in srgb,var(--pa) 60%,var(--ink))}
+.mmth{flex:none;width:48px;height:48px;border-radius:11px;background:var(--fill) center/cover;box-shadow:inset 0 0 0 1px rgba(0,0,0,.06)}
+/* The editor is a page of its own that slides in from the right. */
+.pg{position:fixed;inset:0;z-index:45;display:flex;flex-direction:column;background:var(--bg);transform:translateX(100%);visibility:hidden;transition:transform .32s cubic-bezier(.2,.9,.3,1),visibility 0s .32s}
+.pg.on{transform:none;visibility:visible;transition:transform .32s cubic-bezier(.2,.9,.3,1)}
+body.mmopen{overflow:hidden}
+.mmh{flex:none;display:flex;align-items:center;gap:6px;padding:calc(6px + var(--sat)) 10px 6px 4px;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--rule)}
+.mmb{display:flex;align-items:center;gap:2px;min-height:44px;padding:0 8px 0 2px;font-size:16px;font-weight:600;color:var(--acc)}.mmb svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.mmst{flex:1;text-align:center;font-size:12.5px;color:var(--soft)}
+#mm_del{color:var(--soft)}
+.mmw{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:14px max(20px,calc((100% - 680px)/2)) 30px;display:flex;flex-direction:column}
+.mmti{width:100%;border:0;background:none;padding:4px 0;font:500 28px/1.25 var(--serif);color:var(--ink);outline:none}.mmti::placeholder{color:color-mix(in srgb,var(--soft) 70%,transparent)}
+.mmmeta{margin:2px 0 14px;font-size:12.5px;color:var(--soft);min-height:16px}
+#mm_body{display:flex;flex-direction:column;gap:2px}
+.mmtail{flex:1;min-height:120px;width:100%;cursor:text}
+.mb textarea{display:block;width:100%;border:0;background:none;resize:none;overflow:hidden;padding:5px 0;font:inherit;font-size:16.5px;line-height:1.5;color:var(--ink);outline:none}.mb textarea::placeholder{color:color-mix(in srgb,var(--soft) 65%,transparent)}
+.mblinks{display:flex;flex-wrap:wrap;gap:6px}.mblinks:empty{display:none}.mblinks a{font-size:13px;font-weight:600;padding:4px 10px;border-radius:9px;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);text-decoration:none;margin-bottom:6px}
+.mb-c{display:flex;align-items:center;gap:10px;padding:3px 0}
+.mbck{flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;border:2px solid color-mix(in srgb,var(--soft) 70%,transparent);transition:background .2s,border-color .2s,transform .16s}
+.mbck svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;opacity:0;transform:scale(.6);transition:opacity .2s,transform .25s cubic-bezier(.3,1.6,.5,1)}
+.mbck.on{background:var(--acc);border-color:var(--acc)}.mbck.on svg{opacity:1;transform:none}
+.mb-c input{flex:1;min-width:0;border:0;background:none;padding:6px 0;font:inherit;font-size:16.5px;color:var(--ink);outline:none;transition:color .2s}
+.mb-c.done input{color:var(--soft);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--soft) 60%,transparent)}
+.mb-l,.mb-i{position:relative;margin:6px 0}
+.mbl{display:flex;align-items:center;gap:12px;padding:11px 44px 11px 11px;border-radius:14px;background:var(--card);border:1px solid var(--rule);text-decoration:none;color:var(--ink);box-shadow:var(--shadow)}
+.mblf{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:color-mix(in srgb,var(--acc) 16%,var(--card));color:var(--acc);font-weight:700;font-size:17px}
+.mblt{flex:1;min-width:0;display:flex;flex-direction:column}.mblt b{font-size:15px}.mblt small{font-size:12.5px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbl svg{flex:none;width:18px;height:18px;fill:none;stroke:var(--soft);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mblin{width:100%;padding:12px 14px;border-radius:14px;border:1.5px dashed color-mix(in srgb,var(--acc) 50%,transparent);background:color-mix(in srgb,var(--acc) 6%,transparent);font:inherit;font-size:15.5px;color:var(--ink);outline:none}
+.mb-i img{display:block;width:100%;max-height:70vh;object-fit:cover;border-radius:16px;box-shadow:var(--shadow);cursor:zoom-in}
+.mbx{position:absolute;top:8px;right:8px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:rgba(20,16,26,.55);color:#fff;font-size:20px;line-height:1;backdrop-filter:blur(6px)}
+.mb-l .mbx{top:50%;transform:translateY(-50%);background:var(--fill);color:var(--soft)}
+.mbwait{display:block;padding:30px;text-align:center;border-radius:16px;background:var(--fill);color:var(--soft);font-size:14px}
+.mmbar{flex:none;display:flex;justify-content:center;gap:8px;padding:8px 12px calc(8px + var(--sab));border-top:1px solid var(--rule);background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.mmbar button{flex:1;max-width:150px;display:flex;align-items:center;justify-content:center;gap:7px;min-height:44px;border-radius:13px;background:var(--card);border:1px solid var(--rule);font-size:14.5px;font-weight:600;color:var(--ink)}
+.mmbar svg{width:21px;height:21px;fill:none;stroke:var(--acc);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.mv{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:20px;background:rgba(10,8,14,.9);opacity:0;pointer-events:none;transition:opacity .2s}.mv.on{opacity:1;pointer-events:auto}
+.mv img{max-width:100%;max-height:100%;border-radius:12px;object-fit:contain}.mv .ib{position:absolute;top:calc(12px + var(--sat));right:12px;color:#fff;background:rgba(255,255,255,.15)}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -468,6 +517,13 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 <input type="file" id="pic_in" accept="image/*" class="hide"><input type="file" id="bk_in" accept=".json,application/json,text/plain,*/*" class="hide">
 
 <div id="ip" class="sh" role="dialog" aria-modal="true" aria-labelledby="ip_t"><div class="box"><b id="ip_t" class="title"></b><div class="fl" id="ip_il"></div><div class="ics big" id="ip_l"></div><div class="acts"><button class="btn ghost" id="ip_no"></button><button class="btn" id="ip_ok"></button></div><button class="lnk hide wide" id="ip_none"></button></div></div>
+<div id="mm" class="pg" role="dialog" aria-modal="true" aria-label="Anteckning">
+<div class="mmh"><button class="mmb" id="mm_back" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg><span id="mm_bt"></span></button><span class="mmst" id="mm_st"></span><button class="ib" id="mm_del" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg></button></div>
+<div class="mmw" id="mm_w"><input id="mm_ti" class="mmti" type="text" maxlength="120" autocomplete="off"><p class="mmmeta" id="mm_meta"></p><div id="mm_body"></div><button class="mmtail" id="mm_tail" type="button" aria-hidden="true" tabindex="-1"></button></div>
+<div class="mmbar"><button type="button" id="mm_chk"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><path d="m5.6 7.6 1.4 1.4 2.6-2.8M14 7.5h6M4 16.5h.01M14 16.5h6"/><rect x="4" y="13" width="7" height="7" rx="2"/></svg><span id="mm_chkt"></span></button><button type="button" id="mm_img"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17 5-4.5 4 3.5 2.5-2 4.5 3.5"/></svg><span id="mm_imgt"></span></button><button type="button" id="mm_lnk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span id="mm_lnkt"></span></button></div>
+</div>
+<div id="mv" class="mv"><img id="mv_i" alt=""><button class="ib" id="mv_x" type="button" aria-label="Stäng"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+<input type="file" id="mm_in" accept="image/*" multiple class="hide">
 <div id="as" class="sh" role="dialog" aria-modal="true" aria-labelledby="as_t"><div class="box"><b id="as_t" class="title"></b><p class="muted" id="as_p"></p>
 <div class="fl" id="as_el"></div><input id="as_e" class="field" type="email" autocomplete="email" autocapitalize="off" spellcheck="false" maxlength="120">
 <div class="fl" id="as_wl"></div><input id="as_w" class="field" type="password" autocomplete="current-password" maxlength="100">
@@ -507,6 +563,7 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 
 <section id="t" class="hide">
 <div class="card" id="t_main"><div class="seg three" id="t_seg"></div><div id="t_list"></div><form class="addrow" id="t_f"><input id="t_q" type="text" maxlength="120" autocomplete="off"><button class="btn" id="t_add"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></form><div id="t_done"></div></div>
+<div class="card" id="t_memos"></div>
 </section>
 
 <section id="v" class="hide">
@@ -596,6 +653,7 @@ const dOf=n=>{const d=new Date(n*864e5);return new Date(d.getUTCFullYear(),d.get
 const ymd=n=>{const d=new Date(n*864e5);return[d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()]};
 const dnOf=(y,m,d)=>Math.round(Date.UTC(y,m,d)/864e5);
 const todayN=()=>dn(isoOf(new Date()));
+const dnD=d=>dn(isoOf(d));
 const wdOf=n=>(new Date(n*864e5).getUTCDay()+6)%7;/* 0 = Monday */
 const dim=(y,m)=>new Date(y,m+1,0).getDate();
 function isoWeek(n){const th=n-wdOf(n)+3,y=new Date(th*864e5).getUTCFullYear();return 1+Math.floor((th-dnOf(y,0,1))/7)}
@@ -702,6 +760,8 @@ const putIn=(L,x)=>{const i=L.findIndex(z=>z.id===x.id);if(i>=0)L[i]=x;else L.pu
 /* The last saved copy of every record, so a delete can be undone. */
 let DOCS={};const copy=v=>v==null?null:JSON.parse(JSON.stringify(v));
 const MINE=new Set();
+/* Notes (Anteckningar) and the pictures in them. Pictures are saved as their own records so a note stays small. */
+let MEMOS=[],MIMG={};
 function put(id,v){MINE.add(id);DOCS[id]=copy(v);if(col)col.doc(id).set(v).catch(()=>toast(tx("Kunde inte spara. Försök igen.","Could not save. Try again.")))}
 function del(id){const before=copy(DOCS[id]);delete DOCS[id];if(col)col.doc(id).delete().catch(()=>{});return before}
 /* After a delete, the notice gets an Undo button that puts the record back. */
@@ -875,7 +935,7 @@ function renderDrawer(){$("dr_sub").textContent=CP.a&&CP.b?CP.a+" ♥ "+CP.b:tx(
 const openDrawer=()=>{$("drawer").classList.add("on");$("scrim").classList.add("on")},closeDrawer=()=>{$("drawer").classList.remove("on");$("scrim").classList.remove("on")};
 
 /* ---------- Drawing and moving between pages ---------- */
-function render(){NOW=new Date();$("ttl").textContent=t("ttl"+tab.toUpperCase());renderHome();renderMonth();renderTodo();renderUs();renderSettings()}
+function render(){NOW=new Date();$("ttl").textContent=t("ttl"+tab.toUpperCase());renderHome();renderMonth();renderTodo();renderMemos();renderUs();renderSettings()}
 const TABS=["h","k","t","v","c"];
 function go(x){if(!TABS.includes(x))x="h";tab=x;try{sessionStorage.setItem("kalenderkoll.tab",x)}catch(e){}TABS.forEach(s=>$(s).classList.toggle("hide",s!==x));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===x));$("dr_set").classList.toggle("on",x==="c");closeDrawer();closeDS();$("ttl").textContent=t("ttl"+x.toUpperCase());$("tadd").classList.toggle("hide",x!=="k");$("k_v").classList.toggle("hide",x!=="k");$("tadd").setAttribute("aria-label",x==="t"?tx("Ny uppgift","New task"):x==="v"?tx("Ny lapp","New note"):tx("Ny händelse","New event"));window.scrollTo(0,0)}
 function applyTheme(){S.theme==="auto"?document.documentElement.removeAttribute("data-theme"):document.documentElement.setAttribute("data-theme",S.theme)}
@@ -943,7 +1003,7 @@ function openES(id,on,pre){const e=id?EV.find(z=>z.id===id):null;if(id&&!e)retur
   $("es_d").dataset.req="1";$("es_e").dataset.ph=tx("Samma dag","Same day");$("es_u").dataset.ph=tx("Tills vidare","Until further notice");$("es_t1").dataset.ph=tx("Börjar","Starts");$("es_t2").dataset.ph=tx("Slutar","Ends");
   $("es_n").value=e?e.n:pre.n||"";$("es_d").value=sd;$("es_e").value=dur?nd(dn(sd)+dur):"";$("es_e").dataset.base=$("es_u").dataset.base=sd;$("es_u").value=e?e.u||"":"";$("es_t1").value=e?e.t||"":t1;$("es_t2").value=e?e.t2||"":(t1?addMin(t1,60):"");$("es_p").value=e?e.pl||"":"";$("es_o").value=e?e.o||"":"";
   document.querySelectorAll("#es .tbtn").forEach(tpLabel);document.querySelectorAll("#es .dbtn").forEach(dpLabel);
-  $("es_ok").textContent=e?tx("Spara","Save"):tx("Lägg till","Add");$("es_del").textContent=tx("Ta bort","Delete");$("es_ics").textContent=tx("Exportera till telefonens kalender","Export to your phone's calendar");$("es_by").classList.toggle("hide",!(e&&e.by&&e.at));if(e&&e.by&&e.at)$("es_by").textContent=tx("Tillagd av ","Added by ")+pname(e.by)+" · "+fmtD(dnOf(new Date(e.at)),{day:"numeric",month:"short"});$("es_del").classList.toggle("hide",!e);$("es_ics").classList.toggle("hide",!e);
+  $("es_ok").textContent=e?tx("Spara","Save"):tx("Lägg till","Add");$("es_del").textContent=tx("Ta bort","Delete");$("es_ics").textContent=tx("Exportera till telefonens kalender","Export to your phone's calendar");$("es_by").classList.toggle("hide",!(e&&e.by&&e.at));if(e&&e.by&&e.at)$("es_by").textContent=tx("Tillagd av ","Added by ")+pname(e.by)+" · "+fmtD(dnD(new Date(e.at)),{day:"numeric",month:"short"});$("es_del").classList.toggle("hide",!e);$("es_ics").classList.toggle("hide",!e);
   paintES();$("es").classList.add("on");$("es").querySelector(".box").scrollTop=0;if(!e&&!pre.n)setTimeout(()=>$("es_n").focus(),60)}
 const closeES=()=>{$("es").classList.remove("on");ES=null};
 $("es_x").onclick=closeES;
@@ -1123,7 +1183,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
   const db=await claude.use("db");if(!db)throw 0;
   try{const u=await claude.use("user");if(u&&u.id)MYID=await u.id()||""}catch(e){}
   col=db.collection("cal");let first=true;
-  col.onSnapshot(snap=>{if(first&&snap.metadata&&snap.metadata.fromCache&&!snap.docs.length){setTimeout(()=>{if(!firstDone)firstRun()},6000);return}ok=true;allIds=snap.docs.map(d=>d.id);DOCS={};const prevT=TODOS;EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};PICS={a:"",b:""};let cp=null;
+  col.onSnapshot(snap=>{if(first&&snap.metadata&&snap.metadata.fromCache&&!snap.docs.length){setTimeout(()=>{if(!firstDone)firstRun()},6000);return}ok=true;allIds=snap.docs.map(d=>d.id);DOCS={};const prevT=TODOS;MEMOS=[];MIMG={};EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};PICS={a:"",b:""};let cp=null;
     snap.docs.forEach(d=>{const v=d.data()||{};DOCS[d.id]=copy(v);const iso=x=>/^\d{4}-\d\d-\d\d$/.test(x||"");
       if(d.id==="plan"){if(!PEND.has("plan")){if(typeof v.wkno==="boolean")S.wkno=v.wkno;if(typeof v.hol==="boolean")S.hol=v.hol}}
       else if(d.id==="couple")cp={a:String(v.a||""),b:String(v.b||""),ua:String(v.ua||""),ub:String(v.ub||""),since:iso(v.since)?v.since:"",ca:String(v.ca||""),cb:String(v.cb||"")};
@@ -1132,6 +1192,8 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
       else if(v.kind==="day"&&iso(v.d)&&ICONS[v.ic])DAYS[v.d]={ic:v.ic};
       else if(v.kind==="bd"&&/^\d\d-\d\d$/.test(v.md||""))BD.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),md:v.md,y:+v.y||0,ty:["b","a","o"].includes(v.ty)?v.ty:"b"});
       else if(v.kind==="todo"){const id=String(v.id||d.id.slice(5)),ae=document.activeElement,typing=ae&&ae.dataset&&ae.dataset.tn===id||PEND.has("todo_"+id);TODOS.push(typing&&prevT.find(z=>z.id===id)||{id,n:String(v.n||""),w:["a","b","g"].includes(v.w)?v.w:"g",done:!!v.done,at:+v.at||0,dt:+v.dt||0})}
+      else if(v.kind==="memo"){const m=memoClean(v,d.id.slice(5));if(m)MEMOS.push(m)}
+      else if(v.kind==="mimg"&&typeof v.data==="string"&&/^data:image\/(jpeg|png|webp);base64,/.test(v.data))MIMG[String(v.id||d.id.slice(5))]=v.data;
       else if(v.kind==="note"&&typeof v.txt==="string")NOTES.push({id:String(v.id||d.id.slice(5)),f:v.f==="b"?"b":"a",txt:v.txt,at:+v.at||0})});
     /* Tasks added on this phone but not saved yet stay in the list. */
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
@@ -1142,7 +1204,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
 (()=>{const on=id=>$(id).classList.contains("on");
-  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
+  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["mv",closeMV],["mm",closeMM],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
   const guard=()=>history.pushState({kk:1},"");try{history.replaceState({kk:0},"");guard()}catch(e){return}
   addEventListener("popstate",()=>{if(closeTop())return guard();if(tab!=="h"){go("h");return guard()}history.back()})})();
 
@@ -1186,7 +1248,7 @@ function watchJoin(){if(!SHARED()||!ME||!CP[ME]||!MYID||CP["u"+ME]!==MYID)return
 /* A notice when your partner adds something. This phone keeps a list of what it has already seen;
    anything new that this phone did not write itself comes from your partner. */
 const SK="kalenderkoll.seen";let askedN=false;
-function watchNew(){const ids=Object.keys(DOCS).filter(id=>/^(ev|note|todo|bd)_/.test(id));let seen=null;
+function watchNew(){const ids=Object.keys(DOCS).filter(id=>/^(ev|note|todo|bd|memo)_/.test(id));let seen=null;
   try{const r=localStorage.getItem(SK);if(r)seen=new Set(JSON.parse(r))}catch(e){}
   const fresh=seen?ids.filter(id=>!seen.has(id)):[];if(seen&&!fresh.length)return;
   try{localStorage.setItem(SK,JSON.stringify([...new Set([...(seen||[]),...ids])].slice(-4000)))}catch(e){}
@@ -1195,6 +1257,7 @@ function watchNew(){const ids=Object.keys(DOCS).filter(id=>/^(ev|note|todo|bd)_/
   const msg=news.length>1?tx(`${p} har lagt till ${news.length} nya saker`,`${p} added ${news.length} new things`):
     v.kind==="ev"?tx(`${p} lade till: ${q(v.n)}`,`${p} added: ${q(v.n)}`)+(v.d?" ("+fmtD(dn(v.d),{day:"numeric",month:"short"})+")":""):
     v.kind==="note"?tx(`${p} skrev en lapp: ${q(v.txt)}`,`${p} wrote a note: ${q(v.txt)}`):
+    v.kind==="memo"?tx(`${p} skrev en anteckning: ${q(v.ti||tx("utan rubrik","untitled"))}`,`${p} wrote a note: ${q(v.ti||"untitled")}`):
     v.kind==="todo"?tx(`${p} lade till en uppgift: ${q(v.n)}`,`${p} added a task: ${q(v.n)}`):
     tx(`${p} lade till en speciell dag: ${q(v.n)}`,`${p} added a special day: ${q(v.n)}`);
   toast(msg,5000);notify("Kalenderkoll",msg)}
@@ -1216,7 +1279,7 @@ function FSP(){return NATIVE()&&Capacitor.Plugins&&Capacitor.Plugins.Filesystem|
 /* Plain var and function so the settings page can use these while the app is still starting. */
 var BKN="Kalenderkoll-sakerhetskopia.json",BKK="kalenderkoll.backup";
 function bkInfo(){try{return JSON.parse(localStorage.getItem(BKK)||"{}")||{}}catch(e){return{}}}
-function bkLast(){const t=bkInfo().at;if(!t)return"";const d=new Date(t);return isNaN(d)?"":fmtD(dnOf(d))+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
+function bkLast(){const t=bkInfo().at;if(!t)return"";const d=new Date(t);return isNaN(d)?"":fmtD(dnD(d))+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
 function backupText(){return JSON.stringify({app:"kalenderkoll",v:1,at:new Date().toISOString(),space:window.KK&&KK.space?KK.space():"",me:ME||"",docs:DOCS},null,1)}
 /* Saves a file where the person can find it: Documents › Kalenderkoll in the Android app, a download elsewhere. */
 async function saveFile(name,text,mime){const F=FSP();
@@ -1233,7 +1296,7 @@ function autoBackup(){const F=FSP();if(!F||!hasData())return;clearTimeout(bkTime
   bkPrev=body;info.at=new Date().toISOString();try{localStorage.setItem(BKK,JSON.stringify(info))}catch(e){}if(tab==="c")renderSettings()},3000)}
 async function restoreFrom(file){let b;try{b=JSON.parse(await file.text())}catch(e){b=null}
   if(!b||b.app!=="kalenderkoll"||typeof b.docs!=="object"){toast(tx("Det där är ingen säkerhetskopia från Kalenderkoll","That is not a Kalenderkoll backup"));return}
-  const n=Object.values(b.docs).filter(v=>v&&v.kind==="ev").length,when=b.at?fmtD(dnOf(new Date(b.at))):"";
+  const n=Object.values(b.docs).filter(v=>v&&v.kind==="ev").length,when=b.at?fmtD(dnD(new Date(b.at))):"";
   if(!await ask(tx("Återställa kalendern?","Restore the calendar?"),tx(`Säkerhetskopian${when?" från "+when:""} har ${n} händelser. Är ni ihop kopplas du till er delade kalender igen.`,`The backup${when?" from "+when:""} has ${n} events. If you are a couple, you are connected to your shared calendar again.`),tx("Återställ","Restore")))return;
   if(window.KK&&KK.restore)KK.restore(b)}
 document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("#bk_save,#bk_load,#cs_rs");if(!t)return;
@@ -1281,6 +1344,135 @@ $("as_ok").onclick=async()=>{const em=$("as_e").value.trim(),pw=$("as_w").value;
   try{if(ASM==="up"){await KK.signUp(em,pw);closeAS();toast(tx("Kontot är skapat","The account is created")+" · "+em);renderSettings()}else{await KK.signIn(em,pw)}}
   catch(e){$("as_ok").disabled=false;toast(accErr(e),5000)}};
 document.addEventListener("click",e=>{if(!e.target.closest)return;const b=e.target.closest("[data-acc]");if(b)openAS(b.dataset.acc);else if(e.target.closest("#cs_li"))openAS("in")});
+/* ---------- Anteckningar (notes) ----------
+   A note has a title and a list of blocks: text, to-do items, links and pictures.
+   It saves itself while you write; an empty note is removed when you leave it. */
+/* var, so the list can be drawn while the app is still starting. */
+var MB_T=["p","c","l","i"],URLRE=/https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]]/gi;
+function memoClean(v,fid){const id=String(v.id||fid);if(!id)return null;
+  const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map(b=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000)}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).filter(Boolean);
+  return{id,ti:String(v.ti||"").slice(0,120),bl,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
+var memoDoc=m=>({kind:"memo",id:m.id,ti:m.ti,bl:m.bl,at:m.at,up:m.up,by:m.by,ub:m.ub});
+var memoEmpty=m=>!m.ti.trim()&&!m.bl.some(b=>b.t==="p"?b.x.trim():b.t==="c"?b.x.trim():true);
+var host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}};
+var whenTxt=ms=>{const d=new Date(ms),n=dnD(d),h=pad(d.getHours())+":"+pad(d.getMinutes());return n===todayN()?h:n===todayN()-1?tx("Igår","Yesterday")+" "+h:fmtD(n,{day:"numeric",month:"short"})+(ymd(n)[0]!==ymd(todayN())[0]?" "+ymd(n)[0]:"")};
+
+/* The list on the Att göra page. */
+function renderMemos(){const el=$("t_memos");if(!el)return;const L=[...MEMOS].sort((a,b)=>b.up-a.up);
+  let h=`<div class="mmlh"><h3>${tx("Anteckningar","Notes")}</h3><button class="btn sm" id="mm_new" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>${tx("Ny","New")}</button></div>`;
+  if(!L.length)h+=`<div class="mmempty"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7.5L19 8v11.5a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1z"/><path d="M14 3.5V8h5M9 12.5h6M9 16h4"/></svg><p>${tx("Skriv ner idéer, listor, länkar och bilder. Ni ser dem båda.","Write down ideas, lists, links and pictures. You both see them.")}</p></div>`;
+  else h+=`<div class="mml">${L.map(m=>{const txt=m.bl.filter(b=>b.t==="p"||b.t==="c").map(b=>b.x).join(" ").replace(/\s+/g," ").trim(),first=m.ti.trim()||txt.split(" ").slice(0,8).join(" ")||tx("Ny anteckning","New note"),
+      img=m.bl.find(b=>b.t==="i"&&MIMG[b.i]),C=m.bl.filter(b=>b.t==="c"),nd2=C.filter(b=>b.d).length,lk=m.bl.find(b=>b.t==="l"),rest=m.ti.trim()?txt:txt.split(" ").slice(8).join(" ");
+      return `<button class="mmi" data-memo="${esc(m.id)}" type="button"><span class="mmit"><b>${esc(first)}</b><small><em>${esc(whenTxt(m.up))}</em>${esc(rest||(lk?host(lk.u):img?tx("Bild","Picture"):""))}</small>${C.length||lk?`<span class="mmtags">${C.length?`<i class="${nd2===C.length?"ok":""}">☑ ${nd2}/${C.length}</i>`:""}${lk?`<i>↗ ${esc(host(lk.u))}</i>`:""}</span>`:""}</span>${img?`<span class="mmth" style="background-image:url('${MIMG[img.i]}')"></span>`:""}</button>`}).join("")}</div>`;
+  el.innerHTML=h;if(MM&&MM.open)mmMaybeRefresh()}
+
+/* ---------- The editor ---------- */
+var MM={open:false,id:"",m:null,dirty:false,t:0,loadedUp:0};
+function mmBlock(b){const d=document.createElement("div");d.className="mb mb-"+b.t;d.dataset.t=b.t;
+  if(b.t==="p"){d.innerHTML=`<textarea rows="1" placeholder="${esc(tx("Skriv något…","Write something…"))}"></textarea><div class="mblinks"></div>`;d.firstChild.value=b.x;}
+  else if(b.t==="c"){d.innerHTML=`<button type="button" class="mbck${b.d?" on":""}" aria-label="${esc(tx("Klar","Done"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 12.5 3.6 3.6 7.4-8"/></svg></button><input type="text" maxlength="500">`;d.lastChild.value=b.x;if(b.d)d.classList.add("done")}
+  else if(b.t==="l"){if(b.u){d.dataset.u=b.u;d.innerHTML=`<a href="${esc(b.u)}" target="_blank" rel="noopener noreferrer" class="mbl"><span class="mblf">${esc((host(b.u)[0]||"?").toUpperCase())}</span><span class="mblt"><b>${esc(host(b.u))}</b><small>${esc(b.u)}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 16 16 8M9 8h7v7"/></svg></a><button type="button" class="mbx" aria-label="${esc(tx("Ta bort","Remove"))}">×</button>`}
+    else{d.innerHTML=`<input type="url" class="mblin" inputmode="url" placeholder="${esc(tx("Klistra in eller skriv en länk","Paste or type a link"))}">`}}
+  else if(b.t==="i"){d.dataset.i=b.i;d.innerHTML=MIMG[b.i]?`<img src="${MIMG[b.i]}" alt=""><button type="button" class="mbx" aria-label="${esc(tx("Ta bort","Remove"))}">×</button>`:`<span class="mbwait">${tx("Bilden laddas…","Loading picture…")}</span>`}
+  return d}
+function mmGrow(t){t.style.height="auto";t.style.height=t.scrollHeight+"px"}
+function mmLinks(d){const t=d.querySelector("textarea"),box=d.querySelector(".mblinks");if(!t||!box)return;const U=[...new Set(t.value.match(URLRE)||[])].slice(0,6);
+  box.innerHTML=U.map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">↗ ${esc(host(u))}</a>`).join("")}
+function mmRead(){const bl=[];$("mm_body").querySelectorAll(".mb").forEach(d=>{const t=d.dataset.t;
+  if(t==="p")bl.push({t:"p",x:d.querySelector("textarea").value});else if(t==="c")bl.push({t:"c",x:d.querySelector("input").value,d:d.classList.contains("done")});
+  else if(t==="l"&&d.dataset.u)bl.push({t:"l",u:d.dataset.u});else if(t==="i"&&d.dataset.i)bl.push({t:"i",i:d.dataset.i})});
+  /* Text blocks next to each other are kept as one. */
+  const out=[];bl.forEach(b=>{const p=out[out.length-1];if(b.t==="p"&&p&&p.t==="p"&&!b.x.trim())return;out.push(b)});return out}
+function mmPaint(){const m=MM.m;$("mm_ti").value=m.ti;$("mm_body").innerHTML="";const bl=m.bl.length?m.bl:[{t:"p",x:""}];
+  bl.forEach(b=>$("mm_body").appendChild(mmBlock(b)));if(bl[bl.length-1].t!=="p")$("mm_body").appendChild(mmBlock({t:"p",x:""}));
+  $("mm_body").querySelectorAll(".mb-p").forEach(d=>{mmGrow(d.querySelector("textarea"));mmLinks(d)});mmMeta();MM.loadedUp=m.up}
+function mmMeta(){const m=MM.m;$("mm_meta").textContent=m.at?(m.by?tx("Skapad av ","Created by ")+pname(m.by)+" · ":"")+whenTxt(m.at)+(m.up>m.at+60000?" · "+tx("ändrad ","edited ")+whenTxt(m.up)+(m.ub&&m.ub!==m.by?" "+tx("av ","by ")+pname(m.ub):""):""):""}
+function openMM(id){let m=id&&MEMOS.find(x=>x.id===id);
+  if(!m){const now=Date.now();m={id:newId(),ti:"",bl:[{t:"p",x:""}],at:now,up:now,by:ME||"",ub:ME||""};MM.fresh=true}else MM.fresh=false;
+  MM.open=true;MM.id=m.id;MM.m=JSON.parse(JSON.stringify(m));MM.dirty=false;
+  $("mm_bt").textContent=tx("Anteckningar","Notes");$("mm_ti").placeholder=tx("Rubrik","Title");$("mm_chkt").textContent=tx("Att göra","To-do");$("mm_imgt").textContent=tx("Bild","Picture");$("mm_lnkt").textContent=tx("Länk","Link");$("mm_st").textContent="";
+  mmPaint();$("mm").classList.add("on");document.body.classList.add("mmopen");$("mm_w").scrollTop=0;
+  if(MM.fresh)setTimeout(()=>$("mm_ti").focus(),280)}
+function mmChanged(){MM.dirty=true;$("mm_st").textContent=tx("Sparar…","Saving…");clearTimeout(MM.t);MM.t=setTimeout(mmSave,700)}
+function mmSave(){clearTimeout(MM.t);if(!MM.open&&!MM.m)return;const m=MM.m;m.ti=$("mm_ti").value;m.bl=mmRead();
+  if(!MM.dirty){return}MM.dirty=false;
+  if(memoEmpty(m)&&MM.fresh){$("mm_st").textContent="";return}
+  m.up=Date.now();m.ub=ME||m.ub;MM.fresh=false;const i=MEMOS.findIndex(x=>x.id===m.id),c=JSON.parse(JSON.stringify(m));if(i>=0)MEMOS[i]=c;else MEMOS.push(c);
+  put("memo_"+m.id,memoDoc(m));MM.loadedUp=m.up;mmMeta();$("mm_st").textContent=tx("Sparat","Saved");setTimeout(()=>{if(!MM.dirty)$("mm_st").textContent=""},1400)}
+/* Pictures no note uses any more are removed. */
+function mmSweep(){const used=new Set(MEMOS.flatMap(m=>m.bl.filter(b=>b.t==="i").map(b=>b.i)));Object.keys(DOCS).filter(k=>k.startsWith("mimg_")&&!used.has(k.slice(5))&&Date.now()-(+(DOCS[k]||{}).at||0)>60000).forEach(k=>{del(k);delete MIMG[k.slice(5)]})}
+function closeMM(){if(!MM.open)return;mmSave();const m=MM.m;MM.open=false;$("mm").classList.remove("on");document.body.classList.remove("mmopen");document.activeElement&&document.activeElement.blur&&document.activeElement.blur();
+  if(m&&memoEmpty(m)&&MEMOS.some(x=>x.id===m.id)){MEMOS=MEMOS.filter(x=>x.id!==m.id);del("memo_"+m.id)}
+  MM.m=null;setTimeout(mmSweep,1500);renderMemos()}
+/* If your partner changes the note you have open and you are not typing, you see their change. */
+function mmMaybeRefresh(){const m=MEMOS.find(x=>x.id===MM.id);if(!m){if(!MM.fresh&&MM.m&&!MM.dirty){toast(tx("Anteckningen togs bort","The note was removed"));MM.m=null;MM.open=false;$("mm").classList.remove("on");document.body.classList.remove("mmopen")}return}
+  if(m.up>MM.loadedUp&&!MM.dirty&&!$("mm").contains(document.activeElement)){MM.m=JSON.parse(JSON.stringify(m));const y=$("mm_w").scrollTop;mmPaint();$("mm_w").scrollTop=y}
+  else if(!MM.dirty){$("mm_body").querySelectorAll(".mb-i").forEach(d=>{if(d.querySelector(".mbwait")&&MIMG[d.dataset.i])d.replaceWith(mmBlock({t:"i",i:d.dataset.i}))})}}
+function mmCur(){const a=document.activeElement;return a&&a.closest?a.closest("#mm_body .mb"):null}
+function mmInsert(b,after,focus){const d=mmBlock(b),at=after||mmCur()||$("mm_body").lastElementChild;
+  /* An empty text line is replaced instead of left behind. */
+  if(at&&at.dataset.t==="p"&&!at.querySelector("textarea").value.trim()&&b.t!=="p"){at.replaceWith(d)}else if(at)at.after(d);else $("mm_body").appendChild(d);
+  if(b.t!=="p"&&!d.nextElementSibling)d.after(mmBlock({t:"p",x:""})),mmGrow(d.nextElementSibling.querySelector("textarea"));
+  if(focus){const f=d.querySelector("input,textarea");if(f){f.focus();const n=f.value.length;try{f.setSelectionRange(n,n)}catch(e){}}}
+  if(b.t==="p")mmGrow(d.querySelector("textarea"));mmChanged();return d}
+function mmAddImages(files){[...files].filter(f=>/^image\//.test(f.type)).slice(0,10).forEach(f=>{const u=URL.createObjectURL(f),im=new Image();
+  im.onload=()=>{const max=1400,k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);
+    let q=.8,data=c.toDataURL("image/jpeg",q);while(data.length>850000&&q>.4){q-=.12;data=c.toDataURL("image/jpeg",q)}
+    if(data.length>950000){toast(tx("Bilden är för stor","The picture is too big"));return}
+    const id=newId();MIMG[id]=data;put("mimg_"+id,{kind:"mimg",id,memo:MM.id,data,at:Date.now()});if(MM.open)mmInsert({t:"i",i:id})};
+  im.onerror=()=>{URL.revokeObjectURL(u);toast(tx("Bilden gick inte att använda","That picture could not be used"))};im.src=u})}
+function mmLinkFrom(s){s=String(s||"").trim();if(/^www\./i.test(s))s="https://"+s;return /^https?:\/\/\S+\.\S+$/i.test(s)&&!/\s/.test(s)?s:""}
+function closeMV(){$("mv").classList.remove("on")}
+
+/* Wiring */
+document.addEventListener("click",e=>{if(!e.target.closest)return;
+  if(e.target.closest("#mm_new")){openMM("");return}const it=e.target.closest("[data-memo]");if(it){openMM(it.dataset.memo);return}});
+$("mm_back").onclick=()=>history.state&&history.state.kk?history.back():closeMM();
+$("mm_del").onclick=async()=>{if(!MM.m)return;const m=MM.m;if(memoEmpty({ti:$("mm_ti").value,bl:mmRead()})){MM.dirty=false;closeMM();return}
+  if(!await ask(tx("Radera anteckningen?","Delete the note?"),tx("Den försvinner för er båda.","It disappears for both of you."),tx("Radera","Delete")))return;
+  clearTimeout(MM.t);MM.dirty=false;const ids=["memo_"+m.id,...m.bl.filter(b=>b.t==="i").map(b=>"mimg_"+b.i)];MEMOS=MEMOS.filter(x=>x.id!==m.id);MM.m=null;MM.open=false;$("mm").classList.remove("on");document.body.classList.remove("mmopen");
+  toast(tx("Anteckningen raderades","The note was deleted"));undoable($("toasts").lastElementChild,ids);renderMemos()};
+$("mm_ti").addEventListener("input",mmChanged);
+$("mm_ti").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();const f=$("mm_body").querySelector(".mb textarea,.mb input");if(f)f.focus()}});
+$("mm_tail").onclick=()=>{const L=$("mm_body").lastElementChild;const f=L&&L.querySelector("textarea");if(f){f.focus();const n=f.value.length;f.setSelectionRange(n,n)}else mmInsert({t:"p",x:""},L,true)};
+$("mm_body").addEventListener("input",e=>{const d=e.target.closest(".mb");if(!d)return;if(e.target.tagName==="TEXTAREA"){mmGrow(e.target);mmLinks(d)}
+  if(e.target.classList.contains("mblin"))return;mmChanged()});
+$("mm_body").addEventListener("click",e=>{const d=e.target.closest(".mb");if(!d)return;
+  if(e.target.closest(".mbck")){d.classList.toggle("done");e.target.closest(".mbck").classList.toggle("on");mmChanged();return}
+  if(e.target.closest(".mbx")){const n=d.previousElementSibling;d.remove();if(!$("mm_body").children.length)$("mm_body").appendChild(mmBlock({t:"p",x:""}));mmChanged();return}
+  if(e.target.tagName==="IMG"){$("mv_i").src=e.target.src;$("mv").classList.add("on")}});
+$("mm_body").addEventListener("keydown",e=>{const d=e.target.closest(".mb");if(!d)return;
+  if(d.dataset.t==="c"&&e.target.tagName==="INPUT"){
+    if(e.key==="Enter"){e.preventDefault();const v=e.target.value,pos=e.target.selectionStart;
+      /* Enter on an empty item ends the list, like in Notes. */
+      if(!v.trim()){const p=mmBlock({t:"p",x:""});d.replaceWith(p);mmGrow(p.querySelector("textarea"));p.querySelector("textarea").focus();mmChanged();return}
+      e.target.value=v.slice(0,pos);mmInsert({t:"c",x:v.slice(pos),d:false},d,true).querySelector("input").setSelectionRange(0,0)}
+    else if(e.key==="Backspace"&&e.target.selectionStart===0&&e.target.selectionEnd===0){e.preventDefault();const prev=d.previousElementSibling,v=e.target.value;
+      if(prev&&prev.dataset.t==="c"){const pi=prev.querySelector("input"),n=pi.value.length;pi.value+=v;d.remove();pi.focus();pi.setSelectionRange(n,n)}
+      else{const p=mmBlock({t:"p",x:v});d.replaceWith(p);const ta=p.querySelector("textarea");mmGrow(ta);ta.focus();ta.setSelectionRange(0,0)}mmChanged()}}
+  else if(d.dataset.t==="p"&&e.key==="Backspace"&&e.target.selectionStart===0&&e.target.selectionEnd===0){const prev=d.previousElementSibling;
+    if(prev&&(prev.dataset.t==="p"||prev.dataset.t==="c")){e.preventDefault();const f=prev.querySelector("textarea,input"),n=f.value.length,v=e.target.value;f.value+=(prev.dataset.t==="p"&&v&&n?"\n":"")+v;d.remove();if(f.tagName==="TEXTAREA")mmGrow(f);f.focus();f.setSelectionRange(n,n);mmChanged()}
+    else if(prev&&!e.target.value){e.preventDefault()}}
+  else if(e.target.classList.contains("mblin")&&e.key==="Enter"){e.preventDefault();e.target.blur()}});
+$("mm_body").addEventListener("focusout",e=>{if(!e.target.classList||!e.target.classList.contains("mblin"))return;const d=e.target.closest(".mb"),u=mmLinkFrom(e.target.value);
+  if(u){const n=mmBlock({t:"l",u});d.replaceWith(n);mmChanged()}else{if(e.target.value.trim())toast(tx("Det där ser inte ut som en länk","That does not look like a link"));d.remove()}});
+/* Pasting: a picture becomes a picture, a single link becomes a link card. */
+$("mm").addEventListener("paste",e=>{const cd=e.clipboardData;if(!cd)return;const files=[...(cd.files||[])].filter(f=>/^image\//.test(f.type));
+  if(files.length){e.preventDefault();mmAddImages(files);return}
+  const t=cd.getData("text/plain"),u=mmLinkFrom(t);if(u&&e.target.id!=="mm_ti"&&!e.target.classList.contains("mblin")){e.preventDefault();const d=mmCur();mmInsert({t:"l",u},d)}});
+$("mm_chk").onmousedown=e=>e.preventDefault();$("mm_img").onmousedown=e=>e.preventDefault();$("mm_lnk").onmousedown=e=>e.preventDefault();
+$("mm_chk").onclick=()=>{const d=mmCur();if(d&&d.dataset.t==="c"){const p=mmBlock({t:"p",x:d.querySelector("input").value});d.replaceWith(p);mmGrow(p.querySelector("textarea"));p.querySelector("textarea").focus();mmChanged();return}
+  if(d&&d.dataset.t==="p"){const ta=d.querySelector("textarea"),v=ta.value;
+    /* The line you are on becomes a to-do item. */
+    const pos=ta.selectionStart,a=v.lastIndexOf("\n",pos-1)+1,z=v.indexOf("\n",pos)<0?v.length:v.indexOf("\n",pos),line=v.slice(a,z),before=v.slice(0,a).replace(/\n$/,""),after=v.slice(z+1);
+    if(!v.trim()){const c=mmBlock({t:"c",x:"",d:false});d.replaceWith(c);if(!c.nextElementSibling)c.after(mmBlock({t:"p",x:""}));c.querySelector("input").focus();mmChanged();return}
+    if(before)ta.value=before;else{d.remove()}const c=mmInsert({t:"c",x:line,d:false},before?d:null,true);if(after){const p=mmBlock({t:"p",x:after});c.after(p);mmGrow(p.querySelector("textarea"))}if(!before&&!c.previousElementSibling&&d.isConnected===false){}return}
+  mmInsert({t:"c",x:"",d:false},null,true)};
+$("mm_img").onclick=()=>{$("mm_in").value="";$("mm_in").click()};
+$("mm_in").addEventListener("change",()=>{if($("mm_in").files.length)mmAddImages($("mm_in").files)});
+$("mm_lnk").onclick=()=>{mmInsert({t:"l",u:""},null,true)};
+$("mv_x").onclick=closeMV;$("mv").addEventListener("click",e=>{if(e.target===$("mv"))closeMV()});
+addEventListener("pagehide",()=>{if(MM.open)mmSave()});document.addEventListener("visibilitychange",()=>{if(document.hidden&&MM.open)mmSave()});
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>

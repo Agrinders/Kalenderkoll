@@ -7,6 +7,7 @@ const dOf=n=>{const d=new Date(n*864e5);return new Date(d.getUTCFullYear(),d.get
 const ymd=n=>{const d=new Date(n*864e5);return[d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate()]};
 const dnOf=(y,m,d)=>Math.round(Date.UTC(y,m,d)/864e5);
 const todayN=()=>dn(isoOf(new Date()));
+const dnD=d=>dn(isoOf(d));
 const wdOf=n=>(new Date(n*864e5).getUTCDay()+6)%7;/* 0 = Monday */
 const dim=(y,m)=>new Date(y,m+1,0).getDate();
 function isoWeek(n){const th=n-wdOf(n)+3,y=new Date(th*864e5).getUTCFullYear();return 1+Math.floor((th-dnOf(y,0,1))/7)}

@@ -73,7 +73,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
   const db=await claude.use("db");if(!db)throw 0;
   try{const u=await claude.use("user");if(u&&u.id)MYID=await u.id()||""}catch(e){}
   col=db.collection("cal");let first=true;
-  col.onSnapshot(snap=>{if(first&&snap.metadata&&snap.metadata.fromCache&&!snap.docs.length){setTimeout(()=>{if(!firstDone)firstRun()},6000);return}ok=true;allIds=snap.docs.map(d=>d.id);DOCS={};const prevT=TODOS;EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};PICS={a:"",b:""};let cp=null;
+  col.onSnapshot(snap=>{if(first&&snap.metadata&&snap.metadata.fromCache&&!snap.docs.length){setTimeout(()=>{if(!firstDone)firstRun()},6000);return}ok=true;allIds=snap.docs.map(d=>d.id);DOCS={};const prevT=TODOS;MEMOS=[];MIMG={};EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};PICS={a:"",b:""};let cp=null;
     snap.docs.forEach(d=>{const v=d.data()||{};DOCS[d.id]=copy(v);const iso=x=>/^\d{4}-\d\d-\d\d$/.test(x||"");
       if(d.id==="plan"){if(!PEND.has("plan")){if(typeof v.wkno==="boolean")S.wkno=v.wkno;if(typeof v.hol==="boolean")S.hol=v.hol}}
       else if(d.id==="couple")cp={a:String(v.a||""),b:String(v.b||""),ua:String(v.ua||""),ub:String(v.ub||""),since:iso(v.since)?v.since:"",ca:String(v.ca||""),cb:String(v.cb||"")};
@@ -82,6 +82,8 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
       else if(v.kind==="day"&&iso(v.d)&&ICONS[v.ic])DAYS[v.d]={ic:v.ic};
       else if(v.kind==="bd"&&/^\d\d-\d\d$/.test(v.md||""))BD.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),md:v.md,y:+v.y||0,ty:["b","a","o"].includes(v.ty)?v.ty:"b"});
       else if(v.kind==="todo"){const id=String(v.id||d.id.slice(5)),ae=document.activeElement,typing=ae&&ae.dataset&&ae.dataset.tn===id||PEND.has("todo_"+id);TODOS.push(typing&&prevT.find(z=>z.id===id)||{id,n:String(v.n||""),w:["a","b","g"].includes(v.w)?v.w:"g",done:!!v.done,at:+v.at||0,dt:+v.dt||0})}
+      else if(v.kind==="memo"){const m=memoClean(v,d.id.slice(5));if(m)MEMOS.push(m)}
+      else if(v.kind==="mimg"&&typeof v.data==="string"&&/^data:image\/(jpeg|png|webp);base64,/.test(v.data))MIMG[String(v.id||d.id.slice(5))]=v.data;
       else if(v.kind==="note"&&typeof v.txt==="string")NOTES.push({id:String(v.id||d.id.slice(5)),f:v.f==="b"?"b":"a",txt:v.txt,at:+v.at||0})});
     /* Tasks added on this phone but not saved yet stay in the list. */
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
@@ -92,7 +94,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
 (()=>{const on=id=>$(id).classList.contains("on");
-  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
+  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["mv",closeMV],["mm",closeMM],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
   const guard=()=>history.pushState({kk:1},"");try{history.replaceState({kk:0},"");guard()}catch(e){return}
   addEventListener("popstate",()=>{if(closeTop())return guard();if(tab!=="h"){go("h");return guard()}history.back()})})();
 
@@ -136,7 +138,7 @@ function watchJoin(){if(!SHARED()||!ME||!CP[ME]||!MYID||CP["u"+ME]!==MYID)return
 /* A notice when your partner adds something. This phone keeps a list of what it has already seen;
    anything new that this phone did not write itself comes from your partner. */
 const SK="kalenderkoll.seen";let askedN=false;
-function watchNew(){const ids=Object.keys(DOCS).filter(id=>/^(ev|note|todo|bd)_/.test(id));let seen=null;
+function watchNew(){const ids=Object.keys(DOCS).filter(id=>/^(ev|note|todo|bd|memo)_/.test(id));let seen=null;
   try{const r=localStorage.getItem(SK);if(r)seen=new Set(JSON.parse(r))}catch(e){}
   const fresh=seen?ids.filter(id=>!seen.has(id)):[];if(seen&&!fresh.length)return;
   try{localStorage.setItem(SK,JSON.stringify([...new Set([...(seen||[]),...ids])].slice(-4000)))}catch(e){}
@@ -145,6 +147,7 @@ function watchNew(){const ids=Object.keys(DOCS).filter(id=>/^(ev|note|todo|bd)_/
   const msg=news.length>1?tx(`${p} har lagt till ${news.length} nya saker`,`${p} added ${news.length} new things`):
     v.kind==="ev"?tx(`${p} lade till: ${q(v.n)}`,`${p} added: ${q(v.n)}`)+(v.d?" ("+fmtD(dn(v.d),{day:"numeric",month:"short"})+")":""):
     v.kind==="note"?tx(`${p} skrev en lapp: ${q(v.txt)}`,`${p} wrote a note: ${q(v.txt)}`):
+    v.kind==="memo"?tx(`${p} skrev en anteckning: ${q(v.ti||tx("utan rubrik","untitled"))}`,`${p} wrote a note: ${q(v.ti||"untitled")}`):
     v.kind==="todo"?tx(`${p} lade till en uppgift: ${q(v.n)}`,`${p} added a task: ${q(v.n)}`):
     tx(`${p} lade till en speciell dag: ${q(v.n)}`,`${p} added a special day: ${q(v.n)}`);
   toast(msg,5000);notify("Kalenderkoll",msg)}

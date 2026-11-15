@@ -147,7 +147,7 @@ function renderDrawer(){$("dr_sub").textContent=CP.a&&CP.b?CP.a+" ♥ "+CP.b:tx(
 const openDrawer=()=>{$("drawer").classList.add("on");$("scrim").classList.add("on")},closeDrawer=()=>{$("drawer").classList.remove("on");$("scrim").classList.remove("on")};
 
 /* ---------- Drawing and moving between pages ---------- */
-function render(){NOW=new Date();$("ttl").textContent=t("ttl"+tab.toUpperCase());renderHome();renderMonth();renderTodo();renderUs();renderSettings()}
+function render(){NOW=new Date();$("ttl").textContent=t("ttl"+tab.toUpperCase());renderHome();renderMonth();renderTodo();renderMemos();renderUs();renderSettings()}
 const TABS=["h","k","t","v","c"];
 function go(x){if(!TABS.includes(x))x="h";tab=x;try{sessionStorage.setItem("kalenderkoll.tab",x)}catch(e){}TABS.forEach(s=>$(s).classList.toggle("hide",s!==x));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===x));$("dr_set").classList.toggle("on",x==="c");closeDrawer();closeDS();$("ttl").textContent=t("ttl"+x.toUpperCase());$("tadd").classList.toggle("hide",x!=="k");$("k_v").classList.toggle("hide",x!=="k");$("tadd").setAttribute("aria-label",x==="t"?tx("Ny uppgift","New task"):x==="v"?tx("Ny lapp","New note"):tx("Ny händelse","New event"));window.scrollTo(0,0)}
 function applyTheme(){S.theme==="auto"?document.documentElement.removeAttribute("data-theme"):document.documentElement.setAttribute("data-theme",S.theme)}
