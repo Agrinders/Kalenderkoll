@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="d29b4eb81fe2">
+<meta name="kal-build" content="3b1e083f917e">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -574,6 +574,14 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 .mbfold svg{transition:transform .38s cubic-bezier(.3,1.4,.5,1)}
 .mbprog{cursor:pointer}
 @media (prefers-reduced-motion:reduce){.mb-c.inl,.mb-lh,.mbfold svg{transition:none}}
+
+/* The frame around a named list's items: a thin frosted-glass edge in the list's colour. */
+.mb-c.inl{--lc0:var(--lc,var(--acc));border-left:1px solid color-mix(in srgb,var(--lc0) 30%,rgba(255,255,255,.7));border-right:1px solid color-mix(in srgb,var(--lc0) 30%,rgba(255,255,255,.7));
+  background:linear-gradient(90deg,color-mix(in srgb,var(--lc0) 7%,transparent),rgba(255,255,255,calc(var(--gla,.6)*.25)) 12%,rgba(255,255,255,calc(var(--gla,.6)*.25)) 88%,color-mix(in srgb,var(--lc0) 7%,transparent)),color-mix(in srgb,var(--lc0) 3%,var(--card));
+  box-shadow:inset 1px 0 0 rgba(255,255,255,calc(var(--gla,.6)*1.2)),inset -1px 0 0 rgba(255,255,255,calc(var(--gla,.6)*1.2))}
+.mb-c.inl.lastl{border-bottom:1px solid color-mix(in srgb,var(--lc0) 30%,rgba(255,255,255,.7));box-shadow:inset 1px 0 0 rgba(255,255,255,calc(var(--gla,.6)*1.2)),inset -1px 0 0 rgba(255,255,255,calc(var(--gla,.6)*1.2)),inset 0 -1px 0 rgba(255,255,255,calc(var(--gla,.6)*1.2)),0 6px 14px -10px color-mix(in srgb,var(--lc0) 60%,transparent)}
+.mb-c.inl+.mb-c.inl{border-top:1px solid color-mix(in srgb,var(--lc0) 10%,transparent)}
+.mb-c[data-m] .mbmk{color:var(--tk,var(--lc,var(--acc)))}.mb-c.inl .mbck.on{background:var(--tk,var(--lc,var(--acc)));border-color:var(--tk,var(--lc,var(--acc)))}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1799,6 +1807,9 @@ const _close4=closeMM;closeMM=function(){tocOpen(false);_close4()};
 
 /* Tapping the progress side of a list's name also folds it. */
 $("mm_body").addEventListener("click",e=>{const pr=e.target.closest(".mb-lh .mbprog");if(pr)mmFold(pr.closest(".mb"))});
+
+/* Items in a named list carry the list's colour, so their frame can be tinted to match the glass header. */
+const _prog4=mmProg;mmProg=function(){_prog4();$("mm_body").querySelectorAll(".mb-lh").forEach(h=>{const c=h.dataset.k&&MCOL[h.dataset.k]||"";for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling){if(c)x.style.setProperty("--lc",c);else x.style.removeProperty("--lc")}})};
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>

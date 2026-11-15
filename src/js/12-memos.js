@@ -333,3 +333,6 @@ const _close4=closeMM;closeMM=function(){tocOpen(false);_close4()};
 
 /* Tapping the progress side of a list's name also folds it. */
 $("mm_body").addEventListener("click",e=>{const pr=e.target.closest(".mb-lh .mbprog");if(pr)mmFold(pr.closest(".mb"))});
+
+/* Items in a named list carry the list's colour, so their frame can be tinted to match the glass header. */
+const _prog4=mmProg;mmProg=function(){_prog4();$("mm_body").querySelectorAll(".mb-lh").forEach(h=>{const c=h.dataset.k&&MCOL[h.dataset.k]||"";for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling){if(c)x.style.setProperty("--lc",c);else x.style.removeProperty("--lc")}})};
