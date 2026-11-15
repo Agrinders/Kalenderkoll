@@ -62,7 +62,7 @@ await step('phone 1 gets a notice when phone 2 adds an event',async()=>{await A1
 await step('a repeating event uses repeat-until, not a several-day end',async()=>{await A1.evaluate(()=>go('k'));await A1.click('#tadd');await w(A1);await A1.fill('#es_n','Gym');await A1.click('#es_more');await A1.evaluate(()=>{es_e.value=nd(dn(es_d.value)+6);dpLabel(es_e)});await A1.click('#es_r [data-esr="w"]');await w(A1,100);const ui=await A1.evaluate(()=>[es_ew.classList.contains('hide'),es_u.value===nd(dn(es_d.value)+6),es_e.value]);await A1.click('#es_ok');await w(A1,500);const e=await A1.evaluate(()=>{const e=EV.find(z=>z.n==='Gym');return[e.e,e.u,between(dn(e.d),dn(e.d)+30).filter(o=>o.e.id===e.id).length]});need(ui[0]&&ui[1]&&!ui[2]&&!e[0]&&e[1]&&e[2]===1,'repeat '+JSON.stringify([ui,e]));return e});
 await step('profile colour and view switch in the top bar',async()=>{const r=await A1.evaluate(()=>{const k=document.querySelector('#main_top #k_v');CP.ca='#ff8800';applyPeople();return[!!k&&!k.classList.contains('hide'),getComputedStyle(document.documentElement).getPropertyValue('--pa').trim()]});await A1.evaluate(()=>go('h'));const h=await A1.evaluate(()=>k_v.classList.contains('hide'));need(r[0]&&r[1]==='#ff8800'&&h,'bar '+r+h);return r});
 await step('notes: write, to-do list, link, picture; partner sees it',async()=>{await A1.evaluate(()=>go('t'));await w(A1);await A1.click('#mm_new');await w(A1,400);
-  await A1.fill('#mm_ti','Inför resan');await A1.click('#mm_body .mb-p textarea');await A1.keyboard.type('Kom ihåg:');await A1.keyboard.press('Enter');await A1.click('#mm_chk');await A1.keyboard.type('Pass');await A1.keyboard.press('Enter');await A1.keyboard.type('Laddare');await A1.click('#mm_body .mb-c .mbck');
+  await A1.fill('#mm_ti','Inför resan');await A1.click('#mm_body .mb-p textarea');await A1.keyboard.type('Kom ihåg:');await A1.keyboard.press('Enter');await A1.click('#mm_chk');await A1.click('[data-lk="c"]');await A1.keyboard.type('Pass');await A1.keyboard.press('Enter');await A1.keyboard.type('Laddare');await A1.click('#mm_body .mb-c .mbck');
   await A1.click('#mm_lnk');await A1.keyboard.type('www.sj.se');await A1.keyboard.press('Enter');await w(A1,200);
   const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFklEQVR42mP8z8Dwn4GBgYGJgYGBAQAqHgIBkYBrNQAAAABJRU5ErkJggg==','base64');
   await A1.setInputFiles('#mm_in',{name:'a.png',mimeType:'image/png',buffer:png});await w(A1,800);await A1.click('#mm_back');await w(A1,900);
@@ -73,21 +73,21 @@ await step('notes: write, to-do list, link, picture; partner sees it',async()=>{
   return types});
 await step('notes: headings, colour and named lists',async()=>{await A1.evaluate(()=>go('t'));await A1.click('#mm_new');await w(A1,400);await A1.fill('#mm_ti','Helgen');
   await A1.click('#mm_body .mb-p textarea');await A1.keyboard.type('Lördag');await A1.click('#mm_aa');await A1.click('[data-fs="h2"]');await A1.click('[data-fk="r"]');await A1.keyboard.press('Enter');await A1.keyboard.type('Sovmorgon');
-  await A1.click('[data-fs="lh"]');await A1.keyboard.type('Handla');await A1.keyboard.press('Enter');await A1.keyboard.type('Mjölk');await A1.keyboard.press('Enter');await A1.keyboard.type('Ägg');
+  await A1.click('#mm_chk');await A1.click('[data-lk="named"]');await A1.keyboard.type('Handla');await A1.keyboard.press('Enter');await A1.keyboard.type('Mjölk');await A1.keyboard.press('Enter');await A1.keyboard.type('Ägg');
   await A1.click('#mm_body .mb-c .mbck');await w(A1,100);const pr=await A1.evaluate(()=>document.querySelector('#mm_body .mb-lh em').textContent);
   await A1.click('#mm_back');await w(A1,900);const m=await A1.evaluate(()=>MEMOS.find(x=>x.ti==='Helgen'));need(m,'not saved');
   const h=m.bl.find(b=>b.s==='h2'),lh=m.bl.find(b=>b.t==='lh'),cs=m.bl.filter(b=>b.t==='c');
   need(h&&h.x==='Lördag'&&h.k==='r'&&m.bl.some(b=>b.t==='p'&&!b.s&&b.x==='Sovmorgon')&&lh&&lh.x==='Handla'&&cs.length===2&&cs[0].d&&pr==='1/2','fmt '+JSON.stringify([pr,m.bl]));return pr});
 await step('notes: symbols, fonts, numbered list, recently deleted',async()=>{await A1.evaluate(()=>go('t'));await A1.click('#mm_new');await w(A1,400);await A1.fill('#mm_ti','Att köpa');
-  await A1.click('#mm_chk');await A1.keyboard.type('Bröd');await A1.keyboard.press('Enter');await A1.keyboard.type('Ost');
-  await A1.click('#mm_sy');await A1.click('[data-sym="❤️"]');await A1.click('#mm_aa');await A1.click('[data-fm="n"]');await A1.click('[data-ff="h"]');await w(A1,200);
+  await A1.click('#mm_chk');await A1.click('[data-lk="c"]');await A1.keyboard.type('Bröd');await A1.keyboard.press('Enter');await A1.keyboard.type('Ost');
+  await A1.click('#mm_sy');await A1.click('[data-sym="❤️"]');await A1.click('#mm_chk');await A1.click('[data-lk="n"]');await A1.click('#mm_aa');await A1.click('[data-ff="h"]');await w(A1,200);
   const mk=await A1.evaluate(()=>[...document.querySelectorAll('#mm_body .mb-c .mbmk')].map(x=>x.textContent).join(','));
   await A1.click('#mm_more');await A1.click('[data-sco="del"]');await w(A1,700);
   let m=await A1.evaluate(()=>MEMOS.find(x=>x.ti==='Att köpa'));need(m&&m.del,'not in recently deleted');need(m.bl.filter(b=>b.t==='c').every(b=>b.m==='n')&&m.bl.some(b=>b.x==='Ost❤️'&&b.f==='h'),'fmt '+JSON.stringify(m.bl));
   need(await A1.evaluate(()=>!document.querySelector('#t_memos .mml:not(.del) [data-memo]')||![...document.querySelectorAll('#t_memos .mml:not(.del) [data-memo] b')].some(b=>b.textContent==='Att köpa')),'still in the list');
   await A1.click('[data-mmtrash]');await A1.click('[data-mmback="'+m.id+'"]');await w(A1,500);m=await A1.evaluate(()=>MEMOS.find(x=>x.ti==='Att köpa'));need(m&&!m.del,'not restored');return mk});
 await step('notes: both write at the same time and nothing is lost',async()=>{await A1.evaluate(()=>go('t'));await A1.click('#mm_new');await w(A1,400);await A1.fill('#mm_ti','Tillsammans');
-  await A1.click('#mm_body .mb-p textarea');await A1.keyboard.type('Första raden');await A1.keyboard.press('Enter');await A1.click('#mm_chk');await A1.keyboard.type('Mjölk');await w(A1,1500);
+  await A1.click('#mm_body .mb-p textarea');await A1.keyboard.type('Första raden');await A1.keyboard.press('Enter');await A1.click('#mm_chk');await A1.click('[data-lk="c"]');await A1.keyboard.type('Mjölk');await w(A1,1500);
   const id=await A1.evaluate(()=>MM.id);await B1.evaluate(()=>go('t'));need(await waitFor(B1,()=>MEMOS.some(m=>m.ti==='Tillsammans')),'B does not have it');
   await B1.click(`[data-memo="${id}"]`);await w(B1,500);
   /* Both add a point to the same list and change different lines, without waiting for each other. */

@@ -184,7 +184,7 @@ function mmProg(){$("mm_body").querySelectorAll(".mb-lh").forEach(h=>{let n=0,dn
 let mmLast=null;$("mm_body").addEventListener("focusin",e=>{const d=e.target.closest(".mb");if(d)mmLast=d});
 const mmTarget=()=>{const d=mmCur()||mmLast;return d&&d.isConnected?d:null};
 function mmFmtPaint(){const d=mmTarget(),st=d?(d.dataset.t==="p"?(d.dataset.s||"p"):d.dataset.t):"",k=d&&d.dataset.k||"";
-  const S2=[["h1",tx("Rubrik","Heading")],["h2",tx("Underrubrik","Subheading")],["p",tx("Text","Text")],["lh",tx("Ny lista","New list")]];
+  const S2=[["h1",tx("Rubrik","Heading")],["h2",tx("Underrubrik","Subheading")],["p",tx("Text","Text")]];
   $("mm_fmt").innerHTML=`<div class="mmfs">${S2.map(([v,l])=>`<button type="button" data-fs="${v}" class="fs-${v}${st===v?" on":""}">${l}</button>`).join("")}</div><div class="mmfc"><button type="button" data-fk="" class="${!k?"on":""}" style="--c:var(--ink)" aria-label="${esc(tx("Standard","Default"))}"></button>${Object.entries(MCOL).map(([n,c])=>`<button type="button" data-fk="${n}" class="${k===n?"on":""}" style="--c:${c}" aria-label="${n}"></button>`).join("")}</div>`}
 function mmFmt(open){const f=$("mm_fmt");if(open===undefined)open=f.hidden;f.hidden=!open;$("mm_aa").classList.toggle("on",open);if(open)mmFmtPaint()}
 $("mm_aa").onmousedown=e=>e.preventDefault();$("mm_fmt").addEventListener("mousedown",e=>e.preventDefault());
@@ -215,7 +215,7 @@ const MKIND=[["c","☐",tx("Bockar","Checkboxes")],["b","•",tx("Punkter","Bull
 function mmGroup(d){/* The list a line belongs to: its name and all items next to each other. */
   let a=d;if(a.dataset.t==="lh")a=a.nextElementSibling;if(!a||a.dataset.t!=="c")return[];while(a.previousElementSibling&&a.previousElementSibling.dataset.t==="c")a=a.previousElementSibling;const L=[];for(let x=a;x&&x.dataset.t==="c";x=x.nextElementSibling)L.push(x);return L}
 const _paint=mmFmtPaint;mmFmtPaint=function(){_paint();const d=mmTarget(),f=d&&d.dataset.f||"",isL=d&&(d.dataset.t==="c"||d.dataset.t==="lh"),G=isL?mmGroup(d):[],mk=G[0]&&G[0].dataset.m||"c";
-  let h=isL&&G.length?`<div class="mmfs mmfl">${MKIND.map(([v,i,l])=>`<button type="button" data-fm="${v}" class="${mk===v?"on":""}"><b>${i}</b> ${l}</button>`).join("")}</div>`:"";
+  let h="";
   h+=`<div class="mmfs mmff"><button type="button" data-ff="" class="${!f?"on":""}">Standard</button>${Object.entries(MFONT).map(([v,l])=>`<button type="button" data-ff="${v}" class="ff-${v}${f===v?" on":""}">${l}</button>`).join("")}</div>`;
   $("mm_fmt").querySelector(".mmfs").insertAdjacentHTML("afterend",h)};
 $("mm_fmt").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const d=mmTarget();if(!d)return;
@@ -289,3 +289,24 @@ function mmFold(h,on){if(on===undefined)on=!h.classList.contains("fold");h.class
 $("mm_body").addEventListener("click",e=>{const f=e.target.closest(".mbfold");if(!f)return;e.stopPropagation();mmFold(f.closest(".mb"))},true);
 /* Pressing Enter on a folded list's name opens it and goes to its first point. */
 $("mm_body").addEventListener("keydown",e=>{const d=e.target.closest&&e.target.closest(".mb-lh.fold");if(d&&e.key==="Enter")mmFold(d,false)},true);
+
+/* ---------- The Lista button: a menu of list kinds ----------
+   Pick checkboxes, bullets or numbers, or a new list with a name. Inside a list the same choice changes that list. */
+const mmMakeList=$("mm_chk").onclick;
+function mmLst(open){const f=$("mm_lst");if(open===undefined)open=f.hidden;f.hidden=!open;$("mm_chk").classList.toggle("on",open);if(!open)return;mmFmt(false);mmSym(false);
+  const d=mmTarget(),G=d&&(d.dataset.t==="c"||d.dataset.t==="lh")?mmGroup(d):[],cur=G.length?(G[0].dataset.m||"c"):"";
+  const prev={c:'<i class="pc"></i><i class="pc on"></i><i class="pc"></i>',b:'<i class="pb"></i><i class="pb"></i><i class="pb"></i>',n:'<i class="pn">1</i><i class="pn">2</i><i class="pn">3</i>'};
+  f.innerHTML=`<p>${G.length?tx("Ändra listan till","Change the list to"):tx("Lägg till en lista","Add a list")}</p><div class="mmlk">${MKIND.map(([v,i,l])=>`<button type="button" data-lk="${v}" class="${cur===v?"on":""}"><span class="lkp">${prev[v]}</span><b>${l}</b></button>`).join("")}</div>
+    <button type="button" class="mmln" data-lk="named"><span class="lkh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg></span><span><b>${tx("Ny lista med rubrik","New list with a name")}</b><small>${tx("Med namn och en stapel som visar hur mycket som är klart. Kan fällas ihop.","With a name and a bar showing how much is done. Can be folded.")}</small></span></button>`}
+$("mm_chk").onclick=()=>mmLst();$("mm_lst").addEventListener("mousedown",e=>e.preventDefault());
+const _fmt3=mmFmt;mmFmt=function(open){if(open===undefined)open=$("mm_fmt").hidden;if(open)mmLst(false);_fmt3(open)};
+const _sym3=mmSym;mmSym=function(open){if(open===undefined)open=$("mm_sym").hidden;if(open)mmLst(false);_sym3(open)};
+const _close3=closeMM;closeMM=function(){mmLst(false);_close3()};
+function mmSetKind(L,v){L.forEach(x=>{if(v==="c")delete x.dataset.m;else{x.dataset.m=v;x.classList.remove("done");const ck=x.querySelector(".mbck");if(ck)ck.classList.remove("on")}})}
+$("mm_lst").addEventListener("click",e=>{const b=e.target.closest("[data-lk]");if(!b)return;const v=b.dataset.lk,d=mmTarget();
+  if(v==="named"){const at=d||$("mm_body").lastElementChild,h=mmBlock({t:"lh",x:""});
+    if(at&&at.dataset.t==="p"&&!at.querySelector("textarea").value.trim())at.replaceWith(h);else if(at){let x=at;if(x.dataset.t==="c"||x.dataset.t==="lh"){const G=mmGroup(x);if(G.length)x=G[G.length-1]}x.after(h)}else $("mm_body").appendChild(h);
+    const c=mmBlock({t:"c",x:"",d:false});h.after(c);if(!c.nextElementSibling||c.nextElementSibling.dataset.t!=="p")c.after(mmBlock({t:"p",x:""}));h.querySelector("input").focus();mmChanged();mmLst(false);return}
+  const G=d&&(d.dataset.t==="c"||d.dataset.t==="lh")?mmGroup(d):[];
+  if(G.length){mmSetKind(G,v);mmChanged();mmFocusEnd(d);mmLst(false);return}
+  if(d)mmFocusEnd(d);mmMakeList();const n=mmCur();if(n&&n.dataset.t==="c"){mmSetKind(mmGroup(n),v);mmChanged()}mmLst(false)});
