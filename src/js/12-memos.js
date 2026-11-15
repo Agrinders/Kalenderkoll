@@ -44,7 +44,8 @@ function mmRead(){const bl=[],E=[...$("mm_body").querySelectorAll(":scope>.mb")]
   else if(t==="l"&&d.dataset.u)b={t:"l",u:d.dataset.u};else if(t==="i"&&d.dataset.i)b={t:"i",i:d.dataset.i};if(!b)return;
   /* Each line has its own id and the time it last changed, so two phones can be merged line by line. */
   const sg=mbSig(b);if(sg!==d._sig){d._sig=sg;d._u=Date.now()}
-  if(t==="p"&&ix===E.length-1&&!b.x&&!b.s&&!d._u)return;bl.push({...b,b:d.dataset.b,tm:d._u||0})});return bl}
+  /* Empty lines nobody has written in (the line at the end, and the "Skriv något" line between lists) are not saved. */
+  if(t==="p"&&!b.x&&!b.s&&!d._u)return;bl.push({...b,b:d.dataset.b,tm:d._u||0})});return bl}
 function mmPaint(){const m=MM.m;$("mm_ti").value=m.ti;$("mm_body").innerHTML="";const bl=m.bl.length?m.bl:[{t:"p",x:""}];
   bl.forEach(b=>$("mm_body").appendChild(mmBlock(b)));if(bl[bl.length-1].t!=="p")$("mm_body").appendChild(mmBlock({t:"p",x:""}));
   $("mm_body").querySelectorAll(".mb-p").forEach(d=>{mmGrow(d.querySelector("textarea"));mmLinks(d)});mmProg();mmMeta();MM.loadedUp=m.up}
@@ -417,3 +418,14 @@ const _prog5=mmProg;mmProg=function(){_prog5();$("mm_body").querySelectorAll(":s
   p.classList.toggle("slim",blank(p)&&isL(A)&&isL(B))})};
 $("mm_body").addEventListener("focusin",e=>{const p=e.target.closest(".mb-p.slim");if(p)p.classList.remove("slim")});
 $("mm_body").addEventListener("focusout",e=>{if(e.target.closest(".mb-p"))setTimeout(mmProg,0)});
+
+/* ---------- One writable line between lists ----------
+   Between two lists there is always exactly one "Skriv något…" line to tap into; any further blank lines stay hidden. */
+const _prog6=mmProg;mmProg=function(){_prog6();if(DR)return;const body=$("mm_body"),isL=x=>x&&(x.dataset.t==="c"||x.dataset.t==="lh");
+  const blank=x=>x&&x.dataset.t==="p"&&!x.dataset.s&&!x.querySelector("textarea").value.trim();
+  [...body.querySelectorAll(":scope>.mb")].forEach(x=>{
+    const starts=x.dataset.t==="lh"||(x.dataset.t==="c"&&!(x.previousElementSibling&&x.previousElementSibling.dataset.t==="c"));if(!starts)return;
+    if(x.dataset.t==="c"&&x.previousElementSibling&&x.previousElementSibling.dataset.t==="lh")return;
+    const run=[];let p=x.previousElementSibling;while(blank(p)){run.unshift(p);p=p.previousElementSibling}if(!isL(p))return;
+    if(!run.length){const n=mmBlock({t:"p",x:""});x.before(n);run.push(n)}
+    run.forEach((r,i)=>{r.classList.toggle("slim",i>0);r.classList.toggle("gapline",i===0)})})};

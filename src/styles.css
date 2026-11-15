@@ -605,3 +605,10 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 #mm_body>.mb-c.hid{margin-top:0!important}#mm_body>.mb-p.slim{display:none}
 #mm_body>.mb+.mb-lh,#mm_body>.mb-lh:first-child{margin-top:12px}
 #mm_body>.mb-lh+.mb-c.inl{margin-top:0}
+
+/* The line between two lists: always there, quiet until you write in it. */
+#mm_body>.mb-p.gapline{display:block;height:auto;margin-top:6px}
+#mm_body>.mb-p.gapline textarea{height:auto!important;padding:4px 2px;opacity:1;font-size:15px}
+#mm_body>.mb-p.gapline textarea::placeholder{color:color-mix(in srgb,var(--soft) 45%,transparent)}
+#mm_body>.mb-p.gapline+.mb-lh{margin-top:6px}
+#mm_body>.mb+.mb-lh{margin-top:6px}

@@ -109,7 +109,7 @@ await step('notes: a named list folds on this phone only',async()=>{const id=awa
   need(vis===0&&still&&vis2===2,'fold '+[vis,still,vis2]);return[vis,still,vis2]});
 await step('notes: drag a point, drag a whole list, sort, search',async()=>{await A1.evaluate(()=>{const now=Date.now(),m={id:'dragx',ti:'Dra',bl:[{t:'lh',x:'Handla',b:'h1'},{t:'c',x:'Mjölk',d:true,b:'c1'},{t:'c',x:'Ägg',d:false,b:'c2'},{t:'c',x:'Bröd',d:false,b:'c3'},{t:'p',x:'',b:'gap'},{t:'lh',x:'Packa',b:'h2'},{t:'c',x:'Pass',d:false,b:'c4'},{t:'c',x:'Laddare',d:false,b:'c5'}],at:now,up:now,by:'a',ub:'a'};MEMOS.push(m);put('memo_dragx',memoDoc(m));go('t');openMM('dragx')});await w(A1,600);
   const names=()=>A1.evaluate(()=>[...document.querySelectorAll('#mm_body>.mb')].map(d=>(d.querySelector('input,textarea')||{}).value||d.dataset.t).filter(x=>x!==''));
-  const slim=await A1.evaluate(()=>document.querySelector('#mm_body .mb-p').classList.contains('slim'));
+  const slim=await A1.evaluate(()=>document.querySelector('#mm_body .mb-p').classList.contains('gapline'));
   const drag=async(from,to,dir)=>{const g=await A1.locator(from).boundingBox(),t2=await A1.locator(to).boundingBox();await A1.mouse.move(g.x+g.width/2,g.y+g.height/2);await A1.mouse.down();const ty=dir<0?t2.y+4:t2.y+t2.height-4;for(let i=1;i<=12;i++){await A1.mouse.move(g.x+g.width/2,g.y+g.height/2+(ty-(g.y+g.height/2))*i/12);await A1.waitForTimeout(16)}await A1.mouse.up();await A1.waitForTimeout(300)};
   await drag('[data-b="c3"] .mbgrip','[data-b="c1"]',-1);const n1=await names();
   await drag('[data-b="h2"] .mbgrip','[data-b="h1"]',-1);const n2=await names();

@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="1c454f243948">
+<meta name="kal-build" content="78c448ad638b">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -618,6 +618,13 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 #mm_body>.mb-c.hid{margin-top:0!important}#mm_body>.mb-p.slim{display:none}
 #mm_body>.mb+.mb-lh,#mm_body>.mb-lh:first-child{margin-top:12px}
 #mm_body>.mb-lh+.mb-c.inl{margin-top:0}
+
+/* The line between two lists: always there, quiet until you write in it. */
+#mm_body>.mb-p.gapline{display:block;height:auto;margin-top:6px}
+#mm_body>.mb-p.gapline textarea{height:auto!important;padding:4px 2px;opacity:1;font-size:15px}
+#mm_body>.mb-p.gapline textarea::placeholder{color:color-mix(in srgb,var(--soft) 45%,transparent)}
+#mm_body>.mb-p.gapline+.mb-lh{margin-top:6px}
+#mm_body>.mb+.mb-lh{margin-top:6px}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1555,7 +1562,8 @@ function mmRead(){const bl=[],E=[...$("mm_body").querySelectorAll(":scope>.mb")]
   else if(t==="l"&&d.dataset.u)b={t:"l",u:d.dataset.u};else if(t==="i"&&d.dataset.i)b={t:"i",i:d.dataset.i};if(!b)return;
   /* Each line has its own id and the time it last changed, so two phones can be merged line by line. */
   const sg=mbSig(b);if(sg!==d._sig){d._sig=sg;d._u=Date.now()}
-  if(t==="p"&&ix===E.length-1&&!b.x&&!b.s&&!d._u)return;bl.push({...b,b:d.dataset.b,tm:d._u||0})});return bl}
+  /* Empty lines nobody has written in (the line at the end, and the "Skriv något" line between lists) are not saved. */
+  if(t==="p"&&!b.x&&!b.s&&!d._u)return;bl.push({...b,b:d.dataset.b,tm:d._u||0})});return bl}
 function mmPaint(){const m=MM.m;$("mm_ti").value=m.ti;$("mm_body").innerHTML="";const bl=m.bl.length?m.bl:[{t:"p",x:""}];
   bl.forEach(b=>$("mm_body").appendChild(mmBlock(b)));if(bl[bl.length-1].t!=="p")$("mm_body").appendChild(mmBlock({t:"p",x:""}));
   $("mm_body").querySelectorAll(".mb-p").forEach(d=>{mmGrow(d.querySelector("textarea"));mmLinks(d)});mmProg();mmMeta();MM.loadedUp=m.up}
@@ -1928,6 +1936,17 @@ const _prog5=mmProg;mmProg=function(){_prog5();$("mm_body").querySelectorAll(":s
   p.classList.toggle("slim",blank(p)&&isL(A)&&isL(B))})};
 $("mm_body").addEventListener("focusin",e=>{const p=e.target.closest(".mb-p.slim");if(p)p.classList.remove("slim")});
 $("mm_body").addEventListener("focusout",e=>{if(e.target.closest(".mb-p"))setTimeout(mmProg,0)});
+
+/* ---------- One writable line between lists ----------
+   Between two lists there is always exactly one "Skriv något…" line to tap into; any further blank lines stay hidden. */
+const _prog6=mmProg;mmProg=function(){_prog6();if(DR)return;const body=$("mm_body"),isL=x=>x&&(x.dataset.t==="c"||x.dataset.t==="lh");
+  const blank=x=>x&&x.dataset.t==="p"&&!x.dataset.s&&!x.querySelector("textarea").value.trim();
+  [...body.querySelectorAll(":scope>.mb")].forEach(x=>{
+    const starts=x.dataset.t==="lh"||(x.dataset.t==="c"&&!(x.previousElementSibling&&x.previousElementSibling.dataset.t==="c"));if(!starts)return;
+    if(x.dataset.t==="c"&&x.previousElementSibling&&x.previousElementSibling.dataset.t==="lh")return;
+    const run=[];let p=x.previousElementSibling;while(blank(p)){run.unshift(p);p=p.previousElementSibling}if(!isL(p))return;
+    if(!run.length){const n=mmBlock({t:"p",x:""});x.before(n);run.push(n)}
+    run.forEach((r,i)=>{r.classList.toggle("slim",i>0);r.classList.toggle("gapline",i===0)})})};
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
