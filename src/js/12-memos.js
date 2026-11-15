@@ -359,7 +359,9 @@ $("mm_body").addEventListener("pointerdown",e=>{const g=e.target.closest(".mbgri
 function drPlace(){const w=$("mm_w"),u=DR.unit,nowTop=u[0].getBoundingClientRect().top-parseFloat((u[0].style.transform||"").replace(/[^\d.-]/g,"")||0)+w.scrollTop;
   const dy=DR.y-DR.y0+(w.scrollTop-DR.sc0)-(nowTop-DR.top0);u.forEach(x=>x.style.transform=`translateY(${dy}px)`)}
 $("mm_body").addEventListener("pointermove",e=>{if(!DR)return;e.preventDefault();DR.y=e.clientY;const w=$("mm_w"),u=DR.unit,center=DR.c0+(e.clientY-DR.y0);
-  const prev=unitAt(u[0].previousElementSibling,DR.whole),next=unitAt(u[u.length-1].nextElementSibling,DR.whole);
+  /* Hidden blank lines between lists are stepped over, they are not places to land. */
+  const skip=(x,dir)=>{while(x&&x.classList.contains("slim"))x=dir<0?x.previousElementSibling:x.nextElementSibling;return x};
+  const prev=unitAt(skip(u[0].previousElementSibling,-1),DR.whole),next=unitAt(skip(u[u.length-1].nextElementSibling,1),DR.whole);
   const mid=U=>{const a=U[0].getBoundingClientRect(),b=U[U.length-1].getBoundingClientRect();return(a.top+b.bottom)/2};
   /* Lines step over neighbours as your finger passes their middle; the neighbours slide out of the way. */
   if(prev&&center<mid(prev)-(DR.whole?0:4)){flip(prev,()=>prev[0].before(...u));DR.moved=true;DR.c0+=0}
@@ -409,6 +411,9 @@ const _close5=closeMM;closeMM=function(){if(!$("mm_fd").hidden)fdOpen(false);_cl
 /* ---------- Space between lists ----------
    An empty line that only sits between two lists is kept slim until you tap into it. */
 const _prog5=mmProg;mmProg=function(){_prog5();$("mm_body").querySelectorAll(":scope>.mb-p").forEach(p=>{const t=p.querySelector("textarea"),a=p.previousElementSibling,b=p.nextElementSibling,isL=x=>x&&(x.dataset.t==="c"||x.dataset.t==="lh");
-  p.classList.toggle("slim",!t.value&&!p.dataset.s&&isL(a)&&isL(b)&&document.activeElement!==t)})};
+  /* Several blank lines in a row (even ones holding only spaces or line breaks) count as one gap. */
+  const blank=x=>x&&x.dataset.t==="p"&&!x.dataset.s&&!x.querySelector("textarea").value.trim()&&document.activeElement!==x.querySelector("textarea");
+  let A=a;while(blank(A))A=A.previousElementSibling;let B=b;while(blank(B))B=B.nextElementSibling;
+  p.classList.toggle("slim",blank(p)&&isL(A)&&isL(B))})};
 $("mm_body").addEventListener("focusin",e=>{const p=e.target.closest(".mb-p.slim");if(p)p.classList.remove("slim")});
 $("mm_body").addEventListener("focusout",e=>{if(e.target.closest(".mb-p"))setTimeout(mmProg,0)});

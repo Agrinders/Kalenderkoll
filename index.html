@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="ce3224e64865">
+<meta name="kal-build" content="1c454f243948">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -609,6 +609,15 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 #fd_x{padding:0 10px;font-weight:600;color:var(--acc)}
 .mb.hit,.mmti.hit{background-color:color-mix(in srgb,#ffd84d 22%,transparent)!important;border-radius:10px}
 .mb.hitc,.mmti.hitc{background-color:color-mix(in srgb,#ffc21a 42%,transparent)!important;box-shadow:0 0 0 2px color-mix(in srgb,#f0a800 55%,transparent)!important;border-radius:10px}
+
+/* Blank lines between lists take no room, so every gap between two lists is the same, open or folded. */
+.mb-p.slim{height:0;margin:0!important;overflow:hidden}.mb-p.slim textarea{height:0!important}
+.mb-lh,.mb-lh.fold{margin-top:12px}.mb-lh.fold{margin-bottom:0}.mb-c.inl.lastl{margin-bottom:0}
+/* Even spacing: hidden list points and blank lines between lists add nothing at all. */
+#mm_body{gap:0}#mm_body>.mb+.mb{margin-top:2px}#mm_body>.mb-c.inl+.mb-c.inl{margin-top:0}
+#mm_body>.mb-c.hid{margin-top:0!important}#mm_body>.mb-p.slim{display:none}
+#mm_body>.mb+.mb-lh,#mm_body>.mb-lh:first-child{margin-top:12px}
+#mm_body>.mb-lh+.mb-c.inl{margin-top:0}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1861,7 +1870,9 @@ $("mm_body").addEventListener("pointerdown",e=>{const g=e.target.closest(".mbgri
 function drPlace(){const w=$("mm_w"),u=DR.unit,nowTop=u[0].getBoundingClientRect().top-parseFloat((u[0].style.transform||"").replace(/[^\d.-]/g,"")||0)+w.scrollTop;
   const dy=DR.y-DR.y0+(w.scrollTop-DR.sc0)-(nowTop-DR.top0);u.forEach(x=>x.style.transform=`translateY(${dy}px)`)}
 $("mm_body").addEventListener("pointermove",e=>{if(!DR)return;e.preventDefault();DR.y=e.clientY;const w=$("mm_w"),u=DR.unit,center=DR.c0+(e.clientY-DR.y0);
-  const prev=unitAt(u[0].previousElementSibling,DR.whole),next=unitAt(u[u.length-1].nextElementSibling,DR.whole);
+  /* Hidden blank lines between lists are stepped over, they are not places to land. */
+  const skip=(x,dir)=>{while(x&&x.classList.contains("slim"))x=dir<0?x.previousElementSibling:x.nextElementSibling;return x};
+  const prev=unitAt(skip(u[0].previousElementSibling,-1),DR.whole),next=unitAt(skip(u[u.length-1].nextElementSibling,1),DR.whole);
   const mid=U=>{const a=U[0].getBoundingClientRect(),b=U[U.length-1].getBoundingClientRect();return(a.top+b.bottom)/2};
   /* Lines step over neighbours as your finger passes their middle; the neighbours slide out of the way. */
   if(prev&&center<mid(prev)-(DR.whole?0:4)){flip(prev,()=>prev[0].before(...u));DR.moved=true;DR.c0+=0}
@@ -1911,7 +1922,10 @@ const _close5=closeMM;closeMM=function(){if(!$("mm_fd").hidden)fdOpen(false);_cl
 /* ---------- Space between lists ----------
    An empty line that only sits between two lists is kept slim until you tap into it. */
 const _prog5=mmProg;mmProg=function(){_prog5();$("mm_body").querySelectorAll(":scope>.mb-p").forEach(p=>{const t=p.querySelector("textarea"),a=p.previousElementSibling,b=p.nextElementSibling,isL=x=>x&&(x.dataset.t==="c"||x.dataset.t==="lh");
-  p.classList.toggle("slim",!t.value&&!p.dataset.s&&isL(a)&&isL(b)&&document.activeElement!==t)})};
+  /* Several blank lines in a row (even ones holding only spaces or line breaks) count as one gap. */
+  const blank=x=>x&&x.dataset.t==="p"&&!x.dataset.s&&!x.querySelector("textarea").value.trim()&&document.activeElement!==x.querySelector("textarea");
+  let A=a;while(blank(A))A=A.previousElementSibling;let B=b;while(blank(B))B=B.nextElementSibling;
+  p.classList.toggle("slim",blank(p)&&isL(A)&&isL(B))})};
 $("mm_body").addEventListener("focusin",e=>{const p=e.target.closest(".mb-p.slim");if(p)p.classList.remove("slim")});
 $("mm_body").addEventListener("focusout",e=>{if(e.target.closest(".mb-p"))setTimeout(mmProg,0)});
 </script>

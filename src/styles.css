@@ -596,3 +596,12 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 #fd_x{padding:0 10px;font-weight:600;color:var(--acc)}
 .mb.hit,.mmti.hit{background-color:color-mix(in srgb,#ffd84d 22%,transparent)!important;border-radius:10px}
 .mb.hitc,.mmti.hitc{background-color:color-mix(in srgb,#ffc21a 42%,transparent)!important;box-shadow:0 0 0 2px color-mix(in srgb,#f0a800 55%,transparent)!important;border-radius:10px}
+
+/* Blank lines between lists take no room, so every gap between two lists is the same, open or folded. */
+.mb-p.slim{height:0;margin:0!important;overflow:hidden}.mb-p.slim textarea{height:0!important}
+.mb-lh,.mb-lh.fold{margin-top:12px}.mb-lh.fold{margin-bottom:0}.mb-c.inl.lastl{margin-bottom:0}
+/* Even spacing: hidden list points and blank lines between lists add nothing at all. */
+#mm_body{gap:0}#mm_body>.mb+.mb{margin-top:2px}#mm_body>.mb-c.inl+.mb-c.inl{margin-top:0}
+#mm_body>.mb-c.hid{margin-top:0!important}#mm_body>.mb-p.slim{display:none}
+#mm_body>.mb+.mb-lh,#mm_body>.mb-lh:first-child{margin-top:12px}
+#mm_body>.mb-lh+.mb-c.inl{margin-top:0}
