@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="5ffcab466d04">
+<meta name="kal-build" content="5a0d2bfce034">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -524,6 +524,14 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 .mb-lh.fold .mbfold svg{transform:rotate(-90deg)}
 .mb-lh.fold{border-radius:14px;border-bottom:1px solid var(--rule);margin-bottom:8px}
 .mb-c.hid{display:none}
+/* List names in notes get the same frosted glass as glass events: a shine on top, a bright rim and the list's colour behind. */
+.mb-lh{--c:var(--tk,var(--acc));position:relative;overflow:hidden;border:0;
+  background:linear-gradient(180deg,rgba(255,255,255,var(--gla,.6)) 0%,rgba(255,255,255,calc(var(--gla,.6)*.25)) 46%,rgba(255,255,255,0) 48%,rgba(255,255,255,calc(var(--gla,.6)*.2)) 100%),linear-gradient(120deg,color-mix(in srgb,var(--c) 30%,var(--card)) 0%,color-mix(in srgb,var(--c) 14%,var(--card)) 55%,color-mix(in srgb,var(--c) 32%,var(--card)) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--gla,.6)*1.5)),inset 0 0 0 1px color-mix(in srgb,var(--c) 45%,transparent),0 3px 8px -4px color-mix(in srgb,var(--c) 70%,transparent);
+  backdrop-filter:blur(10px) saturate(1.3);-webkit-backdrop-filter:blur(10px) saturate(1.3)}
+.mb-lh.fold{border-bottom:0}
+.mb-c.inl:first-of-type{border-top:0}
+.mbprog::before{background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 25%,transparent)}
 </style>
 <script src="app-shell.js"></script>
 </head>
