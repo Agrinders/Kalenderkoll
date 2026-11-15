@@ -42,3 +42,11 @@ function widgetSync(){const F=FSP();if(!F)return;clearTimeout(wgTimer);wgTimer=s
   for(const k in days)days[k].sort((x,y)=>(x.t||"")<(y.t||"")?-1:(x.t||"")>(y.t||"")?1:0);
   const txt=JSON.stringify({v:1,lang:S.lang,names:{a:CP.a||"",b:CP.b||""},cols:{a:pc("a"),b:pc("b")},days});
   if(txt===wgPrev)return;F.writeFile({path:"widget.json",data:txt,directory:"DATA",encoding:"utf8"}).then(()=>{wgPrev=txt}).catch(()=>{})},500)}
+/* Keeps the first card just under the top bar, whatever extra space the phone adds above the page. */
+function fixTop(){try{const bar=$("main_top").getBoundingClientRect().bottom,m=document.querySelector("main");if(!m||!bar)return;
+  const first=[...m.querySelectorAll("section:not(.hide)>*")].find(x=>x.offsetHeight&&!x.classList.contains("hide"));if(!first)return;
+  /* offsetTop ignores the slide-in animation, so a page that is still moving is measured right. */
+  let top=0;for(let el=first;el;el=el.offsetParent)top+=el.offsetTop;const diff=top-(bar+6);if(Math.abs(diff)<3)return;
+  const cur=parseFloat(getComputedStyle(document.body).paddingTop)||0;document.body.style.setProperty("padding-top",Math.max(0,cur-diff)+"px","important")}catch(e){}}
+addEventListener("load",()=>{fixTop();setTimeout(fixTop,600);setTimeout(fixTop,2000)});addEventListener("resize",()=>setTimeout(fixTop,100));
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("nav button,[data-go]"))setTimeout(fixTop,50)});

@@ -459,3 +459,5 @@ main,section{gap:10px}
 .hello{padding:0 2px}.hello h2{margin-top:2px;font-size:27px}
 @media (max-width:559px){#k_cal{padding-top:8px}#k_wv,#k_dv{padding-top:8px}#k_cal .mnav{margin-bottom:2px}
   .cgr button{min-height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px);height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px)}}
+/* The Android app can add its own space above the page; the page itself never needs any. */
+html{padding:0!important;margin:0!important}body{margin:0!important}

@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="8d4ed876efc3">
+<meta name="kal-build" content="738846efda99">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -472,6 +472,8 @@ main,section{gap:10px}
 .hello{padding:0 2px}.hello h2{margin-top:2px;font-size:27px}
 @media (max-width:559px){#k_cal{padding-top:8px}#k_wv,#k_dv{padding-top:8px}#k_cal .mnav{margin-bottom:2px}
   .cgr button{min-height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px);height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px)}}
+/* The Android app can add its own space above the page; the page itself never needs any. */
+html{padding:0!important;margin:0!important}body{margin:0!important}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1322,6 +1324,14 @@ function widgetSync(){const F=FSP();if(!F)return;clearTimeout(wgTimer);wgTimer=s
   for(const k in days)days[k].sort((x,y)=>(x.t||"")<(y.t||"")?-1:(x.t||"")>(y.t||"")?1:0);
   const txt=JSON.stringify({v:1,lang:S.lang,names:{a:CP.a||"",b:CP.b||""},cols:{a:pc("a"),b:pc("b")},days});
   if(txt===wgPrev)return;F.writeFile({path:"widget.json",data:txt,directory:"DATA",encoding:"utf8"}).then(()=>{wgPrev=txt}).catch(()=>{})},500)}
+/* Keeps the first card just under the top bar, whatever extra space the phone adds above the page. */
+function fixTop(){try{const bar=$("main_top").getBoundingClientRect().bottom,m=document.querySelector("main");if(!m||!bar)return;
+  const first=[...m.querySelectorAll("section:not(.hide)>*")].find(x=>x.offsetHeight&&!x.classList.contains("hide"));if(!first)return;
+  /* offsetTop ignores the slide-in animation, so a page that is still moving is measured right. */
+  let top=0;for(let el=first;el;el=el.offsetParent)top+=el.offsetTop;const diff=top-(bar+6);if(Math.abs(diff)<3)return;
+  const cur=parseFloat(getComputedStyle(document.body).paddingTop)||0;document.body.style.setProperty("padding-top",Math.max(0,cur-diff)+"px","important")}catch(e){}}
+addEventListener("load",()=>{fixTop();setTimeout(fixTop,600);setTimeout(fixTop,2000)});addEventListener("resize",()=>setTimeout(fixTop,100));
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("nav button,[data-go]"))setTimeout(fixTop,50)});
 /* ---------- Account (optional) ----------
    E-mail and password. Creating one upgrades this phone's sign-in, so nothing changes in the calendar.
    Logging in on a newly installed app brings back the calendar and who you are. */
