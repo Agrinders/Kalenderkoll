@@ -273,3 +273,19 @@ $("mm_body").addEventListener("beforeinput",e=>{if(e.target.tagName!=="TEXTAREA"
   if(line.slice(mt[0].length).trim()===""&&v.slice(pos,v.indexOf("\n",pos)<0?v.length:v.indexOf("\n",pos)).trim()===""){ta.value=v.slice(0,a)+v.slice(pos);ta.setSelectionRange(a,a)}
   else{const nx=mt[1]+(mt[3]?(+mt[3]+1)+mt[4]:mt[2])+" ";ta.value=v.slice(0,pos)+"\n"+nx+v.slice(pos);const q=pos+1+nx.length;ta.setSelectionRange(q,q)}
   mmGrow(ta);mmLinks(d);mmChanged()});
+/* ---------- Folding lists ----------
+   A named list can be folded to just its name and progress. Which lists are folded is kept on this phone only,
+   so folding a list never folds it for your partner. */
+const FK="kalenderkoll.fold";
+function foldSet(){try{return new Set(JSON.parse(localStorage.getItem(FK)||"[]"))}catch(e){return new Set()}}
+function foldSave(S2){try{localStorage.setItem(FK,JSON.stringify([...S2].slice(-400)))}catch(e){}}
+const _mbBlock2=mmBlock;mmBlock=function(b){const d=_mbBlock2(b);if(b.t==="lh"){const f=document.createElement("button");f.type="button";f.className="mbfold";f.setAttribute("aria-label",tx("Fäll ihop eller ut","Fold or unfold"));
+  f.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>';d.prepend(f);if(MM&&MM.id&&foldSet().has(MM.id+":"+d.dataset.b))d.classList.add("fold")}return d};
+const _prog2=mmProg;mmProg=function(){_prog2();$("mm_body").querySelectorAll(".mb-c").forEach(c=>c.classList.remove("hid"));
+  $("mm_body").querySelectorAll(".mb-lh.fold").forEach(h=>{for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)x.classList.add("hid")})};
+function mmFold(h,on){if(on===undefined)on=!h.classList.contains("fold");h.classList.toggle("fold",on);const S2=foldSet(),k=MM.id+":"+h.dataset.b;if(on)S2.add(k);else S2.delete(k);foldSave(S2);
+  /* The line you were writing on is not hidden away. */
+  if(on){const a=mmCur();if(a&&a.dataset.t==="c"&&a!==h){let x=a;while(x&&x.dataset.t==="c")x=x.previousElementSibling;if(x===h)h.querySelector("input").focus()}}mmProg()}
+$("mm_body").addEventListener("click",e=>{const f=e.target.closest(".mbfold");if(!f)return;e.stopPropagation();mmFold(f.closest(".mb"))},true);
+/* Pressing Enter on a folded list's name opens it and goes to its first point. */
+$("mm_body").addEventListener("keydown",e=>{const d=e.target.closest&&e.target.closest(".mb-lh.fold");if(d&&e.key==="Enter")mmFold(d,false)},true);

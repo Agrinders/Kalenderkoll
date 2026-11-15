@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="84adba437920">
+<meta name="kal-build" content="5ffcab466d04">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -518,6 +518,12 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 .mvsave{position:absolute;left:50%;bottom:calc(24px + var(--sab));transform:translateX(-50%);min-height:46px;padding:0 22px}
 #mm_more svg{fill:currentColor;stroke:none}
 .mbf{flex:1;min-width:0;display:flex;margin:0}.mbf input{flex:1;min-width:0}.mb-lh .mbf input{font-weight:700}
+/* Folding lists */
+.mbfold{flex:none;display:grid;place-items:center;width:28px;height:28px;margin:-4px -4px -4px -6px;border-radius:9px;color:var(--tk,var(--acc))}
+.mbfold svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transition:transform .25s cubic-bezier(.3,.9,.4,1)}
+.mb-lh.fold .mbfold svg{transform:rotate(-90deg)}
+.mb-lh.fold{border-radius:14px;border-bottom:1px solid var(--rule);margin-bottom:8px}
+.mb-c.hid{display:none}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1682,6 +1688,22 @@ $("mm_body").addEventListener("beforeinput",e=>{if(e.target.tagName!=="TEXTAREA"
   if(line.slice(mt[0].length).trim()===""&&v.slice(pos,v.indexOf("\n",pos)<0?v.length:v.indexOf("\n",pos)).trim()===""){ta.value=v.slice(0,a)+v.slice(pos);ta.setSelectionRange(a,a)}
   else{const nx=mt[1]+(mt[3]?(+mt[3]+1)+mt[4]:mt[2])+" ";ta.value=v.slice(0,pos)+"\n"+nx+v.slice(pos);const q=pos+1+nx.length;ta.setSelectionRange(q,q)}
   mmGrow(ta);mmLinks(d);mmChanged()});
+/* ---------- Folding lists ----------
+   A named list can be folded to just its name and progress. Which lists are folded is kept on this phone only,
+   so folding a list never folds it for your partner. */
+const FK="kalenderkoll.fold";
+function foldSet(){try{return new Set(JSON.parse(localStorage.getItem(FK)||"[]"))}catch(e){return new Set()}}
+function foldSave(S2){try{localStorage.setItem(FK,JSON.stringify([...S2].slice(-400)))}catch(e){}}
+const _mbBlock2=mmBlock;mmBlock=function(b){const d=_mbBlock2(b);if(b.t==="lh"){const f=document.createElement("button");f.type="button";f.className="mbfold";f.setAttribute("aria-label",tx("Fäll ihop eller ut","Fold or unfold"));
+  f.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>';d.prepend(f);if(MM&&MM.id&&foldSet().has(MM.id+":"+d.dataset.b))d.classList.add("fold")}return d};
+const _prog2=mmProg;mmProg=function(){_prog2();$("mm_body").querySelectorAll(".mb-c").forEach(c=>c.classList.remove("hid"));
+  $("mm_body").querySelectorAll(".mb-lh.fold").forEach(h=>{for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)x.classList.add("hid")})};
+function mmFold(h,on){if(on===undefined)on=!h.classList.contains("fold");h.classList.toggle("fold",on);const S2=foldSet(),k=MM.id+":"+h.dataset.b;if(on)S2.add(k);else S2.delete(k);foldSave(S2);
+  /* The line you were writing on is not hidden away. */
+  if(on){const a=mmCur();if(a&&a.dataset.t==="c"&&a!==h){let x=a;while(x&&x.dataset.t==="c")x=x.previousElementSibling;if(x===h)h.querySelector("input").focus()}}mmProg()}
+$("mm_body").addEventListener("click",e=>{const f=e.target.closest(".mbfold");if(!f)return;e.stopPropagation();mmFold(f.closest(".mb"))},true);
+/* Pressing Enter on a folded list's name opens it and goes to its first point. */
+$("mm_body").addEventListener("keydown",e=>{const d=e.target.closest&&e.target.closest(".mb-lh.fold");if(d&&e.key==="Enter")mmFold(d,false)},true);
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
