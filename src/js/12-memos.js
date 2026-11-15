@@ -284,7 +284,10 @@ const _mbBlock2=mmBlock;mmBlock=function(b){const d=_mbBlock2(b);if(b.t==="lh"){
   f.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>';d.prepend(f);if(MM&&MM.id&&foldSet().has(MM.id+":"+d.dataset.b))d.classList.add("fold")}return d};
 const _prog2=mmProg;mmProg=function(){_prog2();$("mm_body").querySelectorAll(".mb-c").forEach(c=>c.classList.remove("hid"));
   $("mm_body").querySelectorAll(".mb-lh.fold").forEach(h=>{for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)x.classList.add("hid")})};
-function mmFold(h,on){if(on===undefined)on=!h.classList.contains("fold");h.classList.toggle("fold",on);const S2=foldSet(),k=MM.id+":"+h.dataset.b;if(on)S2.add(k);else S2.delete(k);foldSave(S2);
+function mmFold(h,on){if(on===undefined)on=!h.classList.contains("fold");
+  /* Items fold away one after another from the bottom, and open from the top, for a soft ripple. */
+  {const G=[];for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)G.push(x);const n=G.length;G.forEach((x,i)=>x.style.setProperty("--i",Math.min(8,on?n-1-i:i)));}
+  try{if(navigator.vibrate)navigator.vibrate(6)}catch(e){}h.classList.toggle("fold",on);const S2=foldSet(),k=MM.id+":"+h.dataset.b;if(on)S2.add(k);else S2.delete(k);foldSave(S2);
   /* The line you were writing on is not hidden away. */
   if(on){const a=mmCur();if(a&&a.dataset.t==="c"&&a!==h){let x=a;while(x&&x.dataset.t==="c")x=x.previousElementSibling;if(x===h)h.querySelector("input").focus()}}mmProg()}
 $("mm_body").addEventListener("click",e=>{const f=e.target.closest(".mbfold");if(!f)return;e.stopPropagation();mmFold(f.closest(".mb"))},true);
@@ -327,3 +330,6 @@ $("toc_p").addEventListener("click",e=>{const b=e.target.closest("[data-toc]");i
 $("mm_w").addEventListener("click",()=>tocOpen(false));
 const _prog3=mmProg;mmProg=function(){_prog3();tocPaint()};
 const _close4=closeMM;closeMM=function(){tocOpen(false);_close4()};
+
+/* Tapping the progress side of a list's name also folds it. */
+$("mm_body").addEventListener("click",e=>{const pr=e.target.closest(".mb-lh .mbprog");if(pr)mmFold(pr.closest(".mb"))});

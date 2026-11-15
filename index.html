@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="9e0a19e312ec">
+<meta name="kal-build" content="d29b4eb81fe2">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -564,6 +564,16 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 .tocp .tl{flex:none;width:12px;height:12px;border-radius:4px;background:color-mix(in srgb,var(--tc,var(--acc)) 35%,var(--card));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc,var(--acc)) 50%,transparent)}
 .mb.flash{animation:tocflash 1.4s ease}
 @keyframes tocflash{0%,30%{box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 40%,transparent);border-radius:14px}100%{box-shadow:0 0 0 3px transparent}}
+
+/* Smooth folding: items shrink and fade in a short cascade instead of vanishing. */
+.mb-c.inl{max-height:72px;overflow:hidden;transition:max-height .34s cubic-bezier(.3,.85,.3,1),opacity .24s ease,padding .34s cubic-bezier(.3,.85,.3,1),margin .34s cubic-bezier(.3,.85,.3,1),transform .34s cubic-bezier(.3,.85,.3,1),border-color .3s;transition-delay:calc(var(--i,0)*28ms)}
+.mb-c.hid{display:flex;max-height:0;opacity:0;padding-top:0!important;padding-bottom:0!important;margin-bottom:0!important;transform:translateY(-8px) scale(.98);border-bottom-color:transparent;pointer-events:none}
+.mb-c.hid.lastl{border-bottom-width:0}
+.mb-lh{transition:border-radius .34s cubic-bezier(.3,.85,.3,1),margin .34s cubic-bezier(.3,.85,.3,1),box-shadow .3s}
+.mb-lh.fold{border-radius:14px;margin-bottom:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,calc(var(--gla,.6)*1.5)),inset 0 0 0 1px color-mix(in srgb,var(--c) 45%,transparent),0 6px 14px -6px color-mix(in srgb,var(--c) 70%,transparent)}
+.mbfold svg{transition:transform .38s cubic-bezier(.3,1.4,.5,1)}
+.mbprog{cursor:pointer}
+@media (prefers-reduced-motion:reduce){.mb-c.inl,.mb-lh,.mbfold svg{transition:none}}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1740,7 +1750,10 @@ const _mbBlock2=mmBlock;mmBlock=function(b){const d=_mbBlock2(b);if(b.t==="lh"){
   f.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>';d.prepend(f);if(MM&&MM.id&&foldSet().has(MM.id+":"+d.dataset.b))d.classList.add("fold")}return d};
 const _prog2=mmProg;mmProg=function(){_prog2();$("mm_body").querySelectorAll(".mb-c").forEach(c=>c.classList.remove("hid"));
   $("mm_body").querySelectorAll(".mb-lh.fold").forEach(h=>{for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)x.classList.add("hid")})};
-function mmFold(h,on){if(on===undefined)on=!h.classList.contains("fold");h.classList.toggle("fold",on);const S2=foldSet(),k=MM.id+":"+h.dataset.b;if(on)S2.add(k);else S2.delete(k);foldSave(S2);
+function mmFold(h,on){if(on===undefined)on=!h.classList.contains("fold");
+  /* Items fold away one after another from the bottom, and open from the top, for a soft ripple. */
+  {const G=[];for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)G.push(x);const n=G.length;G.forEach((x,i)=>x.style.setProperty("--i",Math.min(8,on?n-1-i:i)));}
+  try{if(navigator.vibrate)navigator.vibrate(6)}catch(e){}h.classList.toggle("fold",on);const S2=foldSet(),k=MM.id+":"+h.dataset.b;if(on)S2.add(k);else S2.delete(k);foldSave(S2);
   /* The line you were writing on is not hidden away. */
   if(on){const a=mmCur();if(a&&a.dataset.t==="c"&&a!==h){let x=a;while(x&&x.dataset.t==="c")x=x.previousElementSibling;if(x===h)h.querySelector("input").focus()}}mmProg()}
 $("mm_body").addEventListener("click",e=>{const f=e.target.closest(".mbfold");if(!f)return;e.stopPropagation();mmFold(f.closest(".mb"))},true);
@@ -1783,6 +1796,9 @@ $("toc_p").addEventListener("click",e=>{const b=e.target.closest("[data-toc]");i
 $("mm_w").addEventListener("click",()=>tocOpen(false));
 const _prog3=mmProg;mmProg=function(){_prog3();tocPaint()};
 const _close4=closeMM;closeMM=function(){tocOpen(false);_close4()};
+
+/* Tapping the progress side of a list's name also folds it. */
+$("mm_body").addEventListener("click",e=>{const pr=e.target.closest(".mb-lh .mbprog");if(pr)mmFold(pr.closest(".mb"))});
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
