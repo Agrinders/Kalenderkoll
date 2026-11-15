@@ -504,3 +504,4 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 .mml.del .mmi{gap:8px}.mml.del .btn.sm{padding:0 12px;flex:none}.mml.del .lnk{flex:none;font-size:14px}
 .mvsave{position:absolute;left:50%;bottom:calc(24px + var(--sab));transform:translateX(-50%);min-height:46px;padding:0 22px}
 #mm_more svg{fill:currentColor;stroke:none}
+.mbf{flex:1;min-width:0;display:flex;margin:0}.mbf input{flex:1;min-width:0}.mb-lh .mbf input{font-weight:700}

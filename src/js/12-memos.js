@@ -4,9 +4,9 @@
 /* var, so the list can be drawn while the app is still starting. */
 var MFONT={sf:"Serif",h:"Skrivstil",r:"Rund",m:"Mono"},MB_T=["p","c","l","i","lh"],MCOL={r:"#e5484d",o:"#ee8a2a",y:"#c99a0e",g:"#2f9e63",b:"#3b82f6",v:"#8a72ee",p:"#e0559c",s:"#8b8494"},URLRE=/https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]]/gi;
 function memoClean(v,fid){const id=String(v.id||fid);if(!id)return null;
-  const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map(b=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000),...(b.s==="h1"||b.s==="h2"?{s:b.s}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d,...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{}),...(b.m==="b"||b.m==="n"?{m:b.m}:{})}:b.t==="lh"?{t:"lh",x:String(b.x||"").slice(0,200),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).filter(Boolean);
-  return{id,ti:String(v.ti||"").slice(0,120),bl,del:+v.del||0,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
-var memoDoc=m=>({kind:"memo",id:m.id,ti:m.ti,bl:m.bl,at:m.at,up:m.up,by:m.by,ub:m.ub,...(m.del?{del:m.del}:{})});
+  const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map((b,ix)=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000),...(b.s==="h1"||b.s==="h2"?{s:b.s}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d,...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{}),...(b.m==="b"||b.m==="n"?{m:b.m}:{})}:b.t==="lh"?{t:"lh",x:String(b.x||"").slice(0,200),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).map((x,ix)=>x&&{...x,b:typeof v.bl[ix].b==="string"&&v.bl[ix].b?v.bl[ix].b.slice(0,24):"o"+ix,tm:+v.bl[ix].tm||0}).filter(Boolean);
+  return{id,ti:String(v.ti||"").slice(0,120),tu:+v.tu||0,gone:Array.isArray(v.gone)?v.gone.filter(x=>typeof x==="string").slice(-500):[],bl,del:+v.del||0,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
+var memoDoc=m=>({kind:"memo",id:m.id,ti:m.ti,tu:m.tu||0,gone:m.gone||[],bl:m.bl,at:m.at,up:m.up,by:m.by,ub:m.ub,...(m.del?{del:m.del}:{})});
 var memoEmpty=m=>!m.ti.trim()&&!m.bl.some(b=>b.t==="p"||b.t==="c"||b.t==="lh"?b.x.trim():true);
 var host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}};
 var whenTxt=ms=>{const d=new Date(ms),n=dnD(d),h=pad(d.getHours())+":"+pad(d.getMinutes());return n===todayN()?h:n===todayN()-1?tx("Igår","Yesterday")+" "+h:fmtD(n,{day:"numeric",month:"short"})+(ymd(n)[0]!==ymd(todayN())[0]?" "+ymd(n)[0]:"")};
@@ -38,12 +38,13 @@ function mmBlock(b){const d=document.createElement("div");d.className="mb mb-"+b
 function mmGrow(t){t.style.height="auto";t.style.height=t.scrollHeight+"px"}
 function mmLinks(d){const t=d.querySelector("textarea"),box=d.querySelector(".mblinks");if(!t||!box)return;const U=[...new Set(t.value.match(URLRE)||[])].slice(0,6);
   box.innerHTML=U.map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">↗ ${esc(host(u))}</a>`).join("")}
-function mmRead(){const bl=[];$("mm_body").querySelectorAll(".mb").forEach(d=>{const t=d.dataset.t;
+function mmRead(){const bl=[],E=[...$("mm_body").querySelectorAll(":scope>.mb")];E.forEach((d,ix)=>{const t=d.dataset.t;let b=null;
   const k={...(d.dataset.k&&MCOL[d.dataset.k]?{k:d.dataset.k}:{}),...(d.dataset.f&&MFONT[d.dataset.f]?{f:d.dataset.f}:{})};
-  if(t==="p")bl.push({t:"p",x:d.querySelector("textarea").value,...(d.dataset.s?{s:d.dataset.s}:{}),...k});else if(t==="c")bl.push({t:"c",x:d.querySelector("input").value,d:!d.dataset.m&&d.classList.contains("done"),...k,...(d.dataset.m?{m:d.dataset.m}:{})});else if(t==="lh")bl.push({t:"lh",x:d.querySelector("input").value,...k});
-  else if(t==="l"&&d.dataset.u)bl.push({t:"l",u:d.dataset.u});else if(t==="i"&&d.dataset.i)bl.push({t:"i",i:d.dataset.i})});
-  /* Text blocks next to each other are kept as one. */
-  const out=[];bl.forEach(b=>{const p=out[out.length-1];if(b.t==="p"&&!b.s&&p&&p.t==="p"&&!p.s&&!b.x.trim())return;out.push(b)});return out}
+  if(t==="p")b={t:"p",x:d.querySelector("textarea").value,...(d.dataset.s?{s:d.dataset.s}:{}),...k};else if(t==="c")b={t:"c",x:d.querySelector("input").value,d:!d.dataset.m&&d.classList.contains("done"),...k,...(d.dataset.m?{m:d.dataset.m}:{})};else if(t==="lh")b={t:"lh",x:d.querySelector("input").value,...k};
+  else if(t==="l"&&d.dataset.u)b={t:"l",u:d.dataset.u};else if(t==="i"&&d.dataset.i)b={t:"i",i:d.dataset.i};if(!b)return;
+  /* Each line has its own id and the time it last changed, so two phones can be merged line by line. */
+  const sg=mbSig(b);if(sg!==d._sig){d._sig=sg;d._u=Date.now()}
+  if(t==="p"&&ix===E.length-1&&!b.x&&!b.s&&!d._u)return;bl.push({...b,b:d.dataset.b,tm:d._u||0})});return bl}
 function mmPaint(){const m=MM.m;$("mm_ti").value=m.ti;$("mm_body").innerHTML="";const bl=m.bl.length?m.bl:[{t:"p",x:""}];
   bl.forEach(b=>$("mm_body").appendChild(mmBlock(b)));if(bl[bl.length-1].t!=="p")$("mm_body").appendChild(mmBlock({t:"p",x:""}));
   $("mm_body").querySelectorAll(".mb-p").forEach(d=>{mmGrow(d.querySelector("textarea"));mmLinks(d)});mmProg();mmMeta();MM.loadedUp=m.up}
@@ -55,20 +56,25 @@ function openMM(id){let m=id&&MEMOS.find(x=>x.id===id);
   mmPaint();$("mm").classList.add("on");document.body.classList.add("mmopen");$("mm_w").scrollTop=0;
   if(MM.fresh)setTimeout(()=>$("mm_ti").focus(),280)}
 function mmChanged(){mmProg();MM.dirty=true;$("mm_st").textContent=tx("Sparar…","Saving…");clearTimeout(MM.t);MM.t=setTimeout(mmSave,700)}
-function mmSave(){clearTimeout(MM.t);if(!MM.open&&!MM.m)return;const m=MM.m;m.ti=$("mm_ti").value;m.bl=mmRead();
-  if(!MM.dirty){return}MM.dirty=false;
-  if(memoEmpty(m)&&MM.fresh){$("mm_st").textContent="";return}
-  m.up=Date.now();m.ub=ME||m.ub;MM.fresh=false;const i=MEMOS.findIndex(x=>x.id===m.id),c=JSON.parse(JSON.stringify(m));if(i>=0)MEMOS[i]=c;else MEMOS.push(c);
-  put("memo_"+m.id,memoDoc(m));MM.loadedUp=m.up;mmMeta();$("mm_st").textContent=tx("Sparat","Saved");setTimeout(()=>{if(!MM.dirty)$("mm_st").textContent=""},1400)}
+function mmSave(){clearTimeout(MM.t);if(!MM.m)return;const mine=mmMine();if(!MM.dirty)return;MM.dirty=false;
+  if(memoEmpty(mine)&&MM.fresh){$("mm_st").textContent="";return}
+  const th=MEMOS.find(x=>x.id===MM.id&&x!==MM.m),mg=th&&!MM.fresh?mmMerge(mine,th):mine;
+  const m={...MM.m,ti:mg.ti,tu:mg.tu,bl:mg.bl,gone:mg.gone,up:Date.now(),ub:ME||MM.m.ub};MM.fresh=false;MM.m=m;MM.saved=new Set(m.bl.map(b=>b.b));
+  const i=MEMOS.findIndex(x=>x.id===m.id),c=JSON.parse(JSON.stringify(m));if(i>=0)MEMOS[i]=c;else MEMOS.push(c);
+  put("memo_"+m.id,memoDoc(m));MM.loadedUp=m.up;if(th)mmReconcile(mg);mmMeta();$("mm_st").textContent=tx("Sparat","Saved");setTimeout(()=>{if(!MM.dirty)$("mm_st").textContent=""},1400)}
 /* Pictures no note uses any more are removed. */
 function mmSweep(){const used=new Set(MEMOS.flatMap(m=>m.bl.filter(b=>b.t==="i").map(b=>b.i)));Object.keys(DOCS).filter(k=>k.startsWith("mimg_")&&!used.has(k.slice(5))&&Date.now()-(+(DOCS[k]||{}).at||0)>60000).forEach(k=>{del(k);delete MIMG[k.slice(5)]})}
 function closeMM(){if(!MM.open)return;mmSave();const m=MM.m;MM.open=false;$("mm").classList.remove("on");document.body.classList.remove("mmopen");document.activeElement&&document.activeElement.blur&&document.activeElement.blur();
   if(m&&memoEmpty(m)&&MEMOS.some(x=>x.id===m.id)){MEMOS=MEMOS.filter(x=>x.id!==m.id);del("memo_"+m.id)}
   MM.m=null;setTimeout(mmSweep,1500);renderMemos()}
 /* If your partner changes the note you have open and you are not typing, you see their change. */
-function mmMaybeRefresh(){const m=MEMOS.find(x=>x.id===MM.id);if(!m){if(!MM.fresh&&MM.m&&!MM.dirty){toast(tx("Anteckningen togs bort","The note was removed"));MM.m=null;MM.open=false;$("mm").classList.remove("on");document.body.classList.remove("mmopen")}return}
-  if(m.up>MM.loadedUp&&!MM.dirty&&!$("mm").contains(document.activeElement)){MM.m=JSON.parse(JSON.stringify(m));const y=$("mm_w").scrollTop;mmPaint();$("mm_w").scrollTop=y}
-  else if(!MM.dirty){$("mm_body").querySelectorAll(".mb-i").forEach(d=>{if(d.querySelector(".mbwait")&&MIMG[d.dataset.i])d.replaceWith(mmBlock({t:"i",i:d.dataset.i}))})}}
+/* Your partner's changes come in line by line while you write; the line you are on is never moved under your fingers. */
+function mmMaybeRefresh(){const m=MEMOS.find(x=>x.id===MM.id);
+  if(!m||m.del){if(!MM.fresh&&MM.m){toast(m?tx("Anteckningen flyttades till Nyligen raderade","The note was moved to Recently deleted"):tx("Anteckningen togs bort","The note was removed"));MM.m=null;MM.open=false;$("mm").classList.remove("on");document.body.classList.remove("mmopen")}return}
+  if(m.up>MM.loadedUp&&m!==MM.m){const mine=mmMine(),mg=mmMerge(mine,m);MM.loadedUp=m.up;MM.m={...m,ti:mg.ti,tu:mg.tu,bl:mg.bl,gone:mg.gone};MM.saved=new Set(m.bl.map(b=>b.b));mmReconcile(mg);mmMeta();
+    /* If this phone has lines the shared copy lacks, they are saved again so nothing is lost. */
+    const key=L=>L.map(b=>b.b+":"+mbSig(b)+":"+(b.tm||0)).join("|");if(key(mg.bl)!==key(m.bl)||mg.ti!==m.ti){MM.dirty=true;clearTimeout(MM.t);MM.t=setTimeout(mmSave,500)}}
+  $("mm_body").querySelectorAll(".mb-i").forEach(d=>{if(d.querySelector(".mbwait")&&MIMG[d.dataset.i]&&d!==mmCur())d.replaceWith(mmBlock({t:"i",i:d.dataset.i,b:d.dataset.b,tm:d._u}))})}
 function mmCur(){const a=document.activeElement;return a&&a.closest?a.closest("#mm_body .mb"):null}
 function mmInsert(b,after,focus){const d=mmBlock(b),at=after||mmCur()||$("mm_body").lastElementChild;
   /* An empty text line is replaced instead of left behind. */
@@ -229,3 +235,41 @@ $("mm_sym").addEventListener("click",e=>{const b=e.target.closest("[data-sym]");
   const v=t.value,s0=Math.min(mmSel.s??v.length,v.length),e0=Math.min(mmSel.e??v.length,v.length),sym=b.dataset.sym;t.value=v.slice(0,s0)+sym+v.slice(e0);const p=s0+sym.length;t.focus();try{t.setSelectionRange(p,p)}catch(err){}mmSel={el:t,s:p,e:p};
   if(t.tagName==="TEXTAREA")mmGrow(t);if(t.id==="mm_ti"||t.closest(".mb"))mmChanged()});
 const _closeMM2=closeMM;closeMM=function(){mmSym(false);_closeMM2()};
+
+/* ---------- Writing together ----------
+   Lines are merged by id: new lines from both of you are kept (placed after the line they followed),
+   a changed line keeps the newest change, and a removed line stays removed. */
+function mbSig(b){const{b:_1,tm:_2,...r}=b;return JSON.stringify(r)}
+const bid=()=>Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3);
+const _mbBlock=mmBlock;mmBlock=function(b){const d=_mbBlock(b);d.dataset.b=b.b||bid();d._u=b.tm||0;d._sig=mbSig({...b});
+  if(b.t==="c"||b.t==="lh"){const inp=d.querySelector("input");if(inp){inp.setAttribute("enterkeyhint","next");const f=document.createElement("form");f.className="mbf";f.noValidate=true;inp.replaceWith(f);f.appendChild(inp)}}
+  /* The signature is taken from what the line really shows, so opening a note never counts as a change. */
+  return d};
+function mmMine(){const ti=$("mm_ti").value;if(ti!==MM.lastTi){MM.lastTi=ti;MM.tu=Date.now()}const bl=mmRead(),here=new Set(bl.map(b=>b.b));
+  $("mm_body").querySelectorAll(":scope>.mb").forEach(d=>here.add(d.dataset.b));
+  const gone=new Set(MM.m&&MM.m.gone||[]);(MM.saved||new Set()).forEach(id=>{if(!here.has(id))gone.add(id)});return{ti,tu:MM.tu||0,bl,gone:[...gone].slice(-500)}}
+function mmMerge(a,b){const gone=new Set([...(a.gone||[]),...(b.gone||[])]),A=new Map(a.bl.map(x=>[x.b,x])),B=new Set(b.bl.map(x=>x.b));
+  const res=b.bl.filter(x=>!gone.has(x.b)).map(x=>{const y=A.get(x.b);return y&&(y.tm||0)>(x.tm||0)?y:x});
+  a.bl.forEach((x,i)=>{if(B.has(x.b)||gone.has(x.b))return;let j=-1;for(let k=i-1;k>=0;k--){const pi=res.findIndex(z=>z.b===a.bl[k].b);if(pi>=0){j=pi;break}}res.splice(j+1,0,x)});
+  return{ti:(a.tu||0)>(b.tu||0)?a.ti:b.ti,tu:Math.max(a.tu||0,b.tu||0),bl:res,gone:[...gone].slice(-500)}}
+function mmReconcile(mg){const body=$("mm_body"),foc=mmCur(),E=[...body.querySelectorAll(":scope>.mb")],els=new Map(E.map(e=>[e.dataset.b,e])),keep=new Set(mg.bl.map(x=>x.b));
+  const spare=e=>e.dataset.t==="p"&&!e.querySelector("textarea").value&&!e._u;
+  E.forEach(e=>{if(!keep.has(e.dataset.b)&&e!==foc&&!spare(e))e.remove()});
+  let prev=null;mg.bl.forEach(x=>{let e=els.get(x.b);
+    if(e&&e!==foc&&e._sig!==mbSig(x)){const n=mmBlock(x);e.replaceWith(n);e=n}else if(!e){e=mmBlock(x)}
+    if(e!==foc){const want=prev?prev.nextElementSibling:body.firstElementChild;if(e!==want){if(prev)prev.after(e);else body.prepend(e)}}
+    const t=e.querySelector("textarea");if(t){mmGrow(t);mmLinks(e)}prev=e});
+  const last=body.lastElementChild;if(!last||last.dataset.t!=="p")body.appendChild(mmBlock({t:"p",x:""}));
+  if(document.activeElement!==$("mm_ti")&&$("mm_ti").value!==mg.ti){$("mm_ti").value=mg.ti;MM.lastTi=mg.ti}mmProg()}
+const _openMM=openMM;openMM=function(id){_openMM(id);MM.saved=new Set((MM.m.bl||[]).map(b=>b.b));MM.lastTi=MM.m.ti;MM.tu=MM.m.tu||0;
+  /* Lines as drawn carry the ids of the saved note. */
+  const E=[...$("mm_body").querySelectorAll(":scope>.mb")];(MM.m.bl||[]).forEach((b,i)=>{if(E[i]){E[i].dataset.b=b.b||E[i].dataset.b;E[i]._u=b.tm||0}})};
+/* Enter on a list line always makes a new point, also on phone keyboards that do not send a normal Enter key. */
+let mmEnterAt=0;$("mm_body").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.isTrusted)mmEnterAt=Date.now()},true);
+$("mm_body").addEventListener("submit",e=>{e.preventDefault();const inp=e.target.querySelector("input");if(!inp||Date.now()-mmEnterAt<400)return;inp.dispatchEvent(new KeyboardEvent("keydown",{key:"Enter",bubbles:true,cancelable:true}))});
+/* In ordinary text, a line that starts with "-", "•" or "1." carries on as a list when you press Enter. */
+$("mm_body").addEventListener("beforeinput",e=>{if(e.target.tagName!=="TEXTAREA"||(e.inputType!=="insertLineBreak"&&e.inputType!=="insertParagraph"))return;const d=e.target.closest(".mb");if(!d||d.dataset.s)return;
+  const ta=e.target,v=ta.value,pos=ta.selectionStart;if(pos!==ta.selectionEnd)return;const a=v.lastIndexOf("\n",pos-1)+1,line=v.slice(a,pos),mt=line.match(/^(\s*)([-•*]|(\d+)([.)]))\s+/);if(!mt)return;e.preventDefault();
+  if(line.slice(mt[0].length).trim()===""&&v.slice(pos,v.indexOf("\n",pos)<0?v.length:v.indexOf("\n",pos)).trim()===""){ta.value=v.slice(0,a)+v.slice(pos);ta.setSelectionRange(a,a)}
+  else{const nx=mt[1]+(mt[3]?(+mt[3]+1)+mt[4]:mt[2])+" ";ta.value=v.slice(0,pos)+"\n"+nx+v.slice(pos);const q=pos+1+nx.length;ta.setSelectionRange(q,q)}
+  mmGrow(ta);mmLinks(d);mmChanged()});

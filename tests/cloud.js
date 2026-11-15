@@ -86,6 +86,22 @@ await step('notes: symbols, fonts, numbered list, recently deleted',async()=>{aw
   let m=await A1.evaluate(()=>MEMOS.find(x=>x.ti==='Att köpa'));need(m&&m.del,'not in recently deleted');need(m.bl.filter(b=>b.t==='c').every(b=>b.m==='n')&&m.bl.some(b=>b.x==='Ost❤️'&&b.f==='h'),'fmt '+JSON.stringify(m.bl));
   need(await A1.evaluate(()=>!document.querySelector('#t_memos .mml:not(.del) [data-memo]')||![...document.querySelectorAll('#t_memos .mml:not(.del) [data-memo] b')].some(b=>b.textContent==='Att köpa')),'still in the list');
   await A1.click('[data-mmtrash]');await A1.click('[data-mmback="'+m.id+'"]');await w(A1,500);m=await A1.evaluate(()=>MEMOS.find(x=>x.ti==='Att köpa'));need(m&&!m.del,'not restored');return mk});
+await step('notes: both write at the same time and nothing is lost',async()=>{await A1.evaluate(()=>go('t'));await A1.click('#mm_new');await w(A1,400);await A1.fill('#mm_ti','Tillsammans');
+  await A1.click('#mm_body .mb-p textarea');await A1.keyboard.type('Första raden');await A1.keyboard.press('Enter');await A1.click('#mm_chk');await A1.keyboard.type('Mjölk');await w(A1,1500);
+  const id=await A1.evaluate(()=>MM.id);await B1.evaluate(()=>go('t'));need(await waitFor(B1,()=>MEMOS.some(m=>m.ti==='Tillsammans')),'B does not have it');
+  await B1.click(`[data-memo="${id}"]`);await w(B1,500);
+  /* Both add a point to the same list and change different lines, without waiting for each other. */
+  await A1.click('#mm_body .mb-c input');await A1.keyboard.press('End');await A1.keyboard.press('Enter');await A1.keyboard.type('Bröd från A');
+  await B1.click('#mm_body .mb-c input');await B1.keyboard.press('End');await B1.keyboard.press('Enter');await B1.keyboard.type('Ost från B');
+  await B1.click('#mm_body .mb-p textarea');await B1.keyboard.press('Control+End');await B1.evaluate(()=>{const t=document.querySelector('#mm_body .mb-p textarea');t.setSelectionRange(t.value.length,t.value.length)});await B1.keyboard.type(' och B skrev här');
+  await w(A1,3500);await w(B1,1500);
+  const rd=pg=>pg.evaluate(()=>mmRead().map(b=>b.x||b.t));const ra=await rd(A1),rb=await rd(B1);
+  const all=['Första raden och B skrev här','Mjölk','Bröd från A','Ost från B'];need(all.every(x=>ra.includes(x))&&all.every(x=>rb.includes(x)),'merge '+JSON.stringify([ra,rb]));
+  const sv=await A1.evaluate(id=>MEMOS.find(m=>m.id===id).bl.map(b=>b.x),id);need(all.every(x=>sv.includes(x)),'saved '+JSON.stringify(sv));
+  await B1.click('#mm_back');await w(B1,400);
+  /* A dash at the start of a text line carries on as a list. */
+  await A1.click('#mm_body .mb-p:last-child textarea');await A1.keyboard.type('- ett');await A1.keyboard.press('Enter');await A1.keyboard.type('två');const tv=await A1.evaluate(()=>[...document.querySelectorAll('#mm_body .mb-p textarea')].map(t=>t.value).find(v=>v.includes('ett')));
+  need(tv==='- ett\n- två','dash list '+JSON.stringify(tv));await A1.click('#mm_back');await w(A1,500);return ra});
 await step('a reinstalled phone gets everything back from a backup file',async()=>{const bk=await A1.evaluate(()=>backupText());const D1=await phone();await D1.goto(base);await waitFor(D1,()=>KK.mode!=='starting');await waitFor(D1,()=>cs.classList.contains('on'));
   need(await D1.evaluate(()=>!cs_rs.classList.contains('hide')),'no restore button on the welcome sheet');
   await D1.setInputFiles('#bk_in',{name:'Kalenderkoll-sakerhetskopia.json',mimeType:'application/json',buffer:Buffer.from(bk)});await w(D1);need(await D1.evaluate(()=>modal.classList.contains('on')),'did not ask');
