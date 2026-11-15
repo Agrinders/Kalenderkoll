@@ -461,3 +461,24 @@ main,section{gap:10px}
   .cgr button{min-height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px);height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px)}}
 /* The Android app can add its own space above the page; the page itself never needs any. */
 html{padding:0!important;margin:0!important}body{margin:0!important}
+
+/* Note formatting: headings, coloured text and named lists. */
+.mb[data-k] textarea,.mb[data-k] input{color:var(--tk)}
+.mb-h1 textarea{font:500 25px/1.25 var(--serif);padding:12px 0 4px;letter-spacing:-.01em}
+.mb-h2 textarea{font-size:18.5px;font-weight:700;padding:10px 0 2px;letter-spacing:-.01em}
+.mb-lh{display:flex;align-items:center;gap:10px;margin:14px 0 0;padding:10px 12px 8px;border-radius:14px 14px 0 0;background:color-mix(in srgb,var(--tk,var(--acc)) 9%,var(--card));border:1px solid var(--rule);border-bottom:0}
+.mb-lh input{flex:1;min-width:0;border:0;background:none;font:inherit;font-size:16px;font-weight:700;color:var(--tk,var(--ink));outline:none;padding:2px 0}
+.mbprog{flex:none;display:flex;align-items:center;gap:8px}.mbprog em{font-style:normal;font-size:12.5px;font-weight:700;color:var(--soft);min-width:26px;text-align:right}
+.mbprog::before{content:"";display:block;width:46px;height:5px;border-radius:3px;background:color-mix(in srgb,var(--soft) 22%,transparent)}
+.mbprog{position:relative}.mbprog i{position:absolute;left:0;top:50%;height:5px;margin-top:-2.5px;max-width:46px;border-radius:3px;background:var(--tk,var(--acc));transition:width .35s cubic-bezier(.3,.9,.4,1)}
+.mb-lh.all em{color:var(--pa)}
+.mb-c.inl{padding:3px 12px;background:color-mix(in srgb,var(--card) 70%,transparent);border-left:1px solid var(--rule);border-right:1px solid var(--rule)}
+.mb-c.inl.lastl{padding-bottom:8px;margin-bottom:8px;border-bottom:1px solid var(--rule);border-radius:0 0 14px 14px}
+.mb-c[data-k] .mbck.on{background:var(--tk);border-color:var(--tk)}
+.mmbar #mm_aa{flex:none;width:52px;max-width:none}.mmbar .aa{font:600 17px/1 var(--serif);color:var(--acc)}.mmbar #mm_aa.on{background:var(--acc)}.mmbar #mm_aa.on .aa{color:#fff}
+.mmfmt{flex:none;padding:10px 12px 4px;border-top:1px solid var(--rule);background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);animation:in .2s ease}
+.mmfs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.mmfs button{flex:none;min-height:38px;padding:0 13px;border-radius:11px;background:var(--card);border:1px solid var(--rule);color:var(--ink);font-size:14px}
+.mmfs .fs-h1{font:500 17px/1 var(--serif)}.mmfs .fs-h2{font-weight:700}.mmfs .fs-lh{font-weight:600;color:var(--acc)}
+.mmfs button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.mmfc{display:flex;gap:10px;padding:10px 2px 6px;overflow-x:auto;scrollbar-width:none}.mmfc button{flex:none;width:28px;height:28px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px var(--bg),0 0 0 2px transparent;transition:box-shadow .2s,transform .16s}
+.mmfc button.on{box-shadow:0 0 0 2.5px var(--bg),0 0 0 4.5px var(--c)}

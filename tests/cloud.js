@@ -71,6 +71,13 @@ await step('notes: write, to-do list, link, picture; partner sees it',async()=>{
   need(await waitFor(B1,()=>MEMOS.some(x=>x.ti==='Inför resan')&&Object.keys(MIMG).length>0),'partner does not see it');
   const empty=await A1.evaluate(async()=>{const n=MEMOS.length;document.getElementById('mm_new').click();await new Promise(r=>setTimeout(r,400));document.getElementById('mm_back').click();await new Promise(r=>setTimeout(r,500));return MEMOS.length===n});need(empty,'empty note was kept');
   return types});
+await step('notes: headings, colour and named lists',async()=>{await A1.evaluate(()=>go('t'));await A1.click('#mm_new');await w(A1,400);await A1.fill('#mm_ti','Helgen');
+  await A1.click('#mm_body .mb-p textarea');await A1.keyboard.type('Lördag');await A1.click('#mm_aa');await A1.click('[data-fs="h2"]');await A1.click('[data-fk="r"]');await A1.keyboard.press('Enter');await A1.keyboard.type('Sovmorgon');
+  await A1.click('[data-fs="lh"]');await A1.keyboard.type('Handla');await A1.keyboard.press('Enter');await A1.keyboard.type('Mjölk');await A1.keyboard.press('Enter');await A1.keyboard.type('Ägg');
+  await A1.click('#mm_body .mb-c .mbck');await w(A1,100);const pr=await A1.evaluate(()=>document.querySelector('#mm_body .mb-lh em').textContent);
+  await A1.click('#mm_back');await w(A1,900);const m=await A1.evaluate(()=>MEMOS.find(x=>x.ti==='Helgen'));need(m,'not saved');
+  const h=m.bl.find(b=>b.s==='h2'),lh=m.bl.find(b=>b.t==='lh'),cs=m.bl.filter(b=>b.t==='c');
+  need(h&&h.x==='Lördag'&&h.k==='r'&&m.bl.some(b=>b.t==='p'&&!b.s&&b.x==='Sovmorgon')&&lh&&lh.x==='Handla'&&cs.length===2&&cs[0].d&&pr==='1/2','fmt '+JSON.stringify([pr,m.bl]));return pr});
 await step('a reinstalled phone gets everything back from a backup file',async()=>{const bk=await A1.evaluate(()=>backupText());const D1=await phone();await D1.goto(base);await waitFor(D1,()=>KK.mode!=='starting');await waitFor(D1,()=>cs.classList.contains('on'));
   need(await D1.evaluate(()=>!cs_rs.classList.contains('hide')),'no restore button on the welcome sheet');
   await D1.setInputFiles('#bk_in',{name:'Kalenderkoll-sakerhetskopia.json',mimeType:'application/json',buffer:Buffer.from(bk)});await w(D1);need(await D1.evaluate(()=>modal.classList.contains('on')),'did not ask');

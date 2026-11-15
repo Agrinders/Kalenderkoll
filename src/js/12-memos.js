@@ -2,12 +2,12 @@
    A note has a title and a list of blocks: text, to-do items, links and pictures.
    It saves itself while you write; an empty note is removed when you leave it. */
 /* var, so the list can be drawn while the app is still starting. */
-var MB_T=["p","c","l","i"],URLRE=/https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]]/gi;
+var MB_T=["p","c","l","i","lh"],MCOL={r:"#e5484d",o:"#ee8a2a",y:"#c99a0e",g:"#2f9e63",b:"#3b82f6",v:"#8a72ee",p:"#e0559c",s:"#8b8494"},URLRE=/https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]]/gi;
 function memoClean(v,fid){const id=String(v.id||fid);if(!id)return null;
-  const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map(b=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000)}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).filter(Boolean);
+  const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map(b=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000),...(b.s==="h1"||b.s==="h2"?{s:b.s}:{}),...(MCOL[b.k]?{k:b.k}:{})}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d,...(MCOL[b.k]?{k:b.k}:{})}:b.t==="lh"?{t:"lh",x:String(b.x||"").slice(0,200),...(MCOL[b.k]?{k:b.k}:{})}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).filter(Boolean);
   return{id,ti:String(v.ti||"").slice(0,120),bl,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
 var memoDoc=m=>({kind:"memo",id:m.id,ti:m.ti,bl:m.bl,at:m.at,up:m.up,by:m.by,ub:m.ub});
-var memoEmpty=m=>!m.ti.trim()&&!m.bl.some(b=>b.t==="p"?b.x.trim():b.t==="c"?b.x.trim():true);
+var memoEmpty=m=>!m.ti.trim()&&!m.bl.some(b=>b.t==="p"||b.t==="c"||b.t==="lh"?b.x.trim():true);
 var host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}};
 var whenTxt=ms=>{const d=new Date(ms),n=dnD(d),h=pad(d.getHours())+":"+pad(d.getMinutes());return n===todayN()?h:n===todayN()-1?tx("Igår","Yesterday")+" "+h:fmtD(n,{day:"numeric",month:"short"})+(ymd(n)[0]!==ymd(todayN())[0]?" "+ymd(n)[0]:"")};
 
@@ -15,15 +15,16 @@ var whenTxt=ms=>{const d=new Date(ms),n=dnD(d),h=pad(d.getHours())+":"+pad(d.get
 function renderMemos(){const el=$("t_memos");if(!el)return;const L=[...MEMOS].sort((a,b)=>b.up-a.up);
   let h=`<div class="mmlh"><h3>${tx("Anteckningar","Notes")}</h3><button class="btn sm" id="mm_new" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>${tx("Ny","New")}</button></div>`;
   if(!L.length)h+=`<div class="mmempty"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7.5L19 8v11.5a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1z"/><path d="M14 3.5V8h5M9 12.5h6M9 16h4"/></svg><p>${tx("Skriv ner idéer, listor, länkar och bilder. Ni ser dem båda.","Write down ideas, lists, links and pictures. You both see them.")}</p></div>`;
-  else h+=`<div class="mml">${L.map(m=>{const txt=m.bl.filter(b=>b.t==="p"||b.t==="c").map(b=>b.x).join(" ").replace(/\s+/g," ").trim(),first=m.ti.trim()||txt.split(" ").slice(0,8).join(" ")||tx("Ny anteckning","New note"),
+  else h+=`<div class="mml">${L.map(m=>{const txt=m.bl.filter(b=>b.t==="p"||b.t==="c"||b.t==="lh").map(b=>b.x).join(" ").replace(/\s+/g," ").trim(),first=m.ti.trim()||txt.split(" ").slice(0,8).join(" ")||tx("Ny anteckning","New note"),
       img=m.bl.find(b=>b.t==="i"&&MIMG[b.i]),C=m.bl.filter(b=>b.t==="c"),nd2=C.filter(b=>b.d).length,lk=m.bl.find(b=>b.t==="l"),rest=m.ti.trim()?txt:txt.split(" ").slice(8).join(" ");
       return `<button class="mmi" data-memo="${esc(m.id)}" type="button"><span class="mmit"><b>${esc(first)}</b><small><em>${esc(whenTxt(m.up))}</em>${esc(rest||(lk?host(lk.u):img?tx("Bild","Picture"):""))}</small>${C.length||lk?`<span class="mmtags">${C.length?`<i class="${nd2===C.length?"ok":""}">☑ ${nd2}/${C.length}</i>`:""}${lk?`<i>↗ ${esc(host(lk.u))}</i>`:""}</span>`:""}</span>${img?`<span class="mmth" style="background-image:url('${MIMG[img.i]}')"></span>`:""}</button>`}).join("")}</div>`;
   el.innerHTML=h;if(MM&&MM.open)mmMaybeRefresh()}
 
 /* ---------- The editor ---------- */
 var MM={open:false,id:"",m:null,dirty:false,t:0,loadedUp:0};
-function mmBlock(b){const d=document.createElement("div");d.className="mb mb-"+b.t;d.dataset.t=b.t;
-  if(b.t==="p"){d.innerHTML=`<textarea rows="1" placeholder="${esc(tx("Skriv något…","Write something…"))}"></textarea><div class="mblinks"></div>`;d.firstChild.value=b.x;}
+function mmBlock(b){const d=document.createElement("div");d.className="mb mb-"+b.t+(b.s?" mb-"+b.s:"");d.dataset.t=b.t;if(b.s)d.dataset.s=b.s;if(b.k){d.dataset.k=b.k;d.style.setProperty("--tk",MCOL[b.k])}
+  if(b.t==="lh"){d.innerHTML=`<input type="text" maxlength="200" placeholder="${esc(tx("Listans namn","List name"))}"><span class="mbprog"><i></i><em></em></span>`;d.firstChild.value=b.x;return d}
+  if(b.t==="p"){d.innerHTML=`<textarea rows="1" placeholder="${esc(b.s==="h1"?tx("Rubrik","Heading"):b.s==="h2"?tx("Underrubrik","Subheading"):tx("Skriv något…","Write something…"))}"></textarea><div class="mblinks"></div>`;d.firstChild.value=b.x;}
   else if(b.t==="c"){d.innerHTML=`<button type="button" class="mbck${b.d?" on":""}" aria-label="${esc(tx("Klar","Done"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 12.5 3.6 3.6 7.4-8"/></svg></button><input type="text" maxlength="500">`;d.lastChild.value=b.x;if(b.d)d.classList.add("done")}
   else if(b.t==="l"){if(b.u){d.dataset.u=b.u;d.innerHTML=`<a href="${esc(b.u)}" target="_blank" rel="noopener noreferrer" class="mbl"><span class="mblf">${esc((host(b.u)[0]||"?").toUpperCase())}</span><span class="mblt"><b>${esc(host(b.u))}</b><small>${esc(b.u)}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 16 16 8M9 8h7v7"/></svg></a><button type="button" class="mbx" aria-label="${esc(tx("Ta bort","Remove"))}">×</button>`}
     else{d.innerHTML=`<input type="url" class="mblin" inputmode="url" placeholder="${esc(tx("Klistra in eller skriv en länk","Paste or type a link"))}">`}}
@@ -33,13 +34,14 @@ function mmGrow(t){t.style.height="auto";t.style.height=t.scrollHeight+"px"}
 function mmLinks(d){const t=d.querySelector("textarea"),box=d.querySelector(".mblinks");if(!t||!box)return;const U=[...new Set(t.value.match(URLRE)||[])].slice(0,6);
   box.innerHTML=U.map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">↗ ${esc(host(u))}</a>`).join("")}
 function mmRead(){const bl=[];$("mm_body").querySelectorAll(".mb").forEach(d=>{const t=d.dataset.t;
-  if(t==="p")bl.push({t:"p",x:d.querySelector("textarea").value});else if(t==="c")bl.push({t:"c",x:d.querySelector("input").value,d:d.classList.contains("done")});
+  const k=d.dataset.k&&MCOL[d.dataset.k]?{k:d.dataset.k}:{};
+  if(t==="p")bl.push({t:"p",x:d.querySelector("textarea").value,...(d.dataset.s?{s:d.dataset.s}:{}),...k});else if(t==="c")bl.push({t:"c",x:d.querySelector("input").value,d:d.classList.contains("done"),...k});else if(t==="lh")bl.push({t:"lh",x:d.querySelector("input").value,...k});
   else if(t==="l"&&d.dataset.u)bl.push({t:"l",u:d.dataset.u});else if(t==="i"&&d.dataset.i)bl.push({t:"i",i:d.dataset.i})});
   /* Text blocks next to each other are kept as one. */
-  const out=[];bl.forEach(b=>{const p=out[out.length-1];if(b.t==="p"&&p&&p.t==="p"&&!b.x.trim())return;out.push(b)});return out}
+  const out=[];bl.forEach(b=>{const p=out[out.length-1];if(b.t==="p"&&!b.s&&p&&p.t==="p"&&!p.s&&!b.x.trim())return;out.push(b)});return out}
 function mmPaint(){const m=MM.m;$("mm_ti").value=m.ti;$("mm_body").innerHTML="";const bl=m.bl.length?m.bl:[{t:"p",x:""}];
   bl.forEach(b=>$("mm_body").appendChild(mmBlock(b)));if(bl[bl.length-1].t!=="p")$("mm_body").appendChild(mmBlock({t:"p",x:""}));
-  $("mm_body").querySelectorAll(".mb-p").forEach(d=>{mmGrow(d.querySelector("textarea"));mmLinks(d)});mmMeta();MM.loadedUp=m.up}
+  $("mm_body").querySelectorAll(".mb-p").forEach(d=>{mmGrow(d.querySelector("textarea"));mmLinks(d)});mmProg();mmMeta();MM.loadedUp=m.up}
 function mmMeta(){const m=MM.m;$("mm_meta").textContent=m.at?(m.by?tx("Skapad av ","Created by ")+pname(m.by)+" · ":"")+whenTxt(m.at)+(m.up>m.at+60000?" · "+tx("ändrad ","edited ")+whenTxt(m.up)+(m.ub&&m.ub!==m.by?" "+tx("av ","by ")+pname(m.ub):""):""):""}
 function openMM(id){let m=id&&MEMOS.find(x=>x.id===id);
   if(!m){const now=Date.now();m={id:newId(),ti:"",bl:[{t:"p",x:""}],at:now,up:now,by:ME||"",ub:ME||""};MM.fresh=true}else MM.fresh=false;
@@ -47,7 +49,7 @@ function openMM(id){let m=id&&MEMOS.find(x=>x.id===id);
   $("mm_bt").textContent=tx("Anteckningar","Notes");$("mm_ti").placeholder=tx("Rubrik","Title");$("mm_chkt").textContent=tx("Att göra","To-do");$("mm_imgt").textContent=tx("Bild","Picture");$("mm_lnkt").textContent=tx("Länk","Link");$("mm_st").textContent="";
   mmPaint();$("mm").classList.add("on");document.body.classList.add("mmopen");$("mm_w").scrollTop=0;
   if(MM.fresh)setTimeout(()=>$("mm_ti").focus(),280)}
-function mmChanged(){MM.dirty=true;$("mm_st").textContent=tx("Sparar…","Saving…");clearTimeout(MM.t);MM.t=setTimeout(mmSave,700)}
+function mmChanged(){mmProg();MM.dirty=true;$("mm_st").textContent=tx("Sparar…","Saving…");clearTimeout(MM.t);MM.t=setTimeout(mmSave,700)}
 function mmSave(){clearTimeout(MM.t);if(!MM.open&&!MM.m)return;const m=MM.m;m.ti=$("mm_ti").value;m.bl=mmRead();
   if(!MM.dirty){return}MM.dirty=false;
   if(memoEmpty(m)&&MM.fresh){$("mm_st").textContent="";return}
@@ -127,3 +129,37 @@ $("mm_in").addEventListener("change",()=>{if($("mm_in").files.length)mmAddImages
 $("mm_lnk").onclick=()=>{mmInsert({t:"l",u:""},null,true)};
 $("mv_x").onclick=closeMV;$("mv").addEventListener("click",e=>{if(e.target===$("mv"))closeMV()});
 addEventListener("pagehide",()=>{if(MM.open)mmSave()});document.addEventListener("visibilitychange",()=>{if(document.hidden&&MM.open)mmSave()});
+
+/* ---------- Headings, colours and separate lists ---------- */
+/* Each list name shows how many of the items under it are done. */
+function mmProg(){$("mm_body").querySelectorAll(".mb-lh").forEach(h=>{let n=0,dn=0;for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling){n++;if(x.classList.contains("done"))dn++;x.classList.add("inl")}
+  h.querySelector("em").textContent=n?dn+"/"+n:"";h.querySelector("i").style.width=n?(dn/n*100)+"%":"0";h.classList.toggle("all",n>0&&dn===n)});
+  $("mm_body").querySelectorAll(".mb-c").forEach(c=>{let p=c.previousElementSibling;while(p&&p.dataset.t==="c")p=p.previousElementSibling;c.classList.toggle("inl",!!(p&&p.dataset.t==="lh"));c.classList.toggle("lastl",!(c.nextElementSibling&&c.nextElementSibling.dataset.t==="c"))})}
+let mmLast=null;$("mm_body").addEventListener("focusin",e=>{const d=e.target.closest(".mb");if(d)mmLast=d});
+const mmTarget=()=>{const d=mmCur()||mmLast;return d&&d.isConnected?d:null};
+function mmFmtPaint(){const d=mmTarget(),st=d?(d.dataset.t==="p"?(d.dataset.s||"p"):d.dataset.t):"",k=d&&d.dataset.k||"";
+  const S2=[["h1",tx("Rubrik","Heading")],["h2",tx("Underrubrik","Subheading")],["p",tx("Text","Text")],["lh",tx("Ny lista","New list")]];
+  $("mm_fmt").innerHTML=`<div class="mmfs">${S2.map(([v,l])=>`<button type="button" data-fs="${v}" class="fs-${v}${st===v?" on":""}">${l}</button>`).join("")}</div><div class="mmfc"><button type="button" data-fk="" class="${!k?"on":""}" style="--c:var(--ink)" aria-label="${esc(tx("Standard","Default"))}"></button>${Object.entries(MCOL).map(([n,c])=>`<button type="button" data-fk="${n}" class="${k===n?"on":""}" style="--c:${c}" aria-label="${n}"></button>`).join("")}</div>`}
+function mmFmt(open){const f=$("mm_fmt");if(open===undefined)open=f.hidden;f.hidden=!open;$("mm_aa").classList.toggle("on",open);if(open)mmFmtPaint()}
+$("mm_aa").onmousedown=e=>e.preventDefault();$("mm_fmt").addEventListener("mousedown",e=>e.preventDefault());
+$("mm_aa").onclick=()=>mmFmt();
+function mmFocusEnd(d){const f=d&&d.querySelector("textarea,input");if(!f)return;f.focus();const n=f.value.length;try{f.setSelectionRange(n,n)}catch(e){}}
+$("mm_fmt").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;let d=mmTarget();
+  if(b.dataset.fs!==undefined){const v=b.dataset.fs;
+    if(v==="lh"){/* A new list: a name, then its first item. */const at=d||$("mm_body").lastElementChild;const h=mmBlock({t:"lh",x:""});
+      if(at&&at.dataset.t==="p"&&!at.querySelector("textarea").value.trim())at.replaceWith(h);else if(at)at.after(h);else $("mm_body").appendChild(h);
+      const c=mmBlock({t:"c",x:"",d:false});h.after(c);if(!c.nextElementSibling)c.after(mmBlock({t:"p",x:""}));h.querySelector("input").focus();mmChanged();mmFmtPaint();return}
+    if(!d){d=mmInsert({t:"p",x:""},null,true)}
+    const txt=(d.querySelector("textarea,input")||{}).value||"",k=d.dataset.k||"";
+    const nb=v==="p"?{t:"p",x:txt}:{t:"p",x:txt,s:v};if(k)nb.k=k;
+    const n=mmBlock(nb);d.replaceWith(n);if(n.querySelector("textarea")){mmGrow(n.querySelector("textarea"));mmLinks(n)}mmFocusEnd(n);mmChanged();mmFmtPaint();return}
+  if(b.dataset.fk!==undefined){if(!d)return;const k=b.dataset.fk;if(k){d.dataset.k=k;d.style.setProperty("--tk",MCOL[k])}else{delete d.dataset.k;d.style.removeProperty("--tk")}
+    mmFocusEnd(d);mmChanged();mmFmtPaint()}});
+document.addEventListener("selectionchange",()=>{if(!$("mm_fmt").hidden&&MM&&MM.open)mmFmtPaint()});
+/* Keys for headings and list names: Enter goes on to a new line of text, or to the list's first item. */
+$("mm_body").addEventListener("keydown",e=>{const d=e.target.closest(".mb");if(!d)return;
+  if(d.dataset.t==="lh"&&e.key==="Enter"){e.preventDefault();const nx=d.nextElementSibling;if(nx&&nx.dataset.t==="c")mmFocusEnd(nx);else mmInsert({t:"c",x:"",d:false},d,true)}
+  else if(d.dataset.t==="lh"&&e.key==="Backspace"&&!e.target.value){e.preventDefault();const pv=d.previousElementSibling;d.remove();if(pv)mmFocusEnd(pv);mmChanged()}
+  else if(d.dataset.t==="p"&&d.dataset.s&&e.key==="Enter"){e.preventDefault();const ta=e.target,pos=ta.selectionStart,rest=ta.value.slice(pos);ta.value=ta.value.slice(0,pos);mmGrow(ta);
+    const n=mmBlock({t:"p",x:rest});d.after(n);mmGrow(n.querySelector("textarea"));const t2=n.querySelector("textarea");t2.focus();t2.setSelectionRange(0,0);mmChanged()}},true);
+const mmCloseOld=closeMM;closeMM=function(){mmFmt(false);mmLast=null;mmCloseOld()};
