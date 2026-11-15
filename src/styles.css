@@ -569,3 +569,4 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 .mb-c.inl.lastl{border-bottom:1px solid color-mix(in srgb,var(--lc0) 30%,rgba(255,255,255,.7));box-shadow:inset 1px 0 0 rgba(255,255,255,calc(var(--gla,.6)*1.2)),inset -1px 0 0 rgba(255,255,255,calc(var(--gla,.6)*1.2)),inset 0 -1px 0 rgba(255,255,255,calc(var(--gla,.6)*1.2)),0 6px 14px -10px color-mix(in srgb,var(--lc0) 60%,transparent)}
 .mb-c.inl+.mb-c.inl{border-top:1px solid color-mix(in srgb,var(--lc0) 10%,transparent)}
 .mb-c[data-m] .mbmk{color:var(--tk,var(--lc,var(--acc)))}.mb-c.inl .mbck.on{background:var(--tk,var(--lc,var(--acc)));border-color:var(--tk,var(--lc,var(--acc)))}
+.mb-c.inl.hid{border-bottom-width:0;border-top-width:0;box-shadow:none}
