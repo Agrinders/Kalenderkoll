@@ -482,3 +482,25 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 .mmfs button.on{background:var(--acc);border-color:var(--acc);color:#fff}
 .mmfc{display:flex;gap:10px;padding:10px 2px 6px;overflow-x:auto;scrollbar-width:none}.mmfc button{flex:none;width:28px;height:28px;border-radius:50%;background:var(--c);box-shadow:0 0 0 2px var(--bg),0 0 0 2px transparent;transition:box-shadow .2s,transform .16s}
 .mmfc button.on{box-shadow:0 0 0 2.5px var(--bg),0 0 0 4.5px var(--c)}
+
+/* Fonts, list kinds, symbols and the safer delete. */
+.mb[data-f="sf"] textarea,.mb[data-f="sf"] input{font-family:Fraunces,Georgia,serif}
+.mb[data-f="h"] textarea,.mb[data-f="h"] input{font-family:Caveat,cursive;font-size:1.32em;line-height:1.25}
+.mb[data-f="r"] textarea,.mb[data-f="r"] input{font-family:Nunito,system-ui,sans-serif;font-weight:500}
+.mb[data-f="m"] textarea,.mb[data-f="m"] input{font-family:"DM Mono",ui-monospace,monospace;font-size:.92em}
+.mb-h1[data-f="h"] textarea{font-size:34px}.mb-h2[data-f="h"] textarea{font-size:25px}
+.mbmk{display:none}.mb-c[data-m] .mbck{display:none}.mb-c[data-m] .mbmk{display:block;flex:none;min-width:24px;text-align:center;font-weight:700;color:var(--tk,var(--acc));font-size:16px}
+.mb-c[data-m="b"] .mbmk{font-size:22px;line-height:1}
+.mmfs+.mmfs{margin-top:8px}.mmff .ff-sf{font-family:Fraunces,serif}.mmff .ff-h{font-family:Caveat,cursive;font-size:19px}.mmff .ff-r{font-family:Nunito,sans-serif;font-weight:700}.mmff .ff-m{font-family:"DM Mono",monospace;font-size:13px}
+.mmfl b{font-weight:800;margin-right:2px}
+.mmfc{padding-left:6px!important}
+.mmbar #mm_sy{flex:none;width:52px;max-width:none}.mmbar #mm_sy .aa{font-family:var(--ui);font-size:20px}.mmbar #mm_sy.on{background:var(--acc)}.mmbar #mm_sy.on .aa{color:#fff}
+.mmbar{gap:6px}.mmbar button{font-size:14px;gap:5px}
+.mmsym{max-height:38vh;overflow-y:auto}.mmsym p{margin:6px 4px 4px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--soft)}
+.mmsg{display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:4px}.mmsg button{height:42px;border-radius:11px;font-size:22px;line-height:1;background:var(--card);border:1px solid var(--rule)}
+.mbx.arm{width:auto;padding:0 12px;border-radius:15px;font-size:13px;font-weight:700;background:var(--red);color:#fff}
+.mb-l .mbx.arm{background:var(--red);color:#fff}
+.mmtrash{display:flex;align-items:center;gap:8px;width:100%;margin-top:10px;padding:10px 4px 2px;border-top:1px solid var(--rule);font-size:14px;font-weight:600;color:var(--soft)}.mmtrash svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}.mmtrash span{margin-left:auto}
+.mml.del .mmi{gap:8px}.mml.del .btn.sm{padding:0 12px;flex:none}.mml.del .lnk{flex:none;font-size:14px}
+.mvsave{position:absolute;left:50%;bottom:calc(24px + var(--sab));transform:translateX(-50%);min-height:46px;padding:0 22px}
+#mm_more svg{fill:currentColor;stroke:none}

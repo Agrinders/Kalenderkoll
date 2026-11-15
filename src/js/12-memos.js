@@ -2,30 +2,35 @@
    A note has a title and a list of blocks: text, to-do items, links and pictures.
    It saves itself while you write; an empty note is removed when you leave it. */
 /* var, so the list can be drawn while the app is still starting. */
-var MB_T=["p","c","l","i","lh"],MCOL={r:"#e5484d",o:"#ee8a2a",y:"#c99a0e",g:"#2f9e63",b:"#3b82f6",v:"#8a72ee",p:"#e0559c",s:"#8b8494"},URLRE=/https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]]/gi;
+var MFONT={sf:"Serif",h:"Skrivstil",r:"Rund",m:"Mono"},MB_T=["p","c","l","i","lh"],MCOL={r:"#e5484d",o:"#ee8a2a",y:"#c99a0e",g:"#2f9e63",b:"#3b82f6",v:"#8a72ee",p:"#e0559c",s:"#8b8494"},URLRE=/https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]]/gi;
 function memoClean(v,fid){const id=String(v.id||fid);if(!id)return null;
-  const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map(b=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000),...(b.s==="h1"||b.s==="h2"?{s:b.s}:{}),...(MCOL[b.k]?{k:b.k}:{})}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d,...(MCOL[b.k]?{k:b.k}:{})}:b.t==="lh"?{t:"lh",x:String(b.x||"").slice(0,200),...(MCOL[b.k]?{k:b.k}:{})}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).filter(Boolean);
-  return{id,ti:String(v.ti||"").slice(0,120),bl,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
-var memoDoc=m=>({kind:"memo",id:m.id,ti:m.ti,bl:m.bl,at:m.at,up:m.up,by:m.by,ub:m.ub});
+  const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map(b=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000),...(b.s==="h1"||b.s==="h2"?{s:b.s}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d,...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{}),...(b.m==="b"||b.m==="n"?{m:b.m}:{})}:b.t==="lh"?{t:"lh",x:String(b.x||"").slice(0,200),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).filter(Boolean);
+  return{id,ti:String(v.ti||"").slice(0,120),bl,del:+v.del||0,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
+var memoDoc=m=>({kind:"memo",id:m.id,ti:m.ti,bl:m.bl,at:m.at,up:m.up,by:m.by,ub:m.ub,...(m.del?{del:m.del}:{})});
 var memoEmpty=m=>!m.ti.trim()&&!m.bl.some(b=>b.t==="p"||b.t==="c"||b.t==="lh"?b.x.trim():true);
 var host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}};
 var whenTxt=ms=>{const d=new Date(ms),n=dnD(d),h=pad(d.getHours())+":"+pad(d.getMinutes());return n===todayN()?h:n===todayN()-1?tx("Igår","Yesterday")+" "+h:fmtD(n,{day:"numeric",month:"short"})+(ymd(n)[0]!==ymd(todayN())[0]?" "+ymd(n)[0]:"")};
 
 /* The list on the Att göra page. */
-function renderMemos(){const el=$("t_memos");if(!el)return;const L=[...MEMOS].sort((a,b)=>b.up-a.up);
+var MMDEL=false;
+function renderMemos(){const el=$("t_memos");if(!el)return;const L=[...MEMOS].filter(m=>!m.del).sort((a,b)=>b.up-a.up),D=MEMOS.filter(m=>m.del).sort((a,b)=>b.del-a.del);
   let h=`<div class="mmlh"><h3>${tx("Anteckningar","Notes")}</h3><button class="btn sm" id="mm_new" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>${tx("Ny","New")}</button></div>`;
   if(!L.length)h+=`<div class="mmempty"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h7.5L19 8v11.5a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-15a1 1 0 0 1 1-1z"/><path d="M14 3.5V8h5M9 12.5h6M9 16h4"/></svg><p>${tx("Skriv ner idéer, listor, länkar och bilder. Ni ser dem båda.","Write down ideas, lists, links and pictures. You both see them.")}</p></div>`;
   else h+=`<div class="mml">${L.map(m=>{const txt=m.bl.filter(b=>b.t==="p"||b.t==="c"||b.t==="lh").map(b=>b.x).join(" ").replace(/\s+/g," ").trim(),first=m.ti.trim()||txt.split(" ").slice(0,8).join(" ")||tx("Ny anteckning","New note"),
       img=m.bl.find(b=>b.t==="i"&&MIMG[b.i]),C=m.bl.filter(b=>b.t==="c"),nd2=C.filter(b=>b.d).length,lk=m.bl.find(b=>b.t==="l"),rest=m.ti.trim()?txt:txt.split(" ").slice(8).join(" ");
       return `<button class="mmi" data-memo="${esc(m.id)}" type="button"><span class="mmit"><b>${esc(first)}</b><small><em>${esc(whenTxt(m.up))}</em>${esc(rest||(lk?host(lk.u):img?tx("Bild","Picture"):""))}</small>${C.length||lk?`<span class="mmtags">${C.length?`<i class="${nd2===C.length?"ok":""}">☑ ${nd2}/${C.length}</i>`:""}${lk?`<i>↗ ${esc(host(lk.u))}</i>`:""}</span>`:""}</span>${img?`<span class="mmth" style="background-image:url('${MIMG[img.i]}')"></span>`:""}</button>`}).join("")}</div>`;
-  el.innerHTML=h;if(MM&&MM.open)mmMaybeRefresh()}
+  if(D.length){h+=`<button class="mmtrash" data-mmtrash type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg>${tx("Nyligen raderade","Recently deleted")} (${D.length})<span>${MMDEL?"▴":"▾"}</span></button>`;
+    if(MMDEL)h+=`<div class="mml del">${D.map(m=>{const left=Math.max(1,30-Math.floor((Date.now()-m.del)/864e5));return `<div class="mmi"><span class="mmit"><b>${esc(m.ti.trim()||tx("Utan rubrik","Untitled"))}</b><small>${tx(`Raderas för alltid om ${left} dagar`,`Deleted for good in ${left} days`)}</small></span><button class="btn sm ghost" data-mmback="${esc(m.id)}" type="button">${tx("Återställ","Restore")}</button><button class="lnk bad" data-mmgone="${esc(m.id)}" type="button">${tx("Radera","Delete")}</button></div>`}).join("")}</div>`}
+  el.innerHTML=h;if(MM&&MM.open)mmMaybeRefresh();mmPurge()}
+/* Notes in Recently deleted are removed for good after 30 days. */
+function mmPurge(){const old=MEMOS.filter(m=>m.del&&Date.now()-m.del>30*864e5);if(!old.length)return;old.forEach(m=>{del("memo_"+m.id);m.bl.filter(b=>b.t==="i").forEach(b=>del("mimg_"+b.i))});MEMOS=MEMOS.filter(m=>!old.includes(m))}
 
 /* ---------- The editor ---------- */
 var MM={open:false,id:"",m:null,dirty:false,t:0,loadedUp:0};
-function mmBlock(b){const d=document.createElement("div");d.className="mb mb-"+b.t+(b.s?" mb-"+b.s:"");d.dataset.t=b.t;if(b.s)d.dataset.s=b.s;if(b.k){d.dataset.k=b.k;d.style.setProperty("--tk",MCOL[b.k])}
+function mmBlock(b){const d=document.createElement("div");d.className="mb mb-"+b.t+(b.s?" mb-"+b.s:"");d.dataset.t=b.t;if(b.s)d.dataset.s=b.s;if(b.k){d.dataset.k=b.k;d.style.setProperty("--tk",MCOL[b.k])}if(b.f)d.dataset.f=b.f;if(b.m)d.dataset.m=b.m;
   if(b.t==="lh"){d.innerHTML=`<input type="text" maxlength="200" placeholder="${esc(tx("Listans namn","List name"))}"><span class="mbprog"><i></i><em></em></span>`;d.firstChild.value=b.x;return d}
   if(b.t==="p"){d.innerHTML=`<textarea rows="1" placeholder="${esc(b.s==="h1"?tx("Rubrik","Heading"):b.s==="h2"?tx("Underrubrik","Subheading"):tx("Skriv något…","Write something…"))}"></textarea><div class="mblinks"></div>`;d.firstChild.value=b.x;}
-  else if(b.t==="c"){d.innerHTML=`<button type="button" class="mbck${b.d?" on":""}" aria-label="${esc(tx("Klar","Done"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 12.5 3.6 3.6 7.4-8"/></svg></button><input type="text" maxlength="500">`;d.lastChild.value=b.x;if(b.d)d.classList.add("done")}
+  else if(b.t==="c"){d.innerHTML=`<span class="mbmk"></span><button type="button" class="mbck${b.d?" on":""}" aria-label="${esc(tx("Klar","Done"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 12.5 3.6 3.6 7.4-8"/></svg></button><input type="text" maxlength="500">`;d.lastChild.value=b.x;if(b.d&&!b.m)d.classList.add("done")}
   else if(b.t==="l"){if(b.u){d.dataset.u=b.u;d.innerHTML=`<a href="${esc(b.u)}" target="_blank" rel="noopener noreferrer" class="mbl"><span class="mblf">${esc((host(b.u)[0]||"?").toUpperCase())}</span><span class="mblt"><b>${esc(host(b.u))}</b><small>${esc(b.u)}</small></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 16 16 8M9 8h7v7"/></svg></a><button type="button" class="mbx" aria-label="${esc(tx("Ta bort","Remove"))}">×</button>`}
     else{d.innerHTML=`<input type="url" class="mblin" inputmode="url" placeholder="${esc(tx("Klistra in eller skriv en länk","Paste or type a link"))}">`}}
   else if(b.t==="i"){d.dataset.i=b.i;d.innerHTML=MIMG[b.i]?`<img src="${MIMG[b.i]}" alt=""><button type="button" class="mbx" aria-label="${esc(tx("Ta bort","Remove"))}">×</button>`:`<span class="mbwait">${tx("Bilden laddas…","Loading picture…")}</span>`}
@@ -34,8 +39,8 @@ function mmGrow(t){t.style.height="auto";t.style.height=t.scrollHeight+"px"}
 function mmLinks(d){const t=d.querySelector("textarea"),box=d.querySelector(".mblinks");if(!t||!box)return;const U=[...new Set(t.value.match(URLRE)||[])].slice(0,6);
   box.innerHTML=U.map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">↗ ${esc(host(u))}</a>`).join("")}
 function mmRead(){const bl=[];$("mm_body").querySelectorAll(".mb").forEach(d=>{const t=d.dataset.t;
-  const k=d.dataset.k&&MCOL[d.dataset.k]?{k:d.dataset.k}:{};
-  if(t==="p")bl.push({t:"p",x:d.querySelector("textarea").value,...(d.dataset.s?{s:d.dataset.s}:{}),...k});else if(t==="c")bl.push({t:"c",x:d.querySelector("input").value,d:d.classList.contains("done"),...k});else if(t==="lh")bl.push({t:"lh",x:d.querySelector("input").value,...k});
+  const k={...(d.dataset.k&&MCOL[d.dataset.k]?{k:d.dataset.k}:{}),...(d.dataset.f&&MFONT[d.dataset.f]?{f:d.dataset.f}:{})};
+  if(t==="p")bl.push({t:"p",x:d.querySelector("textarea").value,...(d.dataset.s?{s:d.dataset.s}:{}),...k});else if(t==="c")bl.push({t:"c",x:d.querySelector("input").value,d:!d.dataset.m&&d.classList.contains("done"),...k,...(d.dataset.m?{m:d.dataset.m}:{})});else if(t==="lh")bl.push({t:"lh",x:d.querySelector("input").value,...k});
   else if(t==="l"&&d.dataset.u)bl.push({t:"l",u:d.dataset.u});else if(t==="i"&&d.dataset.i)bl.push({t:"i",i:d.dataset.i})});
   /* Text blocks next to each other are kept as one. */
   const out=[];bl.forEach(b=>{const p=out[out.length-1];if(b.t==="p"&&!b.s&&p&&p.t==="p"&&!p.s&&!b.x.trim())return;out.push(b)});return out}
@@ -46,7 +51,7 @@ function mmMeta(){const m=MM.m;$("mm_meta").textContent=m.at?(m.by?tx("Skapad av
 function openMM(id){let m=id&&MEMOS.find(x=>x.id===id);
   if(!m){const now=Date.now();m={id:newId(),ti:"",bl:[{t:"p",x:""}],at:now,up:now,by:ME||"",ub:ME||""};MM.fresh=true}else MM.fresh=false;
   MM.open=true;MM.id=m.id;MM.m=JSON.parse(JSON.stringify(m));MM.dirty=false;
-  $("mm_bt").textContent=tx("Anteckningar","Notes");$("mm_ti").placeholder=tx("Rubrik","Title");$("mm_chkt").textContent=tx("Att göra","To-do");$("mm_imgt").textContent=tx("Bild","Picture");$("mm_lnkt").textContent=tx("Länk","Link");$("mm_st").textContent="";
+  $("mm_bt").textContent=tx("Anteckningar","Notes");$("mm_ti").placeholder=tx("Rubrik","Title");$("mm_chkt").textContent=tx("Lista","List");$("mv_s").textContent=tx("Spara bild","Save picture");$("mm_imgt").textContent=tx("Bild","Picture");$("mm_lnkt").textContent=tx("Länk","Link");$("mm_st").textContent="";
   mmPaint();$("mm").classList.add("on");document.body.classList.add("mmopen");$("mm_w").scrollTop=0;
   if(MM.fresh)setTimeout(()=>$("mm_ti").focus(),280)}
 function mmChanged(){mmProg();MM.dirty=true;$("mm_st").textContent=tx("Sparar…","Saving…");clearTimeout(MM.t);MM.t=setTimeout(mmSave,700)}
@@ -84,10 +89,42 @@ function closeMV(){$("mv").classList.remove("on")}
 document.addEventListener("click",e=>{if(!e.target.closest)return;
   if(e.target.closest("#mm_new")){openMM("");return}const it=e.target.closest("[data-memo]");if(it){openMM(it.dataset.memo);return}});
 $("mm_back").onclick=()=>history.state&&history.state.kk?history.back():closeMM();
-$("mm_del").onclick=async()=>{if(!MM.m)return;const m=MM.m;if(memoEmpty({ti:$("mm_ti").value,bl:mmRead()})){MM.dirty=false;closeMM();return}
-  if(!await ask(tx("Radera anteckningen?","Delete the note?"),tx("Den försvinner för er båda.","It disappears for both of you."),tx("Radera","Delete")))return;
-  clearTimeout(MM.t);MM.dirty=false;const ids=["memo_"+m.id,...m.bl.filter(b=>b.t==="i").map(b=>"mimg_"+b.i)];MEMOS=MEMOS.filter(x=>x.id!==m.id);MM.m=null;MM.open=false;$("mm").classList.remove("on");document.body.classList.remove("mmopen");
-  toast(tx("Anteckningen raderades","The note was deleted"));undoable($("toasts").lastElementChild,ids);renderMemos()};
+/* Deleting moves the note to Recently deleted, where it stays for 30 days. */
+function mmTrash(){if(!MM.m)return;clearTimeout(MM.t);const ti=$("mm_ti").value,bl=mmRead();if(memoEmpty({ti,bl})){MM.dirty=false;closeMM();return}
+  const m={...MM.m,ti,bl,del:Date.now(),up:Date.now(),ub:ME||MM.m.ub};MM.dirty=false;MM.m=null;MM.open=false;$("mm").classList.remove("on");document.body.classList.remove("mmopen");mmFmt(false);mmSym(false);
+  const i=MEMOS.findIndex(x=>x.id===m.id);if(i>=0)MEMOS[i]=m;else MEMOS.push(m);put("memo_"+m.id,memoDoc(m));renderMemos();
+  toast(tx("Flyttad till Nyligen raderade","Moved to Recently deleted"));const tb=$("toasts").lastElementChild;if(tb){const b=document.createElement("button");b.className="tundo";b.textContent=tx("Ångra","Undo");b.onclick=()=>{mmRestore(m.id);tb.remove()};tb.appendChild(b)}}
+function mmRestore(id){const m=MEMOS.find(x=>x.id===id);if(!m)return;m.del=0;m.up=Date.now();put("memo_"+m.id,memoDoc(m));renderMemos();toast(tx("Anteckningen är tillbaka","The note is back"))}
+document.addEventListener("click",async e=>{if(!e.target.closest)return;let b;
+  if(e.target.closest("[data-mmtrash]")){MMDEL=!MMDEL;renderMemos();return}
+  if(b=e.target.closest("[data-mmback]")){mmRestore(b.dataset.mmback);return}
+  if(b=e.target.closest("[data-mmgone]")){const m=MEMOS.find(x=>x.id===b.dataset.mmgone);if(!m)return;
+    if(!await ask(tx("Radera för alltid?","Delete for good?"),tx("Anteckningen och bilderna i den försvinner för er båda och går inte att få tillbaka.","The note and its pictures disappear for both of you and cannot be brought back."),tx("Radera för alltid","Delete for good")))return;
+    del("memo_"+m.id);m.bl.filter(x=>x.t==="i").forEach(x=>{del("mimg_"+x.i);delete MIMG[x.i]});MEMOS=MEMOS.filter(x=>x!==m);renderMemos()}});
+/* The ⋯ menu: save to the phone, copy the text, or move to Recently deleted. */
+$("mm_more").onclick=async()=>{if(!MM.m)return;mmSave();
+  const v=await askOpts(MM.m.ti.trim()||tx("Anteckning","Note"),"",[["save",tx("Spara på telefonen","Save to the phone"),tx("Som en fil med text och bilder","As a file with text and pictures")],["copy",tx("Kopiera texten","Copy the text"),""],["del",tx("Radera","Delete"),tx("Hamnar i Nyligen raderade i 30 dagar","Goes to Recently deleted for 30 days"),true]]);
+  if(v==="save")mmExport();else if(v==="copy")mmCopy();else if(v==="del")mmTrash()};
+function mmPlain(){const m={ti:$("mm_ti").value,bl:mmRead()};let n=0,prev="";return [m.ti.trim(),...m.bl.map(b=>{if(b.t!=="c")n=0;const r=b.t==="p"?b.x:b.t==="lh"?"\n"+b.x+":":b.t==="c"?(b.m==="b"?"• ":b.m==="n"?(++n)+". ":(b.d?"☑ ":"☐ "))+b.x:b.t==="l"?b.u:"";return r})].filter((x,i)=>i===0?x:x!=="" ).join("\n").trim()}
+async function mmCopy(){const t=mmPlain();try{await navigator.clipboard.writeText(t);toast(tx("Texten är kopierad","The text is copied"))}catch(e){const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy");toast(tx("Texten är kopierad","The text is copied"))}catch(e2){toast(tx("Kunde inte kopiera","Could not copy"))}a.remove()}}
+const FF={sf:"Fraunces,Georgia,serif",h:"Caveat,cursive",r:"Nunito,system-ui,sans-serif",m:"'DM Mono',ui-monospace,monospace"};
+/* The saved file is a small web page: it opens in any browser and keeps headings, colours, lists and pictures. */
+function mmExport(){const ti=$("mm_ti").value.trim()||tx("Anteckning","Note"),bl=mmRead();let n=0,inList=false,h="";
+  const st=b=>`${b.k?`color:${MCOL[b.k]};`:""}${b.f?`font-family:${FF[b.f]};`:""}`;
+  bl.forEach(b=>{if(b.t!=="c"){n=0;if(inList){h+="</ul>";inList=false}}
+    if(b.t==="p"){if(!b.x.trim())return;const tag=b.s==="h1"?"h2":b.s==="h2"?"h3":"p";h+=`<${tag} style="${st(b)}">${esc(b.x).replace(URLRE,u=>`<a href="${u}">${u}</a>`).replace(/\n/g,"<br>")}</${tag}>`}
+    else if(b.t==="lh")h+=`<h4 style="${st(b)}">${esc(b.x)}</h4>`;
+    else if(b.t==="c"){if(!inList){h+="<ul>";inList=true}const mk=b.m==="b"?"•":b.m==="n"?(++n)+".":b.d?"☑":"☐";h+=`<li style="${st(b)}${b.d&&!b.m?"text-decoration:line-through;opacity:.6;":""}"><span>${mk}</span>${esc(b.x)}</li>`}
+    else if(b.t==="l")h+=`<p><a href="${esc(b.u)}">${esc(b.u)}</a></p>`;
+    else if(b.t==="i"&&MIMG[b.i])h+=`<img src="${MIMG[b.i]}" alt="">`});
+  if(inList)h+="</ul>";
+  const doc=`<!DOCTYPE html><html lang="${S.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(ti)}</title><style>body{max-width:680px;margin:0 auto;padding:28px 20px;font:17px/1.55 system-ui,sans-serif;color:#2a2530;background:#fffcfd}h1{font:500 30px/1.2 Georgia,serif}ul{list-style:none;padding:0}li{padding:4px 0;display:flex;gap:10px}li span{min-width:1.2em;color:#8a72ee}img{max-width:100%;border-radius:14px;margin:10px 0}a{color:#8a72ee}small{color:#867d8c}</style></head><body><h1>${esc(ti)}</h1><small>Kalenderkoll · ${esc(new Date().toLocaleDateString(S.lang==="en"?"en-GB":"sv-SE"))}</small>${h}</body></html>`;
+  const name=(ti.replace(/[\\/:*?"<>|]+/g," ").trim().slice(0,60)||"Anteckning")+".html";saveFile(name,doc,"text/html")}
+/* Saving a picture from the full-screen view. */
+async function saveB64(name,dataUrl){const F=FSP(),b64=dataUrl.split(",")[1]||"";
+  if(F){try{await F.writeFile({path:"Kalenderkoll/"+name,data:b64,directory:"DOCUMENTS",recursive:true});toast(tx("Sparad i Dokument › Kalenderkoll","Saved in Documents › Kalenderkoll")+" · "+name)}catch(e){toast(tx("Kunde inte spara bilden","Could not save the picture"))}return}
+  const a=document.createElement("a");a.href=dataUrl;a.download=name;document.body.appendChild(a);a.click();a.remove()}
+$("mv_s").onclick=()=>saveB64("Bild-"+isoOf(new Date())+"-"+Date.now().toString(36).slice(-4)+".jpg",$("mv_i").src);
 $("mm_ti").addEventListener("input",mmChanged);
 $("mm_ti").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();const f=$("mm_body").querySelector(".mb textarea,.mb input");if(f)f.focus()}});
 $("mm_tail").onclick=()=>{const L=$("mm_body").lastElementChild;const f=L&&L.querySelector("textarea");if(f){f.focus();const n=f.value.length;f.setSelectionRange(n,n)}else mmInsert({t:"p",x:""},L,true)};
@@ -95,14 +132,17 @@ $("mm_body").addEventListener("input",e=>{const d=e.target.closest(".mb");if(!d)
   if(e.target.classList.contains("mblin"))return;mmChanged()});
 $("mm_body").addEventListener("click",e=>{const d=e.target.closest(".mb");if(!d)return;
   if(e.target.closest(".mbck")){d.classList.toggle("done");e.target.closest(".mbck").classList.toggle("on");mmChanged();return}
-  if(e.target.closest(".mbx")){const n=d.previousElementSibling;d.remove();if(!$("mm_body").children.length)$("mm_body").appendChild(mmBlock({t:"p",x:""}));mmChanged();return}
+  if(e.target.closest(".mbx")){const x=e.target.closest(".mbx");
+    /* Removing a picture or link takes two taps, so it does not happen by mistake. */
+    if(!x.classList.contains("arm")){x.classList.add("arm");x.textContent=tx("Ta bort?","Remove?");clearTimeout(x._t);x._t=setTimeout(()=>{x.classList.remove("arm");x.textContent="×"},3000);return}
+    d.remove();if(!$("mm_body").children.length)$("mm_body").appendChild(mmBlock({t:"p",x:""}));mmChanged();return}
   if(e.target.tagName==="IMG"){$("mv_i").src=e.target.src;$("mv").classList.add("on")}});
 $("mm_body").addEventListener("keydown",e=>{const d=e.target.closest(".mb");if(!d)return;
   if(d.dataset.t==="c"&&e.target.tagName==="INPUT"){
     if(e.key==="Enter"){e.preventDefault();const v=e.target.value,pos=e.target.selectionStart;
       /* Enter on an empty item ends the list, like in Notes. */
       if(!v.trim()){const p=mmBlock({t:"p",x:""});d.replaceWith(p);mmGrow(p.querySelector("textarea"));p.querySelector("textarea").focus();mmChanged();return}
-      e.target.value=v.slice(0,pos);mmInsert({t:"c",x:v.slice(pos),d:false},d,true).querySelector("input").setSelectionRange(0,0)}
+      e.target.value=v.slice(0,pos);mmInsert({t:"c",x:v.slice(pos),d:false,...(d.dataset.m?{m:d.dataset.m}:{}),...(d.dataset.f?{f:d.dataset.f}:{})},d,true).querySelector("input").setSelectionRange(0,0)}
     else if(e.key==="Backspace"&&e.target.selectionStart===0&&e.target.selectionEnd===0){e.preventDefault();const prev=d.previousElementSibling,v=e.target.value;
       if(prev&&prev.dataset.t==="c"){const pi=prev.querySelector("input"),n=pi.value.length;pi.value+=v;d.remove();pi.focus();pi.setSelectionRange(n,n)}
       else{const p=mmBlock({t:"p",x:v});d.replaceWith(p);const ta=p.querySelector("textarea");mmGrow(ta);ta.focus();ta.setSelectionRange(0,0)}mmChanged()}}
@@ -163,3 +203,29 @@ $("mm_body").addEventListener("keydown",e=>{const d=e.target.closest(".mb");if(!
   else if(d.dataset.t==="p"&&d.dataset.s&&e.key==="Enter"){e.preventDefault();const ta=e.target,pos=ta.selectionStart,rest=ta.value.slice(pos);ta.value=ta.value.slice(0,pos);mmGrow(ta);
     const n=mmBlock({t:"p",x:rest});d.after(n);mmGrow(n.querySelector("textarea"));const t2=n.querySelector("textarea");t2.focus();t2.setSelectionRange(0,0);mmChanged()}},true);
 const mmCloseOld=closeMM;closeMM=function(){mmFmt(false);mmLast=null;mmCloseOld()};
+
+/* ---------- Fonts, list kinds and symbols ---------- */
+const MKIND=[["c","☐",tx("Bockar","Checkboxes")],["b","•",tx("Punkter","Bullets")],["n","1.",tx("Nummer","Numbers")]];
+function mmGroup(d){/* The list a line belongs to: its name and all items next to each other. */
+  let a=d;if(a.dataset.t==="lh")a=a.nextElementSibling;if(!a||a.dataset.t!=="c")return[];while(a.previousElementSibling&&a.previousElementSibling.dataset.t==="c")a=a.previousElementSibling;const L=[];for(let x=a;x&&x.dataset.t==="c";x=x.nextElementSibling)L.push(x);return L}
+const _paint=mmFmtPaint;mmFmtPaint=function(){_paint();const d=mmTarget(),f=d&&d.dataset.f||"",isL=d&&(d.dataset.t==="c"||d.dataset.t==="lh"),G=isL?mmGroup(d):[],mk=G[0]&&G[0].dataset.m||"c";
+  let h=isL&&G.length?`<div class="mmfs mmfl">${MKIND.map(([v,i,l])=>`<button type="button" data-fm="${v}" class="${mk===v?"on":""}"><b>${i}</b> ${l}</button>`).join("")}</div>`:"";
+  h+=`<div class="mmfs mmff"><button type="button" data-ff="" class="${!f?"on":""}">Standard</button>${Object.entries(MFONT).map(([v,l])=>`<button type="button" data-ff="${v}" class="ff-${v}${f===v?" on":""}">${l}</button>`).join("")}</div>`;
+  $("mm_fmt").querySelector(".mmfs").insertAdjacentHTML("afterend",h)};
+$("mm_fmt").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const d=mmTarget();if(!d)return;
+  if(b.dataset.fm!==undefined){const v=b.dataset.fm;mmGroup(d).forEach(x=>{if(v==="c")delete x.dataset.m;else{x.dataset.m=v;x.classList.remove("done");const ck=x.querySelector(".mbck");if(ck)ck.classList.remove("on")}});mmChanged();mmFocusEnd(d);mmFmtPaint()}
+  else if(b.dataset.ff!==undefined){const v=b.dataset.ff;if(v)d.dataset.f=v;else delete d.dataset.f;const t=d.querySelector("textarea");if(t)mmGrow(t);mmChanged();mmFocusEnd(d);mmFmtPaint()}});
+/* Numbers count up within each list. */
+const _prog=mmProg;mmProg=function(){_prog();$("mm_body").querySelectorAll(".mb-c").forEach(c=>{const p=c.previousElementSibling,n=p&&p.dataset.t==="c"&&p.dataset.m===c.dataset.m?(+p.dataset.no||0)+1:1;c.dataset.no=n;const mk=c.querySelector(".mbmk");if(mk)mk.textContent=c.dataset.m==="n"?n+".":c.dataset.m==="b"?"•":""})};
+/* Symbols: tap one and it goes in where you were writing. */
+const SYMS=[["Hjärtan","Hearts","❤️ 🧡 💛 💚 💙 💜 🩷 🤍 💕 💞 💖 💘 💗 ❣️"],["Ansikten","Faces","😊 😍 🥰 😘 😂 🥹 😎 🤩 😴 🥳 😅 🤔 😢 😮"],["Saker","Things","🎂 🎁 🎉 🎈 ✈️ 🚗 🏠 🛒 🍕 🍷 ☕ 🍰 💐 🌹 🎬 🎵 📚 💼 🏋️ ⚽ 🐶 🐱 💍 🔑"],["Väder","Weather","☀️ 🌤️ ⛅ 🌧️ ❄️ ⛄ 🌈 🌙 ⭐ ✨ 🔥 🌊 🌸 🍂 🎄 🎃"],["Symboler","Symbols","✓ ✔︎ ✗ ★ ☆ → ← ↑ ↓ • ◦ — – … ± × ÷ ≈ ≠ ∞ § © ® ™ € £ % # @ & ♪ ☎ ✉ ⏰ 📌 📍 ⚠️ ❗ ❓"]];
+let mmSel=null;["keyup","click","input","select","focusin"].forEach(ev=>$("mm").addEventListener(ev,e=>{const t=e.target;if(t&&(t.tagName==="TEXTAREA"||(t.tagName==="INPUT"&&t.type!=="file"))&&$("mm").contains(t))mmSel={el:t,s:t.selectionStart,e:t.selectionEnd}},true));
+function mmSym(open){const f=$("mm_sym");if(open===undefined)open=f.hidden;f.hidden=!open;$("mm_sy").classList.toggle("on",open);if(open){mmFmt(false);f.innerHTML=SYMS.map(([sv,en,L])=>`<p>${S.lang==="en"?en:sv}</p><div class="mmsg">${L.split(" ").map(x=>`<button type="button" data-sym="${x}">${x}</button>`).join("")}</div>`).join("")}}
+$("mm_sy").onmousedown=e=>e.preventDefault();$("mm_sym").addEventListener("mousedown",e=>e.preventDefault());
+$("mm_sy").onclick=()=>mmSym();
+const _fmt=mmFmt;mmFmt=function(open){if(open===undefined)open=$("mm_fmt").hidden;if(open)mmSym(false);_fmt(open)};
+$("mm_sym").addEventListener("click",e=>{const b=e.target.closest("[data-sym]");if(!b)return;let t=mmSel&&mmSel.el&&mmSel.el.isConnected?mmSel.el:null;
+  if(!t){const d=mmInsert({t:"p",x:""},null,true);t=d.querySelector("textarea");mmSel={el:t,s:0,e:0}}
+  const v=t.value,s0=Math.min(mmSel.s??v.length,v.length),e0=Math.min(mmSel.e??v.length,v.length),sym=b.dataset.sym;t.value=v.slice(0,s0)+sym+v.slice(e0);const p=s0+sym.length;t.focus();try{t.setSelectionRange(p,p)}catch(err){}mmSel={el:t,s:p,e:p};
+  if(t.tagName==="TEXTAREA")mmGrow(t);if(t.id==="mm_ti"||t.closest(".mb"))mmChanged()});
+const _closeMM2=closeMM;closeMM=function(){mmSym(false);_closeMM2()};
