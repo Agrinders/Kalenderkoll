@@ -310,7 +310,7 @@ function mmSetKind(L,v){L.forEach(x=>{if(v==="c")delete x.dataset.m;else{x.datas
 $("mm_lst").addEventListener("click",e=>{const b=e.target.closest("[data-lk]");if(!b)return;const v=b.dataset.lk,d=mmTarget();
   if(v==="named"){const at=d||$("mm_body").lastElementChild,h=mmBlock({t:"lh",x:""});
     if(at&&at.dataset.t==="p"&&!at.querySelector("textarea").value.trim())at.replaceWith(h);else if(at){let x=at;if(x.dataset.t==="c"||x.dataset.t==="lh"){const G=mmGroup(x);if(G.length)x=G[G.length-1]}x.after(h)}else $("mm_body").appendChild(h);
-    const c=mmBlock({t:"c",x:"",d:false});h.after(c);if(!c.nextElementSibling||c.nextElementSibling.dataset.t!=="p")c.after(mmBlock({t:"p",x:""}));h.querySelector("input").focus();mmChanged();mmLst(false);return}
+    const c=mmBlock({t:"c",x:"",d:false});h.after(c);if(!c.nextElementSibling)c.after(mmBlock({t:"p",x:""}));h.querySelector("input").focus();mmChanged();mmLst(false);return}
   const G=d&&(d.dataset.t==="c"||d.dataset.t==="lh")?mmGroup(d):[];
   if(G.length){mmSetKind(G,v);mmChanged();mmFocusEnd(d);mmLst(false);return}
   if(d)mmFocusEnd(d);mmMakeList();const n=mmCur();if(n&&n.dataset.t==="c"){mmSetKind(mmGroup(n),v);mmChanged()}mmLst(false)});
@@ -336,3 +336,79 @@ $("mm_body").addEventListener("click",e=>{const pr=e.target.closest(".mb-lh .mbp
 
 /* Items in a named list carry the list's colour, so their frame can be tinted to match the glass header. */
 const _prog4=mmProg;mmProg=function(){_prog4();$("mm_body").querySelectorAll(".mb-lh").forEach(h=>{const c=h.dataset.k&&MCOL[h.dataset.k]||"";for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling){if(c)x.style.setProperty("--lc",c);else x.style.removeProperty("--lc")}})};
+
+/* ---------- Dragging items and whole lists ----------
+   Each list line and each list name has a grip on the right. Hold it and drag: a line can move within a list or to
+   another list; a list name brings its whole list along. A moved line gets a new id, so the move is kept when two
+   phones' copies are merged. */
+const GRIP='<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="6.5" r="1.5"/><circle cx="15" cy="6.5" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="17.5" r="1.5"/><circle cx="15" cy="17.5" r="1.5"/></svg>';
+const _mbBlock3=mmBlock;mmBlock=function(b){const d=_mbBlock3(b);if(b.t==="c"||b.t==="lh"){const g=document.createElement("span");g.className="mbgrip";g.setAttribute("aria-label",tx("Dra för att flytta","Drag to move"));g.innerHTML=GRIP;d.appendChild(g)}return d};
+function itemsOf(h){const L=[];for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)L.push(x);return L}
+/* The neighbour to step over: for a whole list that is another whole list (or a plain run of points), for a single line just the next line. */
+function unitAt(el,whole,dir){if(!el)return null;if(!whole)return[el];
+  if(el.dataset.t==="lh")return[el,...itemsOf(el)];
+  if(el.dataset.t==="c"){let a=el;while(a.previousElementSibling&&a.previousElementSibling.dataset.t==="c")a=a.previousElementSibling;const h=a.previousElementSibling&&a.previousElementSibling.dataset.t==="lh"?a.previousElementSibling:null;const first=h||a;const L=[first];for(let x=first.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)L.push(x);return L}
+  return[el]}
+function flip(els,fn){const r=new Map(els.map(e=>[e,e.getBoundingClientRect().top]));fn();els.forEach(e=>{const dy=r.get(e)-e.getBoundingClientRect().top;if(!dy)return;e.style.transition="none";e.style.transform=`translateY(${dy}px)`;requestAnimationFrame(()=>{e.style.transition="transform .22s cubic-bezier(.3,.8,.3,1)";e.style.transform=""})})}
+let DR=null;
+$("mm_body").addEventListener("pointerdown",e=>{const g=e.target.closest(".mbgrip");if(!g||DR)return;e.preventDefault();const d=g.closest(".mb"),whole=d.dataset.t==="lh",unit=whole?[d,...itemsOf(d)]:[d];
+  if(document.activeElement&&$("mm").contains(document.activeElement))document.activeElement.blur();tocOpen(false);
+  const r0=unit[0].getBoundingClientRect(),r1=unit[unit.length-1].getBoundingClientRect();
+  DR={unit,whole,y0:e.clientY,top0:r0.top+$("mm_w").scrollTop,c0:(r0.top+r1.bottom)/2,h:r1.bottom-r0.top,moved:false,order:[...$("mm_body").children].map(x=>x.dataset.b).join(),sc0:$("mm_w").scrollTop};
+  try{g.setPointerCapture(e.pointerId)}catch(err){}unit.forEach(x=>{x.classList.add("drg");x.style.transition="none"});d.classList.add("lift");try{if(navigator.vibrate)navigator.vibrate(10)}catch(err){}});
+function drPlace(){const w=$("mm_w"),u=DR.unit,nowTop=u[0].getBoundingClientRect().top-parseFloat((u[0].style.transform||"").replace(/[^\d.-]/g,"")||0)+w.scrollTop;
+  const dy=DR.y-DR.y0+(w.scrollTop-DR.sc0)-(nowTop-DR.top0);u.forEach(x=>x.style.transform=`translateY(${dy}px)`)}
+$("mm_body").addEventListener("pointermove",e=>{if(!DR)return;e.preventDefault();DR.y=e.clientY;const w=$("mm_w"),u=DR.unit,center=DR.c0+(e.clientY-DR.y0);
+  const prev=unitAt(u[0].previousElementSibling,DR.whole),next=unitAt(u[u.length-1].nextElementSibling,DR.whole);
+  const mid=U=>{const a=U[0].getBoundingClientRect(),b=U[U.length-1].getBoundingClientRect();return(a.top+b.bottom)/2};
+  /* Lines step over neighbours as your finger passes their middle; the neighbours slide out of the way. */
+  if(prev&&center<mid(prev)-(DR.whole?0:4)){flip(prev,()=>prev[0].before(...u));DR.moved=true;DR.c0+=0}
+  else if(next&&center>mid(next)+(DR.whole?0:4)){flip(next,()=>next[next.length-1].after(...u));DR.moved=true}
+  drPlace();
+  /* Near the top or bottom edge the note scrolls along. */
+  const wr=w.getBoundingClientRect();if(e.clientY<wr.top+50)w.scrollTop-=10;else if(e.clientY>wr.bottom-50)w.scrollTop+=10});
+function drEnd(){if(!DR)return;const u=DR.unit,changed=[...$("mm_body").children].map(x=>x.dataset.b).join()!==DR.order;
+  u.forEach(x=>{x.style.transition="transform .2s cubic-bezier(.3,.8,.3,1)";x.style.transform="";x.classList.remove("lift")});setTimeout(()=>u.forEach(x=>{x.classList.remove("drg");x.style.transition=""}),220);
+  if(changed){u.forEach(x=>{x.dataset.b=bid();x._u=Date.now();x._sig=""});
+    /* A list name keeps its folded state under its new id. */
+    if(DR.whole&&u[0].classList.contains("fold")){const S2=foldSet();S2.add(MM.id+":"+u[0].dataset.b);foldSave(S2)}
+    const last=$("mm_body").lastElementChild;if(!last||last.dataset.t!=="p")$("mm_body").appendChild(mmBlock({t:"p",x:""}));mmChanged()}
+  DR=null}
+$("mm_body").addEventListener("pointerup",drEnd);$("mm_body").addEventListener("pointercancel",drEnd);
+/* While nothing changed on the other phone, this phone's own order is kept as it is. */
+const _merge0=mmMerge;mmMerge=function(a,b){if(MM&&MM.m&&b&&b.up&&b.up<=MM.loadedUp&&b.id===MM.id)return{...a,gone:[...new Set([...(a.gone||[]),...(b.gone||[])])].slice(-500)};return _merge0(a,b)};
+
+/* ---------- Sorting a list ---------- */
+function mmSort(d,how){const h=d.dataset.t==="lh"?d:null,L=h?itemsOf(h):mmGroup(d);if(L.length<2)return;
+  const val=x=>x.querySelector("input").value.trim().toLocaleLowerCase(S.lang==="en"?"en":"sv");
+  const S3=[...L].sort(how==="az"?(a,b)=>val(a).localeCompare(val(b),S.lang==="en"?"en":"sv"):(a,b)=>(a.classList.contains("done")-b.classList.contains("done")));
+  if(S3.every((x,i)=>x===L[i])){toast(tx("Listan är redan sorterad","The list is already sorted"));return}
+  const anchor=L[0].previousElementSibling;flip(L,()=>{if(anchor)anchor.after(...S3);else $("mm_body").prepend(...S3)});S3.forEach(x=>{x.dataset.b=bid();x._u=Date.now();x._sig=""});mmChanged()}
+const _lst2=mmLst;mmLst=function(open){_lst2(open);const f=$("mm_lst");if(f.hidden)return;const d=mmTarget(),G=d&&(d.dataset.t==="c"||d.dataset.t==="lh")?mmGroup(d):[];
+  if(G.length>1)f.insertAdjacentHTML("beforeend",`<p>${tx("Sortera listan","Sort the list")}</p><div class="mmfs"><button type="button" data-srt="az">A–Ö</button><button type="button" data-srt="done">${tx("Klara sist","Done last")}</button></div><p class="mmtip">${tx("Tips: håll i ⠿ till höger och dra för att flytta en punkt eller en hel lista.","Tip: hold ⠿ on the right and drag to move a point or a whole list.")}</p>`)};
+$("mm_lst").addEventListener("click",e=>{const b=e.target.closest("[data-srt]");if(!b)return;const d=mmTarget();if(d)mmSort(d,b.dataset.srt);mmLst(false)});
+
+/* ---------- Searching in a note ---------- */
+let FD={L:[],i:0};
+function fdOpen(on){const f=$("mm_fd");f.hidden=!on;$("mm_find").classList.toggle("on",on);if(on){$("fd_q").placeholder=tx("Sök i anteckningen","Search the note");$("fd_x").textContent=tx("Klar","Done");tocOpen(false);mmFmt(false);mmSym(false);mmLst(false);$("fd_q").focus();fdRun()}else{$("fd_q").value="";fdClear()}}
+function fdClear(){$("mm_body").querySelectorAll(".hit,.hitc").forEach(x=>x.classList.remove("hit","hitc"));$("mm_ti").classList.remove("hit","hitc");FD={L:[],i:0};$("fd_n").textContent=""}
+function fdRun(){fdClear();const q=$("fd_q").value.trim().toLocaleLowerCase();if(!q)return;
+  const L=[];if($("mm_ti").value.toLocaleLowerCase().includes(q))L.push($("mm_ti"));
+  $("mm_body").querySelectorAll(":scope>.mb").forEach(d=>{const t=[...d.querySelectorAll("textarea,input")].map(x=>x.value).join(" ")+" "+(d.dataset.u||"");if(t.toLocaleLowerCase().includes(q))L.push(d)});
+  L.forEach(x=>x.classList.add("hit"));FD={L,i:0};fdGo(0)}
+function fdGo(step){const L=FD.L;if(!L.length){$("fd_n").textContent=$("fd_q").value.trim()?tx("Inga träffar","No matches"):"";return}
+  FD.i=(FD.i+step+L.length)%L.length;L.forEach(x=>x.classList.remove("hitc"));const el=L[FD.i];el.classList.add("hitc");$("fd_n").textContent=(FD.i+1)+" / "+L.length;
+  /* A match inside a folded list opens the list. */
+  if(el.classList.contains("hid")){let h=el.previousElementSibling;while(h&&h.dataset.t==="c")h=h.previousElementSibling;if(h&&h.classList.contains("fold"))mmFold(h,false)}
+  setTimeout(()=>{const w=$("mm_w"),y=el.getBoundingClientRect().top-w.getBoundingClientRect().top+w.scrollTop-w.clientHeight/3;w.scrollTo({top:Math.max(0,y),behavior:"smooth"})},el.classList.contains("hid")?380:0)}
+$("mm_find").onclick=()=>fdOpen($("mm_fd").hidden);$("fd_x").onclick=()=>fdOpen(false);
+$("fd_q").addEventListener("input",fdRun);$("fd_q").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();fdGo(1)}});
+$("fd_dn").onmousedown=e=>e.preventDefault();$("fd_up").onmousedown=e=>e.preventDefault();$("fd_dn").onclick=()=>fdGo(1);$("fd_up").onclick=()=>fdGo(-1);
+const _close5=closeMM;closeMM=function(){if(!$("mm_fd").hidden)fdOpen(false);_close5()};
+
+/* ---------- Space between lists ----------
+   An empty line that only sits between two lists is kept slim until you tap into it. */
+const _prog5=mmProg;mmProg=function(){_prog5();$("mm_body").querySelectorAll(":scope>.mb-p").forEach(p=>{const t=p.querySelector("textarea"),a=p.previousElementSibling,b=p.nextElementSibling,isL=x=>x&&(x.dataset.t==="c"||x.dataset.t==="lh");
+  p.classList.toggle("slim",!t.value&&!p.dataset.s&&isL(a)&&isL(b)&&document.activeElement!==t)})};
+$("mm_body").addEventListener("focusin",e=>{const p=e.target.closest(".mb-p.slim");if(p)p.classList.remove("slim")});
+$("mm_body").addEventListener("focusout",e=>{if(e.target.closest(".mb-p"))setTimeout(mmProg,0)});

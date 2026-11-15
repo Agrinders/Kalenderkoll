@@ -107,6 +107,17 @@ await step('notes: a named list folds on this phone only',async()=>{const id=awa
   await A1.click('#mm_back');await w(A1,400);await A1.click(`[data-memo="${id}"]`);await w(A1,400);const still=await A1.evaluate(()=>document.querySelector('#mm_body .mb-lh').classList.contains('fold'));
   await A1.click('#mm_body .mb-lh .mbfold');await w(A1,200);const vis2=await A1.evaluate(()=>[...document.querySelectorAll('#mm_body .mb-c')].filter(c=>c.offsetHeight).length);await A1.click('#mm_back');await w(A1,400);
   need(vis===0&&still&&vis2===2,'fold '+[vis,still,vis2]);return[vis,still,vis2]});
+await step('notes: drag a point, drag a whole list, sort, search',async()=>{await A1.evaluate(()=>{const now=Date.now(),m={id:'dragx',ti:'Dra',bl:[{t:'lh',x:'Handla',b:'h1'},{t:'c',x:'Mjölk',d:true,b:'c1'},{t:'c',x:'Ägg',d:false,b:'c2'},{t:'c',x:'Bröd',d:false,b:'c3'},{t:'p',x:'',b:'gap'},{t:'lh',x:'Packa',b:'h2'},{t:'c',x:'Pass',d:false,b:'c4'},{t:'c',x:'Laddare',d:false,b:'c5'}],at:now,up:now,by:'a',ub:'a'};MEMOS.push(m);put('memo_dragx',memoDoc(m));go('t');openMM('dragx')});await w(A1,600);
+  const names=()=>A1.evaluate(()=>[...document.querySelectorAll('#mm_body>.mb')].map(d=>(d.querySelector('input,textarea')||{}).value||d.dataset.t).filter(x=>x!==''));
+  const slim=await A1.evaluate(()=>document.querySelector('#mm_body .mb-p').classList.contains('slim'));
+  const drag=async(from,to,dir)=>{const g=await A1.locator(from).boundingBox(),t2=await A1.locator(to).boundingBox();await A1.mouse.move(g.x+g.width/2,g.y+g.height/2);await A1.mouse.down();const ty=dir<0?t2.y+4:t2.y+t2.height-4;for(let i=1;i<=12;i++){await A1.mouse.move(g.x+g.width/2,g.y+g.height/2+(ty-(g.y+g.height/2))*i/12);await A1.waitForTimeout(16)}await A1.mouse.up();await A1.waitForTimeout(300)};
+  await drag('[data-b="c3"] .mbgrip','[data-b="c1"]',-1);const n1=await names();
+  await drag('[data-b="h2"] .mbgrip','[data-b="h1"]',-1);const n2=await names();
+  await A1.click('#mm_body .mb-lh input');await A1.click('#mm_chk');await A1.click('[data-srt="az"]');await w(A1,300);const n3=await names();
+  await A1.click('#mm_find');await A1.fill('#fd_q','ägg');await w(A1,200);const hits=await A1.evaluate(()=>[document.querySelectorAll('#mm_body .hit').length,fd_n.textContent]);await A1.click('#fd_x');
+  await A1.click('#mm_back');await w(A1,900);const sv=await A1.evaluate(()=>MEMOS.find(m=>m.id==='dragx').bl.map(b=>b.x).filter(Boolean));
+  need(slim,'gap not slim');need(n1.slice(0,4).join()==='Handla,Bröd,Mjölk,Ägg','drag point '+n1);need(n2[0]==='Packa'&&n2.indexOf('Handla')>n2.indexOf('Laddare'),'drag list '+n2);
+  need(hits[0]===1&&hits[1]==='1 / 1','search '+hits);need(sv.join()===n3.filter(x=>x!=='p').join(),'saved '+JSON.stringify([sv,n3]));return[n1,n2,n3,hits]});
 await step('a reinstalled phone gets everything back from a backup file',async()=>{const bk=await A1.evaluate(()=>backupText());const D1=await phone();await D1.goto(base);await waitFor(D1,()=>KK.mode!=='starting');await waitFor(D1,()=>cs.classList.contains('on'));
   need(await D1.evaluate(()=>!cs_rs.classList.contains('hide')),'no restore button on the welcome sheet');
   await D1.setInputFiles('#bk_in',{name:'Kalenderkoll-sakerhetskopia.json',mimeType:'application/json',buffer:Buffer.from(bk)});await w(D1);need(await D1.evaluate(()=>modal.classList.contains('on')),'did not ask');
