@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="48986ffe16b0">
+<meta name="kal-build" content="52755c797563">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -584,6 +584,11 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 .mb-c[data-m] .mbmk{color:var(--tk,var(--lc,var(--acc)))}.mb-c.inl .mbck.on{background:var(--tk,var(--lc,var(--acc)));border-color:var(--tk,var(--lc,var(--acc)))}
 .mb-c.inl.hid{border-bottom-width:0;border-top-width:0;box-shadow:none}
 .mb-c.inl+.mb-c.inl.hid{border-top-width:0}
+/* The list item you are writing on gets a soft rounded outline in the list's colour, drawn inside its frame. */
+.mb-c{position:relative}
+.mb-c::after{content:"";position:absolute;inset:3px 4px;border-radius:10px;border:1.5px solid transparent;background:transparent;pointer-events:none;transition:border-color .2s ease,background-color .2s ease}
+.mb-c:focus-within::after{border-color:color-mix(in srgb,var(--tk,var(--lc,var(--acc))) 50%,transparent);background:color-mix(in srgb,var(--tk,var(--lc,var(--acc))) 6%,transparent)}
+.mb-c:not(.inl)::after{inset:1px -6px}
 </style>
 <script src="app-shell.js"></script>
 </head>

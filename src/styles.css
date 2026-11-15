@@ -571,3 +571,8 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 .mb-c[data-m] .mbmk{color:var(--tk,var(--lc,var(--acc)))}.mb-c.inl .mbck.on{background:var(--tk,var(--lc,var(--acc)));border-color:var(--tk,var(--lc,var(--acc)))}
 .mb-c.inl.hid{border-bottom-width:0;border-top-width:0;box-shadow:none}
 .mb-c.inl+.mb-c.inl.hid{border-top-width:0}
+/* The list item you are writing on gets a soft rounded outline in the list's colour, drawn inside its frame. */
+.mb-c{position:relative}
+.mb-c::after{content:"";position:absolute;inset:3px 4px;border-radius:10px;border:1.5px solid transparent;background:transparent;pointer-events:none;transition:border-color .2s ease,background-color .2s ease}
+.mb-c:focus-within::after{border-color:color-mix(in srgb,var(--tk,var(--lc,var(--acc))) 50%,transparent);background:color-mix(in srgb,var(--tk,var(--lc,var(--acc))) 6%,transparent)}
+.mb-c:not(.inl)::after{inset:1px -6px}
