@@ -311,3 +311,19 @@ $("mm_lst").addEventListener("click",e=>{const b=e.target.closest("[data-lk]");i
   const G=d&&(d.dataset.t==="c"||d.dataset.t==="lh")?mmGroup(d):[];
   if(G.length){mmSetKind(G,v);mmChanged();mmFocusEnd(d);mmLst(false);return}
   if(d)mmFocusEnd(d);mmMakeList();const n=mmCur();if(n&&n.dataset.t==="c"){mmSetKind(mmGroup(n),v);mmChanged()}mmLst(false)});
+
+/* ---------- Jump to a heading or list ----------
+   A small flap on the left edge appears when a note has headings or named lists.
+   Tap it for a short list of them; tap one and the note scrolls there. */
+function tocItems(){return[...$("mm_body").querySelectorAll(":scope>.mb-h1,:scope>.mb-h2,:scope>.mb-lh")].map(d=>({d,lv:d.classList.contains("mb-h1")?1:d.classList.contains("mb-h2")?2:3,x:(d.querySelector("textarea,input")||{}).value||""})).filter(o=>o.x.trim())}
+function tocPaint(){const L=tocItems();$("toc_f").classList.toggle("hide",L.length<2);if(L.length<2)tocOpen(false);
+  if($("toc_p").classList.contains("on"))$("toc_p").innerHTML=`<p>${tx("Hoppa till","Jump to")}</p>`+L.map((o,i)=>`<button type="button" data-toc="${i}" class="lv${o.lv}"${o.d.dataset.k?` style="--tc:${MCOL[o.d.dataset.k]}"`:""}>${o.lv===3?'<span class="tl"></span>':""}${esc(o.x)}</button>`).join("")}
+function tocOpen(on){const p=$("toc_p");if(on===undefined)on=!p.classList.contains("on");p.classList.toggle("on",on);p.setAttribute("aria-hidden",String(!on));$("toc_f").classList.toggle("on",on);if(on)tocPaint()}
+$("toc_f").onclick=()=>tocOpen();
+$("toc_p").addEventListener("click",e=>{const b=e.target.closest("[data-toc]");if(!b)return;const o=tocItems()[+b.dataset.toc];tocOpen(false);if(!o)return;
+  const w=$("mm_w"),y=o.d.getBoundingClientRect().top-w.getBoundingClientRect().top+w.scrollTop-14;w.scrollTo({top:Math.max(0,y),behavior:"smooth"});
+  /* A soft glow shows where you landed; folded lists open. */
+  if(o.d.classList.contains("fold"))mmFold(o.d,false);o.d.classList.remove("flash");void o.d.offsetWidth;o.d.classList.add("flash")});
+$("mm_w").addEventListener("click",()=>tocOpen(false));
+const _prog3=mmProg;mmProg=function(){_prog3();tocPaint()};
+const _close4=closeMM;closeMM=function(){tocOpen(false);_close4()};

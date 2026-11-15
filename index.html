@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="f554366fbf50">
+<meta name="kal-build" content="9e0a19e312ec">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -547,6 +547,23 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 .mmln .lkh{flex:none;display:grid;place-items:center;width:36px;height:36px;border-radius:11px;background:var(--card);color:var(--acc)}.mmln .lkh svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .mmln b{display:block;font-size:15px}.mmln small{display:block;font-size:12.5px;color:var(--soft);margin-top:1px}
 .mmbar #mm_chk.on{background:var(--acc);color:#fff}.mmbar #mm_chk.on svg{stroke:#fff}
+
+/* The jump flap: a slim glass tab on the left edge, and the short list that slides out from it. */
+.tocflap{position:absolute;left:0;top:44%;z-index:6;display:flex;flex-direction:column;justify-content:center;gap:4px;width:22px;height:58px;padding-left:6px;border-radius:0 14px 14px 0;
+  background:linear-gradient(90deg,rgba(255,255,255,var(--gla,.6)),rgba(255,255,255,.15)),color-mix(in srgb,var(--acc) 14%,var(--card));box-shadow:inset -1px 0 0 rgba(255,255,255,.8),inset 0 0 0 1px color-mix(in srgb,var(--acc) 30%,transparent),2px 4px 12px -6px color-mix(in srgb,var(--acc) 70%,transparent);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:transform .3s cubic-bezier(.2,.9,.3,1),opacity .2s}
+.tocflap i{display:block;height:2.5px;border-radius:2px;background:var(--acc);opacity:.8}.tocflap i:nth-child(1){width:10px}.tocflap i:nth-child(2){width:7px;margin-left:3px}.tocflap i:nth-child(3){width:7px;margin-left:3px}
+.tocflap.on{transform:translateX(min(230px,64vw))}
+.tocp{position:absolute;left:0;top:50%;z-index:6;width:min(230px,64vw);max-height:60vh;overflow-y:auto;padding:12px 8px 10px;border-radius:0 18px 18px 0;transform:translate(-105%,-50%);transition:transform .3s cubic-bezier(.2,.9,.3,1);
+  background:color-mix(in srgb,var(--card) 82%,transparent);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);box-shadow:0 12px 34px -10px rgba(40,20,60,.35),inset 0 0 0 1px var(--rule)}
+.tocp.on{transform:translate(0,-50%)}
+.tocp p{margin:0 8px 6px;font-size:11.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--soft)}
+.tocp button{display:flex;align-items:center;gap:8px;width:100%;padding:8px 8px;border-radius:10px;text-align:left;font-size:14.5px;color:var(--tc,var(--ink));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tocp button:active{background:var(--fill)}
+.tocp .lv1{font:500 16.5px/1.25 var(--serif)}.tocp .lv2{font-weight:700;padding-left:14px}.tocp .lv3{font-weight:600;padding-left:14px}
+.tocp .tl{flex:none;width:12px;height:12px;border-radius:4px;background:color-mix(in srgb,var(--tc,var(--acc)) 35%,var(--card));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--tc,var(--acc)) 50%,transparent)}
+.mb.flash{animation:tocflash 1.4s ease}
+@keyframes tocflash{0%,30%{box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 40%,transparent);border-radius:14px}100%{box-shadow:0 0 0 3px transparent}}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -603,6 +620,7 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 <div id="mm" class="pg" role="dialog" aria-modal="true" aria-label="Anteckning">
 <div class="mmh"><button class="mmb" id="mm_back" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg><span id="mm_bt"></span></button><span class="mmst" id="mm_st"></span><button class="ib" id="mm_more" type="button" aria-label="Mer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5.5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="18.5" cy="12" r="1.6"/></svg></button></div>
 <div class="mmw" id="mm_w"><input id="mm_ti" class="mmti" type="text" maxlength="120" autocomplete="off"><p class="mmmeta" id="mm_meta"></p><div id="mm_body"></div><button class="mmtail" id="mm_tail" type="button" aria-hidden="true" tabindex="-1"></button></div>
+<button type="button" class="tocflap hide" id="toc_f" aria-label="Innehåll"><i></i><i></i><i></i></button><div class="tocp" id="toc_p" aria-hidden="true"></div>
 <div class="mmfmt" id="mm_fmt" hidden></div><div class="mmfmt mmsym" id="mm_sym" hidden></div><div class="mmfmt mmlst" id="mm_lst" hidden></div>
 <div class="mmbar"><button type="button" id="mm_aa" aria-label="Format"><b class="aa">Aa</b></button><button type="button" id="mm_sy" aria-label="Symboler"><b class="aa">☺</b></button><button type="button" id="mm_chk"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><path d="m5.6 7.6 1.4 1.4 2.6-2.8M14 7.5h6M4 16.5h.01M14 16.5h6"/><rect x="4" y="13" width="7" height="7" rx="2"/></svg><span id="mm_chkt"></span></button><button type="button" id="mm_img"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17 5-4.5 4 3.5 2.5-2 4.5 3.5"/></svg><span id="mm_imgt"></span></button><button type="button" id="mm_lnk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg><span id="mm_lnkt"></span></button></div>
 </div>
@@ -1749,6 +1767,22 @@ $("mm_lst").addEventListener("click",e=>{const b=e.target.closest("[data-lk]");i
   const G=d&&(d.dataset.t==="c"||d.dataset.t==="lh")?mmGroup(d):[];
   if(G.length){mmSetKind(G,v);mmChanged();mmFocusEnd(d);mmLst(false);return}
   if(d)mmFocusEnd(d);mmMakeList();const n=mmCur();if(n&&n.dataset.t==="c"){mmSetKind(mmGroup(n),v);mmChanged()}mmLst(false)});
+
+/* ---------- Jump to a heading or list ----------
+   A small flap on the left edge appears when a note has headings or named lists.
+   Tap it for a short list of them; tap one and the note scrolls there. */
+function tocItems(){return[...$("mm_body").querySelectorAll(":scope>.mb-h1,:scope>.mb-h2,:scope>.mb-lh")].map(d=>({d,lv:d.classList.contains("mb-h1")?1:d.classList.contains("mb-h2")?2:3,x:(d.querySelector("textarea,input")||{}).value||""})).filter(o=>o.x.trim())}
+function tocPaint(){const L=tocItems();$("toc_f").classList.toggle("hide",L.length<2);if(L.length<2)tocOpen(false);
+  if($("toc_p").classList.contains("on"))$("toc_p").innerHTML=`<p>${tx("Hoppa till","Jump to")}</p>`+L.map((o,i)=>`<button type="button" data-toc="${i}" class="lv${o.lv}"${o.d.dataset.k?` style="--tc:${MCOL[o.d.dataset.k]}"`:""}>${o.lv===3?'<span class="tl"></span>':""}${esc(o.x)}</button>`).join("")}
+function tocOpen(on){const p=$("toc_p");if(on===undefined)on=!p.classList.contains("on");p.classList.toggle("on",on);p.setAttribute("aria-hidden",String(!on));$("toc_f").classList.toggle("on",on);if(on)tocPaint()}
+$("toc_f").onclick=()=>tocOpen();
+$("toc_p").addEventListener("click",e=>{const b=e.target.closest("[data-toc]");if(!b)return;const o=tocItems()[+b.dataset.toc];tocOpen(false);if(!o)return;
+  const w=$("mm_w"),y=o.d.getBoundingClientRect().top-w.getBoundingClientRect().top+w.scrollTop-14;w.scrollTo({top:Math.max(0,y),behavior:"smooth"});
+  /* A soft glow shows where you landed; folded lists open. */
+  if(o.d.classList.contains("fold"))mmFold(o.d,false);o.d.classList.remove("flash");void o.d.offsetWidth;o.d.classList.add("flash")});
+$("mm_w").addEventListener("click",()=>tocOpen(false));
+const _prog3=mmProg;mmProg=function(){_prog3();tocPaint()};
+const _close4=closeMM;closeMM=function(){tocOpen(false);_close4()};
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
