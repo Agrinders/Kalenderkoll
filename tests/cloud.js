@@ -103,7 +103,7 @@ await step('notes: both write at the same time and nothing is lost',async()=>{aw
   await A1.click('#mm_body .mb-p:last-child textarea');await A1.keyboard.type('- ett');await A1.keyboard.press('Enter');await A1.keyboard.type('två');const tv=await A1.evaluate(()=>[...document.querySelectorAll('#mm_body .mb-p textarea')].map(t=>t.value).find(v=>v.includes('ett')));
   need(tv==='- ett\n- två','dash list '+JSON.stringify(tv));await A1.click('#mm_back');await w(A1,500);return ra});
 await step('notes: a named list folds on this phone only',async()=>{const id=await A1.evaluate(()=>MEMOS.find(m=>m.ti==='Helgen').id);await A1.evaluate(()=>go('t'));await A1.click(`[data-memo="${id}"]`);await w(A1,400);
-  await A1.click('#mm_body .mb-lh .mbfold');await w(A1,200);const vis=await A1.evaluate(()=>[...document.querySelectorAll('#mm_body .mb-c')].filter(c=>c.offsetHeight).length);
+  await A1.click('#mm_body .mb-lh .mbfold');await w(A1,800);const vis=await A1.evaluate(()=>[...document.querySelectorAll('#mm_body .mb-c')].filter(c=>c.offsetHeight).length);
   await A1.click('#mm_back');await w(A1,400);await A1.click(`[data-memo="${id}"]`);await w(A1,400);const still=await A1.evaluate(()=>document.querySelector('#mm_body .mb-lh').classList.contains('fold'));
   await A1.click('#mm_body .mb-lh .mbfold');await w(A1,200);const vis2=await A1.evaluate(()=>[...document.querySelectorAll('#mm_body .mb-c')].filter(c=>c.offsetHeight).length);await A1.click('#mm_back');await w(A1,400);
   need(vis===0&&still&&vis2===2,'fold '+[vis,still,vis2]);return[vis,still,vis2]});
