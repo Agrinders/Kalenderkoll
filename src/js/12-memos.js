@@ -452,3 +452,18 @@ const _prog7=mmProg;let progQ=0;mmProg=function(){if(progQ)return;progQ=requestA
 /* While you are dragging, changes from the other phone wait until you let go, so lines are not moved under your finger. */
 let drWait=false;const _mr=mmMaybeRefresh;mmMaybeRefresh=function(){if(DR){drWait=true;return}_mr()};
 ["pointerup","pointercancel"].forEach(ev=>$("mm_body").addEventListener(ev,()=>{if(drWait&&!DR){drWait=false;if(MM.open)mmMaybeRefresh()}}));
+/* ---------- Hold a list's name to remove the list ---------- */
+(()=>{let t=0,x0=0,y0=0;const stop=()=>{clearTimeout(t);t=0};
+  $("mm_body").addEventListener("pointerdown",e=>{const h=e.target.closest(".mb-lh");if(!h||e.target.closest(".mbgrip,.mbfold"))return;x0=e.clientX;y0=e.clientY;stop();t=setTimeout(()=>{t=0;lhMenu(h)},550)});
+  $("mm_body").addEventListener("pointermove",e=>{if(t&&Math.hypot(e.clientX-x0,e.clientY-y0)>10)stop()});
+  ["pointerup","pointercancel","scroll"].forEach(ev=>$("mm_body").addEventListener(ev,stop));$("mm_w").addEventListener("scroll",stop,{passive:true});
+  $("mm_body").addEventListener("contextmenu",e=>{if(e.target.closest(".mb-lh"))e.preventDefault()})})();
+async function lhMenu(h){if(DR||!h.isConnected)return;try{if(navigator.vibrate)navigator.vibrate(12)}catch(e){}
+  if(document.activeElement&&$("mm").contains(document.activeElement))document.activeElement.blur();h.classList.add("held");
+  const L=itemsOf(h),nm=h.querySelector("input").value.trim()||tx("Lista","List");
+  const v=await askOpts(nm,"",[["del",tx("Ta bort listan","Remove the list"),L.length?tx(`Rubriken och ${L.length} ${L.length===1?"punkt":"punkter"} tas bort`,`The name and ${L.length} point${L.length===1?"":"s"} are removed`):"",true]]);
+  h.classList.remove("held");if(v!=="del"||!h.isConnected)return;
+  const all=[h,...L],anchor=h.previousElementSibling;all.forEach(x=>x.remove());if(!$("mm_body").children.length)$("mm_body").appendChild(mmBlock({t:"p",x:""}));mmChanged();
+  toast(tx("Listan togs bort","The list was removed")+" · "+nm,6000);const tb=$("toasts").lastElementChild;
+  if(tb){const b=document.createElement("button");b.className="tundo";b.textContent=tx("Ångra","Undo");b.onclick=()=>{tb.remove();if(!MM.open)return;
+    all.forEach(x=>{x.dataset.b=bid();x._u=Date.now();x._sig=""});if(anchor&&anchor.isConnected)anchor.after(...all);else $("mm_body").prepend(...all);mmChanged()};tb.appendChild(b)}}

@@ -129,6 +129,11 @@ await step('notes: lists do not multiply, copies are removed, folding is remembe
   await A1.evaluate(()=>openMM('multi'));await w(A1,500);const fold=await A1.evaluate(()=>document.querySelector('#mm_body .mb-lh').classList.contains('fold'));await A1.click('#mm_back');await B1.click('#mm_back');await w(A1,900);
   const a=await A1.evaluate(()=>MEMOS.find(m=>m.id==='multi').bl.filter(b=>b.t!=='p').map(b=>b.x)),bb=await B1.evaluate(()=>MEMOS.find(m=>m.id==='multi').bl.filter(b=>b.t!=='p').map(b=>b.x));
   need(a.length===9&&bb.length===9&&a.filter(x=>x==='Kök'||x==='Bad'||x==='Sov').join()==='Kök,Sov,Bad','grew '+JSON.stringify([a,bb]));need(fold,'fold forgotten');return a});
+await step('notes: hold a list name to remove the list, with undo',async()=>{await A1.evaluate(()=>{go('t');openMM('multi')});await w(A1,500);const n0=await A1.evaluate(()=>document.querySelectorAll('#mm_body .mb-lh').length);
+  const hold=async()=>{const r=await A1.locator('#mm_body .mb-lh >> nth=1').boundingBox();await A1.mouse.move(r.x+80,r.y+r.height/2);await A1.mouse.down();await A1.waitForTimeout(750);await A1.mouse.up();await w(A1,300)};
+  await hold();await A1.click('[data-sco="del"]');await w(A1,300);const n1=await A1.evaluate(()=>document.querySelectorAll('#mm_body .mb-lh').length);await A1.click('#toasts .tundo');await w(A1,300);const n2=await A1.evaluate(()=>document.querySelectorAll('#mm_body .mb-lh').length);
+  await hold();await A1.click('[data-sco="del"]');await w(A1,1200);await A1.click('#mm_back');await w(A1,900);const sv=await A1.evaluate(()=>MEMOS.find(m=>m.id==='multi').bl.filter(b=>b.t==='lh').length);
+  need(n1===n0-1&&n2===n0&&sv===n0-1,'hold '+[n0,n1,n2,sv]);return[n0,n1,n2,sv]});
 await step('a reinstalled phone gets everything back from a backup file',async()=>{const bk=await A1.evaluate(()=>backupText());const D1=await phone();await D1.goto(base);await waitFor(D1,()=>KK.mode!=='starting');await waitFor(D1,()=>cs.classList.contains('on'));
   need(await D1.evaluate(()=>!cs_rs.classList.contains('hide')),'no restore button on the welcome sheet');
   await D1.setInputFiles('#bk_in',{name:'Kalenderkoll-sakerhetskopia.json',mimeType:'application/json',buffer:Buffer.from(bk)});await w(D1);need(await D1.evaluate(()=>modal.classList.contains('on')),'did not ask');

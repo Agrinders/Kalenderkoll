@@ -612,3 +612,5 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 #mm_body>.mb-p.gapline textarea::placeholder{color:color-mix(in srgb,var(--soft) 45%,transparent)}
 #mm_body>.mb-p.gapline+.mb-lh{margin-top:6px}
 #mm_body>.mb+.mb-lh{margin-top:6px}
+.mb-lh{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}.mb-lh input{-webkit-user-select:text;user-select:text}
+.mb-lh.held{transform:scale(.98);filter:brightness(.96)}
