@@ -733,3 +733,26 @@ nav{background:color-mix(in oklab,var(--card2) 92%,transparent)}
 body.mmopen #toasts{bottom:calc(78px + var(--sab))}
 body:has(.sh.on) #toasts{bottom:calc(20px + var(--sab))}
 .toast{animation-name:tinb}@keyframes tinb{from{transform:translateY(12px);opacity:0}}
+
+/* Descriptions and costs on list points */
+.mb-c{flex-wrap:wrap}.mb-c>.mbf{flex:1 1 0}
+.mbpr{display:none;flex:none;width:94px;margin-left:6px;padding:4px 8px;border:0;border-radius:8px;background:var(--fill);font:inherit;font-size:14.5px;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink);outline:none}
+.mbpr:focus{background:color-mix(in oklab,var(--lc,var(--acc)) 12%,var(--card))}
+.mb-c.showp .mbpr{display:block}.mb-c.done .mbpr{color:var(--soft);text-decoration:line-through}
+.mbds{display:none;flex:0 0 calc(100% - 34px);margin:-2px 0 6px 34px;padding:2px 0;border:0;background:none;resize:none;overflow:hidden;font:inherit;font-size:14px;line-height:1.4;color:var(--soft);outline:none}
+.mbds::placeholder{color:color-mix(in oklab,var(--soft) 50%,transparent)}
+.mb-c.showd .mbds{display:block}.mb-c:not(.showd) .mbds{display:none}
+.mb-c[data-m] .mbds{margin-left:34px}
+.mbtot{flex:0 0 100%;display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:8px 0 0;padding:8px 2px 0;border-top:1px dashed color-mix(in oklab,var(--lc,var(--acc)) 35%,var(--rule));font-size:13.5px;color:var(--soft)}
+.mbtot b{font-size:15px;color:var(--ink);font-variant-numeric:tabular-nums}
+.mbsum{flex:none;font-size:13px;font-weight:700;color:var(--tk,var(--ink));font-variant-numeric:tabular-nums;opacity:.85}.mbsum:empty{display:none}
+.mmsw{display:flex;align-items:center;gap:12px;width:100%;padding:10px 4px;text-align:left}.mmsw span{flex:1;min-width:0}.mmsw b{display:block;font-size:15px}.mmsw small{display:block;font-size:12.5px;color:var(--soft)}
+.mmsw i{flex:none;position:relative;width:44px;height:26px;border-radius:13px;background:color-mix(in oklab,var(--soft) 35%,transparent);transition:background .2s}
+.mmsw i::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px oklch(0 0 0/.2);transition:transform .22s cubic-bezier(.3,.9,.4,1)}
+.mmsw.on i{background:var(--acc)}.mmsw.on i::after{transform:translateX(18px)}
+.mbds{min-height:0}
+/* A description is small and grey; an empty one only shows on the point you are on, so the list stays compact. */
+.mb-c .mbds{font-size:14px;line-height:1.4;padding:0 0 2px;margin:-4px 0 6px 34px;color:var(--soft)}
+.mb[data-k] .mbds{color:var(--soft)}
+.mb-c.showd:not(:focus-within) .mbds:placeholder-shown{display:none}
+.mb-c .mbpr{font-size:14.5px}

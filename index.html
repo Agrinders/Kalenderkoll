@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="52c7aaf5ee4c">
+<meta name="kal-build" content="7f3f5acfb01f">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -746,6 +746,29 @@ nav{background:color-mix(in oklab,var(--card2) 92%,transparent)}
 body.mmopen #toasts{bottom:calc(78px + var(--sab))}
 body:has(.sh.on) #toasts{bottom:calc(20px + var(--sab))}
 .toast{animation-name:tinb}@keyframes tinb{from{transform:translateY(12px);opacity:0}}
+
+/* Descriptions and costs on list points */
+.mb-c{flex-wrap:wrap}.mb-c>.mbf{flex:1 1 0}
+.mbpr{display:none;flex:none;width:94px;margin-left:6px;padding:4px 8px;border:0;border-radius:8px;background:var(--fill);font:inherit;font-size:14.5px;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink);outline:none}
+.mbpr:focus{background:color-mix(in oklab,var(--lc,var(--acc)) 12%,var(--card))}
+.mb-c.showp .mbpr{display:block}.mb-c.done .mbpr{color:var(--soft);text-decoration:line-through}
+.mbds{display:none;flex:0 0 calc(100% - 34px);margin:-2px 0 6px 34px;padding:2px 0;border:0;background:none;resize:none;overflow:hidden;font:inherit;font-size:14px;line-height:1.4;color:var(--soft);outline:none}
+.mbds::placeholder{color:color-mix(in oklab,var(--soft) 50%,transparent)}
+.mb-c.showd .mbds{display:block}.mb-c:not(.showd) .mbds{display:none}
+.mb-c[data-m] .mbds{margin-left:34px}
+.mbtot{flex:0 0 100%;display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:8px 0 0;padding:8px 2px 0;border-top:1px dashed color-mix(in oklab,var(--lc,var(--acc)) 35%,var(--rule));font-size:13.5px;color:var(--soft)}
+.mbtot b{font-size:15px;color:var(--ink);font-variant-numeric:tabular-nums}
+.mbsum{flex:none;font-size:13px;font-weight:700;color:var(--tk,var(--ink));font-variant-numeric:tabular-nums;opacity:.85}.mbsum:empty{display:none}
+.mmsw{display:flex;align-items:center;gap:12px;width:100%;padding:10px 4px;text-align:left}.mmsw span{flex:1;min-width:0}.mmsw b{display:block;font-size:15px}.mmsw small{display:block;font-size:12.5px;color:var(--soft)}
+.mmsw i{flex:none;position:relative;width:44px;height:26px;border-radius:13px;background:color-mix(in oklab,var(--soft) 35%,transparent);transition:background .2s}
+.mmsw i::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px oklch(0 0 0/.2);transition:transform .22s cubic-bezier(.3,.9,.4,1)}
+.mmsw.on i{background:var(--acc)}.mmsw.on i::after{transform:translateX(18px)}
+.mbds{min-height:0}
+/* A description is small and grey; an empty one only shows on the point you are on, so the list stays compact. */
+.mb-c .mbds{font-size:14px;line-height:1.4;padding:0 0 2px;margin:-4px 0 6px 34px;color:var(--soft)}
+.mb[data-k] .mbds{color:var(--soft)}
+.mb-c.showd:not(:focus-within) .mbds:placeholder-shown{display:none}
+.mb-c .mbpr{font-size:14.5px}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1661,7 +1684,7 @@ document.addEventListener("click",e=>{if(!e.target.closest)return;const b=e.targ
 /* var, so the list can be drawn while the app is still starting. */
 var MFONT={sf:"Serif",h:"Skrivstil",r:"Rund",m:"Mono"},MB_T=["p","c","l","i","lh"],MCOL={r:"#e5484d",o:"#ee8a2a",y:"#c99a0e",g:"#2f9e63",b:"#3b82f6",v:"#8a72ee",p:"#e0559c",s:"#8b8494"},URLRE=/https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]]/gi;
 function memoClean(v,fid){const id=String(v.id||fid);if(!id)return null;
-  const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map((b,ix)=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000),...(b.s==="h1"||b.s==="h2"?{s:b.s}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d,...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{}),...(b.m==="b"||b.m==="n"?{m:b.m}:{})}:b.t==="lh"?{t:"lh",x:String(b.x||"").slice(0,200),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).map((x,ix)=>x&&{...x,b:typeof v.bl[ix].b==="string"&&v.bl[ix].b?v.bl[ix].b.slice(0,24):"o"+ix,tm:+v.bl[ix].tm||0}).filter(Boolean);
+  const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map((b,ix)=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000),...(b.s==="h1"||b.s==="h2"?{s:b.s}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d,...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{}),...(b.m==="b"||b.m==="n"?{m:b.m}:{}),...(typeof b.ds==="string"&&b.ds?{ds:b.ds.slice(0,1000)}:{}),...(Number.isFinite(+b.pr)&&b.pr!==""&&b.pr!==null?{pr:Math.round(+b.pr*100)/100}:{}),...(b.od?{od:1}:{}),...(b.op?{op:1}:{})}:b.t==="lh"?{t:"lh",x:String(b.x||"").slice(0,200),...(b.od?{od:1}:{}),...(b.op?{op:1}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).map((x,ix)=>x&&{...x,b:typeof v.bl[ix].b==="string"&&v.bl[ix].b?v.bl[ix].b.slice(0,24):"o"+ix,tm:+v.bl[ix].tm||0}).filter(Boolean);
   return{id,pin:+v.pin||0,ti:String(v.ti||"").slice(0,120),tu:+v.tu||0,gone:Array.isArray(v.gone)?v.gone.filter(x=>typeof x==="string").slice(-500):[],bl,del:+v.del||0,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
 /* A fingerprint of a note's content, to tell whether a copy is one this phone has already handled. */
 function memoKey(m){return m?m.ti+"\u0002"+(m.tu||0)+"\u0002"+(m.bl||[]).map(b=>b.b+":"+(b.tm||0)+":"+mbSig(b)).join("|")+"\u0002"+(m.gone||[]).length+"\u0002"+(m.del||0):""}
@@ -1699,7 +1722,7 @@ function mmLinks(d){const t=d.querySelector("textarea"),box=d.querySelector(".mb
   box.innerHTML=U.map(u=>`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">↗ ${esc(host(u))}</a>`).join("")}
 function mmRead(){const bl=[],E=[...$("mm_body").querySelectorAll(":scope>.mb")];E.forEach((d,ix)=>{const t=d.dataset.t;let b=null;
   const k={...(d.dataset.k&&MCOL[d.dataset.k]?{k:d.dataset.k}:{}),...(d.dataset.f&&MFONT[d.dataset.f]?{f:d.dataset.f}:{})};
-  if(t==="p")b={t:"p",x:d.querySelector("textarea").value,...(d.dataset.s?{s:d.dataset.s}:{}),...k};else if(t==="c")b={t:"c",x:d.querySelector("input").value,d:!d.dataset.m&&d.classList.contains("done"),...k,...(d.dataset.m?{m:d.dataset.m}:{})};else if(t==="lh")b={t:"lh",x:d.querySelector("input").value,...k};
+  if(t==="p")b={t:"p",x:d.querySelector("textarea").value,...(d.dataset.s?{s:d.dataset.s}:{}),...k};else if(t==="c")b={t:"c",x:d.querySelector("input").value,d:!d.dataset.m&&d.classList.contains("done"),...k,...(d.dataset.m?{m:d.dataset.m}:{}),...itemExtra(d)};else if(t==="lh")b={t:"lh",x:d.querySelector("input").value,...k,...(d.dataset.od?{od:1}:{}),...(d.dataset.op?{op:1}:{})};
   else if(t==="l"&&d.dataset.u)b={t:"l",u:d.dataset.u};else if(t==="i"&&d.dataset.i)b={t:"i",i:d.dataset.i};if(!b)return;
   /* Each line has its own id and the time it last changed, so two phones can be merged line by line. */
   const sg=mbSig(b);if(sg!==d._sig){d._sig=sg;d._u=Date.now()}
@@ -2307,7 +2330,9 @@ async function mmImage(){const ti=$("mm_ti").value.trim(),bl=mmRead(),W=1080,P=7
     else if(b.t==="c"){const yy=y,x0=P+56;n++;
       ops.push(()=>{g.lineWidth=3;if(b.m==="n"){g.font=`700 32px ${UI}`;g.fillStyle=b.k?col:"#8a72ee";g.fillText(n+".",P,yy+34)}else if(b.m==="b"){g.fillStyle=b.k?col:"#8a72ee";g.beginPath();g.arc(P+16,yy+24,7,0,7);g.fill()}
         else{g.strokeStyle=b.d?"#8a72ee":"#bdb4c0";g.fillStyle="#8a72ee";g.beginPath();g.arc(P+18,yy+24,17,0,7);if(b.d){g.fill();g.strokeStyle="#fff";g.beginPath();g.moveTo(P+10,yy+25);g.lineTo(P+16,yy+31);g.lineTo(P+27,yy+18);g.stroke()}else g.stroke()}});
-      wrap(b.x,`400 34px ${ff}`,34,52,b.d&&!b.m?"#9a92a0":col,x0,cw-56,b.d&&!b.m)}
+      const prW=b.pr!==undefined?170:0;wrap(b.x,`400 34px ${ff}`,34,52,b.d&&!b.m?"#9a92a0":col,x0,cw-56-prW,b.d&&!b.m);
+      if(prW){const t=fmtKr(b.pr);ops.push(()=>{g.font=`600 32px ${UI}`;g.fillStyle="#2a2530";g.textAlign="right";g.fillText(t,P+cw,yy+34);g.textAlign="left"})}
+      if(b.ds){wrap(b.ds,`400 28px ${UI}`,28,40,"#867d8c",x0,cw-56);y+=4}}
     else if(b.t==="l"){wrap("↗ "+b.u,`600 30px ${UI}`,30,46,"#8a72ee",P,cw);y+=6}
     else if(b.t==="i"&&MIMG[b.i]){const im=new Image();im.src=MIMG[b.i];try{await im.decode()}catch(e){continue}const h=Math.round(cw*im.height/im.width),yy=y+10;
       ops.push(()=>{g.save();g.beginPath();g.roundRect(P,yy,cw,h,28);g.clip();g.drawImage(im,P,yy,cw,h);g.restore()});y+=h+30}}
@@ -2355,6 +2380,7 @@ const _wsync=widgetSync;widgetSync=function(){_wsync();const F=FSP();if(!F||!S.h
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"2.9",d:"16 nov 2026",i:[["t","memos",["Beskrivning och kostnad i listor","Descriptions and costs in lists"],["Ställ in i Lista-menyn när du står i en lista: en rad för detaljer under varje punkt, och ett belopp på varje punkt med summan och hur mycket som är kvar.","Switch on in the Lista menu while in a list: a line for details under each point, and an amount on each point with the total and how much is left."]]]},
 {v:"2.8",d:"16 nov 2026",i:[["o","",["Enklare ikon","Simpler icon"],["En lugnare appikon: en vit kalender med ett hjärta på rosa botten. Den syns efter att du installerat den nya Android-appen.","A calmer app icon: a white calendar with a heart on a pink background. It shows after you install the new Android app."]],["n","",["Meddelanden längst ner","Messages at the bottom"],["Korta meddelanden som \"Sparat\" och \"Ångra\" visas nu längst ner, så de aldrig täcker knapparna högst upp.","Short messages like \"Saved\" and \"Undo\" now show at the bottom, so they never cover the buttons at the top."]]]},
 {v:"2.7",d:"16 nov 2026",i:[
   ["k","rem",["Påminnelser","Reminders"],["Välj när du vill bli påmind om en händelse: när den börjar, 10 eller 30 minuter innan, en timme innan eller dagen innan. Påminnelsen kommer även när appen är stängd.","Choose when to be reminded of an event: at the start, 10 or 30 minutes before, an hour before or the day before. It arrives even when the app is closed."]],
@@ -2384,6 +2410,53 @@ document.addEventListener("click",e=>{if(!e.target.closest)return;if(e.target.cl
   setTimeout(()=>{if(to==="rem"){openES(null,null,{});setTimeout(()=>{const m=$("es_m");if(m){m.scrollIntoView({block:"center",behavior:"smooth"});m.classList.add("flash")}},350)}
     else if(to==="search")openSearch();
     else if(to==="memos"){const el=$("t_memos");if(el){el.scrollIntoView({block:"start",behavior:"smooth"});el.classList.add("flash")}}},250)});
+/* ---------- Descriptions and costs on list points ----------
+   Each list can switch on a description under every point, and a cost on every point with the sum shown.
+   The switches belong to the list (its name, or the first point of a list without a name). */
+function parseKr(s){s=String(s||"").replace(/\s|kr|sek|:-/gi,"").replace(",",".");if(!s)return null;const n=+s;return Number.isFinite(n)?n:null}
+const fmtKr=n=>(Math.round(n*100)/100).toLocaleString(S.lang==="en"?"en-GB":"sv-SE",{maximumFractionDigits:2})+" kr";
+function itemExtra(d){const o={};const ds=d.querySelector(".mbds"),pr=d.querySelector(".mbpr");if(ds&&ds.value.trim())o.ds=ds.value;
+  const n=pr?parseKr(pr.value):null;if(n!==null)o.pr=Math.round(n*100)/100;if(d.dataset.od)o.od=1;if(d.dataset.op)o.op=1;return o}
+const _mbItems=mmBlock;mmBlock=function(b){const d=_mbItems(b);
+  if(b.t==="c"){const pr=document.createElement("input");pr.className="mbpr";pr.type="text";pr.inputMode="decimal";pr.placeholder="0 kr";pr.setAttribute("aria-label",tx("Kostnad","Cost"));pr.value=b.pr!==undefined?fmtKr(b.pr):"";
+    const g=d.querySelector(".mbgrip");if(g)g.before(pr);else d.appendChild(pr);
+    const ds=document.createElement("textarea");ds.className="mbds";ds.rows=1;ds.maxLength=1000;ds.placeholder=tx("Beskrivning","Description");ds.value=b.ds||"";d.appendChild(ds);
+    if(b.od)d.dataset.od="1";if(b.op)d.dataset.op="1"}
+  if(b.t==="lh"){if(b.od)d.dataset.od="1";if(b.op)d.dataset.op="1";const sum=document.createElement("span");sum.className="mbsum";const pg=d.querySelector(".mbprog");if(pg)pg.before(sum);else d.appendChild(sum)}
+  return d};
+/* Where a list keeps its switches. */
+function flagHolder(d){if(!d)return null;if(d.dataset.t==="lh")return d;const G=mmGroup(d);if(!G.length)return null;const h=G[0].previousElementSibling;return h&&h.dataset.t==="lh"?h:G[0]}
+const _prog10=mmProg;mmProg=function(){_prog10();itemsPaint()};
+function itemsPaint(){const body=$("mm_body");body.querySelectorAll(":scope>.mb-c .mbtot").forEach(x=>x.remove());
+  const seen=new Set();body.querySelectorAll(":scope>.mb-c").forEach(c=>{if(seen.has(c))return;const G=mmGroup(c);G.forEach(x=>seen.add(x));if(!G.length)return;
+    const h=G[0].previousElementSibling&&G[0].previousElementSibling.dataset.t==="lh"?G[0].previousElementSibling:null,F=h||G[0],od=!!F.dataset.od,op=!!F.dataset.op;
+    let sum=0,left=0,any=false;G.forEach(x=>{x.classList.toggle("showd",od);x.classList.toggle("showp",op);const n=parseKr(x.querySelector(".mbpr")&&x.querySelector(".mbpr").value);if(n!==null){any=true;sum+=n;if(!x.classList.contains("done"))left+=n}
+      const t=x.querySelector(".mbds");if(t&&od&&t.offsetParent){t.style.height="auto";t.style.height=t.scrollHeight+"px"}});
+    const check=!G[0].dataset.m,txt=op?(any?fmtKr(sum)+(check&&left!==sum?" · "+fmtKr(left)+" "+tx("kvar","left"):""):tx("Inga kostnader än","No costs yet")):"";
+    if(h){const s=h.querySelector(".mbsum");if(s){s.textContent=op&&any?fmtKr(sum):"";s.title=txt}}
+    if(op){const last=G[G.length-1],tot=document.createElement("div");tot.className="mbtot";tot.innerHTML=`<span>${tx("Totalt","Total")}</span><b>${esc(txt)}</b>`;last.appendChild(tot)}})}
+$("mm_body").addEventListener("input",e=>{if(e.target.classList&&(e.target.classList.contains("mbpr")||e.target.classList.contains("mbds"))){if(e.target.classList.contains("mbds")){e.target.style.height="auto";e.target.style.height=e.target.scrollHeight+"px"}mmChanged()}});
+/* Enter in a description goes on to the next point; in a cost it goes to the description or the next point. */
+$("mm_body").addEventListener("keydown",e=>{const t=e.target;if(!t.classList||e.key!=="Enter")return;
+  if(t.classList.contains("mbpr")){e.preventDefault();e.stopImmediatePropagation();const d=t.closest(".mb");if(d.classList.contains("showd"))d.querySelector(".mbds").focus();else{const n=d.nextElementSibling;if(n&&n.dataset.t==="c")n.querySelector("form input").focus()}}
+  else if(t.classList.contains("mbds")&&!e.shiftKey){e.preventDefault();e.stopImmediatePropagation();const d=t.closest(".mb");mmInsert({t:"c",x:"",d:false,...(d.dataset.m?{m:d.dataset.m}:{})},d,true)}},true);
+/* Leaving a cost tidies how it is written. */
+$("mm_body").addEventListener("focusout",e=>{const t=e.target;if(t.classList&&t.classList.contains("mbpr")){const n=parseKr(t.value);t.value=n===null?"":fmtKr(n);itemsPaint()}});
+/* While you type a cost it is plain digits; the "kr" comes back when you leave it. */
+$("mm_body").addEventListener("focusin",e=>{const t=e.target;if(t.classList&&t.classList.contains("mbpr")){const n=parseKr(t.value);t.value=n===null?"":String(n).replace(".",S.lang==="en"?".":",");try{t.select()}catch(err){}}});
+/* The switches, in the Lista menu when you are in a list. */
+const _lst3=mmLst;mmLst=function(open){_lst3(open);const f=$("mm_lst");if(f.hidden)return;const d=mmTarget(),F=d&&(d.dataset.t==="c"||d.dataset.t==="lh")?flagHolder(d):null;if(!F)return;
+  const sw=(k,l,sub)=>`<button type="button" class="mmsw${F.dataset[k]?" on":""}" data-flag="${k}"><span><b>${l}</b><small>${sub}</small></span><i></i></button>`;
+  f.insertAdjacentHTML("beforeend",`<p>${tx("I den här listan","In this list")}</p>${sw("od",tx("Beskrivning under punkterna","Description under the points"),tx("En rad för detaljer under varje punkt","A line for details under each point"))}${sw("op",tx("Kostnad och summa","Cost and total"),tx("Ett belopp på varje punkt och summan för listan","An amount on each point and the list's total"))}`)};
+$("mm_lst").addEventListener("click",e=>{const b=e.target.closest("[data-flag]");if(!b)return;const d=mmTarget(),F=flagHolder(d);if(!F)return;const k=b.dataset.flag;
+  if(F.dataset[k])delete F.dataset[k];else F.dataset[k]="1";b.classList.toggle("on",!!F.dataset[k]);F._sig="";mmChanged();itemsPaint();
+  if(F.dataset[k]){const G=F.dataset.t==="lh"?itemsOf(F):mmGroup(F),first=G[0];if(first)setTimeout(()=>{const t=first.querySelector(k==="op"?".mbpr":".mbds");if(t)t.focus()},60)}});
+/* Search, copy and the saved files include descriptions and costs. */
+const _plain3=mmPlain;mmPlain=function(){const bl=mmRead(),lines=[];let n=0;const ti=$("mm_ti").value.trim();if(ti)lines.push(ti);
+  bl.forEach(b=>{if(b.t!=="c")n=0;if(b.t==="p")lines.push(richPlain(b.x));else if(b.t==="lh")lines.push("","",b.x+":");else if(b.t==="c"){lines.push((b.m==="b"?"• ":b.m==="n"?(++n)+". ":(b.d?"☑ ":"☐ "))+b.x+(b.pr!==undefined?" – "+fmtKr(b.pr):""));if(b.ds)lines.push("   "+b.ds.replace(/\n/g,"\n   "))}else if(b.t==="l")lines.push(b.u)});
+  return lines.join("\n").replace(/\n{3,}/g,"\n\n").trim()};
+const _fdRun2=fdRun;fdRun=function(){_fdRun2();const q=$("fd_q").value.trim().toLocaleLowerCase();if(!q)return;
+  $("mm_body").querySelectorAll(":scope>.mb-c:not(.hit)").forEach(d=>{const t=d.querySelector(".mbds");if(t&&t.value.toLocaleLowerCase().includes(q)){d.classList.add("hit");FD.L.push(d)}});if(FD.L.length)fdGo(0)};
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
