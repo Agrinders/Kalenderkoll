@@ -256,7 +256,8 @@ function mmMerge(a,b){const gone=new Set([...(a.gone||[]),...(b.gone||[])]),A=ne
   return{ti:(a.tu||0)>(b.tu||0)?a.ti:b.ti,tu:Math.max(a.tu||0,b.tu||0),bl:res,gone:[...gone].slice(-500)}}
 function mmReconcile(mg){const body=$("mm_body"),foc=mmCur(),E=[...body.querySelectorAll(":scope>.mb")],els=new Map(E.map(e=>[e.dataset.b,e])),keep=new Set(mg.bl.map(x=>x.b));
   const spare=e=>e.dataset.t==="p"&&!e.querySelector("textarea").value&&!e._u;
-  E.forEach(e=>{if(!keep.has(e.dataset.b)&&e!==foc&&!spare(e))e.remove()});
+  /* Empty helper lines are taken out too (they are put back between lists afterwards), so none is left inside a list. */
+  E.forEach(e=>{if(!keep.has(e.dataset.b)&&e!==foc)e.remove()});
   let prev=null;mg.bl.forEach(x=>{let e=els.get(x.b);
     if(e&&e!==foc&&e._sig!==mbSig(x)){const n=mmBlock(x);e.replaceWith(n);e=n}else if(!e){e=mmBlock(x)}
     if(e!==foc){const want=prev?prev.nextElementSibling:body.firstElementChild;if(e!==want){if(prev)prev.after(e);else body.prepend(e)}}
@@ -264,8 +265,7 @@ function mmReconcile(mg){const body=$("mm_body"),foc=mmCur(),E=[...body.querySel
   const last=body.lastElementChild;if(!last||last.dataset.t!=="p")body.appendChild(mmBlock({t:"p",x:""}));
   if(document.activeElement!==$("mm_ti")&&$("mm_ti").value!==mg.ti){$("mm_ti").value=mg.ti;MM.lastTi=mg.ti}mmProg()}
 const _openMM=openMM;openMM=function(id){_openMM(id);MM.saved=new Set((MM.m.bl||[]).map(b=>b.b));MM.lastTi=MM.m.ti;MM.tu=MM.m.tu||0;
-  /* Lines as drawn carry the ids of the saved note. */
-  const E=[...$("mm_body").querySelectorAll(":scope>.mb")];(MM.m.bl||[]).forEach((b,i)=>{if(E[i]){E[i].dataset.b=b.b||E[i].dataset.b;E[i]._u=b.tm||0}})};
+  mmTidy()};
 /* Enter on a list line always makes a new point, also on phone keyboards that do not send a normal Enter key. */
 let mmEnterAt=0;$("mm_body").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.isTrusted)mmEnterAt=Date.now()},true);
 $("mm_body").addEventListener("submit",e=>{e.preventDefault();const inp=e.target.querySelector("input");if(!inp||Date.now()-mmEnterAt<400)return;inp.dispatchEvent(new KeyboardEvent("keydown",{key:"Enter",bubbles:true,cancelable:true}))});
@@ -282,13 +282,14 @@ const FK="kalenderkoll.fold";
 function foldSet(){try{return new Set(JSON.parse(localStorage.getItem(FK)||"[]"))}catch(e){return new Set()}}
 function foldSave(S2){try{localStorage.setItem(FK,JSON.stringify([...S2].slice(-400)))}catch(e){}}
 const _mbBlock2=mmBlock;mmBlock=function(b){const d=_mbBlock2(b);if(b.t==="lh"){const f=document.createElement("button");f.type="button";f.className="mbfold";f.setAttribute("aria-label",tx("Fäll ihop eller ut","Fold or unfold"));
-  f.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>';d.prepend(f);if(MM&&MM.id&&foldSet().has(MM.id+":"+d.dataset.b))d.classList.add("fold")}return d};
+  f.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>';d.prepend(f);if(MM&&MM.id){const F=foldSet();if(F.has(MM.id+":"+d.dataset.b)||(b.x&&F.has(MM.id+":n:"+b.x.trim())))d.classList.add("fold")}}return d};
 const _prog2=mmProg;mmProg=function(){_prog2();$("mm_body").querySelectorAll(".mb-c").forEach(c=>c.classList.remove("hid"));
   $("mm_body").querySelectorAll(".mb-lh.fold").forEach(h=>{for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)x.classList.add("hid")})};
 function mmFold(h,on){if(on===undefined)on=!h.classList.contains("fold");
   /* Items fold away one after another from the bottom, and open from the top, for a soft ripple. */
   {const G=[];for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)G.push(x);const n=G.length;G.forEach((x,i)=>x.style.setProperty("--i",Math.min(8,on?n-1-i:i)));}
-  try{if(navigator.vibrate)navigator.vibrate(6)}catch(e){}h.classList.toggle("fold",on);const S2=foldSet(),k=MM.id+":"+h.dataset.b;if(on)S2.add(k);else S2.delete(k);foldSave(S2);
+  try{if(navigator.vibrate)navigator.vibrate(6)}catch(e){}h.classList.toggle("fold",on);/* Remembered both by the line and by the list's name, so it stays folded next time even after the list is moved. */
+  const S2=foldSet(),nm=h.querySelector("input").value.trim();[MM.id+":"+h.dataset.b,...(nm?[MM.id+":n:"+nm]:[])].forEach(k=>{if(on)S2.add(k);else S2.delete(k)});foldSave(S2);
   /* The line you were writing on is not hidden away. */
   if(on){const a=mmCur();if(a&&a.dataset.t==="c"&&a!==h){let x=a;while(x&&x.dataset.t==="c")x=x.previousElementSibling;if(x===h)h.querySelector("input").focus()}}mmProg()}
 $("mm_body").addEventListener("click",e=>{const f=e.target.closest(".mbfold");if(!f)return;e.stopPropagation();mmFold(f.closest(".mb"))},true);
@@ -423,9 +424,31 @@ $("mm_body").addEventListener("focusout",e=>{if(e.target.closest(".mb-p"))setTim
    Between two lists there is always exactly one "Skriv något…" line to tap into; any further blank lines stay hidden. */
 const _prog6=mmProg;mmProg=function(){_prog6();if(DR)return;const body=$("mm_body"),isL=x=>x&&(x.dataset.t==="c"||x.dataset.t==="lh");
   const blank=x=>x&&x.dataset.t==="p"&&!x.dataset.s&&!x.querySelector("textarea").value.trim();
+  body.querySelectorAll(":scope>.gapline").forEach(x=>x.classList.remove("gapline"));
+  /* An empty helper line that ended up between a list's name and its points, or between two points, is removed. */
+  body.querySelectorAll(":scope>.mb-p").forEach(x=>{const a=x.previousElementSibling,b=x.nextElementSibling;if(blank(x)&&!x._u&&document.activeElement!==x.querySelector("textarea")&&a&&b&&b.dataset.t==="c"&&(a.dataset.t==="lh"||(a.dataset.t==="c"&&b.classList.contains("inl")&&!a.classList.contains("lastl"))))x.remove()});
   [...body.querySelectorAll(":scope>.mb")].forEach(x=>{
     const starts=x.dataset.t==="lh"||(x.dataset.t==="c"&&!(x.previousElementSibling&&x.previousElementSibling.dataset.t==="c"));if(!starts)return;
     if(x.dataset.t==="c"&&x.previousElementSibling&&x.previousElementSibling.dataset.t==="lh")return;
     const run=[];let p=x.previousElementSibling;while(blank(p)){run.unshift(p);p=p.previousElementSibling}if(!isL(p))return;
     if(!run.length){const n=mmBlock({t:"p",x:""});x.before(n);run.push(n)}
     run.forEach((r,i)=>{r.classList.toggle("slim",i>0);r.classList.toggle("gapline",i===0)})})};
+
+/* ---------- Keeping notes from growing by themselves ----------
+   A line of mine that the shared copy lacks is only kept if it is new on this phone. If this phone had it from an
+   earlier sync, the other phone removed or moved it, so it is not put back (that used to bring whole lists back twice). */
+const _merge1=mmMerge;mmMerge=function(a,b){const base=MM&&MM.saved,B=new Set((b.bl||[]).map(x=>x.b));
+  return _merge1(base?{...a,bl:a.bl.filter(x=>B.has(x.b)||!base.has(x.b))}:a,b)};
+/* When a note opens, lists that are exact copies of an earlier list are removed, and lines sharing an id are separated. */
+function mmTidy(){const bl=MM.m&&MM.m.bl||[];if(bl.length<2)return;const out=[],seenL=new Set(),seenId=new Map();let dropped=0,changed=false;
+  for(let i=0;i<bl.length;){const b=bl[i];
+    if(b.t==="lh"){let j=i+1;while(j<bl.length&&bl[j].t==="c")j++;const sig=b.x.trim().toLowerCase()+"\u0001"+bl.slice(i+1,j).map(x=>x.x.trim()).join("\u0001");
+      if(b.x.trim()&&j>i+1&&seenL.has(sig)){dropped++;changed=true;i=j;continue}seenL.add(sig)}
+    const sg=mbSig(b);if(seenId.has(b.b)){changed=true;if(seenId.get(b.b)===sg&&b.t!=="p"){i++;continue}out.push({...b,b:bid()})}else{seenId.set(b.b,sg);out.push(b)}i++}
+  if(!changed)return;MM.m.bl=out;const y=$("mm_w").scrollTop;mmPaint();$("mm_w").scrollTop=y;MM.dirty=true;clearTimeout(MM.t);MM.t=setTimeout(mmSave,600);
+  if(dropped)toast(tx(`Tog bort ${dropped} ${dropped>1?"listor som var kopior":"lista som var en kopia"}`,`Removed ${dropped} duplicated list${dropped>1?"s":""}`),4500)}
+/* Long notes: the formatting panel is only refreshed when it is open, and progress is recounted at most once per frame. */
+const _prog7=mmProg;let progQ=0;mmProg=function(){if(progQ)return;progQ=requestAnimationFrame(()=>{progQ=0;_prog7()})};
+/* While you are dragging, changes from the other phone wait until you let go, so lines are not moved under your finger. */
+let drWait=false;const _mr=mmMaybeRefresh;mmMaybeRefresh=function(){if(DR){drWait=true;return}_mr()};
+["pointerup","pointercancel"].forEach(ev=>$("mm_body").addEventListener(ev,()=>{if(drWait&&!DR){drWait=false;if(MM.open)mmMaybeRefresh()}}));
