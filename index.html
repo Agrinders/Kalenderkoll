@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="351dc07fc4a3">
+<meta name="kal-build" content="d18084b0dfd2">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -2322,7 +2322,7 @@ $("mm_more").onclick=async()=>{if(!MM.m)return;mmSave();
   else if(v==="saveas"){const f=await askOpts(tx("Spara som","Save as"),"",[["pdf","PDF",tx("Sidor i A4, bra att skriva ut eller skicka","A4 pages, good to print or send")],["img",tx("Bild","Picture"),tx("En lång bild, lätt att dela i en chatt","One long picture, easy to share in a chat")],["html",tx("Webbsida","Web page"),tx("Öppnas i webbläsaren, med länkar som går att trycka på","Opens in the browser, with links you can tap")]]);
     if(f){toast(tx("Sparar…","Saving…"),1500);if(f==="pdf")mmPdf();else if(f==="img")mmImage();else mmExport()}}};
 /* The picture is drawn line by line on a canvas: title, text with its styles, lists, links and photos. */
-async function mmCanvas(){const cuts=[];const ti=$("mm_ti").value.trim(),bl=mmRead(),W=1080,P=72,cw=W-2*P,dark=false;
+async function mmCanvas(forPdf){const cuts=[],boxes=[];const ti=$("mm_ti").value.trim(),bl=mmRead(),W=1080,P=72,cw=W-2*P,dark=false;
   const fam={sf:"Fraunces, Georgia, serif",h:"Caveat, cursive",r:"Nunito, sans-serif",m:"'DM Mono', monospace"},UI="Figtree, system-ui, sans-serif";
   const c=document.createElement("canvas"),g=c.getContext("2d");const ops=[];let y=P;
   const wrap=(text,font,size,lh,color,x0,width,deco)=>{g.font=font;const words=String(text).split(/(\s+)/);let line="";const lines=[];
@@ -2337,10 +2337,12 @@ async function mmCanvas(){const cuts=[];const ti=$("mm_ti").value.trim(),bl=mmRe
     if(b.t==="p"){if(!b.x.trim()){y+=20;continue}const sz=b.s==="h1"?52:b.s==="h2"?40:34,wt=b.s==="h2"?700:b.s==="h1"?500:400,font=`${wt} ${sz}px ${b.s==="h1"&&!b.f?"Fraunces, Georgia, serif":ff}`;
       if(b.s)y+=16;richPlain(b.x).split("\n").forEach(line=>wrap(line,font,sz,Math.round(sz*1.42),col,P,cw));y+=10}
     else if(b.t==="lh"){y+=24;const yy=y;ops.push(()=>{g.fillStyle=(b.k?MCOL[b.k]:"#8a72ee")+"22";g.beginPath();g.roundRect(P-14,yy-4,cw+28,64,18);g.fill()});wrap(b.x,`700 36px ${ff}`,36,56,b.k?MCOL[b.k]:"#2a2530",P+6,cw-12);y+=12}
-    else if(b.t==="c"){const yy=y,x0=P+56;n++;
+    else if(b.t==="c"){const yy=y,x0=P+56;n++;if(forPdf&&!b.m)boxes.push({x:P+18,y:yy+24,r:19,d:!!b.d,k:b.k?MCOL[b.k]:""});
       ops.push(()=>{g.lineWidth=3;if(b.m==="n"){g.font=`700 32px ${UI}`;g.fillStyle=b.k?col:"#8a72ee";g.fillText(n+".",P,yy+34)}else if(b.m==="b"){g.fillStyle=b.k?col:"#8a72ee";g.beginPath();g.arc(P+16,yy+24,7,0,7);g.fill()}
+        else if(forPdf){/* In a PDF the box is a real checkbox drawn by the PDF itself. */}
         else{g.strokeStyle=b.d?"#8a72ee":"#bdb4c0";g.fillStyle="#8a72ee";g.beginPath();g.arc(P+18,yy+24,17,0,7);if(b.d){g.fill();g.strokeStyle="#fff";g.beginPath();g.moveTo(P+10,yy+25);g.lineTo(P+16,yy+31);g.lineTo(P+27,yy+18);g.stroke()}else g.stroke()}});
-      const prW=b.pr!==undefined?170:0;wrap(b.x,`400 34px ${ff}`,34,52,b.d&&!b.m?"#9a92a0":col,x0,cw-56-prW,b.d&&!b.m);
+      const prW=b.pr!==undefined?170:0;/* In a PDF the text is not struck through, since the box can be ticked and unticked there. */
+      const strike=b.d&&!b.m&&!forPdf;wrap(b.x,`400 34px ${ff}`,34,52,strike?"#9a92a0":col,x0,cw-56-prW,strike);
       if(prW){const t=fmtKr(b.pr);ops.push(()=>{g.font=`600 32px ${UI}`;g.fillStyle="#2a2530";g.textAlign="right";g.fillText(t,P+cw,yy+34);g.textAlign="left"})}
       if(b.ds){wrap(b.ds,`400 28px ${UI}`,28,40,"#867d8c",x0,cw-56);y+=4}
       if(tot.has(b)){y+=8;const yy=y,t=fmtKr(tot.get(b));ops.push(()=>{g.fillStyle="#e3dce6";g.fillRect(P,yy,cw,2);g.font=`500 28px ${UI}`;g.fillStyle="#867d8c";g.fillText(tx("Totalt","Total"),P,yy+40);g.font=`700 32px ${UI}`;g.fillStyle="#2a2530";g.textAlign="right";g.fillText(t,P+cw,yy+40);g.textAlign="left"});y+=56;cuts.push(y)}}
@@ -2348,24 +2350,33 @@ async function mmCanvas(){const cuts=[];const ti=$("mm_ti").value.trim(),bl=mmRe
     else if(b.t==="i"&&MIMG[b.i]){const im=new Image();im.src=MIMG[b.i];try{await im.decode()}catch(e){continue}const h=Math.round(cw*im.height/im.width),yy=y+10;
       ops.push(()=>{g.save();g.beginPath();g.roundRect(P,yy,cw,h,28);g.clip();g.drawImage(im,P,yy,cw,h);g.restore()});y+=h+30}}
   y+=P;c.width=W;c.height=Math.min(y,30000);g.fillStyle="#fffcfd";g.fillRect(0,0,W,c.height);g.textBaseline="alphabetic";ops.forEach(f=>f());
-  const name=(ti||tx("Anteckning","Note")).replace(/[\\/:*?"<>|]+/g," ").trim().slice(0,60);return{c,cuts,name}}
+  const name=(ti||tx("Anteckning","Note")).replace(/[\\/:*?"<>|]+/g," ").trim().slice(0,60);return{c,cuts,boxes,name}}
 async function mmImage(){const r=await mmCanvas();saveB64(r.name+".png",r.c.toDataURL("image/png"))}
 /* A PDF in A4: the picture of the note, split into pages between lines, never through one. */
-async function mmPdf(){const{c,cuts,name}=await mmCanvas(),W=595.28,H=841.89,k=W/c.width,pageH=Math.floor(H/k);
+async function mmPdf(){const{c,cuts,boxes,name}=await mmCanvas(true),W=595.28,H=841.89,k=W/c.width,pageH=Math.floor(H/k);
   /* Pages after the first get a margin at the top, like the first one has. */
   const parts=[];let top=0;while(top<c.height-2){const pad=top>0?72:0;let end=Math.min(c.height,top+pageH-pad);if(end<c.height){const ok=cuts.filter(y=>y>top+pageH*.4&&y<=end);if(ok.length)end=ok[ok.length-1]+6}
     const pc=document.createElement("canvas");pc.width=c.width;pc.height=end-top+pad;const g=pc.getContext("2d");g.fillStyle="#fffcfd";g.fillRect(0,0,pc.width,pc.height);g.drawImage(c,0,top,c.width,end-top,0,pad,c.width,end-top);
-    const bin=atob(pc.toDataURL("image/jpeg",.9).split(",")[1]),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);parts.push({u,w:pc.width,h:pc.height});top=end}
+    const bin=atob(pc.toDataURL("image/jpeg",.9).split(",")[1]),u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);parts.push({u,w:pc.width,h:pc.height,top,end,pad});top=end}
   const enc=s=>new TextEncoder().encode(s),chunks=[],offs=[];let len=0;const add=x=>{const b=typeof x==="string"?enc(x):x;chunks.push(b);len+=b.length};
+  /* Each round box is a real checkbox you can tick in the PDF reader. Two shared drawings: an empty ring and a filled tick. */
   const n=parts.length,obj=(i,body)=>{offs[i]=len;add(`${i} 0 obj\n`);body();add("\nendobj\n")};
+  const S=20,R=8.6,cx=S/2,cy=S/2,q=0.5523*R,circ=`${cx+R} ${cy} m ${cx+R} ${cy+q} ${cx+q} ${cy+R} ${cx} ${cy+R} c ${cx-q} ${cy+R} ${cx-R} ${cy+q} ${cx-R} ${cy} c ${cx-R} ${cy-q} ${cx-q} ${cy-R} ${cx} ${cy-R} c ${cx+q} ${cy-R} ${cx+R} ${cy-q} ${cx+R} ${cy} c`;
+  const offAp=`0.741 0.706 0.753 RG 1.4 w ${circ} S`,onAp=`0.541 0.447 0.933 rg ${circ} f 1 1 1 RG 1.6 w 1 J 1 j ${cx-4.2} ${cy+0.2} m ${cx-1.2} ${cy-3} l ${cx+4.6} ${cy+3.6} l S`;
+  const perPage=parts.map(p=>boxes.filter(b=>b.y>=p.top&&b.y<p.end));let next=3+n*3;const AOFF=next++,AON=next++;const fieldIds=[];
+  const pageAnn=perPage.map(L=>L.map(()=>{const id=next++;fieldIds.push(id);return id}));
   add("%PDF-1.4\n%\u00e2\u00e3\n");
-  obj(1,()=>add("<< /Type /Catalog /Pages 2 0 R >>"));
+  obj(1,()=>add(`<< /Type /Catalog /Pages 2 0 R /AcroForm << /Fields [${fieldIds.map(i=>i+" 0 R").join(" ")}] /NeedAppearances false >> >>`));
   obj(2,()=>add(`<< /Type /Pages /Count ${n} /Kids [${parts.map((_,i)=>`${3+i*3} 0 R`).join(" ")}] >>`));
   parts.forEach((p,i)=>{const pg=3+i*3,im=pg+1,ct=pg+2,ph=(p.h*k).toFixed(2),draw=`q ${W.toFixed(2)} 0 0 ${ph} 0 ${(H-p.h*k).toFixed(2)} cm /Im0 Do Q`;
-    obj(pg,()=>add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W.toFixed(2)} ${H.toFixed(2)}] /Resources << /XObject << /Im0 ${im} 0 R >> >> /Contents ${ct} 0 R >>`));
+    obj(pg,()=>add(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${W.toFixed(2)} ${H.toFixed(2)}] /Resources << /XObject << /Im0 ${im} 0 R >> >> /Contents ${ct} 0 R${pageAnn[i].length?` /Annots [${pageAnn[i].map(x=>x+" 0 R").join(" ")}]`:""} >>`));
     obj(im,()=>{add(`<< /Type /XObject /Subtype /Image /Width ${p.w} /Height ${p.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.u.length} >>\nstream\n`);add(p.u);add("\nendstream")});
     obj(ct,()=>add(`<< /Length ${draw.length} >>\nstream\n${draw}\nendstream`))});
-  const total=3+n*3,xref=len;add(`xref\n0 ${total}\n0000000000 65535 f \n`);for(let i=1;i<total;i++)add(String(offs[i]).padStart(10,"0")+" 00000 n \n");
+  obj(AOFF,()=>add(`<< /Type /XObject /Subtype /Form /BBox [0 0 ${S} ${S}] /Length ${offAp.length} >>\nstream\n${offAp}\nendstream`));
+  obj(AON,()=>add(`<< /Type /XObject /Subtype /Form /BBox [0 0 ${S} ${S}] /Length ${onAp.length} >>\nstream\n${onAp}\nendstream`));
+  let fi=0;perPage.forEach((L,i)=>L.forEach((b,j)=>{const id=pageAnn[i][j],p=parts[i],X=b.x*k,Y=H-(p.pad+(b.y-p.top))*k,st=b.d?"/Yes":"/Off";fi++;
+    obj(id,()=>add(`<< /Type /Annot /Subtype /Widget /FT /Btn /F 4 /T (box${fi}) /P ${3+i*3} 0 R /Rect [${(X-S/2).toFixed(2)} ${(Y-S/2).toFixed(2)} ${(X+S/2).toFixed(2)} ${(Y+S/2).toFixed(2)}] /V ${st} /AS ${st} /MK << >> /AP << /N << /Yes ${AON} 0 R /Off ${AOFF} 0 R >> /D << /Yes ${AON} 0 R /Off ${AOFF} 0 R >> >> >>`))}));
+  const total=next,xref=len;add(`xref\n0 ${total}\n0000000000 65535 f \n`);for(let i=1;i<total;i++)add(String(offs[i]).padStart(10,"0")+" 00000 n \n");
   add(`trailer\n<< /Size ${total} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`);
   const all=new Uint8Array(len);let o=0;chunks.forEach(b=>{all.set(b,o);o+=b.length});let bs="";for(let i=0;i<all.length;i+=8192)bs+=String.fromCharCode.apply(null,all.subarray(i,i+8192));
   saveB64(name+".pdf","data:application/pdf;base64,"+btoa(bs))}
@@ -2419,7 +2430,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
-{v:"3.0",d:"16 nov 2026",i:[["t","memos",["Fäst från listan","Pin from the list"],["Varje anteckning har en nål uppe till höger i listan. Tryck för att fästa den överst.","Each note has a pin at the top right in the list. Tap it to keep the note at the top."]],["t","memos",["Spara som PDF","Save as PDF"],["Under ⋯ i en anteckning finns Spara som: PDF i A4, en bild eller en webbsida.","Under ⋯ in a note there is Save as: a PDF in A4, a picture or a web page."]]]},
+{v:"3.0",d:"16 nov 2026",i:[["t","memos",["Fäst från listan","Pin from the list"],["Varje anteckning har en nål uppe till höger i listan. Tryck för att fästa den överst.","Each note has a pin at the top right in the list. Tap it to keep the note at the top."]],["t","memos",["Spara som PDF med bockrutor","Save as PDF with tick boxes"],["Under ⋯ i en anteckning finns Spara som: PDF i A4, en bild eller en webbsida. I PDF:en går de runda rutorna att bocka i.","Under ⋯ in a note there is Save as: a PDF in A4, a picture or a web page. In the PDF the round boxes can be ticked."]]]},
 {v:"2.9",d:"16 nov 2026",i:[["t","memos",["Ett tryck för att titta","One tap to look"],["Skriver du i en anteckning och trycker någon annanstans stängs bara tangentbordet, så du kan se allt. Tryck igen för att skriva där.","If you are writing in a note and tap somewhere else, only the keyboard closes so you can see everything. Tap again to write there."]],["t","memos",["Beskrivning och kostnad i listor","Descriptions and costs in lists"],["Ställ in i Lista-menyn när du står i en lista: en rad för detaljer under varje punkt, och ett belopp på varje punkt med summan och hur mycket som är kvar.","Switch on in the Lista menu while in a list: a line for details under each point, and an amount on each point with the total and how much is left."]]]},
 {v:"2.8",d:"16 nov 2026",i:[["o","",["Enklare ikon","Simpler icon"],["En lugnare appikon: en vit kalender med ett hjärta på rosa botten. Den syns efter att du installerat den nya Android-appen.","A calmer app icon: a white calendar with a heart on a pink background. It shows after you install the new Android app."]],["n","",["Meddelanden längst ner","Messages at the bottom"],["Korta meddelanden som \"Sparat\" och \"Ångra\" visas nu längst ner, så de aldrig täcker knapparna högst upp.","Short messages like \"Saved\" and \"Undo\" now show at the bottom, so they never cover the buttons at the top."]]]},
 {v:"2.7",d:"16 nov 2026",i:[
