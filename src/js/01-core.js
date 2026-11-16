@@ -51,6 +51,8 @@ const icon=k=>ICONS[k]?`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">$
 /* Effects a day can have around it. In day view, that day's events get it too. */
 /* The three looks an event can have, and the short class used for its small labels. */
 const stOf=e=>e.st==="glass"||e.st==="stripe"?e.st:"fill",stMini=e=>e.st==="glass"?"gl":e.st==="stripe"?"sp":"";
+/* Reminder choices, in minutes before the start (-1 is none). */
+const REMS=[-1,0,10,30,60,1440];
 const FX=[["glow","Glöd","Glow"],["rainbow","Regnbåge","Rainbow"],["sparkle","Gnistor","Sparkle"],["hearts","Hjärtan","Hearts"]];
 const fxCls=k=>FX.some(x=>x[0]===k)?" fx fx-"+k:"";
 /* Event colours. Any colour works; these are the quick ones. */

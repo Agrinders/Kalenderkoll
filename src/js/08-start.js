@@ -78,7 +78,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
       if(d.id==="plan"){if(!PEND.has("plan")){if(typeof v.wkno==="boolean")S.wkno=v.wkno;if(typeof v.hol==="boolean")S.hol=v.hol}}
       else if(d.id==="couple")cp={a:String(v.a||""),b:String(v.b||""),ua:String(v.ua||""),ub:String(v.ub||""),since:iso(v.since)?v.since:"",ca:String(v.ca||""),cb:String(v.cb||"")};
       else if(v.kind==="pic"&&(v.w==="a"||v.w==="b")&&okPic(v.img))PICS[v.w]=v.img;
-      else if(v.kind==="ev"&&iso(v.d))EV.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),d:v.d,e:iso(v.e)&&v.e>v.d&&(v.r||"o")==="o"?v.e:"",t:/^\d\d:\d\d$/.test(v.t||"")?v.t:"",t2:/^\d\d:\d\d$/.test(v.t2||"")?v.t2:"",r:["o","d","wd","w","2w","m","y"].includes(v.r)?v.r:"o",u:iso(v.u)?v.u:(iso(v.e)&&v.e>v.d&&v.r&&v.r!=="o"?v.e:""),skip:Array.isArray(v.skip)?v.skip.filter(x=>typeof x==="string"):[],pl:String(v.pl||""),o:String(v.o||""),w:["a","b","g"].includes(v.w)?v.w:"g",col:/^#[0-9a-f]{6}$/i.test(v.col||"")?v.col:"",st:v.st==="glass"||v.st==="stripe"?v.st:"fill",ic:ICONS[v.ic]?v.ic:"",fx:fxCls(v.fx)?v.fx:"",wd:Array.isArray(v.wd)?[...new Set(v.wd.filter(x=>Number.isInteger(x)&&x>=0&&x<7))].sort():[],by:v.by==="a"||v.by==="b"?v.by:"",at:+v.at||0});
+      else if(v.kind==="ev"&&iso(v.d))EV.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),d:v.d,e:iso(v.e)&&v.e>v.d&&(v.r||"o")==="o"?v.e:"",t:/^\d\d:\d\d$/.test(v.t||"")?v.t:"",t2:/^\d\d:\d\d$/.test(v.t2||"")?v.t2:"",r:["o","d","wd","w","2w","m","y"].includes(v.r)?v.r:"o",u:iso(v.u)?v.u:(iso(v.e)&&v.e>v.d&&v.r&&v.r!=="o"?v.e:""),skip:Array.isArray(v.skip)?v.skip.filter(x=>typeof x==="string"):[],pl:String(v.pl||""),o:String(v.o||""),w:["a","b","g"].includes(v.w)?v.w:"g",col:/^#[0-9a-f]{6}$/i.test(v.col||"")?v.col:"",st:v.st==="glass"||v.st==="stripe"?v.st:"fill",ic:ICONS[v.ic]?v.ic:"",fx:fxCls(v.fx)?v.fx:"",wd:Array.isArray(v.wd)?[...new Set(v.wd.filter(x=>Number.isInteger(x)&&x>=0&&x<7))].sort():[],by:v.by==="a"||v.by==="b"?v.by:"",at:+v.at||0,rm:REMS.includes(+v.rm)?+v.rm:-1});
       else if(v.kind==="day"&&iso(v.d)&&ICONS[v.ic])DAYS[v.d]={ic:v.ic};
       else if(v.kind==="bd"&&/^\d\d-\d\d$/.test(v.md||""))BD.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),md:v.md,y:+v.y||0,ty:["b","a","o"].includes(v.ty)?v.ty:"b"});
       else if(v.kind==="todo"){const id=String(v.id||d.id.slice(5)),ae=document.activeElement,typing=ae&&ae.dataset&&ae.dataset.tn===id||PEND.has("todo_"+id);TODOS.push(typing&&prevT.find(z=>z.id===id)||{id,n:String(v.n||""),w:["a","b","g"].includes(v.w)?v.w:"g",done:!!v.done,at:+v.at||0,dt:+v.dt||0})}
@@ -89,7 +89,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
     CP=cp||{a:"",b:"",ua:"",ub:"",since:"",ca:"",cb:""};applyPeople();
     if(MYID){if(CP.ua===MYID)setMe("a");else if(CP.ub===MYID)setMe("b")}
-    watchJoin();watchNew();render();widgetSync();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
+    watchJoin();watchNew();render();remSched();bgSync();widgetSync();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
 }catch(e){}setTimeout(()=>{if(!ok&&!firstDone)firstRun()},col?10000:400)})();
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
@@ -142,7 +142,7 @@ function watchNew(){const ids=Object.keys(DOCS).filter(id=>/^(ev|note|todo|bd|me
   try{const r=localStorage.getItem(SK);if(r)seen=new Set(JSON.parse(r))}catch(e){}
   const fresh=seen?ids.filter(id=>!seen.has(id)):[];if(seen&&!fresh.length)return;
   try{localStorage.setItem(SK,JSON.stringify([...new Set([...(seen||[]),...ids])].slice(-4000)))}catch(e){}
-  const news=fresh.filter(id=>!MINE.has(id));if(!seen||!news.length||!SHARED()||!ME)return;
+  const news=fresh.filter(id=>!MINE.has(id)&&!TOLD.has(id));if(!seen||!news.length||!SHARED()||!ME)return;
   const p=pname(other(ME)),v=DOCS[news[0]]||{},q=s=>String(s||"").slice(0,60);
   const msg=news.length>1?tx(`${p} har lagt till ${news.length} nya saker`,`${p} added ${news.length} new things`):
     v.kind==="ev"?tx(`${p} lade till: ${q(v.n)}`,`${p} added: ${q(v.n)}`)+(v.d?" ("+fmtD(dn(v.d),{day:"numeric",month:"short"})+")":""):

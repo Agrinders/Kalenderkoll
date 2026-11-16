@@ -23,7 +23,7 @@
   addEventListener("storage",e=>{if(e.key===KEY){fresh();Object.keys(subs).forEach(fire)}});
   if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
 
-  const KK=window.KK={mode:"starting",uid:"",space:()=>space,
+  const KK=window.KK={mode:"starting",uid:"",space:()=>space,cfg:{key:CFG.apiKey,project:CFG.projectId},
     /* Inside the Android app the page lives on the phone, so the link points to the website. */
     inviteUrl:()=>(window.Capacitor&&window.Capacitor.isNativePlatform&&window.Capacitor.isNativePlatform()?"https://agrinders.github.io/Kalenderkoll/":location.origin+location.pathname)+"#join="+space,
     codeIn,

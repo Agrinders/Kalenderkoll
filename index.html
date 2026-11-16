@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="f239e8a17404">
+<meta name="kal-build" content="c292cc3a2014">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -691,6 +691,7 @@ nav{background:color-mix(in oklab,var(--card2) 92%,transparent)}
 <div class="pair" id="es_tw"><button type="button" class="field tbtn" id="es_t1" value=""><span></span></button><button type="button" class="field tbtn" id="es_t2" value=""><span></span></button></div>
 <div class="fl" id="es_rl"></div><div class="chips" id="es_r"></div><div class="wds hide" id="es_wd"></div>
 <div id="es_uw"><div class="fl" id="es_ul"></div><button type="button" class="field dbtn" id="es_u" value=""><span></span></button></div>
+<div class="fl" id="es_ml"></div><div class="chips" id="es_m"></div>
 <div class="fl" id="es_sl"></div><div class="lookrow" id="es_lk" role="button" tabindex="0"><div class="pv" id="es_pv"></div><span id="es_lkt"></span></div>
 <div id="es_look" class="hide"><div class="seg" id="es_st"></div>
 <div class="fl" id="es_cl"></div><div class="sw" id="es_c"></div>
@@ -853,6 +854,8 @@ const icon=k=>ICONS[k]?`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">$
 /* Effects a day can have around it. In day view, that day's events get it too. */
 /* The three looks an event can have, and the short class used for its small labels. */
 const stOf=e=>e.st==="glass"||e.st==="stripe"?e.st:"fill",stMini=e=>e.st==="glass"?"gl":e.st==="stripe"?"sp":"";
+/* Reminder choices, in minutes before the start (-1 is none). */
+const REMS=[-1,0,10,30,60,1440];
 const FX=[["glow","Glöd","Glow"],["rainbow","Regnbåge","Rainbow"],["sparkle","Gnistor","Sparkle"],["hearts","Hjärtan","Hearts"]];
 const fxCls=k=>FX.some(x=>x[0]===k)?" fx fx-"+k:"";
 /* Event colours. Any colour works; these are the quick ones. */
@@ -974,9 +977,9 @@ const PEND=new Map();
 function later(key,fn,ms){const old=PEND.get(key);if(old)clearTimeout(old.t);PEND.set(key,{fn,t:setTimeout(()=>{PEND.delete(key);fn()},ms)})}
 function flushSaves(){PEND.forEach(e=>{clearTimeout(e.t);e.fn()});PEND.clear()}
 addEventListener("pagehide",flushSaves);document.addEventListener("visibilitychange",()=>{if(document.hidden)flushSaves()});
-const evDoc=e=>({kind:"ev",id:e.id,n:e.n,d:e.d,e:e.e||"",t:e.t||"",t2:e.t2||"",r:e.r||"o",u:e.u||"",skip:e.skip||[],pl:e.pl||"",o:e.o||"",w:["a","b","g"].includes(e.w)?e.w:"g",col:/^#[0-9a-f]{6}$/i.test(e.col||"")?e.col:"",st:e.st==="glass"||e.st==="stripe"?e.st:"fill",ic:ICONS[e.ic]?e.ic:"",fx:fxCls(e.fx)?e.fx:"",wd:e.r==="w"&&Array.isArray(e.wd)?e.wd:[],by:e.by==="a"||e.by==="b"?e.by:"",at:+e.at||0});
+const evDoc=e=>({kind:"ev",id:e.id,n:e.n,d:e.d,e:e.e||"",t:e.t||"",t2:e.t2||"",r:e.r||"o",u:e.u||"",skip:e.skip||[],pl:e.pl||"",o:e.o||"",w:["a","b","g"].includes(e.w)?e.w:"g",col:/^#[0-9a-f]{6}$/i.test(e.col||"")?e.col:"",st:e.st==="glass"||e.st==="stripe"?e.st:"fill",ic:ICONS[e.ic]?e.ic:"",fx:fxCls(e.fx)?e.fx:"",wd:e.r==="w"&&Array.isArray(e.wd)?e.wd:[],by:e.by==="a"||e.by==="b"?e.by:"",at:+e.at||0,rm:REMS.includes(+e.rm)?+e.rm:-1});
 const bdDoc=b=>({kind:"bd",id:b.id,n:b.n,md:b.md,y:b.y||0,ty:b.ty||"b"});
-const todoDoc=x=>({kind:"todo",id:x.id,n:x.n,w:x.w||"g",done:!!x.done,at:x.at||0,dt:x.dt||0});
+const todoDoc=x=>({kind:"todo",id:x.id,n:x.n,w:x.w||"g",done:!!x.done,at:x.at||0,dt:x.dt||0,by:x.by||ME||""});
 const noteDoc=x=>({kind:"note",id:x.id,f:x.f,txt:x.txt,at:x.at});
 const putIn=(L,x)=>{const i=L.findIndex(z=>z.id===x.id);if(i>=0)L[i]=x;else L.push(x)};
 /* The last saved copy of every record, so a delete can be undone. */
@@ -1206,7 +1209,8 @@ const scopeOpts=(on,isDel)=>[["one",tx("Bara den här gången","Only this time")
 /* ---------- The event sheet ---------- */
 let ES=null;
 const esWd=()=>{const w=wdOf(dn($("es_d").value));return[...new Set([...ES.wd,w])].sort()};
-function paintES(){const c=ES.col||pvar(ES.w),dd=ymd(dn($("es_d").value))[2],wdn=wdOf(dn($("es_d").value));
+function remLbl(m,ad){return m<0?tx("Ingen","None"):m===0?(ad?tx("Samma dag 09:00","Same day 9:00"):tx("När det börjar","At start")):m===1440?(ad?tx("Dagen innan 09:00","Day before 9:00"):tx("Dagen innan","Day before")):m===60?tx("1 timme innan","1 hour before"):tx(`${m} min innan`,`${m} min before`)}
+function paintES(){$("es_ml").textContent=tx("Påminnelse","Reminder");$("es_m").innerHTML=REMS.filter(m=>!ES.ad||m<0||m===0||m===1440).map(m=>`<button type="button" class="chip${ES.rm===m?" on":""}" data-esm="${m}">${remLbl(m,ES.ad)}</button>`).join("");if(ES.ad&&ES.rm>0&&ES.rm<1440)ES.rm=0;const c=ES.col||pvar(ES.w),dd=ymd(dn($("es_d").value))[2],wdn=wdOf(dn($("es_d").value));
   $("es_wd").classList.toggle("hide",ES.r!=="w");$("es_wd").innerHTML=[0,1,2,3,4,5,6].map(i=>`<button type="button" class="${esWd().includes(i)?"on":""}${i===wdn?" base":""}" data-eswd="${i}" aria-pressed="${esWd().includes(i)}">${dshort(i)}</button>`).join("");
   $("es_fx").innerHTML=[["",tx("Ingen","None"),tx("Ingen","None")],...FX].map(([k,a,b])=>`<button type="button" class="${ES.fx===k?"on":""}" data-esfx="${k}"><span class="fxd${fxCls(k)}">${dd}</span><small>${li()?b:a}</small></button>`).join("");
   $("es_st").innerHTML=[["fill",tx("Block","Block")],["glass",tx("Glas","Glass")],["stripe",tx("Ränder","Stripes")]].map(([v,l])=>`<button type="button" class="${ES.st===v?"on":""}" data-est="${v}">${l}</button>`).join("");
@@ -1219,7 +1223,7 @@ $("es_w").innerHTML=["g","a","b"].map(w=>`<button type="button" class="${ES.w===
   $("es_look").classList.toggle("hide",!ES.look);$("es_lkt").textContent=ES.look?tx("Klar","Done"):tx("Ändra","Change");$("es_cl").textContent=tx("Färg","Colour");$("es_il").textContent=tx("Ikon","Icon");$("es_uw").classList.toggle("hide",ES.r==="o");$("es_ew").classList.toggle("hide",ES.r!=="o");$("es_extra").classList.toggle("hide",!ES.more);$("es_more").classList.toggle("hide",ES.more);$("es_more").textContent=ES.r==="o"?tx("＋ Flera dagar, plats och anteckning","＋ Several days, place and note"):tx("＋ Plats och anteckning","＋ Place and note")}
 function openES(id,on,pre){const e=id?EV.find(z=>z.id===id):null;if(id&&!e)return;pre=pre||{};const n=todayN(),d=pre.d||nd(tab==="k"?SEL:n),nh=new Date().getHours()+1;
   const t1=e?e.t:pre.t||pad(dn(d)===n&&nh>=7&&nh<=22?nh:18)+":00";
-  ES={id:e?e.id:null,on:e?(on||e.d):null,ad:e?!e.t:!!pre.ad,r:e?e.r||"o":"o",w:e?e.w||"g":pre.w||"g",col:e?e.col||"":pre.col||"",st:e?e.st||"fill":pre.st||"fill",ic:e?e.ic||"":pre.ic||"",fx:e?e.fx||"":"",wd:e&&e.r==="w"&&e.wd&&e.wd.length?[...e.wd]:[],more:!!(e&&(e.e||e.u||e.pl||e.o))};
+  ES={id:e?e.id:null,on:e?(on||e.d):null,ad:e?!e.t:!!pre.ad,r:e?e.r||"o":"o",w:e?e.w||"g":pre.w||"g",col:e?e.col||"":pre.col||"",st:e?e.st||"fill":pre.st||"fill",ic:e?e.ic||"":pre.ic||"",fx:e?e.fx||"":"",rm:e?(e.rm??-1):(pre.rm??-1),wd:e&&e.r==="w"&&e.wd&&e.wd.length?[...e.wd]:[],more:!!(e&&(e.e||e.u||e.pl||e.o))};
   const sd=e?ES.on:d,dur=e?evDur(e):0;
   $("es_t").textContent=e?tx("Ändra","Edit"):tx("Ny händelse","New event");$("es_wl").textContent=tx("Vems","Whose");$("es_sl").textContent=tx("Utseende","Look");$("es_fl").textContent=tx("Effekt","Effect");$("es_dl").textContent=tx("När","When");$("es_rl").textContent=tx("Upprepa","Repeat");$("es_el").textContent=tx("Pågår flera dagar? Sista dagen","Lasts several days? The last day");$("es_ul").textContent=tx("Upprepa till och med","Repeat until");$("es_pl").textContent=tx("Plats","Place");$("es_ol").textContent=tx("Anteckning","Note");
   $("es_d").dataset.req="1";$("es_e").dataset.ph=tx("Samma dag","Same day");$("es_u").dataset.ph=tx("Tills vidare","Until further notice");$("es_t1").dataset.ph=tx("Börjar","Starts");$("es_t2").dataset.ph=tx("Slutar","Ends");
@@ -1231,12 +1235,13 @@ const closeES=()=>{$("es").classList.remove("on");ES=null};
 $("es_x").onclick=closeES;
 $("es").addEventListener("click",e=>{if(e.target===$("es"))return closeES();if(!ES)return;const g=x=>e.target.closest(x);let b;
   if(g("#es_ad")){ES.ad=!ES.ad;if(!ES.ad&&!$("es_t1").value){$("es_t1").value="18:00";$("es_t2").value="19:00";tpLabel($("es_t1"));tpLabel($("es_t2"))}paintES();return}
+  if(b=g("[data-esm]")){ES.rm=+b.dataset.esm;paintES();askNotify();return}
   if(b=g("[data-esw]")){ES.w=b.dataset.esw;paintES();return}if(b=g("[data-est]")){ES.st=b.dataset.est;paintES();return}if(b=g("[data-esc]")){ES.col=b.dataset.esc;paintES();return}if(b=g("[data-esfx]")){ES.fx=b.dataset.esfx;paintES();return}if(b=g("[data-eswd]")){const i=+b.dataset.eswd;if(i===wdOf(dn($("es_d").value))){toast(tx("Dagen du valde som datum är alltid med","The day you picked as the date is always included"));return}ES.wd=esWd().includes(i)?esWd().filter(x=>x!==i):[...esWd(),i];paintES();return}if(b=g("[data-esi]")){ES.ic=b.dataset.esi;paintES();return}if(b=g("[data-esr]")){ES.r=b.dataset.esr;
     /* A repeating event has a last time instead of an end date, so a date picked as the end moves there. */
     if(ES.r!=="o"&&$("es_e").value){if(!$("es_u").value){$("es_u").value=$("es_e").value;dpLabel($("es_u"))}$("es_e").value="";dpLabel($("es_e"))}paintES();return}if(g("#es_more")){ES.more=true;paintES();return}if(g("#es_lk")){ES.look=!ES.look;paintES();return}});
 $("es_d").addEventListener("change",()=>{if(ES){if(ES.wd.length<=1)ES.wd=[];paintES()}$("es_e").dataset.base=$("es_u").dataset.base=$("es_d").value;if($("es_e").value&&$("es_e").value<$("es_d").value){$("es_e").value="";dpLabel($("es_e"))}});
 const shiftIso=(iso,k)=>iso?nd(dn(iso)+k):"";
-function esVals(){const d=$("es_d").value,e=$("es_e").value,u=$("es_u").value;return{n:$("es_n").value.trim(),d,e:ES.r==="o"&&e&&e>d?e:"",t:ES.ad?"":$("es_t1").value,t2:ES.ad?"":$("es_t2").value,r:ES.r,u:ES.r!=="o"&&u&&u>=d?u:"",pl:$("es_p").value.trim(),o:$("es_o").value.trim(),w:ES.w,col:ES.col,st:ES.st,ic:ES.ic,fx:ES.fx,wd:ES.r==="w"?esWd():[]}}
+function esVals(){const d=$("es_d").value,e=$("es_e").value,u=$("es_u").value;return{n:$("es_n").value.trim(),d,e:ES.r==="o"&&e&&e>d?e:"",t:ES.ad?"":$("es_t1").value,t2:ES.ad?"":$("es_t2").value,r:ES.r,u:ES.r!=="o"&&u&&u>=d?u:"",pl:$("es_p").value.trim(),o:$("es_o").value.trim(),w:ES.w,col:ES.col,st:ES.st,ic:ES.ic,fx:ES.fx,rm:ES.rm,wd:ES.r==="w"?esWd():[]}}
 function saved(e,n,isNew){toast((isNew?tx("Tillagd","Added"):tx("Sparad","Saved"))+" · "+e.n+", "+relDay(n).toLowerCase()+(e.t?" "+e.t:""));if(tab==="k")pickDay(n);render()}
 $("es_ok").onclick=async()=>{if(!ES)return;const v=esVals();if(!v.n){$("es_n").focus();toast(tx("Skriv vad det är först","Write what it is first"));return}if(!ES.ad&&!v.t){toast(tx("Välj en tid, eller Heldag","Pick a time, or All day"));return}
   const old=ES.id&&EV.find(z=>z.id===ES.id),on=ES.on;
@@ -1410,7 +1415,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
       if(d.id==="plan"){if(!PEND.has("plan")){if(typeof v.wkno==="boolean")S.wkno=v.wkno;if(typeof v.hol==="boolean")S.hol=v.hol}}
       else if(d.id==="couple")cp={a:String(v.a||""),b:String(v.b||""),ua:String(v.ua||""),ub:String(v.ub||""),since:iso(v.since)?v.since:"",ca:String(v.ca||""),cb:String(v.cb||"")};
       else if(v.kind==="pic"&&(v.w==="a"||v.w==="b")&&okPic(v.img))PICS[v.w]=v.img;
-      else if(v.kind==="ev"&&iso(v.d))EV.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),d:v.d,e:iso(v.e)&&v.e>v.d&&(v.r||"o")==="o"?v.e:"",t:/^\d\d:\d\d$/.test(v.t||"")?v.t:"",t2:/^\d\d:\d\d$/.test(v.t2||"")?v.t2:"",r:["o","d","wd","w","2w","m","y"].includes(v.r)?v.r:"o",u:iso(v.u)?v.u:(iso(v.e)&&v.e>v.d&&v.r&&v.r!=="o"?v.e:""),skip:Array.isArray(v.skip)?v.skip.filter(x=>typeof x==="string"):[],pl:String(v.pl||""),o:String(v.o||""),w:["a","b","g"].includes(v.w)?v.w:"g",col:/^#[0-9a-f]{6}$/i.test(v.col||"")?v.col:"",st:v.st==="glass"||v.st==="stripe"?v.st:"fill",ic:ICONS[v.ic]?v.ic:"",fx:fxCls(v.fx)?v.fx:"",wd:Array.isArray(v.wd)?[...new Set(v.wd.filter(x=>Number.isInteger(x)&&x>=0&&x<7))].sort():[],by:v.by==="a"||v.by==="b"?v.by:"",at:+v.at||0});
+      else if(v.kind==="ev"&&iso(v.d))EV.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),d:v.d,e:iso(v.e)&&v.e>v.d&&(v.r||"o")==="o"?v.e:"",t:/^\d\d:\d\d$/.test(v.t||"")?v.t:"",t2:/^\d\d:\d\d$/.test(v.t2||"")?v.t2:"",r:["o","d","wd","w","2w","m","y"].includes(v.r)?v.r:"o",u:iso(v.u)?v.u:(iso(v.e)&&v.e>v.d&&v.r&&v.r!=="o"?v.e:""),skip:Array.isArray(v.skip)?v.skip.filter(x=>typeof x==="string"):[],pl:String(v.pl||""),o:String(v.o||""),w:["a","b","g"].includes(v.w)?v.w:"g",col:/^#[0-9a-f]{6}$/i.test(v.col||"")?v.col:"",st:v.st==="glass"||v.st==="stripe"?v.st:"fill",ic:ICONS[v.ic]?v.ic:"",fx:fxCls(v.fx)?v.fx:"",wd:Array.isArray(v.wd)?[...new Set(v.wd.filter(x=>Number.isInteger(x)&&x>=0&&x<7))].sort():[],by:v.by==="a"||v.by==="b"?v.by:"",at:+v.at||0,rm:REMS.includes(+v.rm)?+v.rm:-1});
       else if(v.kind==="day"&&iso(v.d)&&ICONS[v.ic])DAYS[v.d]={ic:v.ic};
       else if(v.kind==="bd"&&/^\d\d-\d\d$/.test(v.md||""))BD.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),md:v.md,y:+v.y||0,ty:["b","a","o"].includes(v.ty)?v.ty:"b"});
       else if(v.kind==="todo"){const id=String(v.id||d.id.slice(5)),ae=document.activeElement,typing=ae&&ae.dataset&&ae.dataset.tn===id||PEND.has("todo_"+id);TODOS.push(typing&&prevT.find(z=>z.id===id)||{id,n:String(v.n||""),w:["a","b","g"].includes(v.w)?v.w:"g",done:!!v.done,at:+v.at||0,dt:+v.dt||0})}
@@ -1421,7 +1426,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
     CP=cp||{a:"",b:"",ua:"",ub:"",since:"",ca:"",cb:""};applyPeople();
     if(MYID){if(CP.ua===MYID)setMe("a");else if(CP.ub===MYID)setMe("b")}
-    watchJoin();watchNew();render();widgetSync();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
+    watchJoin();watchNew();render();remSched();bgSync();widgetSync();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
 }catch(e){}setTimeout(()=>{if(!ok&&!firstDone)firstRun()},col?10000:400)})();
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
@@ -1474,7 +1479,7 @@ function watchNew(){const ids=Object.keys(DOCS).filter(id=>/^(ev|note|todo|bd|me
   try{const r=localStorage.getItem(SK);if(r)seen=new Set(JSON.parse(r))}catch(e){}
   const fresh=seen?ids.filter(id=>!seen.has(id)):[];if(seen&&!fresh.length)return;
   try{localStorage.setItem(SK,JSON.stringify([...new Set([...(seen||[]),...ids])].slice(-4000)))}catch(e){}
-  const news=fresh.filter(id=>!MINE.has(id));if(!seen||!news.length||!SHARED()||!ME)return;
+  const news=fresh.filter(id=>!MINE.has(id)&&!TOLD.has(id));if(!seen||!news.length||!SHARED()||!ME)return;
   const p=pname(other(ME)),v=DOCS[news[0]]||{},q=s=>String(s||"").slice(0,60);
   const msg=news.length>1?tx(`${p} har lagt till ${news.length} nya saker`,`${p} added ${news.length} new things`):
     v.kind==="ev"?tx(`${p} lade till: ${q(v.n)}`,`${p} added: ${q(v.n)}`)+(v.d?" ("+fmtD(dn(v.d),{day:"numeric",month:"short"})+")":""):
@@ -2090,6 +2095,34 @@ const _fd0=fdRun;fdRun=function(){paintFlush();_fd0()};$("fd_q").removeEventList
 const _close6=closeMM;closeMM=function(){paintFlush();_close6()};
 /* While a list is sliding shut, nothing else re-lays out the note. */
 const _prog9=mmProg;mmProg=function(){if(foldBusy>0)return;_prog9()};
+/* ---------- Reminders ----------
+   In the Android app, reminders for the next three weeks are handed to the phone, which shows them even when the app
+   is closed. Every change to the calendar redoes the list, so moved or deleted events never remind at the old time.
+   Only events that are yours or for both of you remind you. */
+var remTimer=0;
+function remId(s){let h=0;for(let i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return Math.abs(h)%2000000000+1}
+function remSched(){const N=NATIVE()&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications;if(!N||!ME)return;clearTimeout(remTimer);remTimer=setTimeout(async()=>{
+  const now=Date.now(),n0=todayN(),L=[];
+  for(const o of between(n0-1,n0+21)){const e=o.e;if(!(e.rm>=0)||(e.w!=="g"&&e.w!==ME))continue;
+    const [y,m,d]=ymd(o.s),st=e.t?tmin(e.t):9*60,base=new Date(y,m,d,Math.floor(st/60),st%60).getTime(),at=e.t?base-e.rm*60000:base-(e.rm===1440?864e5:0);
+    if(at<now+5000)continue;
+    const when=e.t?(e.rm===0?tx("Nu","Now"):e.rm===1440?tx("Imorgon ","Tomorrow ")+e.t:tx(`Om ${e.rm===60?"1 timme":e.rm+" min"}`,`In ${e.rm===60?"1 hour":e.rm+" min"}`)+" · "+e.t+(e.t2&&e.t2!==e.t?"–"+e.t2:"")):(e.rm===1440?tx("Imorgon","Tomorrow"):tx("Idag","Today"));
+    L.push({id:remId(e.id+"@"+o.s),title:(e.ic?"":"")+e.n,body:when+(e.pl?" · "+e.pl:""),schedule:{at:new Date(at),allowWhileIdle:true},extra:{d:nd(o.s),ev:e.id}})}
+  L.sort((a,b)=>a.schedule.at-b.schedule.at);const keep=L.slice(0,60);
+  let old=[];try{old=JSON.parse(localStorage.getItem("kalenderkoll.rems")||"[]")}catch(e){}
+  const ids=new Set(keep.map(x=>x.id)),gone=old.filter(i=>!ids.has(i));
+  try{if(gone.length)await N.cancel({notifications:gone.map(id=>({id}))});if(keep.length)await N.schedule({notifications:keep});localStorage.setItem("kalenderkoll.rems",JSON.stringify([...ids]))}catch(e){}},1500)}
+/* Tapping a reminder opens that day. */
+try{const N=NATIVE()&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications;if(N)N.addListener("localNotificationActionPerformed",a=>{const x=a&&a.notification&&a.notification.extra;if(x&&x.d){go("k");pickDay(dn(x.d))}})}catch(e){}
+
+/* ---------- Hand-over to the background check (Android app) ----------
+   The app leaves the calendar's code, who you are and what it has already seen in bg.json; the background job
+   reads it while the app is closed. What the job has already told you about is not announced again here. */
+var bgTimer=0,bgPrev="",TOLD=new Set();
+function bgSync(){const F=FSP();if(!F||!window.KK||KK.mode!=="cloud"||!KK.cfg)return;clearTimeout(bgTimer);bgTimer=setTimeout(()=>{
+  const txt=JSON.stringify({space:KK.space(),me:ME||"",names:{a:CP.a||"",b:CP.b||""},lang:S.lang,key:KK.cfg.key,project:KK.cfg.project,seen:Object.keys(DOCS).filter(k=>/^(ev|note|todo|bd|memo)_/.test(k))});
+  if(txt===bgPrev)return;F.writeFile({path:"bg.json",data:txt,directory:"DATA",encoding:"utf8"}).then(()=>{bgPrev=txt}).catch(()=>{})},800)}
+(async()=>{const F=FSP();if(!F)return;try{const r=await F.readFile({path:"bg_told.json",directory:"DATA",encoding:"utf8"});JSON.parse(r.data).forEach(x=>TOLD.add(x))}catch(e){}})();
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
