@@ -26,3 +26,16 @@ function bgSync(){const F=FSP();if(!F||!window.KK||KK.mode!=="cloud"||!KK.cfg)re
   const txt=JSON.stringify({space:KK.space(),me:ME||"",names:{a:CP.a||"",b:CP.b||""},lang:S.lang,key:KK.cfg.key,project:KK.cfg.project,seen:Object.keys(DOCS).filter(k=>/^(ev|note|todo|bd|memo)_/.test(k))});
   if(txt===bgPrev)return;F.writeFile({path:"bg.json",data:txt,directory:"DATA",encoding:"utf8"}).then(()=>{bgPrev=txt}).catch(()=>{})},800)}
 (async()=>{const F=FSP();if(!F)return;try{const r=await F.readFile({path:"bg_told.json",directory:"DATA",encoding:"utf8"});JSON.parse(r.data).forEach(x=>TOLD.add(x))}catch(e){}})();
+
+/* ---------- Sync status in the top bar ----------
+   Offline: a crossed cloud and "Offline". Saving for more than a moment: "Sparar…". When it is done: a brief tick. */
+var syncT=0,syncWas=0;
+function syncShow(){const b=$("sync");if(!b)return;const cloud=window.KK&&KK.mode==="cloud",off=!navigator.onLine,local=window.KK&&KK.mode==="local"&&SHARED();
+  clearTimeout(syncT);let st="";if(!cloud&&!local){b.hidden=true;return}
+  if(off||local)st="off";else if(WAIT>0)st="busy";else if(syncWas)st="done";
+  const set=s=>{b.hidden=!s;b.className="sync "+s;b.querySelector("span").textContent=s==="off"?tx("Offline","Offline"):s==="busy"?tx("Sparar…","Saving…"):s==="done"?tx("Sparat","Saved"):""};
+  if(st==="busy"){syncWas=1;syncT=setTimeout(()=>set("busy"),700);return}
+  if(st==="done"){syncWas=0;set("done");syncT=setTimeout(()=>set(""),1600);return}set(st)}
+addEventListener("online",syncShow);addEventListener("offline",syncShow);setTimeout(syncShow,3000);
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#sync")){const off=!navigator.onLine||(window.KK&&KK.mode==="local");
+  toast(off?tx("Ingen internetanslutning · Det du gör sparas på telefonen och skickas när du är online igen.","No internet · What you do is kept on the phone and sent when you are back online."):tx("Allt är sparat och delat.","Everything is saved and shared."),5000)}});

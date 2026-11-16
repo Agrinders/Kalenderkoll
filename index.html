@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="c292cc3a2014">
+<meta name="kal-build" content="342e16a9f4cc">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -674,6 +674,15 @@ nav{background:color-mix(in oklab,var(--card2) 92%,transparent)}
 /* Advent: deep plum to candle gold, with small stars. */
 [class*="fest-adv"]{--f1:#4a2a5e;--f2:#b8892f;--fi:#ffe0a0;--ft:#fff;--fa:118deg;--fp:radial-gradient(circle,#ffe0a0 0 1.5px,transparent 2px) 18% 28%/40px 30px,radial-gradient(circle,#fff 0 1px,transparent 1.5px) 62% 68%/46px 36px}
 .cgr [class*="fest-adv"]{--c1:#9b6fc0;--c2:#e0b050}
+
+/* Sync status */
+.sync{flex:none;display:inline-flex;align-items:center;gap:5px;height:26px;margin-left:6px;padding:0 9px 0 7px;border-radius:13px;font-size:12px;font-weight:600;color:var(--soft);background:var(--fill);animation:in .25s ease}
+.sync i{width:12px;height:12px;border-radius:50%;flex:none}
+.sync.busy i{border:2px solid color-mix(in oklab,var(--acc) 30%,transparent);border-top-color:var(--acc);animation:spin .8s linear infinite}
+.sync.done i{background:var(--good);-webkit-mask:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"><path d="M2.5 6.3 5 8.6l4.5-5" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>') center/contain no-repeat}
+.sync.off{color:var(--bad);background:color-mix(in oklab,var(--bad) 12%,transparent)}.sync.off i{background:var(--bad);-webkit-mask:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"><path d="M3.5 9h5.2a2 2 0 0 0 .3-4A3 3 0 0 0 3.3 4.6 2.2 2.2 0 0 0 3.5 9zM1.5 1.5l9 9" fill="none" stroke="black" stroke-width="1.6" stroke-linecap="round"/></svg>') center/contain no-repeat}
+@keyframes spin{to{transform:rotate(360deg)}}
+.top:has(#k_v:not(.hide)) .sync span{display:none}.top:has(#k_v:not(.hide)) .sync{padding:0 7px}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -757,7 +766,7 @@ nav{background:color-mix(in oklab,var(--card2) 92%,transparent)}
 <button class="di dset" data-go="c" id="dr_set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h2M11 17h9"/><circle cx="15.5" cy="7" r="2.5"/><circle cx="8.5" cy="17" r="2.5"/></svg><span></span></button>
 <div class="dlang" id="dr_lang"></div></aside>
 <main>
-<header class="top" id="main_top"><button class="ib" id="menu" type="button" aria-label="Meny"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h11M4 17h16"/></svg></button><h1 id="ttl"></h1><div class="seg kv hide" id="k_v"></div><button class="ib add" id="tadd" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></header>
+<header class="top" id="main_top"><button class="ib" id="menu" type="button" aria-label="Meny"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h11M4 17h16"/></svg></button><h1 id="ttl"></h1><button type="button" class="sync" id="sync" hidden aria-live="polite"><i></i><span></span></button><div class="seg kv hide" id="k_v"></div><button class="ib add" id="tadd" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></header>
 
 <section id="h">
 <div class="hello"><p class="eyebrow" id="h_date"></p><h2 id="h_hi"></h2></div>
@@ -987,8 +996,10 @@ let DOCS={};const copy=v=>v==null?null:JSON.parse(JSON.stringify(v));
 const MINE=new Set();
 /* Notes (Anteckningar) and the pictures in them. Pictures are saved as their own records so a note stays small. */
 let MEMOS=[],MIMG={};
-function put(id,v){MINE.add(id);DOCS[id]=copy(v);if(col)col.doc(id).set(v).catch(()=>toast(tx("Kunde inte spara. Försök igen.","Could not save. Try again.")))}
-function del(id){const before=copy(DOCS[id]);delete DOCS[id];if(col)col.doc(id).delete().catch(()=>{});return before}
+/* Every write is counted until the shared copy has it, so the top bar can show "Sparar…" or "Offline". */
+let WAIT=0;function track(pr){if(!pr||!pr.then)return pr;WAIT++;syncShow();return pr.finally(()=>{WAIT--;syncShow()})}
+function put(id,v){MINE.add(id);DOCS[id]=copy(v);if(col)track(col.doc(id).set(v)).catch(()=>toast(tx("Kunde inte spara. Försök igen.","Could not save. Try again.")))}
+function del(id){const before=copy(DOCS[id]);delete DOCS[id];if(col)track(col.doc(id).delete()).catch(()=>{});return before}
 /* After a delete, the notice gets an Undo button that puts the record back. */
 function undoable(e,ids){const was=ids.map(id=>[id,del(id)]).filter(x=>x[1]);if(!e||!was.length)return;const b=document.createElement("button");b.className="tundo";b.textContent=tx("Ångra","Undo");
   b.onclick=ev=>{ev.stopPropagation();dropToast(e);was.forEach(([id,v])=>put(id,v));reload()};clearTimeout(e._t);e._t=setTimeout(()=>dropToast(e),6000);e.appendChild(b)}
@@ -1587,6 +1598,8 @@ var MFONT={sf:"Serif",h:"Skrivstil",r:"Rund",m:"Mono"},MB_T=["p","c","l","i","lh
 function memoClean(v,fid){const id=String(v.id||fid);if(!id)return null;
   const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map((b,ix)=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000),...(b.s==="h1"||b.s==="h2"?{s:b.s}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d,...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{}),...(b.m==="b"||b.m==="n"?{m:b.m}:{})}:b.t==="lh"?{t:"lh",x:String(b.x||"").slice(0,200),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).map((x,ix)=>x&&{...x,b:typeof v.bl[ix].b==="string"&&v.bl[ix].b?v.bl[ix].b.slice(0,24):"o"+ix,tm:+v.bl[ix].tm||0}).filter(Boolean);
   return{id,ti:String(v.ti||"").slice(0,120),tu:+v.tu||0,gone:Array.isArray(v.gone)?v.gone.filter(x=>typeof x==="string").slice(-500):[],bl,del:+v.del||0,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
+/* A fingerprint of a note's content, to tell whether a copy is one this phone has already handled. */
+function memoKey(m){return m?m.ti+"\u0002"+(m.tu||0)+"\u0002"+(m.bl||[]).map(b=>b.b+":"+(b.tm||0)+":"+mbSig(b)).join("|")+"\u0002"+(m.gone||[]).length+"\u0002"+(m.del||0):""}
 var memoDoc=m=>({kind:"memo",id:m.id,ti:m.ti,tu:m.tu||0,gone:m.gone||[],bl:m.bl,at:m.at,up:m.up,by:m.by,ub:m.ub,...(m.del?{del:m.del}:{})});
 var memoEmpty=m=>!m.ti.trim()&&!m.bl.some(b=>b.t==="p"||b.t==="c"||b.t==="lh"?b.x.trim():true);
 var host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}};
@@ -1629,7 +1642,7 @@ function mmRead(){const bl=[],E=[...$("mm_body").querySelectorAll(":scope>.mb")]
   if(t==="p"&&!b.x&&!b.s&&!d._u)return;bl.push({...b,b:d.dataset.b,tm:d._u||0})});return bl}
 function mmPaint(){const m=MM.m;$("mm_ti").value=m.ti;$("mm_body").innerHTML="";const bl=m.bl.length?m.bl:[{t:"p",x:""}];
   bl.forEach(b=>$("mm_body").appendChild(mmBlock(b)));if(bl[bl.length-1].t!=="p")$("mm_body").appendChild(mmBlock({t:"p",x:""}));
-  $("mm_body").querySelectorAll(".mb-p").forEach(d=>{mmGrow(d.querySelector("textarea"));mmLinks(d)});mmProg();mmMeta();MM.loadedUp=m.up}
+  $("mm_body").querySelectorAll(".mb-p").forEach(d=>{mmGrow(d.querySelector("textarea"));mmLinks(d)});mmProg();mmMeta();MM.loadedUp=m.up;MM.lastKey=memoKey(m)}
 function mmMeta(){const m=MM.m;$("mm_meta").textContent=m.at?(m.by?tx("Skapad av ","Created by ")+pname(m.by)+" · ":"")+whenTxt(m.at)+(m.up>m.at+60000?" · "+tx("ändrad ","edited ")+whenTxt(m.up)+(m.ub&&m.ub!==m.by?" "+tx("av ","by ")+pname(m.ub):""):""):""}
 function openMM(id){let m=id&&MEMOS.find(x=>x.id===id);
   if(!m){const now=Date.now();m={id:newId(),ti:"",bl:[{t:"p",x:""}],at:now,up:now,by:ME||"",ub:ME||""};MM.fresh=true}else MM.fresh=false;
@@ -1643,7 +1656,7 @@ function mmSave(){clearTimeout(MM.t);if(!MM.m)return;const mine=mmMine();if(!MM.
   const th=MEMOS.find(x=>x.id===MM.id&&x!==MM.m),mg=th&&!MM.fresh?mmMerge(mine,th):mine;
   const m={...MM.m,ti:mg.ti,tu:mg.tu,bl:mg.bl,gone:mg.gone,up:Date.now(),ub:ME||MM.m.ub};MM.fresh=false;MM.m=m;MM.saved=new Set(m.bl.map(b=>b.b));
   const i=MEMOS.findIndex(x=>x.id===m.id),c=JSON.parse(JSON.stringify(m));if(i>=0)MEMOS[i]=c;else MEMOS.push(c);
-  put("memo_"+m.id,memoDoc(m));MM.loadedUp=m.up;if(th)mmReconcile(mg);mmMeta();$("mm_st").textContent=tx("Sparat","Saved");setTimeout(()=>{if(!MM.dirty)$("mm_st").textContent=""},1400)}
+  put("memo_"+m.id,memoDoc(m));MM.loadedUp=m.up;MM.lastKey=memoKey(m);if(th)mmReconcile(mg);mmMeta();$("mm_st").textContent=tx("Sparat","Saved");setTimeout(()=>{if(!MM.dirty)$("mm_st").textContent=""},1400)}
 /* Pictures no note uses any more are removed. */
 function mmSweep(){const used=new Set(MEMOS.flatMap(m=>m.bl.filter(b=>b.t==="i").map(b=>b.i)));Object.keys(DOCS).filter(k=>k.startsWith("mimg_")&&!used.has(k.slice(5))&&Date.now()-(+(DOCS[k]||{}).at||0)>60000).forEach(k=>{del(k);delete MIMG[k.slice(5)]})}
 function closeMM(){if(!MM.open)return;mmSave();const m=MM.m;MM.open=false;$("mm").classList.remove("on");document.body.classList.remove("mmopen");document.activeElement&&document.activeElement.blur&&document.activeElement.blur();
@@ -1653,7 +1666,8 @@ function closeMM(){if(!MM.open)return;mmSave();const m=MM.m;MM.open=false;$("mm"
 /* Your partner's changes come in line by line while you write; the line you are on is never moved under your fingers. */
 function mmMaybeRefresh(){const m=MEMOS.find(x=>x.id===MM.id);
   if(!m||m.del){if(!MM.fresh&&MM.m){toast(m?tx("Anteckningen flyttades till Nyligen raderade","The note was moved to Recently deleted"):tx("Anteckningen togs bort","The note was removed"));MM.m=null;MM.open=false;$("mm").classList.remove("on");document.body.classList.remove("mmopen")}return}
-  if(m.up>MM.loadedUp&&m!==MM.m){const mine=mmMine(),mg=mmMerge(mine,m);MM.loadedUp=m.up;MM.m={...m,ti:mg.ti,tu:mg.tu,bl:mg.bl,gone:mg.gone};MM.saved=new Set(m.bl.map(b=>b.b));mmReconcile(mg);mmMeta();
+  /* "New" means different from the last copy this phone saved or took in — never judged by clocks, which differ between phones. */
+  if(memoKey(m)!==MM.lastKey&&m!==MM.m){const mine=mmMine(),mg=mmMerge(mine,m);MM.loadedUp=m.up;MM.lastKey=memoKey(m);MM.m={...m,ti:mg.ti,tu:mg.tu,bl:mg.bl,gone:mg.gone};MM.saved=new Set(m.bl.map(b=>b.b));mmReconcile(mg);mmMeta();
     /* If this phone has lines the shared copy lacks, they are saved again so nothing is lost. */
     const key=L=>L.map(b=>b.b+":"+mbSig(b)+":"+(b.tm||0)).join("|");if(key(mg.bl)!==key(m.bl)||mg.ti!==m.ti){MM.dirty=true;clearTimeout(MM.t);MM.t=setTimeout(mmSave,500)}}
   $("mm_body").querySelectorAll(".mb-i").forEach(d=>{if(d.querySelector(".mbwait")&&MIMG[d.dataset.i]&&d!==mmCur())d.replaceWith(mmBlock({t:"i",i:d.dataset.i,b:d.dataset.b,tm:d._u}))})}
@@ -1982,7 +1996,7 @@ function drEnd(){if(!DR)return;const u=DR.unit,changed=[...$("mm_body").children
   DR=null}
 $("mm_body").addEventListener("pointerup",drEnd);$("mm_body").addEventListener("pointercancel",drEnd);
 /* While nothing changed on the other phone, this phone's own order is kept as it is. */
-const _merge0=mmMerge;mmMerge=function(a,b){if(MM&&MM.m&&b&&b.up&&b.up<=MM.loadedUp&&b.id===MM.id)return{...a,gone:[...new Set([...(a.gone||[]),...(b.gone||[])])].slice(-500)};return _merge0(a,b)};
+const _merge0=mmMerge;mmMerge=function(a,b){if(MM&&MM.m&&b&&b.id===MM.id&&memoKey(b)===MM.lastKey)return{...a,gone:[...new Set([...(a.gone||[]),...(b.gone||[])])].slice(-500)};return _merge0(a,b)};
 
 /* ---------- Sorting a list ---------- */
 function mmSort(d,how){const h=d.dataset.t==="lh"?d:null,L=h?itemsOf(h):mmGroup(d);if(L.length<2)return;
@@ -2089,7 +2103,7 @@ function paintStep(job){if(paintJob!==job)return;paintAdd(job.rest.splice(0,90))
 function paintEnd(){paintJob=null;const last=$("mm_body").lastElementChild;if(!last||last.dataset.t!=="p")$("mm_body").appendChild(mmBlock({t:"p",x:""}));mmProg()}
 function paintFlush(){if(!paintJob)return;const job=paintJob;paintAdd(job.rest.splice(0));paintEnd()}
 mmPaint=function(){paintJob=null;const m=MM.m;if(!m||m.bl.length<=120){_paint0();return}
-  $("mm_ti").value=m.ti;$("mm_body").innerHTML="";const job=paintJob={rest:m.bl.slice(),fold:false};paintAdd(job.rest.splice(0,60));mmProg();mmMeta();MM.loadedUp=m.up;requestAnimationFrame(()=>paintStep(job))};
+  $("mm_ti").value=m.ti;$("mm_body").innerHTML="";const job=paintJob={rest:m.bl.slice(),fold:false};paintAdd(job.rest.splice(0,60));mmProg();mmMeta();MM.loadedUp=m.up;MM.lastKey=memoKey(m);requestAnimationFrame(()=>paintStep(job))};
 const _read0=mmRead;mmRead=function(){paintFlush();return _read0()};
 const _fd0=fdRun;fdRun=function(){paintFlush();_fd0()};$("fd_q").removeEventListener("input",_fd0);$("fd_q").addEventListener("input",()=>fdRun());
 const _close6=closeMM;closeMM=function(){paintFlush();_close6()};
@@ -2123,6 +2137,19 @@ function bgSync(){const F=FSP();if(!F||!window.KK||KK.mode!=="cloud"||!KK.cfg)re
   const txt=JSON.stringify({space:KK.space(),me:ME||"",names:{a:CP.a||"",b:CP.b||""},lang:S.lang,key:KK.cfg.key,project:KK.cfg.project,seen:Object.keys(DOCS).filter(k=>/^(ev|note|todo|bd|memo)_/.test(k))});
   if(txt===bgPrev)return;F.writeFile({path:"bg.json",data:txt,directory:"DATA",encoding:"utf8"}).then(()=>{bgPrev=txt}).catch(()=>{})},800)}
 (async()=>{const F=FSP();if(!F)return;try{const r=await F.readFile({path:"bg_told.json",directory:"DATA",encoding:"utf8"});JSON.parse(r.data).forEach(x=>TOLD.add(x))}catch(e){}})();
+
+/* ---------- Sync status in the top bar ----------
+   Offline: a crossed cloud and "Offline". Saving for more than a moment: "Sparar…". When it is done: a brief tick. */
+var syncT=0,syncWas=0;
+function syncShow(){const b=$("sync");if(!b)return;const cloud=window.KK&&KK.mode==="cloud",off=!navigator.onLine,local=window.KK&&KK.mode==="local"&&SHARED();
+  clearTimeout(syncT);let st="";if(!cloud&&!local){b.hidden=true;return}
+  if(off||local)st="off";else if(WAIT>0)st="busy";else if(syncWas)st="done";
+  const set=s=>{b.hidden=!s;b.className="sync "+s;b.querySelector("span").textContent=s==="off"?tx("Offline","Offline"):s==="busy"?tx("Sparar…","Saving…"):s==="done"?tx("Sparat","Saved"):""};
+  if(st==="busy"){syncWas=1;syncT=setTimeout(()=>set("busy"),700);return}
+  if(st==="done"){syncWas=0;set("done");syncT=setTimeout(()=>set(""),1600);return}set(st)}
+addEventListener("online",syncShow);addEventListener("offline",syncShow);setTimeout(syncShow,3000);
+document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("#sync")){const off=!navigator.onLine||(window.KK&&KK.mode==="local");
+  toast(off?tx("Ingen internetanslutning · Det du gör sparas på telefonen och skickas när du är online igen.","No internet · What you do is kept on the phone and sent when you are back online."):tx("Allt är sparat och delat.","Everything is saved and shared."),5000)}});
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>

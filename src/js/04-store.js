@@ -14,8 +14,10 @@ let DOCS={};const copy=v=>v==null?null:JSON.parse(JSON.stringify(v));
 const MINE=new Set();
 /* Notes (Anteckningar) and the pictures in them. Pictures are saved as their own records so a note stays small. */
 let MEMOS=[],MIMG={};
-function put(id,v){MINE.add(id);DOCS[id]=copy(v);if(col)col.doc(id).set(v).catch(()=>toast(tx("Kunde inte spara. Försök igen.","Could not save. Try again.")))}
-function del(id){const before=copy(DOCS[id]);delete DOCS[id];if(col)col.doc(id).delete().catch(()=>{});return before}
+/* Every write is counted until the shared copy has it, so the top bar can show "Sparar…" or "Offline". */
+let WAIT=0;function track(pr){if(!pr||!pr.then)return pr;WAIT++;syncShow();return pr.finally(()=>{WAIT--;syncShow()})}
+function put(id,v){MINE.add(id);DOCS[id]=copy(v);if(col)track(col.doc(id).set(v)).catch(()=>toast(tx("Kunde inte spara. Försök igen.","Could not save. Try again.")))}
+function del(id){const before=copy(DOCS[id]);delete DOCS[id];if(col)track(col.doc(id).delete()).catch(()=>{});return before}
 /* After a delete, the notice gets an Undo button that puts the record back. */
 function undoable(e,ids){const was=ids.map(id=>[id,del(id)]).filter(x=>x[1]);if(!e||!was.length)return;const b=document.createElement("button");b.className="tundo";b.textContent=tx("Ångra","Undo");
   b.onclick=ev=>{ev.stopPropagation();dropToast(e);was.forEach(([id,v])=>put(id,v));reload()};clearTimeout(e._t);e._t=setTimeout(()=>dropToast(e),6000);e.appendChild(b)}
