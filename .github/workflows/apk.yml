@@ -42,7 +42,7 @@ jobs:
           JSON
           npx cap add android
           mkdir -p assets && cp ../android-assets/*.png assets/
-          npx capacitor-assets generate --android --iconBackgroundColor '#f8e4dc' --splashBackgroundColor '#f8f3f4' --splashBackgroundColorDark '#15131a'
+          npx capacitor-assets generate --android --iconBackgroundColor '#f3b8c6' --splashBackgroundColor '#f8f3f4' --splashBackgroundColorDark '#15131a'
           npx cap sync android
           # Older phones (Android 10 and earlier) need permission to write the backup to Documents.
           sed -i 's#<uses-permission android:name="android.permission.INTERNET" />#<uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />#' android/app/src/main/AndroidManifest.xml
