@@ -756,3 +756,10 @@ body:has(.sh.on) #toasts{bottom:calc(20px + var(--sab))}
 .mb[data-k] .mbds{color:var(--soft)}
 .mb-c.showd:not(:focus-within) .mbds:placeholder-shown{display:none}
 .mb-c .mbpr{font-size:14.5px}
+
+/* Notes list: a pin at the top right of each note */
+.mmrow{position:relative;border-top:1px solid var(--rule)}.mml>.mmrow:first-child{border-top:0}.mmrow .mmi{border-top:0;padding-right:40px}
+.mmpinb{position:absolute;top:6px;right:0;display:grid;place-items:center;width:36px;height:36px;border-radius:10px;color:color-mix(in oklab,var(--soft) 70%,transparent)}
+.mmpinb svg{width:18px;height:18px;stroke-width:1.75;transform:rotate(30deg);transition:transform .25s cubic-bezier(.3,1.4,.5,1),fill .2s}
+.mmpinb.on{color:var(--acc)}.mmpinb.on svg{fill:color-mix(in oklab,var(--acc) 35%,transparent);transform:rotate(0)}
+.mmrow.pinned .mmi{background:linear-gradient(90deg,color-mix(in oklab,var(--acc) 6%,transparent),transparent 60%)}
