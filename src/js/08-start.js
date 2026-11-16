@@ -89,7 +89,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
     CP=cp||{a:"",b:"",ua:"",ub:"",since:"",ca:"",cb:""};applyPeople();
     if(MYID){if(CP.ua===MYID)setMe("a");else if(CP.ub===MYID)setMe("b")}
-    watchJoin();watchNew();render();remSched();bgSync();widgetSync();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
+    document.body.classList.remove("loading");watchJoin();watchNew();render();remSched();bgSync();widgetSync();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
 }catch(e){}setTimeout(()=>{if(!ok&&!firstDone)firstRun()},col?10000:400)})();
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */

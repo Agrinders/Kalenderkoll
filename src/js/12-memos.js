@@ -5,10 +5,10 @@
 var MFONT={sf:"Serif",h:"Skrivstil",r:"Rund",m:"Mono"},MB_T=["p","c","l","i","lh"],MCOL={r:"#e5484d",o:"#ee8a2a",y:"#c99a0e",g:"#2f9e63",b:"#3b82f6",v:"#8a72ee",p:"#e0559c",s:"#8b8494"},URLRE=/https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]]/gi;
 function memoClean(v,fid){const id=String(v.id||fid);if(!id)return null;
   const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map((b,ix)=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000),...(b.s==="h1"||b.s==="h2"?{s:b.s}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d,...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{}),...(b.m==="b"||b.m==="n"?{m:b.m}:{})}:b.t==="lh"?{t:"lh",x:String(b.x||"").slice(0,200),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).map((x,ix)=>x&&{...x,b:typeof v.bl[ix].b==="string"&&v.bl[ix].b?v.bl[ix].b.slice(0,24):"o"+ix,tm:+v.bl[ix].tm||0}).filter(Boolean);
-  return{id,ti:String(v.ti||"").slice(0,120),tu:+v.tu||0,gone:Array.isArray(v.gone)?v.gone.filter(x=>typeof x==="string").slice(-500):[],bl,del:+v.del||0,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
+  return{id,pin:+v.pin||0,ti:String(v.ti||"").slice(0,120),tu:+v.tu||0,gone:Array.isArray(v.gone)?v.gone.filter(x=>typeof x==="string").slice(-500):[],bl,del:+v.del||0,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
 /* A fingerprint of a note's content, to tell whether a copy is one this phone has already handled. */
 function memoKey(m){return m?m.ti+"\u0002"+(m.tu||0)+"\u0002"+(m.bl||[]).map(b=>b.b+":"+(b.tm||0)+":"+mbSig(b)).join("|")+"\u0002"+(m.gone||[]).length+"\u0002"+(m.del||0):""}
-var memoDoc=m=>({kind:"memo",id:m.id,ti:m.ti,tu:m.tu||0,gone:m.gone||[],bl:m.bl,at:m.at,up:m.up,by:m.by,ub:m.ub,...(m.del?{del:m.del}:{})});
+var memoDoc=m=>({kind:"memo",id:m.id,pin:m.pin||0,ti:m.ti,tu:m.tu||0,gone:m.gone||[],bl:m.bl,at:m.at,up:m.up,by:m.by,ub:m.ub,...(m.del?{del:m.del}:{})});
 var memoEmpty=m=>!m.ti.trim()&&!m.bl.some(b=>b.t==="p"||b.t==="c"||b.t==="lh"?b.x.trim():true);
 var host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}};
 var whenTxt=ms=>{const d=new Date(ms),n=dnD(d),h=pad(d.getHours())+":"+pad(d.getMinutes());return n===todayN()?h:n===todayN()-1?tx("Igår","Yesterday")+" "+h:fmtD(n,{day:"numeric",month:"short"})+(ymd(n)[0]!==ymd(todayN())[0]?" "+ymd(n)[0]:"")};
@@ -377,11 +377,18 @@ function unitAt(el,whole,dir){if(!el)return null;if(!whole)return[el];
   return[el]}
 function flip(els,fn){const r=new Map(els.map(e=>[e,e.getBoundingClientRect().top]));fn();els.forEach(e=>{const dy=r.get(e)-e.getBoundingClientRect().top;if(!dy)return;e.style.transition="none";e.style.transform=`translateY(${dy}px)`;requestAnimationFrame(()=>{e.style.transition="transform .22s cubic-bezier(.3,.8,.3,1)";e.style.transform=""})})}
 let DR=null;
-$("mm_body").addEventListener("pointerdown",e=>{const g=e.target.closest(".mbgrip");if(!g||DR)return;e.preventDefault();const d=g.closest(".mb"),whole=d.dataset.t==="lh",unit=whole?[d,...itemsOf(d)]:[d];
+/* The grip only picks a line up after you have held it still for half a second, so a quick touch never moves anything.
+   A ring fills around the grip while you hold. */
+let ARM=null;
+$("mm_body").addEventListener("pointerdown",e=>{const g=e.target.closest(".mbgrip");if(!g||DR||ARM)return;e.preventDefault();try{g.setPointerCapture(e.pointerId)}catch(err){}
+  g.classList.add("arming");ARM={g,x:e.clientX,y:e.clientY,id:e.pointerId,t:setTimeout(()=>{const A=ARM;ARM=null;g.classList.remove("arming");startDrag({clientY:A.y,pointerId:A.id},g)},500)}});
+$("mm_body").addEventListener("pointermove",e=>{if(ARM&&Math.hypot(e.clientX-ARM.x,e.clientY-ARM.y)>8){clearTimeout(ARM.t);ARM.g.classList.remove("arming");ARM=null}else if(ARM){ARM.y=e.clientY}});
+["pointerup","pointercancel"].forEach(ev=>$("mm_body").addEventListener(ev,()=>{if(ARM){clearTimeout(ARM.t);ARM.g.classList.remove("arming");ARM=null}}));
+function startDrag(e,g){const d=g.closest(".mb"),whole=d.dataset.t==="lh",unit=whole?[d,...itemsOf(d)]:[d];
   if(document.activeElement&&$("mm").contains(document.activeElement))document.activeElement.blur();tocOpen(false);
   const r0=unit[0].getBoundingClientRect(),r1=unit[unit.length-1].getBoundingClientRect();
   DR={unit,whole,y0:e.clientY,top0:r0.top+$("mm_w").scrollTop,c0:(r0.top+r1.bottom)/2,h:r1.bottom-r0.top,moved:false,order:[...$("mm_body").children].map(x=>x.dataset.b).join(),sc0:$("mm_w").scrollTop};
-  try{g.setPointerCapture(e.pointerId)}catch(err){}unit.forEach(x=>{x.classList.add("drg");x.style.transition="none"});d.classList.add("lift");try{if(navigator.vibrate)navigator.vibrate(10)}catch(err){}});
+  unit.forEach(x=>{x.classList.add("drg");x.style.transition="none"});d.classList.add("lift");try{if(navigator.vibrate)navigator.vibrate(12)}catch(err){}}
 function drPlace(){const w=$("mm_w"),u=DR.unit,nowTop=u[0].getBoundingClientRect().top-parseFloat((u[0].style.transform||"").replace(/[^\d.-]/g,"")||0)+w.scrollTop;
   const dy=DR.y-DR.y0+(w.scrollTop-DR.sc0)-(nowTop-DR.top0);u.forEach(x=>x.style.transform=`translateY(${dy}px)`)}
 $("mm_body").addEventListener("pointermove",e=>{if(!DR)return;e.preventDefault();DR.y=e.clientY;const w=$("mm_w"),u=DR.unit,center=DR.c0+(e.clientY-DR.y0);

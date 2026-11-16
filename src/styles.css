@@ -670,3 +670,50 @@ nav{background:color-mix(in oklab,var(--card2) 92%,transparent)}
 .sync.off{color:var(--bad);background:color-mix(in oklab,var(--bad) 12%,transparent)}.sync.off i{background:var(--bad);-webkit-mask:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12"><path d="M3.5 9h5.2a2 2 0 0 0 .3-4A3 3 0 0 0 3.3 4.6 2.2 2.2 0 0 0 3.5 9zM1.5 1.5l9 9" fill="none" stroke="black" stroke-width="1.6" stroke-linecap="round"/></svg>') center/contain no-repeat}
 @keyframes spin{to{transform:rotate(360deg)}}
 .top:has(#k_v:not(.hide)) .sync span{display:none}.top:has(#k_v:not(.hide)) .sync{padding:0 7px}
+
+/* ---------- Polish pass ---------- */
+/* Month: names wrap onto two lines instead of being cut. */
+.cev u{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;hyphens:auto;line-height:1.18;padding:1.5px 2px 1.5px 3px}
+.cev u::after{display:none}
+@media (max-width:559px){.cev u{font-size:9.5px;line-height:1.16}}
+/* Grip: a ring fills while you hold it. */
+.mbgrip{position:relative}.mbgrip::after{content:"";position:absolute;inset:3px;border-radius:50%;border:2px solid var(--acc);opacity:0;transform:scale(.6)}
+.mbgrip.arming{color:var(--acc)}.mbgrip.arming::after{animation:arm .5s linear forwards}
+@keyframes arm{0%{opacity:0;transform:scale(.6)}30%{opacity:.5}100%{opacity:1;transform:scale(1)}}
+/* Inline styles in notes */
+.mbv{display:block;padding:5px 0;font-size:16.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;cursor:text;min-height:1.5em}
+.mb-p:not(.rich) .mbv{display:none}.mb-p.rich textarea{position:absolute;opacity:0;pointer-events:none;height:0!important}.mb-p{position:relative}
+.mb-h1 .mbv{font:500 25px/1.25 var(--serif);padding:12px 0 4px}.mb-h2 .mbv{font-size:18.5px;font-weight:700;padding:10px 0 2px}
+.mb[data-k] .mbv{color:var(--tk)}.mb[data-f="sf"] .mbv{font-family:Fraunces,Georgia,serif}.mb[data-f="h"] .mbv{font-family:Caveat,cursive;font-size:1.32em;line-height:1.25}.mb[data-f="r"] .mbv{font-family:Nunito,sans-serif}.mb[data-f="m"] .mbv{font-family:"DM Mono",monospace;font-size:.92em}
+.mbv .rb{font-weight:700}.mbv .ri{font-style:italic}.mbv .rs{text-decoration:line-through;text-decoration-color:color-mix(in oklab,currentColor 60%,transparent)}
+.mmin{align-items:center}.mmin button{min-width:44px;font-size:17px}.mmin button b{font-weight:800}.mmin button i{font-family:Georgia,serif}.mmin span{flex:1;min-width:120px;font-size:12px;color:var(--soft);line-height:1.3;padding-left:4px;white-space:normal}
+.mmfmt.selmode .mmin span{color:var(--acc);font-weight:600}
+/* Notes list tools */
+.mmtools{display:flex;gap:8px;margin:0 0 8px}.mmq{flex:1;display:flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border-radius:12px;background:var(--fill)}
+.mmq svg{width:17px;height:17px;flex:none;color:var(--soft);stroke-width:1.75}.mmq input{flex:1;min-width:0;border:0;background:none;outline:none;font-size:15px}
+.mmq.big{min-height:46px;margin:6px 0 10px}.mmq.big input{font-size:16px}
+.mmsort{flex:none;min-height:40px;padding:0 12px;border-radius:12px;background:var(--fill);font-size:13px;font-weight:600;color:var(--soft)}
+.mmpin{margin-right:6px;font-size:13px}.mmnone{margin:6px 2px}
+/* Calendar search */
+.mnav .srchb{order:3;width:40px;height:40px;color:var(--soft)}.mnav .srchb svg{width:19px;height:19px;stroke-width:1.9}
+.mnav{gap:0}#k_cal .mnav,#k_wv .mnav,#k_dv .mnav{justify-content:flex-start}#k_cal .mnav b,#k_wv .mnav b,#k_dv .mnav b{flex:1;order:0;text-align:left;padding-left:10px}
+#k_cal .mnav button[data-mv="-1"],#k_wv .mnav [data-wmv="-7"],#k_dv .mnav [data-dmv="-1"]{order:4}#k_cal .mnav button[data-mv="1"],#k_wv .mnav [data-wmv="7"],#k_dv .mnav [data-dmv="1"]{order:5}
+#dv_t{justify-content:flex-start}
+#ss .box{min-height:60vh}#ss .bh{display:flex;align-items:center;justify-content:space-between}
+.ssh{text-align:center;margin:24px 8px}.ssg{margin:14px 4px 4px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--soft)}
+.ssi{display:flex;align-items:center;gap:12px;width:100%;padding:9px 6px;border-radius:12px;text-align:left}.ssi:active{background:var(--fill)}
+.ssdt{flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;width:46px;height:46px;border-radius:12px;background:color-mix(in oklab,var(--c,var(--acc)) 22%,var(--card));line-height:1}
+.ssdt b{font-size:18px;font-weight:700}.ssdt small{font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--soft);margin-top:2px}
+.sst{flex:1;min-width:0}.sst b{display:block;font-size:15.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.sst small{display:block;font-size:13px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ssi.past{opacity:.7}
+/* Loading placeholders */
+#skel{display:none}body.loading #skel{display:flex;flex-direction:column;gap:12px}body.loading main>section{display:none}
+.sk{display:flex;flex-direction:column;gap:12px;padding:20px;border-radius:20px;background:var(--card);border:1px solid var(--rule)}
+.sk i{display:block;height:14px;border-radius:7px;background:linear-gradient(90deg,var(--fill) 0%,color-mix(in oklab,var(--ink) 9%,transparent) 50%,var(--fill) 100%);background-size:200% 100%;animation:shim 1.3s ease-in-out infinite}
+.sk1 i:first-child{width:30%;height:12px}.sk1 i:last-child{width:55%;height:40px;border-radius:12px}.sk2 i{height:44px;border-radius:12px}.sk3 i:nth-child(2){width:80%}.sk3 i:nth-child(3){width:60%}
+@keyframes shim{0%{background-position:100% 0}100%{background-position:-100% 0}}
+/* Week view celebrations */
+.wvh .wfest{position:relative}.wvh .wfi{font-size:11px;line-height:1;margin-top:1px}
+.wvcol.wfest{overflow:hidden;background:linear-gradient(180deg,color-mix(in oklab,var(--f1) 18%,transparent),color-mix(in oklab,var(--f2) 14%,transparent))}
+.wvcol .wvart{left:50%;top:auto;bottom:6px;width:min(90%,40px);aspect-ratio:1;transform:translateX(-50%);opacity:.4}
+.mmq{min-width:0;flex:1 1 0}.mmsort{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}.mmsort svg{width:16px;height:16px;stroke-width:2}
