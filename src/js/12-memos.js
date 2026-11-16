@@ -467,3 +467,10 @@ async function lhMenu(h){if(DR||!h.isConnected)return;try{if(navigator.vibrate)n
   toast(tx("Listan togs bort","The list was removed")+" · "+nm,6000);const tb=$("toasts").lastElementChild;
   if(tb){const b=document.createElement("button");b.className="tundo";b.textContent=tx("Ångra","Undo");b.onclick=()=>{tb.remove();if(!MM.open)return;
     all.forEach(x=>{x.dataset.b=bid();x._u=Date.now();x._sig=""});if(anchor&&anchor.isConnected)anchor.after(...all);else $("mm_body").prepend(...all);mmChanged()};tb.appendChild(b)}}
+/* Never more than one empty "Skriv något…" line in a row, anywhere in the note: spare helper lines are removed,
+   and other empty lines after the first are hidden. The line you are in is always kept. */
+const _prog8=_prog7;function mmOneBlank(){if(DR)return;const blank=x=>x&&x.dataset.t==="p"&&!x.dataset.s&&!x.querySelector("textarea").value.trim();
+  let run=[];const flush=()=>{if(run.length>1){const foc=run.find(x=>x.querySelector("textarea")===document.activeElement),keep=foc||run.find(x=>x.classList.contains("gapline"))||run[0];
+      run.forEach(x=>{if(x===keep){x.classList.remove("slim");return}if(!x._u)x.remove();else{x.classList.add("slim");x.classList.remove("gapline")}})}run=[]};
+  [...$("mm_body").querySelectorAll(":scope>.mb")].forEach(x=>{if(blank(x))run.push(x);else flush()});flush()}
+mmProg=function(){if(progQ)return;progQ=requestAnimationFrame(()=>{progQ=0;_prog8();mmOneBlank()})};
