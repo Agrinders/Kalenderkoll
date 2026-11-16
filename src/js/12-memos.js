@@ -285,13 +285,34 @@ const _mbBlock2=mmBlock;mmBlock=function(b){const d=_mbBlock2(b);if(b.t==="lh"){
   f.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 10 4 4 4-4"/></svg>';d.prepend(f);if(MM&&MM.id){const F=foldSet();if(F.has(MM.id+":"+d.dataset.b)||(b.x&&F.has(MM.id+":n:"+b.x.trim())))d.classList.add("fold")}}return d};
 const _prog2=mmProg;mmProg=function(){_prog2();$("mm_body").querySelectorAll(".mb-c").forEach(c=>c.classList.remove("hid"));
   $("mm_body").querySelectorAll(".mb-lh.fold").forEach(h=>{for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)x.classList.add("hid")})};
-function mmFold(h,on){if(on===undefined)on=!h.classList.contains("fold");
-  /* Items fold away one after another from the bottom, and open from the top, for a soft ripple. */
-  {const G=[];for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)G.push(x);const n=G.length;G.forEach((x,i)=>x.style.setProperty("--i",Math.min(8,on?n-1-i:i)));}
-  try{if(navigator.vibrate)navigator.vibrate(6)}catch(e){}h.classList.toggle("fold",on);/* Remembered both by the line and by the list's name, so it stays folded next time even after the list is moved. */
+/* Folding is drawn with transforms and opacity only: the lines are shown or hidden in one step, and what you see
+   is the lines fading while everything below slides. That keeps it smooth however long the list is. */
+const calm=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;
+var foldBusy=0;
+function mmFold(h,on){if(on===undefined)on=!h.classList.contains("fold");if(h.classList.contains("fold")===on)return;
+  const G=[];for(let x=h.nextElementSibling;x&&x.dataset.t==="c";x=x.nextElementSibling)G.push(x);
   const S2=foldSet(),nm=h.querySelector("input").value.trim();[MM.id+":"+h.dataset.b,...(nm?[MM.id+":n:"+nm]:[])].forEach(k=>{if(on)S2.add(k);else S2.delete(k)});foldSave(S2);
+  try{if(navigator.vibrate)navigator.vibrate(6)}catch(e){}
   /* The line you were writing on is not hidden away. */
-  if(on){const a=mmCur();if(a&&a.dataset.t==="c"&&a!==h){let x=a;while(x&&x.dataset.t==="c")x=x.previousElementSibling;if(x===h)h.querySelector("input").focus()}}mmProg()}
+  if(on){const a=mmCur();if(a&&G.includes(a))h.querySelector("input").focus()}
+  const w=$("mm_w"),vb=w.getBoundingClientRect().bottom,EASE="cubic-bezier(.22,.9,.3,1)",DUR=260,anim=!calm()&&G.length&&h.getBoundingClientRect().top<vb;
+  G.forEach(x=>x.getAnimations&&x.getAnimations().forEach(a=>a.cancel()));
+  const after=[];if(anim){for(let x=G[G.length-1].nextElementSibling;x&&after.length<40;x=x.nextElementSibling)after.push(x);const t=$("mm_tail");if(t)after.push(t)}
+  const top0=after.length?after[0].getBoundingClientRect().top:0;
+  if(!on){G.forEach(x=>x.classList.remove("hid"));h.classList.remove("fold")}
+  const top1=!on&&after.length?after[0].getBoundingClientRect().top:0,H=on?(G.length?G[G.length-1].getBoundingClientRect().bottom-G[0].getBoundingClientRect().top:0):top1-top0;
+  if(on)h.classList.add("fold");
+  if(!anim){if(on)G.forEach(x=>x.classList.add("hid"));mmProg();return}
+  const seen=G.filter(x=>{const r=x.getBoundingClientRect();return r.top<vb}).slice(0,14);
+  if(on){/* Closing: lines fade up and out while what is below slides up; then the lines are taken out of the page. */
+    seen.forEach((x,i)=>x.animate([{opacity:1,transform:"none"},{opacity:0,transform:"translateY(-6px)"}],{duration:130,delay:Math.max(0,(seen.length-1-i))*10,easing:"ease-in",fill:"forwards"}));
+    const vis=after.filter(x=>x.getBoundingClientRect().top-H<vb+40);
+    const A=vis.map(x=>x.animate([{transform:"none"},{transform:`translateY(${-H}px)`}],{duration:DUR,easing:EASE,fill:"forwards"}));
+    foldBusy++;const done=()=>{foldBusy--;G.forEach(x=>{x.classList.add("hid");x.getAnimations().forEach(a=>a.cancel())});A.forEach(a=>a.cancel());mmProg()};
+    if(A.length)A[0].finished.then(done,()=>{});else setTimeout(done,150)}
+  else{/* Opening: the lines are already in place; they fade in from just above while what is below slides down. */
+    seen.forEach((x,i)=>x.animate([{opacity:0,transform:"translateY(-8px)"},{opacity:1,transform:"none"}],{duration:200,delay:40+i*16,easing:EASE,fill:"backwards"}));
+    after.filter(x=>x.getBoundingClientRect().top-H<vb+40).forEach(x=>x.animate([{transform:`translateY(${-H}px)`},{transform:"none"}],{duration:DUR,easing:EASE}));mmProg()}}
 $("mm_body").addEventListener("click",e=>{const f=e.target.closest(".mbfold");if(!f)return;e.stopPropagation();mmFold(f.closest(".mb"))},true);
 /* Pressing Enter on a folded list's name opens it and goes to its first point. */
 $("mm_body").addEventListener("keydown",e=>{const d=e.target.closest&&e.target.closest(".mb-lh.fold");if(d&&e.key==="Enter")mmFold(d,false)},true);
@@ -474,3 +495,22 @@ const _prog8=_prog7;function mmOneBlank(){if(DR)return;const blank=x=>x&&x.datas
       run.forEach(x=>{if(x===keep){x.classList.remove("slim");return}if(!x._u)x.remove();else{x.classList.add("slim");x.classList.remove("gapline")}})}run=[]};
   [...$("mm_body").querySelectorAll(":scope>.mb")].forEach(x=>{if(blank(x))run.push(x);else flush()});flush()}
 mmProg=function(){if(progQ)return;progQ=requestAnimationFrame(()=>{progQ=0;_prog8();mmOneBlank()})};
+
+/* ---------- Long notes open at once ----------
+   The first screenful is drawn straight away and the rest is added over the next few frames, out of sight.
+   Anything that needs the whole note (saving, searching, merging) finishes the drawing first, so nothing is ever lost. */
+const _paint0=mmPaint;let paintJob=null;
+function paintAdd(L){const body=$("mm_body"),fr=document.createDocumentFragment(),E=L.map(b=>mmBlock(b));
+  E.forEach(d=>{/* Points of a folded list are born hidden, so they never flash. */
+    if(d.dataset.t==="lh")paintJob.fold=d.classList.contains("fold");else if(d.dataset.t==="c"){if(paintJob.fold)d.classList.add("hid","inl")}else paintJob.fold=false;fr.appendChild(d)});
+  body.appendChild(fr);E.forEach(d=>{if(d.dataset.t==="p"){mmGrow(d.querySelector("textarea"));mmLinks(d)}})}
+function paintStep(job){if(paintJob!==job)return;paintAdd(job.rest.splice(0,90));if(job.rest.length)requestAnimationFrame(()=>paintStep(job));else paintEnd()}
+function paintEnd(){paintJob=null;const last=$("mm_body").lastElementChild;if(!last||last.dataset.t!=="p")$("mm_body").appendChild(mmBlock({t:"p",x:""}));mmProg()}
+function paintFlush(){if(!paintJob)return;const job=paintJob;paintAdd(job.rest.splice(0));paintEnd()}
+mmPaint=function(){paintJob=null;const m=MM.m;if(!m||m.bl.length<=120){_paint0();return}
+  $("mm_ti").value=m.ti;$("mm_body").innerHTML="";const job=paintJob={rest:m.bl.slice(),fold:false};paintAdd(job.rest.splice(0,60));mmProg();mmMeta();MM.loadedUp=m.up;requestAnimationFrame(()=>paintStep(job))};
+const _read0=mmRead;mmRead=function(){paintFlush();return _read0()};
+const _fd0=fdRun;fdRun=function(){paintFlush();_fd0()};$("fd_q").removeEventListener("input",_fd0);$("fd_q").addEventListener("input",()=>fdRun());
+const _close6=closeMM;closeMM=function(){paintFlush();_close6()};
+/* While a list is sliding shut, nothing else re-lays out the note. */
+const _prog9=mmProg;mmProg=function(){if(foldBusy>0)return;_prog9()};
