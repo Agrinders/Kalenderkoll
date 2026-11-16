@@ -45,3 +45,13 @@ const _plain3=mmPlain;mmPlain=function(){const bl=mmRead(),lines=[];let n=0;cons
   return lines.join("\n").replace(/\n{3,}/g,"\n\n").trim()};
 const _fdRun2=fdRun;fdRun=function(){_fdRun2();const q=$("fd_q").value.trim().toLocaleLowerCase();if(!q)return;
   $("mm_body").querySelectorAll(":scope>.mb-c:not(.hit)").forEach(d=>{const t=d.querySelector(".mbds");if(t&&t.value.toLocaleLowerCase().includes(q)){d.classList.add("hit");FD.L.push(d)}});if(FD.L.length)fdGo(0)};
+/* ---------- A tap while you are writing only ends the writing ----------
+   If you are in a field (a point, a cost, a description, the title …) and tap another place you could write,
+   the first tap just closes the keyboard so you can look at the note. Tap again to start writing there. */
+let mmSwallow=false;
+$("mm_w").addEventListener("mousedown",e=>{const a=document.activeElement,w=$("mm_w");
+  if(!a||!w.contains(a)||!(a.tagName==="INPUT"||a.tagName==="TEXTAREA"))return;
+  const t=e.target;if(t===a||(a.contains&&a.contains(t)))return;
+  if(!t.closest("input,textarea,.mbv,#mm_tail,.mmti"))return;
+  e.preventDefault();e.stopPropagation();a.blur();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600)},true);
+$("mm_w").addEventListener("click",e=>{if(!mmSwallow)return;mmSwallow=false;e.preventDefault();e.stopPropagation()},true);

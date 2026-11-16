@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="7f3f5acfb01f">
+<meta name="kal-build" content="c4fa9aa78cd0">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -2380,7 +2380,7 @@ const _wsync=widgetSync;widgetSync=function(){_wsync();const F=FSP();if(!F||!S.h
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
-{v:"2.9",d:"16 nov 2026",i:[["t","memos",["Beskrivning och kostnad i listor","Descriptions and costs in lists"],["Ställ in i Lista-menyn när du står i en lista: en rad för detaljer under varje punkt, och ett belopp på varje punkt med summan och hur mycket som är kvar.","Switch on in the Lista menu while in a list: a line for details under each point, and an amount on each point with the total and how much is left."]]]},
+{v:"2.9",d:"16 nov 2026",i:[["t","memos",["Ett tryck för att titta","One tap to look"],["Skriver du i en anteckning och trycker någon annanstans stängs bara tangentbordet, så du kan se allt. Tryck igen för att skriva där.","If you are writing in a note and tap somewhere else, only the keyboard closes so you can see everything. Tap again to write there."]],["t","memos",["Beskrivning och kostnad i listor","Descriptions and costs in lists"],["Ställ in i Lista-menyn när du står i en lista: en rad för detaljer under varje punkt, och ett belopp på varje punkt med summan och hur mycket som är kvar.","Switch on in the Lista menu while in a list: a line for details under each point, and an amount on each point with the total and how much is left."]]]},
 {v:"2.8",d:"16 nov 2026",i:[["o","",["Enklare ikon","Simpler icon"],["En lugnare appikon: en vit kalender med ett hjärta på rosa botten. Den syns efter att du installerat den nya Android-appen.","A calmer app icon: a white calendar with a heart on a pink background. It shows after you install the new Android app."]],["n","",["Meddelanden längst ner","Messages at the bottom"],["Korta meddelanden som \"Sparat\" och \"Ångra\" visas nu längst ner, så de aldrig täcker knapparna högst upp.","Short messages like \"Saved\" and \"Undo\" now show at the bottom, so they never cover the buttons at the top."]]]},
 {v:"2.7",d:"16 nov 2026",i:[
   ["k","rem",["Påminnelser","Reminders"],["Välj när du vill bli påmind om en händelse: när den börjar, 10 eller 30 minuter innan, en timme innan eller dagen innan. Påminnelsen kommer även när appen är stängd.","Choose when to be reminded of an event: at the start, 10 or 30 minutes before, an hour before or the day before. It arrives even when the app is closed."]],
@@ -2457,6 +2457,16 @@ const _plain3=mmPlain;mmPlain=function(){const bl=mmRead(),lines=[];let n=0;cons
   return lines.join("\n").replace(/\n{3,}/g,"\n\n").trim()};
 const _fdRun2=fdRun;fdRun=function(){_fdRun2();const q=$("fd_q").value.trim().toLocaleLowerCase();if(!q)return;
   $("mm_body").querySelectorAll(":scope>.mb-c:not(.hit)").forEach(d=>{const t=d.querySelector(".mbds");if(t&&t.value.toLocaleLowerCase().includes(q)){d.classList.add("hit");FD.L.push(d)}});if(FD.L.length)fdGo(0)};
+/* ---------- A tap while you are writing only ends the writing ----------
+   If you are in a field (a point, a cost, a description, the title …) and tap another place you could write,
+   the first tap just closes the keyboard so you can look at the note. Tap again to start writing there. */
+let mmSwallow=false;
+$("mm_w").addEventListener("mousedown",e=>{const a=document.activeElement,w=$("mm_w");
+  if(!a||!w.contains(a)||!(a.tagName==="INPUT"||a.tagName==="TEXTAREA"))return;
+  const t=e.target;if(t===a||(a.contains&&a.contains(t)))return;
+  if(!t.closest("input,textarea,.mbv,#mm_tail,.mmti"))return;
+  e.preventDefault();e.stopPropagation();a.blur();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600)},true);
+$("mm_w").addEventListener("click",e=>{if(!mmSwallow)return;mmSwallow=false;e.preventDefault();e.stopPropagation()},true);
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
