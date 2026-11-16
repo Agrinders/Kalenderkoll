@@ -12,7 +12,7 @@ const DSH=[["Mån","Tis","Ons","Tor","Fre","Lör","Sön"],["Mon","Tue","Wed","Th
 const li=()=>S.lang==="sv"?0:1,mn=i=>MNS[li()][i],loc=()=>S.lang==="sv"?"sv-SE":"en-GB",tx=(a,b)=>li()?b:a,dshort=i=>DSH[li()][i];
 const esc=x=>String(x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const cap=s=>s?s[0].toUpperCase()+s.slice(1):s;
-const T={nH:["Idag","Today"],nK:["Kalender","Calendar"],nT:["Att göra","To do"],nV:["Vi","Us"],ttlH:["Idag","Today"],ttlK:["Kalender","Calendar"],ttlT:["Att göra","To do"],ttlV:["Vi två","The two of us"],ttlC:["Inställningar","Settings"]};
+const T={nH:["Idag","Today"],nK:["Kalender","Calendar"],nT:["Att göra","To do"],nV:["Vi","Us"],ttlH:["Idag","Today"],ttlK:["Kalender","Calendar"],ttlT:["Att göra","To do"],ttlV:["Vi två","The two of us"],ttlC:["Inställningar","Settings"],ttlO:["Om Kalenderkoll","About Kalenderkoll"]};
 const t=k=>T[k][li()];
 
 /* The two of you: a and b, and g for things you do together. ua/ub tie a name to a signed-in person. */

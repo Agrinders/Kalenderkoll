@@ -142,13 +142,13 @@ function renderSettings(){
 /* ---------- Side menu ---------- */
 function renderDrawer(){$("dr_sub").textContent=CP.a&&CP.b?CP.a+" ♥ "+CP.b:tx("Er gemensamma kalender","Your shared calendar");
   $("dr_join").lastElementChild.textContent=tx("Gå med med länk","Join with a link");$("dr_inv").lastElementChild.textContent=LOCAL&&!SHARED()?tx("Dela med varandra","Share with each other"):joined()?tx("Ansluten till ","Connected to ")+pname(other(me())):tx("Dela kalendern med din partner","Share the calendar with your partner");$("dr_names").lastElementChild.textContent=tx("Din profil","Your profile");
-  $("dr_set").lastElementChild.textContent=t("ttlC");$("dr_ics").lastElementChild.textContent=tx("Exportera till telefonens kalender","Export to your phone's calendar");
+  $("dr_set").lastElementChild.textContent=t("ttlC");$("dr_about").lastElementChild.textContent=tx("Om Kalenderkoll","About Kalenderkoll")+(typeof CHANGELOG!=="undefined"&&CHANGELOG?" · "+CHANGELOG[0].v:"");$("dr_ics").lastElementChild.textContent=tx("Exportera till telefonens kalender","Export to your phone's calendar");
   $("dr_lang").innerHTML=[["sv","🇸🇪","Svenska"],["en","🇬🇧","English"]].map(([v,f,l])=>`<button class="${S.lang===v?"on":""}" data-lg="${v}" aria-label="${l}" title="${l}" aria-pressed="${S.lang===v}">${f}</button>`).join("")}
 const openDrawer=()=>{$("drawer").classList.add("on");$("scrim").classList.add("on")},closeDrawer=()=>{$("drawer").classList.remove("on");$("scrim").classList.remove("on")};
 
 /* ---------- Drawing and moving between pages ---------- */
 function render(){NOW=new Date();$("ttl").textContent=t("ttl"+tab.toUpperCase());renderHome();renderMonth();renderTodo();renderMemos();renderUs();renderSettings()}
-const TABS=["h","k","t","v","c"];
+const TABS=["h","k","t","v","c","o"];
 function go(x){if(!TABS.includes(x))x="h";tab=x;try{sessionStorage.setItem("kalenderkoll.tab",x)}catch(e){}TABS.forEach(s=>$(s).classList.toggle("hide",s!==x));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===x));$("dr_set").classList.toggle("on",x==="c");closeDrawer();closeDS();$("ttl").textContent=t("ttl"+x.toUpperCase());$("tadd").classList.toggle("hide",x!=="k");$("k_v").classList.toggle("hide",x!=="k");$("tadd").setAttribute("aria-label",x==="t"?tx("Ny uppgift","New task"):x==="v"?tx("Ny lapp","New note"):tx("Ny händelse","New event"));window.scrollTo(0,0)}
 function applyTheme(){S.theme==="auto"?document.documentElement.removeAttribute("data-theme"):document.documentElement.setAttribute("data-theme",S.theme)}
 function applyLang(){document.documentElement.lang=S.lang;document.querySelectorAll("[data-i]").forEach(e=>{e.textContent=t(e.dataset.i)});$("es_n").placeholder=tx("Vad ska hända?","What's happening?");render()}

@@ -717,3 +717,14 @@ nav{background:color-mix(in oklab,var(--card2) 92%,transparent)}
 .wvcol.wfest{overflow:hidden;background:linear-gradient(180deg,color-mix(in oklab,var(--f1) 18%,transparent),color-mix(in oklab,var(--f2) 14%,transparent))}
 .wvcol .wvart{left:50%;top:auto;bottom:6px;width:min(90%,40px);aspect-ratio:1;transform:translateX(-50%);opacity:.4}
 .mmq{min-width:0;flex:1 1 0}.mmsort{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}.mmsort svg{width:16px;height:16px;stroke-width:2}
+
+/* Om Kalenderkoll */
+.abt{display:flex;align-items:center;gap:16px}.abt img{width:64px;height:64px;border-radius:16px;box-shadow:var(--shadow)}.abt .eyebrow{margin:0}
+.abtv{display:block;font:500 40px/1.05 var(--serif)}.abt small{color:var(--soft);font-size:13.5px}
+.vn{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 12px;align-items:center;padding-block:12px;border-bottom:1px solid var(--rule)}.vn:last-child{border:0;padding-bottom:0}.vn b{font-weight:650}.vn p{grid-column:1;margin:0;font-size:14px;color:var(--soft)}
+.vn .take{grid-column:2;grid-row:1/3;display:inline-flex;align-items:center;gap:5px;min-height:38px;padding:4px 12px;border:1px solid color-mix(in oklab,var(--acc) 42%,transparent);border-radius:99px;background:color-mix(in oklab,var(--acc) 12%,transparent);color:var(--acc);font-size:13.5px;font-weight:650;white-space:nowrap}.take svg{width:14px;height:14px;stroke-width:2.25}
+.vold{padding-block:10px;border-top:1px solid var(--rule)}.vold:first-of-type{border-top:0;padding-top:2px}.vh{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.vh b{font-weight:700}.vh span{font-size:14px;color:var(--soft)}
+.vold ul{margin:4px 0 0;padding-left:18px;font-size:14.5px}.vold li{margin-top:2px}#ver_more{margin-top:6px}
+.abtf{text-align:center;margin:6px 0 4px;font-size:13px}
+#drawer>button.dabout{margin-top:auto}#drawer>button.dset{margin-top:0}
+.flash{animation:tocflash 1.6s ease}

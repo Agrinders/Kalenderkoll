@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="7fa9698902dd">
+<meta name="kal-build" content="01e7420e136a">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -730,6 +730,17 @@ nav{background:color-mix(in oklab,var(--card2) 92%,transparent)}
 .wvcol.wfest{overflow:hidden;background:linear-gradient(180deg,color-mix(in oklab,var(--f1) 18%,transparent),color-mix(in oklab,var(--f2) 14%,transparent))}
 .wvcol .wvart{left:50%;top:auto;bottom:6px;width:min(90%,40px);aspect-ratio:1;transform:translateX(-50%);opacity:.4}
 .mmq{min-width:0;flex:1 1 0}.mmsort{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}.mmsort svg{width:16px;height:16px;stroke-width:2}
+
+/* Om Kalenderkoll */
+.abt{display:flex;align-items:center;gap:16px}.abt img{width:64px;height:64px;border-radius:16px;box-shadow:var(--shadow)}.abt .eyebrow{margin:0}
+.abtv{display:block;font:500 40px/1.05 var(--serif)}.abt small{color:var(--soft);font-size:13.5px}
+.vn{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 12px;align-items:center;padding-block:12px;border-bottom:1px solid var(--rule)}.vn:last-child{border:0;padding-bottom:0}.vn b{font-weight:650}.vn p{grid-column:1;margin:0;font-size:14px;color:var(--soft)}
+.vn .take{grid-column:2;grid-row:1/3;display:inline-flex;align-items:center;gap:5px;min-height:38px;padding:4px 12px;border:1px solid color-mix(in oklab,var(--acc) 42%,transparent);border-radius:99px;background:color-mix(in oklab,var(--acc) 12%,transparent);color:var(--acc);font-size:13.5px;font-weight:650;white-space:nowrap}.take svg{width:14px;height:14px;stroke-width:2.25}
+.vold{padding-block:10px;border-top:1px solid var(--rule)}.vold:first-of-type{border-top:0;padding-top:2px}.vh{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.vh b{font-weight:700}.vh span{font-size:14px;color:var(--soft)}
+.vold ul{margin:4px 0 0;padding-left:18px;font-size:14.5px}.vold li{margin-top:2px}#ver_more{margin-top:6px}
+.abtf{text-align:center;margin:6px 0 4px;font-size:13px}
+#drawer>button.dabout{margin-top:auto}#drawer>button.dset{margin-top:0}
+.flash{animation:tocflash 1.6s ease}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -810,6 +821,7 @@ nav{background:color-mix(in oklab,var(--card2) 92%,transparent)}
 <button class="di hide" id="dr_join" hidden type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1"/></svg><span></span></button>
 <button class="di" id="dr_names" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg><span></span></button>
 <button class="di" id="dr_ics" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4M12 13v5M9.5 15.5 12 18l2.5-2.5"/></svg><span></span></button>
+<button class="di dabout" data-go="o" id="dr_about" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5M12 7.6v.1"/></svg><span></span></button>
 <button class="di dset" data-go="c" id="dr_set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h2M11 17h9"/><circle cx="15.5" cy="7" r="2.5"/><circle cx="8.5" cy="17" r="2.5"/></svg><span></span></button>
 <div class="dlang" id="dr_lang"></div></aside>
 <main>
@@ -843,6 +855,7 @@ nav{background:color-mix(in oklab,var(--card2) 92%,transparent)}
 <div class="card" id="v_days"><div class="ch"><h3 id="v_dh"></h3><button class="lnk" id="v_dadd"></button></div><div id="v_dl"></div></div>
 </section>
 
+<section id="o" class="hide"></section>
 <section id="c" class="hide">
 <div class="card set"><h3 id="c_h1"></h3>
 <div class="srow"><span id="c_thl"></span><div class="seg three" id="c_th"></div></div>
@@ -871,7 +884,7 @@ const DSH=[["Mån","Tis","Ons","Tor","Fre","Lör","Sön"],["Mon","Tue","Wed","Th
 const li=()=>S.lang==="sv"?0:1,mn=i=>MNS[li()][i],loc=()=>S.lang==="sv"?"sv-SE":"en-GB",tx=(a,b)=>li()?b:a,dshort=i=>DSH[li()][i];
 const esc=x=>String(x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const cap=s=>s?s[0].toUpperCase()+s.slice(1):s;
-const T={nH:["Idag","Today"],nK:["Kalender","Calendar"],nT:["Att göra","To do"],nV:["Vi","Us"],ttlH:["Idag","Today"],ttlK:["Kalender","Calendar"],ttlT:["Att göra","To do"],ttlV:["Vi två","The two of us"],ttlC:["Inställningar","Settings"]};
+const T={nH:["Idag","Today"],nK:["Kalender","Calendar"],nT:["Att göra","To do"],nV:["Vi","Us"],ttlH:["Idag","Today"],ttlK:["Kalender","Calendar"],ttlT:["Att göra","To do"],ttlV:["Vi två","The two of us"],ttlC:["Inställningar","Settings"],ttlO:["Om Kalenderkoll","About Kalenderkoll"]};
 const t=k=>T[k][li()];
 
 /* The two of you: a and b, and g for things you do together. ua/ub tie a name to a signed-in person. */
@@ -1213,13 +1226,13 @@ function renderSettings(){
 /* ---------- Side menu ---------- */
 function renderDrawer(){$("dr_sub").textContent=CP.a&&CP.b?CP.a+" ♥ "+CP.b:tx("Er gemensamma kalender","Your shared calendar");
   $("dr_join").lastElementChild.textContent=tx("Gå med med länk","Join with a link");$("dr_inv").lastElementChild.textContent=LOCAL&&!SHARED()?tx("Dela med varandra","Share with each other"):joined()?tx("Ansluten till ","Connected to ")+pname(other(me())):tx("Dela kalendern med din partner","Share the calendar with your partner");$("dr_names").lastElementChild.textContent=tx("Din profil","Your profile");
-  $("dr_set").lastElementChild.textContent=t("ttlC");$("dr_ics").lastElementChild.textContent=tx("Exportera till telefonens kalender","Export to your phone's calendar");
+  $("dr_set").lastElementChild.textContent=t("ttlC");$("dr_about").lastElementChild.textContent=tx("Om Kalenderkoll","About Kalenderkoll")+(typeof CHANGELOG!=="undefined"&&CHANGELOG?" · "+CHANGELOG[0].v:"");$("dr_ics").lastElementChild.textContent=tx("Exportera till telefonens kalender","Export to your phone's calendar");
   $("dr_lang").innerHTML=[["sv","🇸🇪","Svenska"],["en","🇬🇧","English"]].map(([v,f,l])=>`<button class="${S.lang===v?"on":""}" data-lg="${v}" aria-label="${l}" title="${l}" aria-pressed="${S.lang===v}">${f}</button>`).join("")}
 const openDrawer=()=>{$("drawer").classList.add("on");$("scrim").classList.add("on")},closeDrawer=()=>{$("drawer").classList.remove("on");$("scrim").classList.remove("on")};
 
 /* ---------- Drawing and moving between pages ---------- */
 function render(){NOW=new Date();$("ttl").textContent=t("ttl"+tab.toUpperCase());renderHome();renderMonth();renderTodo();renderMemos();renderUs();renderSettings()}
-const TABS=["h","k","t","v","c"];
+const TABS=["h","k","t","v","c","o"];
 function go(x){if(!TABS.includes(x))x="h";tab=x;try{sessionStorage.setItem("kalenderkoll.tab",x)}catch(e){}TABS.forEach(s=>$(s).classList.toggle("hide",s!==x));document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.go===x));$("dr_set").classList.toggle("on",x==="c");closeDrawer();closeDS();$("ttl").textContent=t("ttl"+x.toUpperCase());$("tadd").classList.toggle("hide",x!=="k");$("k_v").classList.toggle("hide",x!=="k");$("tadd").setAttribute("aria-label",x==="t"?tx("Ny uppgift","New task"):x==="v"?tx("Ny lapp","New note"):tx("Ny händelse","New event"));window.scrollTo(0,0)}
 function applyTheme(){S.theme==="auto"?document.documentElement.removeAttribute("data-theme"):document.documentElement.setAttribute("data-theme",S.theme)}
 function applyLang(){document.documentElement.lang=S.lang;document.querySelectorAll("[data-i]").forEach(e=>{e.textContent=t(e.dataset.i)});$("es_n").placeholder=tx("Vad ska hända?","What's happening?");render()}
@@ -2333,6 +2346,38 @@ const _wv=renderWeekView;renderWeekView=function(){_wv();if(!S.hol)return;docume
 const _wsync=widgetSync;widgetSync=function(){_wsync();const F=FSP();if(!F||!S.hol)return;setTimeout(async()=>{try{const r=await F.readFile({path:"widget.json",directory:"DATA",encoding:"utf8"}),w=JSON.parse(r.data),days=w.days||{},n=todayN();let ch=false;
   for(let d=n-21;d<=n+120;d++){const h=holOn(d),k=festOf(h);if(!k)continue;const key=nd(d),L=days[key]=days[key]||[],nm=FEMO[k]+" "+h[1+li()];if(!L.some(x=>x.n===nm)){L.unshift({n:nm,t:"",w:"g",c:FCOL[k]});ch=true}}
   if(ch){w.days=days;const txt=JSON.stringify(w);await F.writeFile({path:"widget.json",data:txt,directory:"DATA",encoding:"utf8"});wgPrev=txt}}catch(e){}},900)};
+/* ---------- Om Kalenderkoll: the version, what is new, and earlier versions ----------
+   Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
+   "n" means there is nowhere in particular to go. */
+var CHANGELOG=[
+{v:"2.7",d:"16 nov 2026",i:[
+  ["k","rem",["Påminnelser","Reminders"],["Välj när du vill bli påmind om en händelse: när den börjar, 10 eller 30 minuter innan, en timme innan eller dagen innan. Påminnelsen kommer även när appen är stängd.","Choose when to be reminded of an event: at the start, 10 or 30 minutes before, an hour before or the day before. It arrives even when the app is closed."]],
+  ["n","",["Notiser när appen är stängd","Notifications when the app is closed"],["Ungefär var 15:e minut kollar telefonen om din partner har lagt till något, och säger till. Nya händelser hamnar också i widgeten.","About every 15 minutes the phone checks whether your partner has added something, and tells you. New events also show in the widget."]],
+  ["k","search",["Sök i kalendern","Search the calendar"],["Förstoringsglaset bredvid pilarna hittar händelser på namn, plats eller anteckning, även de som upprepas.","The magnifier beside the arrows finds events by name, place or note, also repeating ones."]],
+  ["t","memos",["Fet, kursiv och färg på enstaka ord","Bold, italic and colour on single words"],["Markera ord i en anteckning och tryck på Aa. Anteckningar går nu också att söka bland, sortera och fästa överst.","Select words in a note and tap Aa. Notes can now also be searched, sorted and pinned to the top."]],
+  ["h","",["Synkstatus","Sync status"],["Uppe i hörnet syns om något sparas, är sparat eller om du är offline.","The corner shows when something is saving, is saved, or when you are offline."]],
+  ["n","",["Om Kalenderkoll","About Kalenderkoll"],["Den här sidan, med vad som är nytt och tidigare versioner.","This page, with what is new and earlier versions."]]]},
+{v:"2.6",d:"16 nov 2026",i:[["k","",["Advent","Advent"],["De fyra adventssöndagarna med ljusstake, där lika många ljus brinner som söndagens nummer.","The four Sundays of Advent with a candlestick, as many candles lit as the Sunday's number."]],["n","",["Lugnare design","Calmer design"],["Jämnare färger, rundningar som följer varandra och mer djup i mörkt läge.","Smoother colours, corners that follow each other and more depth in dark mode."]],["t","memos",["Mjukare listor","Smoother lists"],["Listor i anteckningar fälls ihop och ut utan att hacka, även långa.","Lists in notes fold and unfold without stutter, even long ones."]]]},
+{v:"2.5",d:"15 nov 2026",i:[["t","memos",["Skriv samtidigt","Write at the same time"],["Ni kan skriva i samma anteckning samtidigt utan att något försvinner.","You can write in the same note at the same time without losing anything."]],["t","memos",["Listor med namn","Named lists"],["Listor med rubrik, förloppsstapel, ihopfällning och dra för att flytta.","Lists with a name, progress bar, folding and drag to move."]]]},
+{v:"2.4",d:"15 nov 2026",i:[["t","memos",["Anteckningar","Notes"],["Delade anteckningar med att göra-listor, länkar och bilder.","Shared notes with to-do lists, links and pictures."]]]},
+{v:"2.3",d:"14 nov 2026",i:[["n","",["Widget","Widget"],["En widget för hemskärmen med veckan och dagen för er båda.","A home-screen widget with the week and the day for you both."]],["k","",["Högtider","Celebrations"],["Påsk, midsommar, halloween, lucia, jul och nyår med egna dekorationer.","Easter, Midsummer, Halloween, Lucia, Christmas and New Year with their own decorations."]],["k","",["Randig stil","Striped style"],["En tredje stil för händelser: randig och nedsänkt.","A third look for events: striped and set in."]]]},
+{v:"2.2",d:"14 nov 2026",i:[["k","",["Veckovy","Week view"],["Se hela veckan på en gång, sida vid sida.","See the whole week at once, side by side."]],["c","",["Konto","Account"],["Ett konto gör att du aldrig tappar kalendern om du installerar om appen.","An account means you never lose the calendar if you reinstall the app."]],["n","",["Profil","Profile"],["Egen bild och egen färg.","Your own picture and colour."]]]},
+{v:"2.1",d:"14 nov 2026",i:[["n","",["Android-app","Android app"],["Kalenderkoll som en riktig app på telefonen, med säkerhetskopior.","Kalenderkoll as a real app on the phone, with backups."]]]},
+{v:"2.0",d:"14 nov 2026",i:[["v","",["För er två","For the two of you"],["En delad kalender för par: bjud in din partner med en länk.","A shared calendar for couples: invite your partner with a link."]]]},
+{v:"1.0",d:"14 nov 2026",i:[["k","",["Första versionen","First version"],["Kalender i Kronkoll-stil.","A calendar in the Kronkoll style."]]]}];
+let verAll=false;
+function renderAbout(){const q=li(),c=CHANGELOG[0],arrow='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',old=CHANGELOG.slice(1),show=verAll?old:old.slice(0,3);
+  let bid="";try{bid=(document.querySelector('meta[name="kk-build"]')||{}).content||""}catch(e){}
+  $("o").innerHTML=`<div class="card abt"><img src="icons/icon-192.png" alt="" width="64" height="64"><div><p class="eyebrow">${tx("Version","Version")}</p><b class="abtv">${c.v}</b><small>${c.d}${NATIVE()?" · "+tx("Android-app","Android app"):""}</small></div></div>`
+  +`<div class="card"><h3>${tx("Nytt i den här versionen","New in this version")}</h3>${c.i.map(x=>`<div class="vn"><b>${esc(x[2][q])}</b><p>${esc(x[3][q])}</p>${x[0]==="n"?"":`<button class="take" type="button" data-take="${x[0]}" data-to="${x[1]}">${tx("Ta mig dit","Take me there")}${arrow}</button>`}</div>`).join("")}</div>`
+  +`<div class="card"><h3>${tx("Tidigare versioner","Earlier versions")}</h3>${show.map(r=>`<div class="vold"><div class="vh"><b>${r.v}</b><span>${r.d}</span></div><ul>${r.i.map(x=>`<li>${esc(x[2][q])}</li>`).join("")}</ul></div>`).join("")}${old.length>3?`<button class="lnk" type="button" id="ver_more">${verAll?tx("Visa färre","Show fewer"):tx(`Visa alla ${old.length} tidigare versioner`,`Show all ${old.length} earlier versions`)}</button>`:""}</div>`
+  +`<p class="muted abtf">${tx("Kalenderkoll · en kalender för er två","Kalenderkoll · a calendar for the two of you")}</p>`}
+const _goAbout=go;go=function(x){_goAbout(x);if(x==="o"){renderAbout();scrollTo(0,0)}};
+document.addEventListener("click",e=>{if(!e.target.closest)return;if(e.target.closest("#ver_more")){verAll=!verAll;renderAbout();return}
+  const b=e.target.closest("[data-take]");if(!b)return;const to=b.dataset.to;go(b.dataset.take);
+  setTimeout(()=>{if(to==="rem"){openES(null,null,{});setTimeout(()=>{const m=$("es_m");if(m){m.scrollIntoView({block:"center",behavior:"smooth"});m.classList.add("flash")}},350)}
+    else if(to==="search")openSearch();
+    else if(to==="memos"){const el=$("t_memos");if(el){el.scrollIntoView({block:"start",behavior:"smooth"});el.classList.add("flash")}}},250)});
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
