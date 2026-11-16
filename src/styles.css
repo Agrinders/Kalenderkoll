@@ -728,3 +728,8 @@ nav{background:color-mix(in oklab,var(--card2) 92%,transparent)}
 .abtf{text-align:center;margin:6px 0 4px;font-size:13px}
 #drawer>button.dabout{margin-top:auto}#drawer>button.dset{margin-top:0}
 .flash{animation:tocflash 1.6s ease}
+/* Messages sit at the bottom, just above the tab bar, so they never cover the buttons at the top. */
+#toasts{top:auto;bottom:calc(84px + var(--sab));flex-direction:column-reverse}
+body.mmopen #toasts{bottom:calc(78px + var(--sab))}
+body:has(.sh.on) #toasts{bottom:calc(20px + var(--sab))}
+.toast{animation-name:tinb}@keyframes tinb{from{transform:translateY(12px);opacity:0}}
