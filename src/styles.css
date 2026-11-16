@@ -657,3 +657,7 @@ nav{background:color-mix(in oklab,var(--card2) 92%,transparent)}
       with transforms (see mmFold). */
 .mb-c.inl{max-height:none;overflow:visible;transition:none;transition-delay:0s}
 .mb-c.hid,#mm_body>.mb-c.hid{display:none!important}
+
+/* Advent: deep plum to candle gold, with small stars. */
+[class*="fest-adv"]{--f1:#4a2a5e;--f2:#b8892f;--fi:#ffe0a0;--ft:#fff;--fa:118deg;--fp:radial-gradient(circle,#ffe0a0 0 1.5px,transparent 2px) 18% 28%/40px 30px,radial-gradient(circle,#fff 0 1px,transparent 1.5px) 62% 68%/46px 36px}
+.cgr [class*="fest-adv"]{--c1:#9b6fc0;--c2:#e0b050}
