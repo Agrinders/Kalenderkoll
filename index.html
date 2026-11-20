@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="d18084b0dfd2">
+<meta name="kal-build" content="1c41ea164b1b">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -776,6 +776,14 @@ body:has(.sh.on) #toasts{bottom:calc(20px + var(--sab))}
 .mmpinb svg{width:18px;height:18px;stroke-width:1.75;transform:rotate(30deg);transition:transform .25s cubic-bezier(.3,1.4,.5,1),fill .2s}
 .mmpinb.on{color:var(--acc)}.mmpinb.on svg{fill:color-mix(in oklab,var(--acc) 35%,transparent);transform:rotate(0)}
 .mmrow.pinned .mmi{background:linear-gradient(90deg,color-mix(in oklab,var(--acc) 6%,transparent),transparent 60%)}
+
+/* Private notes */
+.mmbtns{display:inline-flex;gap:6px}.btn.sm.ghost{background:var(--fill);color:var(--ink)}
+.mmlock{display:inline-grid;place-items:center;margin-right:6px;vertical-align:-2px;color:var(--acc)}.mmlock svg{width:15px;height:15px;stroke-width:2}
+.mmrow.priv .mmi{background:linear-gradient(90deg,color-mix(in oklab,var(--ink) 4%,transparent),transparent 70%)}
+.mmpv{display:inline-flex;align-items:center;gap:6px;margin:-6px 0 12px;padding:5px 11px 5px 9px;border-radius:99px;font-size:12.5px;font-weight:600;color:var(--soft);background:var(--fill)}
+.mmpv svg{width:15px;height:15px;stroke-width:1.9}.mmpv.on{color:var(--acc);background:color-mix(in oklab,var(--acc) 12%,transparent)}
+.mmpv{align-self:flex-start}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1089,6 +1097,8 @@ const putIn=(L,x)=>{const i=L.findIndex(z=>z.id===x.id);if(i>=0)L[i]=x;else L.pu
 /* The last saved copy of every record, so a delete can be undone. */
 let DOCS={};const copy=v=>v==null?null:JSON.parse(JSON.stringify(v));
 const MINE=new Set();
+/* Private notes and their pictures, kept apart from the shared calendar (see 17-private.js). */
+let PDOCS={},pcol=null,PMEMOS=[],PIMG={};
 /* Notes (Anteckningar) and the pictures in them. Pictures are saved as their own records so a note stays small. */
 let MEMOS=[],MIMG={};
 /* Every write is counted until the shared copy has it, so the top bar can show "Sparar…" or "Offline". */
@@ -1515,7 +1525,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
 (async()=>{let ok=false;try{
   const db=await claude.use("db");if(!db)throw 0;
   try{const u=await claude.use("user");if(u&&u.id)MYID=await u.id()||""}catch(e){}
-  col=db.collection("cal");let first=true;
+  col=db.collection("cal");privStart(db);let first=true;
   col.onSnapshot(snap=>{if(first&&snap.metadata&&snap.metadata.fromCache&&!snap.docs.length){setTimeout(()=>{if(!firstDone)firstRun()},6000);return}ok=true;allIds=snap.docs.map(d=>d.id);DOCS={};const prevT=TODOS;MEMOS=[];MIMG={};EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};PICS={a:"",b:""};let cp=null;
     snap.docs.forEach(d=>{const v=d.data()||{};DOCS[d.id]=copy(v);const iso=x=>/^\d{4}-\d\d-\d\d$/.test(x||"");
       if(d.id==="plan"){if(!PEND.has("plan")){if(typeof v.wkno==="boolean")S.wkno=v.wkno;if(typeof v.hol==="boolean")S.hol=v.hol}}
@@ -1532,7 +1542,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
     CP=cp||{a:"",b:"",ua:"",ub:"",since:"",ca:"",cb:""};applyPeople();
     if(MYID){if(CP.ua===MYID)setMe("a");else if(CP.ub===MYID)setMe("b")}
-    document.body.classList.remove("loading");watchJoin();watchNew();render();remSched();bgSync();widgetSync();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
+    privMerge();document.body.classList.remove("loading");watchJoin();watchNew();render();remSched();bgSync();widgetSync();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
 }catch(e){}setTimeout(()=>{if(!ok&&!firstDone)firstRun()},col?10000:400)})();
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
@@ -1613,7 +1623,7 @@ function FSP(){return NATIVE()&&Capacitor.Plugins&&Capacitor.Plugins.Filesystem|
 var BKN="Kalenderkoll-sakerhetskopia.json",BKK="kalenderkoll.backup";
 function bkInfo(){try{return JSON.parse(localStorage.getItem(BKK)||"{}")||{}}catch(e){return{}}}
 function bkLast(){const t=bkInfo().at;if(!t)return"";const d=new Date(t);return isNaN(d)?"":fmtD(dnD(d))+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
-function backupText(){return JSON.stringify({app:"kalenderkoll",v:1,at:new Date().toISOString(),space:window.KK&&KK.space?KK.space():"",me:ME||"",docs:DOCS},null,1)}
+function backupText(){return JSON.stringify({app:"kalenderkoll",v:1,at:new Date().toISOString(),space:window.KK&&KK.space?KK.space():"",me:ME||"",docs:DOCS,pspace:window.KK&&KK.pspace?KK.pspace():"",pdocs:PDOCS},null,1)}
 /* Saves a file where the person can find it: Documents › Kalenderkoll in the Android app, a download elsewhere. */
 async function saveFile(name,text,mime){const F=FSP();
   if(F){try{await F.writeFile({path:"Kalenderkoll/"+name,data:text,directory:"DOCUMENTS",encoding:"utf8",recursive:true});toast(tx("Sparad i Dokument › Kalenderkoll","Saved in Documents › Kalenderkoll")+" · "+name);return true}
@@ -1692,10 +1702,10 @@ document.addEventListener("click",e=>{if(!e.target.closest)return;const b=e.targ
 var MFONT={sf:"Serif",h:"Skrivstil",r:"Rund",m:"Mono"},MB_T=["p","c","l","i","lh"],MCOL={r:"#e5484d",o:"#ee8a2a",y:"#c99a0e",g:"#2f9e63",b:"#3b82f6",v:"#8a72ee",p:"#e0559c",s:"#8b8494"},URLRE=/https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]]/gi;
 function memoClean(v,fid){const id=String(v.id||fid);if(!id)return null;
   const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map((b,ix)=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000),...(b.s==="h1"||b.s==="h2"?{s:b.s}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d,...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{}),...(b.m==="b"||b.m==="n"?{m:b.m}:{}),...(typeof b.ds==="string"&&b.ds?{ds:b.ds.slice(0,1000)}:{}),...(Number.isFinite(+b.pr)&&b.pr!==""&&b.pr!==null?{pr:Math.round(+b.pr*100)/100}:{}),...(b.od?{od:1}:{}),...(b.op?{op:1}:{})}:b.t==="lh"?{t:"lh",x:String(b.x||"").slice(0,200),...(b.od?{od:1}:{}),...(b.op?{op:1}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).map((x,ix)=>x&&{...x,b:typeof v.bl[ix].b==="string"&&v.bl[ix].b?v.bl[ix].b.slice(0,24):"o"+ix,tm:+v.bl[ix].tm||0}).filter(Boolean);
-  return{id,pin:+v.pin||0,ti:String(v.ti||"").slice(0,120),tu:+v.tu||0,gone:Array.isArray(v.gone)?v.gone.filter(x=>typeof x==="string").slice(-500):[],bl,del:+v.del||0,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
+  return{id,priv:v.priv?1:0,pin:+v.pin||0,ti:String(v.ti||"").slice(0,120),tu:+v.tu||0,gone:Array.isArray(v.gone)?v.gone.filter(x=>typeof x==="string").slice(-500):[],bl,del:+v.del||0,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
 /* A fingerprint of a note's content, to tell whether a copy is one this phone has already handled. */
 function memoKey(m){return m?m.ti+"\u0002"+(m.tu||0)+"\u0002"+(m.bl||[]).map(b=>b.b+":"+(b.tm||0)+":"+mbSig(b)).join("|")+"\u0002"+(m.gone||[]).length+"\u0002"+(m.del||0):""}
-var memoDoc=m=>({kind:"memo",id:m.id,pin:m.pin||0,ti:m.ti,tu:m.tu||0,gone:m.gone||[],bl:m.bl,at:m.at,up:m.up,by:m.by,ub:m.ub,...(m.del?{del:m.del}:{})});
+var memoDoc=m=>({kind:"memo",id:m.id,...(m.priv?{priv:1}:{}),pin:m.pin||0,ti:m.ti,tu:m.tu||0,gone:m.gone||[],bl:m.bl,at:m.at,up:m.up,by:m.by,ub:m.ub,...(m.del?{del:m.del}:{})});
 var memoEmpty=m=>!m.ti.trim()&&!m.bl.some(b=>b.t==="p"||b.t==="c"||b.t==="lh"?b.x.trim():true);
 var host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}};
 var whenTxt=ms=>{const d=new Date(ms),n=dnD(d),h=pad(d.getHours())+":"+pad(d.getMinutes());return n===todayN()?h:n===todayN()-1?tx("Igår","Yesterday")+" "+h:fmtD(n,{day:"numeric",month:"short"})+(ymd(n)[0]!==ymd(todayN())[0]?" "+ymd(n)[0]:"")};
@@ -2430,6 +2440,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"3.1",d:"20 nov 2026",i:[["t","memos",["Privata anteckningar","Private notes"],["Knappen Privat bredvid Ny skapar en anteckning som bara du ser. Den sparas på ett eget, hemligt ställe som din partners telefon aldrig får. Under rubriken i en anteckning kan du byta mellan delad och privat.","The Private button beside New makes a note only you see. It is saved in a separate, secret place your partner's phone never gets. Under a note's title you can switch between shared and private."]]]},
 {v:"3.0",d:"16 nov 2026",i:[["t","memos",["Fäst från listan","Pin from the list"],["Varje anteckning har en nål uppe till höger i listan. Tryck för att fästa den överst.","Each note has a pin at the top right in the list. Tap it to keep the note at the top."]],["t","memos",["Spara som PDF med bockrutor","Save as PDF with tick boxes"],["Under ⋯ i en anteckning finns Spara som: PDF i A4, en bild eller en webbsida. I PDF:en går de runda rutorna att bocka i.","Under ⋯ in a note there is Save as: a PDF in A4, a picture or a web page. In the PDF the round boxes can be ticked."]]]},
 {v:"2.9",d:"16 nov 2026",i:[["t","memos",["Ett tryck för att titta","One tap to look"],["Skriver du i en anteckning och trycker någon annanstans stängs bara tangentbordet, så du kan se allt. Tryck igen för att skriva där.","If you are writing in a note and tap somewhere else, only the keyboard closes so you can see everything. Tap again to write there."]],["t","memos",["Beskrivning och kostnad i listor","Descriptions and costs in lists"],["Ställ in i Lista-menyn när du står i en lista: en rad för detaljer under varje punkt, och ett belopp på varje punkt med summan och hur mycket som är kvar.","Switch on in the Lista menu while in a list: a line for details under each point, and an amount on each point with the total and how much is left."]]]},
 {v:"2.8",d:"16 nov 2026",i:[["o","",["Enklare ikon","Simpler icon"],["En lugnare appikon: en vit kalender med ett hjärta på rosa botten. Den syns efter att du installerat den nya Android-appen.","A calmer app icon: a white calendar with a heart on a pink background. It shows after you install the new Android app."]],["n","",["Meddelanden längst ner","Messages at the bottom"],["Korta meddelanden som \"Sparat\" och \"Ångra\" visas nu längst ner, så de aldrig täcker knapparna högst upp.","Short messages like \"Saved\" and \"Undo\" now show at the bottom, so they never cover the buttons at the top."]]]},
@@ -2518,6 +2529,44 @@ $("mm_w").addEventListener("mousedown",e=>{const a=document.activeElement,w=$("m
   if(!t.closest("input,textarea,.mbv,#mm_tail,.mmti"))return;
   e.preventDefault();e.stopPropagation();a.blur();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600)},true);
 $("mm_w").addEventListener("click",e=>{if(!mmSwallow)return;mmSwallow=false;e.preventDefault();e.stopPropagation()},true);
+/* ---------- Private notes ----------
+   A private note is saved in a separate space whose code only you have, never in the shared calendar.
+   Your partner's phone does not get it, cannot open it and is not told about it. */
+function privStart(db){try{pcol=db.collection("priv");pcol.onSnapshot(s=>{PDOCS={};PMEMOS=[];PIMG={};
+  s.docs.forEach(d=>{const v=d.data()||{};PDOCS[d.id]=copy(v);if(v.kind==="memo"){const m=memoClean(v,d.id.slice(5));if(m){m.priv=1;PMEMOS.push(m)}}else if(v.kind==="mimg"&&typeof v.data==="string")PIMG[String(v.id||d.id.slice(5))]=v.data});
+  privMerge();renderMemos()})}catch(e){}}
+/* The notes list shows shared and private notes together; private ones carry a lock. */
+function privMerge(){MEMOS=MEMOS.filter(m=>!m.priv).concat(PMEMOS.map(m=>({...m})));Object.assign(MIMG,PIMG);if(MM&&MM.open&&MM.m&&MM.m.priv){const m=MEMOS.find(x=>x.id===MM.id);if(m&&memoKey(m)!==MM.lastKey)mmMaybeRefresh()}}
+const privMemo=id=>!!(MEMOS.find(m=>m.id===id&&m.priv)||(MM&&MM.m&&MM.m.id===id&&MM.m.priv));
+const isPriv=(id,v)=>v?(v.kind==="memo"&&!!v.priv)||(v.kind==="mimg"&&privMemo(v.memo)):(id in PDOCS);
+/* Saving and removing go to the right place. */
+/* The private list is updated right away, so a shared update arriving first never makes a private note look gone. */
+const _put0=put;put=function(id,v){if(isPriv(id,v)){MINE.add(id);PDOCS[id]=copy(v);if(v.kind==="memo"){const m=memoClean(v,id.slice(5));if(m){m.priv=1;PMEMOS=PMEMOS.filter(x=>x.id!==m.id).concat([m])}}else if(v.kind==="mimg")PIMG[String(v.id)]=v.data;if(pcol)track(pcol.doc(id).set(v)).catch(()=>toast(tx("Kunde inte spara. Försök igen.","Could not save. Try again.")));return}_put0(id,v)};
+const _del0=del;del=function(id){if(id in PDOCS&&!(id in DOCS)){const before=copy(PDOCS[id]);delete PDOCS[id];if(id.startsWith("memo_"))PMEMOS=PMEMOS.filter(x=>x.id!==id.slice(5));if(pcol)track(pcol.doc(id).delete()).catch(()=>{});return before}return _del0(id)};
+/* Moving a note between shared and private: it is written to the new place first, then removed from the old one. */
+async function memoMove(m,toPriv){const imgs=m.bl.filter(b=>b.t==="i").map(b=>b.i),wasShared=!m.priv;
+  const nm={...m,priv:toPriv?1:0,up:Date.now()};
+  if(toPriv){imgs.forEach(i=>{const d=DOCS["mimg_"+i];if(d){PDOCS["mimg_"+i]=copy(d);pcol&&pcol.doc("mimg_"+i).set(d);_del0("mimg_"+i)}});pcol&&pcol.doc("memo_"+m.id).set(memoDoc(nm));PDOCS["memo_"+m.id]=memoDoc(nm);_del0("memo_"+m.id)}
+  else{imgs.forEach(i=>{const d=PDOCS["mimg_"+i];if(d){col&&col.doc("mimg_"+i).set(d);delete PDOCS["mimg_"+i];pcol&&pcol.doc("mimg_"+i).delete()}});col&&col.doc("memo_"+m.id).set(memoDoc(nm));delete PDOCS["memo_"+m.id];pcol&&pcol.doc("memo_"+m.id).delete()}
+  PMEMOS=PMEMOS.filter(x=>x.id!==m.id);if(toPriv)PMEMOS.push({...nm});MEMOS=MEMOS.filter(x=>x.id!==m.id).concat([nm]);if(MM.m&&MM.m.id===m.id){MM.m.priv=nm.priv;MM.lastKey="";privBadge()}renderMemos();
+  toast(toPriv?tx("Nu är anteckningen privat · bara du ser den","The note is now private · only you see it"):tx("Nu delar ni anteckningen","You now share the note"),3500)}
+/* Creating: a lock button beside "Ny" makes a private note straight away. */
+const privAvail=()=>window.KK&&KK.mode==="cloud"&&SHARED()&&joined();
+const _rm2=renderMemos;renderMemos=function(){_rm2();const el=$("t_memos");if(!el)return;const h=el.querySelector(".mmlh");
+  if(h&&!$("mm_newp")){h.querySelector("#mm_new").insertAdjacentHTML("beforebegin",`<button class="btn sm ghost" id="mm_newp" type="button" aria-label="${esc(tx("Ny privat anteckning","New private note"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5.5" y="10.5" width="13" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>${tx("Privat","Private")}</button>`);const w=document.createElement("span");w.className="mmbtns";h.querySelector("#mm_newp").before(w);w.append($("mm_newp"),$("mm_new"))}
+  const b=$("mm_newp");if(b)b.classList.toggle("hide",!privAvail());
+  el.querySelectorAll(".mmrow").forEach(r=>{const id=r.querySelector("[data-memo]").dataset.memo,m=MEMOS.find(x=>x.id===id);r.classList.toggle("priv",!!(m&&m.priv));const t=r.querySelector(".mmit b");if(m&&m.priv&&t&&!t.querySelector(".mmlock"))t.insertAdjacentHTML("afterbegin",'<span class="mmlock" aria-label="Privat"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5.5" y="10.5" width="13" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg></span>')})};
+document.addEventListener("click",e=>{if(!e.target.closest||!e.target.closest("#mm_newp"))return;e.stopPropagation();openMM("");MM.m.priv=1;MM.fresh=true;privBadge();toast(tx("Privat anteckning · bara du ser den","Private note · only you see it"),2500)},true);
+/* In the editor: a small line under the title says who sees the note. */
+function privBadge(){let b=$("mm_pv");if(!b){b=document.createElement("button");b.id="mm_pv";b.type="button";b.className="mmpv";$("mm_meta").after(b)}
+  const p=MM.m&&MM.m.priv,show=privAvail()||p;b.hidden=!show;if(!show)return;b.classList.toggle("on",!!p);
+  b.innerHTML=p?`<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5.5" y="10.5" width="13" height="9.5" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>${tx("Privat · bara du ser den","Private · only you see it")}`:`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="9" r="3"/><circle cx="16" cy="10" r="2.5"/><path d="M3.5 19c.8-3 3-4.5 5.5-4.5s4.7 1.5 5.5 4.5M14 15c2.300-.3 4.400.9 5.300 3.500"/></svg>${tx("Delad med ","Shared with ")+esc(pname(other(ME||"a")))}`}
+const _openMM3=openMM;openMM=function(id){_openMM3(id);privBadge()};
+document.addEventListener("click",async e=>{if(!e.target.closest||!e.target.closest("#mm_pv"))return;if(!MM.m)return;const p=!!MM.m.priv;
+  if(MM.fresh&&memoEmpty({ti:$("mm_ti").value,bl:mmRead()})){MM.m.priv=p?0:1;privBadge();return}
+  mmSave();const m=MEMOS.find(x=>x.id===MM.id)||MM.m;
+  if(!await ask(p?tx("Dela anteckningen?","Share the note?"):tx("Gör anteckningen privat?","Make the note private?"),p?tx(`${pname(other(ME||"a"))} kommer att kunna se och ändra den.`,`${pname(other(ME||"a"))} will be able to see and change it.`):tx(`Den försvinner från ${pname(other(ME||"a"))}s telefon och syns bara för dig.`,`It disappears from ${pname(other(ME||"a"))}'s phone and only you see it.`),p?tx("Dela","Share"):tx("Gör privat","Make private")))return;
+  await memoMove(m,!p)});
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>

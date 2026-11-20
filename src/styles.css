@@ -763,3 +763,11 @@ body:has(.sh.on) #toasts{bottom:calc(20px + var(--sab))}
 .mmpinb svg{width:18px;height:18px;stroke-width:1.75;transform:rotate(30deg);transition:transform .25s cubic-bezier(.3,1.4,.5,1),fill .2s}
 .mmpinb.on{color:var(--acc)}.mmpinb.on svg{fill:color-mix(in oklab,var(--acc) 35%,transparent);transform:rotate(0)}
 .mmrow.pinned .mmi{background:linear-gradient(90deg,color-mix(in oklab,var(--acc) 6%,transparent),transparent 60%)}
+
+/* Private notes */
+.mmbtns{display:inline-flex;gap:6px}.btn.sm.ghost{background:var(--fill);color:var(--ink)}
+.mmlock{display:inline-grid;place-items:center;margin-right:6px;vertical-align:-2px;color:var(--acc)}.mmlock svg{width:15px;height:15px;stroke-width:2}
+.mmrow.priv .mmi{background:linear-gradient(90deg,color-mix(in oklab,var(--ink) 4%,transparent),transparent 70%)}
+.mmpv{display:inline-flex;align-items:center;gap:6px;margin:-6px 0 12px;padding:5px 11px 5px 9px;border-radius:99px;font-size:12.5px;font-weight:600;color:var(--soft);background:var(--fill)}
+.mmpv svg{width:15px;height:15px;stroke-width:1.9}.mmpv.on{color:var(--acc);background:color-mix(in oklab,var(--acc) 12%,transparent)}
+.mmpv{align-self:flex-start}

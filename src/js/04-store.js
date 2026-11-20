@@ -12,6 +12,8 @@ const putIn=(L,x)=>{const i=L.findIndex(z=>z.id===x.id);if(i>=0)L[i]=x;else L.pu
 /* The last saved copy of every record, so a delete can be undone. */
 let DOCS={};const copy=v=>v==null?null:JSON.parse(JSON.stringify(v));
 const MINE=new Set();
+/* Private notes and their pictures, kept apart from the shared calendar (see 17-private.js). */
+let PDOCS={},pcol=null,PMEMOS=[],PIMG={};
 /* Notes (Anteckningar) and the pictures in them. Pictures are saved as their own records so a note stays small. */
 let MEMOS=[],MIMG={};
 /* Every write is counted until the shared copy has it, so the top bar can show "Sparar…" or "Offline". */

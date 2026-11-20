@@ -72,7 +72,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
 (async()=>{let ok=false;try{
   const db=await claude.use("db");if(!db)throw 0;
   try{const u=await claude.use("user");if(u&&u.id)MYID=await u.id()||""}catch(e){}
-  col=db.collection("cal");let first=true;
+  col=db.collection("cal");privStart(db);let first=true;
   col.onSnapshot(snap=>{if(first&&snap.metadata&&snap.metadata.fromCache&&!snap.docs.length){setTimeout(()=>{if(!firstDone)firstRun()},6000);return}ok=true;allIds=snap.docs.map(d=>d.id);DOCS={};const prevT=TODOS;MEMOS=[];MIMG={};EV=[];BD=[];TODOS=[];NOTES=[];DAYS={};PICS={a:"",b:""};let cp=null;
     snap.docs.forEach(d=>{const v=d.data()||{};DOCS[d.id]=copy(v);const iso=x=>/^\d{4}-\d\d-\d\d$/.test(x||"");
       if(d.id==="plan"){if(!PEND.has("plan")){if(typeof v.wkno==="boolean")S.wkno=v.wkno;if(typeof v.hol==="boolean")S.hol=v.hol}}
@@ -89,7 +89,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
     prevT.forEach(x=>{if(PEND.has("todo_"+x.id)&&!TODOS.some(z=>z.id===x.id))TODOS.push(x)});
     CP=cp||{a:"",b:"",ua:"",ub:"",since:"",ca:"",cb:""};applyPeople();
     if(MYID){if(CP.ua===MYID)setMe("a");else if(CP.ub===MYID)setMe("b")}
-    document.body.classList.remove("loading");watchJoin();watchNew();render();remSched();bgSync();widgetSync();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
+    privMerge();document.body.classList.remove("loading");watchJoin();watchNew();render();remSched();bgSync();widgetSync();autoBackup();if(!first)checkWho();if(first){first=false;setTimeout(firstRun,200)}},()=>{col=null;render()});
 }catch(e){}setTimeout(()=>{if(!ok&&!firstDone)firstRun()},col?10000:400)})();
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */

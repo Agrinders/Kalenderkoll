@@ -8,7 +8,7 @@ function FSP(){return NATIVE()&&Capacitor.Plugins&&Capacitor.Plugins.Filesystem|
 var BKN="Kalenderkoll-sakerhetskopia.json",BKK="kalenderkoll.backup";
 function bkInfo(){try{return JSON.parse(localStorage.getItem(BKK)||"{}")||{}}catch(e){return{}}}
 function bkLast(){const t=bkInfo().at;if(!t)return"";const d=new Date(t);return isNaN(d)?"":fmtD(dnD(d))+" "+String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0")}
-function backupText(){return JSON.stringify({app:"kalenderkoll",v:1,at:new Date().toISOString(),space:window.KK&&KK.space?KK.space():"",me:ME||"",docs:DOCS},null,1)}
+function backupText(){return JSON.stringify({app:"kalenderkoll",v:1,at:new Date().toISOString(),space:window.KK&&KK.space?KK.space():"",me:ME||"",docs:DOCS,pspace:window.KK&&KK.pspace?KK.pspace():"",pdocs:PDOCS},null,1)}
 /* Saves a file where the person can find it: Documents › Kalenderkoll in the Android app, a download elsewhere. */
 async function saveFile(name,text,mime){const F=FSP();
   if(F){try{await F.writeFile({path:"Kalenderkoll/"+name,data:text,directory:"DOCUMENTS",encoding:"utf8",recursive:true});toast(tx("Sparad i Dokument › Kalenderkoll","Saved in Documents › Kalenderkoll")+" · "+name);return true}

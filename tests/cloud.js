@@ -157,6 +157,15 @@ await step('notes: a tap elsewhere while writing only closes the keyboard',async
   await A1.click('#mm_body [data-b="b"] form input');const f2=await A1.evaluate(()=>document.activeElement.tagName);
   await A1.click('#mm_body [data-b="b"] form input');const f3=await A1.evaluate(()=>document.activeElement.closest('.mb')?.dataset.b);await A1.click('#mm_back');await w(A1,500);
   need(f1==='a'&&f2==='BODY'&&f3==='b','focus '+[f1,f2,f3]);return[f1,f2,f3]});
+await step('private notes: only the writer sees them; sharing and making private again',async()=>{const ck=async q=>{try{await A1.click(q,{timeout:4000})}catch(e){console.log('CK',q,await A1.evaluate(q=>{const e=document.querySelector(q);if(!e)return'missing';const r=e.getBoundingClientRect();const t=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2);return[r.x,r.y,r.width,r.height,t?t.tagName+'#'+t.id+'.'+t.className:'none']},q));throw e}};await A1.evaluate(()=>{go('t');scrollTo(0,9999)});await w(A1,300);
+  need(await A1.evaluate(()=>!$('mm_newp').classList.contains('hide')),'no private button');await ck('#mm_newp');await w(A1,400);await A1.fill('#mm_ti','Julklapp till Maya');await tap(A1,'#mm_body .mb-p textarea');await A1.keyboard.type('Halsband från stan');await w(A1,1200);await ck('#mm_back');await w(A1,900);
+  const a=await A1.evaluate(()=>{const m=MEMOS.find(x=>x.ti==='Julklapp till Maya');return[!!m,m&&m.priv,!!document.querySelector('#mm_list .mmrow.priv'),Object.keys(DOCS).some(k=>DOCS[k].ti==='Julklapp till Maya'),Object.keys(PDOCS).length>0]});
+  await w(B1,800);const b=await B1.evaluate(()=>MEMOS.some(x=>x.ti==='Julklapp till Maya'));
+  const SPACE=await B1.evaluate(()=>KK.space()),inShared=Object.entries(STORE).some(([k,v])=>k.startsWith('spaces/'+SPACE)&&JSON.stringify(v).includes('Julklapp'));
+  const id=await A1.evaluate(()=>MEMOS.find(x=>x.ti==='Julklapp till Maya').id);await ck(`[data-memo="${id}"]`);await w(A1,500);await ck('#mm_pv');await ck('#m_yes');await w(A1,900);
+  const b2=await waitFor(B1,()=>MEMOS.some(x=>x.ti==='Julklapp till Maya'));await ck('#mm_pv');await ck('#m_yes');await w(A1,900);await ck('#mm_back');
+  const b3=await waitFor(B1,()=>!MEMOS.some(x=>x.ti==='Julklapp till Maya'));
+  need(a[0]&&a[1]&&a[2]&&!a[3]&&a[4]&&!b&&!inShared,'private '+JSON.stringify([a,b,inShared]));need(b2,'sharing did not reach B');need(b3,'making private did not hide it from B');return[a,b,b2,b3]});
 await step('a reinstalled phone gets everything back from a backup file',async()=>{const bk=await A1.evaluate(()=>backupText());const D1=await phone();await D1.goto(base);await waitFor(D1,()=>KK.mode!=='starting');await waitFor(D1,()=>cs.classList.contains('on'));
   need(await D1.evaluate(()=>!cs_rs.classList.contains('hide')),'no restore button on the welcome sheet');
   await D1.setInputFiles('#bk_in',{name:'Kalenderkoll-sakerhetskopia.json',mimeType:'application/json',buffer:Buffer.from(bk)});await w(D1);need(await D1.evaluate(()=>modal.classList.contains('on')),'did not ask');
