@@ -41,7 +41,7 @@ $("mm_lst").addEventListener("click",e=>{const b=e.target.closest("[data-flag]")
   if(F.dataset[k]){const G=F.dataset.t==="lh"?itemsOf(F):mmGroup(F),first=G[0];if(first)setTimeout(()=>{const t=first.querySelector(k==="op"?".mbpr":".mbds");if(t)t.focus()},60)}});
 /* Search, copy and the saved files include descriptions and costs. */
 const _plain3=mmPlain;mmPlain=function(){const bl=mmRead(),lines=[];let n=0;const ti=$("mm_ti").value.trim();if(ti)lines.push(ti);
-  bl.forEach(b=>{if(b.t!=="c")n=0;if(b.t==="p")lines.push(richPlain(b.x));else if(b.t==="lh")lines.push("","",b.x+":");else if(b.t==="c"){lines.push((b.m==="b"?"• ":b.m==="n"?(++n)+". ":(b.d?"☑ ":"☐ "))+b.x+(b.pr!==undefined?" – "+fmtKr(b.pr):""));if(b.ds)lines.push("   "+b.ds.replace(/\n/g,"\n   "))}else if(b.t==="l")lines.push(b.u)});
+  bl.forEach(b=>{if(b.t!=="c")n=0;if(b.t==="p")lines.push(richPlain(b.x));else if(b.t==="lh")lines.push("","",b.x+":");else if(b.t==="c"){lines.push((b.m==="b"?"• ":b.m==="n"?(++n)+". ":(b.d?"☑ ":"☐ "))+richPlain(b.x)+(b.pr!==undefined?" – "+fmtKr(b.pr):""));if(b.ds)lines.push("   "+b.ds.replace(/\n/g,"\n   "))}else if(b.t==="l")lines.push(b.u)});
   return lines.join("\n").replace(/\n{3,}/g,"\n\n").trim()};
 const _fdRun2=fdRun;fdRun=function(){_fdRun2();const q=$("fd_q").value.trim().toLocaleLowerCase();if(!q)return;
   $("mm_body").querySelectorAll(":scope>.mb-c:not(.hit)").forEach(d=>{const t=d.querySelector(".mbds");if(t&&t.value.toLocaleLowerCase().includes(q)){d.classList.add("hit");FD.L.push(d)}});if(FD.L.length)fdGo(0)};

@@ -27,7 +27,7 @@ $("mm_body").addEventListener("click",e=>{const v=e.target.closest(".mbv");if(!v
 /* The Aa panel: B, I, S and colours work on the words you have selected (or start a styled word where you are). */
 function wrapSel(open,close){const S3=mmSel,t=S3&&S3.el;if(!t||!t.isConnected||t.tagName!=="TEXTAREA"){toast(tx("Markera några ord i en textrad först","Select some words in a text line first"));return false}
   const v=t.value,a=Math.min(S3.s,S3.e),b=Math.max(S3.s,S3.e);t.value=v.slice(0,a)+open+v.slice(a,b)+close+v.slice(b);const na=a+open.length,nb=b+open.length;if(!MMSOFT)t.focus();t.setSelectionRange(na,nb);mmSel={el:t,s:na,e:nb};mmGrow(t);mmChanged();return true}
-const _fmtPaint2=mmFmtPaint;mmFmtPaint=function(){_fmtPaint2();const f=$("mm_fmt");const S3=mmSel,sel=S3&&S3.el&&S3.el.tagName==="TEXTAREA"&&S3.el.isConnected&&S3.s!==S3.e;
+const _fmtPaint2=mmFmtPaint;mmFmtPaint=function(){_fmtPaint2();const f=$("mm_fmt");const S3=mmSel,sel=S3&&richOK(S3.el)&&S3.s!==S3.e;
   f.insertAdjacentHTML("afterbegin",`<div class="mmfs mmin"><button type="button" data-wr="**" aria-label="${tx("Fet","Bold")}"><b>B</b></button><button type="button" data-wr="*" aria-label="${tx("Kursiv","Italic")}"><i>I</i></button><button type="button" data-wr="~~" aria-label="${tx("Genomstruken","Strike")}"><s>S</s></button><span>${sel?tx("Gäller de markerade orden","For the selected words"):tx("Markera ord för fet, kursiv, struken eller färg på bara dem","Select words to make just them bold, italic, struck or coloured")}</span></div>`);
   f.classList.toggle("selmode",!!sel)};
 $("mm_fmt").addEventListener("click",e=>{const b=e.target.closest("[data-wr]");if(b){wrapSel(b.dataset.wr,b.dataset.wr);return}
@@ -89,7 +89,7 @@ async function mmCanvas(forPdf){const cuts=[],boxes=[];const ti=$("mm_ti").value
         else if(forPdf){/* In a PDF the box is a real checkbox drawn by the PDF itself. */}
         else{g.strokeStyle=b.d?"#8a72ee":"#bdb4c0";g.fillStyle="#8a72ee";g.beginPath();g.arc(P+18,yy+24,17,0,7);if(b.d){g.fill();g.strokeStyle="#fff";g.beginPath();g.moveTo(P+10,yy+25);g.lineTo(P+16,yy+31);g.lineTo(P+27,yy+18);g.stroke()}else g.stroke()}});
       const prW=b.pr!==undefined?170:0;/* In a PDF the text is not struck through, since the box can be ticked and unticked there. */
-      const strike=b.d&&!b.m&&!forPdf;wrap(b.x,`400 34px ${ff}`,34,52,strike?"#9a92a0":col,x0,cw-56-prW,strike);
+      const strike=b.d&&!b.m&&!forPdf;wrap(richPlain(b.x),`400 34px ${ff}`,34,52,strike?"#9a92a0":col,x0,cw-56-prW,strike);
       if(prW){const t=fmtKr(b.pr);ops.push(()=>{g.font=`600 32px ${UI}`;g.fillStyle="#2a2530";g.textAlign="right";g.fillText(t,P+cw,yy+34);g.textAlign="left"})}
       if(b.ds){wrap(b.ds,`400 28px ${UI}`,28,40,"#867d8c",x0,cw-56);y+=4}
       if(tot.has(b)){y+=8;const yy=y,t=fmtKr(tot.get(b));ops.push(()=>{g.fillStyle="#e3dce6";g.fillRect(P,yy,cw,2);g.font=`500 28px ${UI}`;g.fillStyle="#867d8c";g.fillText(tx("Totalt","Total"),P,yy+40);g.font=`700 32px ${UI}`;g.fillStyle="#2a2530";g.textAlign="right";g.fillText(t,P+cw,yy+40);g.textAlign="left"});y+=56;cuts.push(y)}}

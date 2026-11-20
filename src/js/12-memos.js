@@ -122,13 +122,13 @@ const FF={sf:"Fraunces,Georgia,serif",h:"Caveat,cursive",r:"Nunito,system-ui,san
 function mmExport(){const ti=$("mm_ti").value.trim()||tx("Anteckning","Note"),bl=mmRead();let n=0,inList=false,h="";
   const st=b=>`${b.k?`color:${MCOL[b.k]};`:""}${b.f?`font-family:${FF[b.f]};`:""}`;
   bl.forEach(b=>{if(b.t!=="c"){n=0;if(inList){h+="</ul>";inList=false}}
-    if(b.t==="p"){if(!b.x.trim())return;const tag=b.s==="h1"?"h2":b.s==="h2"?"h3":"p";h+=`<${tag} style="${st(b)}">${esc(b.x).replace(URLRE,u=>`<a href="${u}">${u}</a>`).replace(/\n/g,"<br>")}</${tag}>`}
+    if(b.t==="p"){if(!b.x.trim())return;const tag=b.s==="h1"?"h2":b.s==="h2"?"h3":"p";h+=`<${tag} style="${st(b)}">${(typeof richHTML==="function"?richHTML(b.x):esc(b.x)).replace(URLRE,u=>`<a href="${u}">${u}</a>`).replace(/\n/g,"<br>")}</${tag}>`}
     else if(b.t==="lh")h+=`<h4 style="${st(b)}">${esc(b.x)}</h4>`;
-    else if(b.t==="c"){if(!inList){h+="<ul>";inList=true}const mk=b.m==="b"?"•":b.m==="n"?(++n)+".":b.d?"☑":"☐";h+=`<li style="${st(b)}${b.d&&!b.m?"text-decoration:line-through;opacity:.6;":""}"><span>${mk}</span>${esc(b.x)}</li>`}
+    else if(b.t==="c"){if(!inList){h+="<ul>";inList=true}const mk=b.m==="b"?"•":b.m==="n"?(++n)+".":b.d?"☑":"☐";h+=`<li style="${st(b)}${b.d&&!b.m?"text-decoration:line-through;opacity:.6;":""}"><span>${mk}</span>${typeof richHTML==="function"?richHTML(b.x):esc(b.x)}</li>`}
     else if(b.t==="l")h+=`<p><a href="${esc(b.u)}">${esc(b.u)}</a></p>`;
     else if(b.t==="i"&&MIMG[b.i])h+=`<img src="${MIMG[b.i]}" alt="">`});
   if(inList)h+="</ul>";
-  const doc=`<!DOCTYPE html><html lang="${S.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(ti)}</title><style>body{max-width:680px;margin:0 auto;padding:28px 20px;font:17px/1.55 system-ui,sans-serif;color:#2a2530;background:#fffcfd}h1{font:500 30px/1.2 Georgia,serif}ul{list-style:none;padding:0}li{padding:4px 0;display:flex;gap:10px}li span{min-width:1.2em;color:#8a72ee}img{max-width:100%;border-radius:14px;margin:10px 0}a{color:#8a72ee}small{color:#867d8c}</style></head><body><h1>${esc(ti)}</h1><small>Kalenderkoll · ${esc(new Date().toLocaleDateString(S.lang==="en"?"en-GB":"sv-SE"))}</small>${h}</body></html>`;
+  const doc=`<!DOCTYPE html><html lang="${S.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(ti)}</title><style>.rb{font-weight:700}.ri{font-style:italic}.rs{text-decoration:line-through}body{max-width:680px;margin:0 auto;padding:28px 20px;font:17px/1.55 system-ui,sans-serif;color:#2a2530;background:#fffcfd}h1{font:500 30px/1.2 Georgia,serif}ul{list-style:none;padding:0}li{padding:4px 0;display:flex;gap:10px}li span{min-width:1.2em;color:#8a72ee}img{max-width:100%;border-radius:14px;margin:10px 0}a{color:#8a72ee}small{color:#867d8c}</style></head><body><h1>${esc(ti)}</h1><small>Kalenderkoll · ${esc(new Date().toLocaleDateString(S.lang==="en"?"en-GB":"sv-SE"))}</small>${h}</body></html>`;
   const name=(ti.replace(/[\\/:*?"<>|]+/g," ").trim().slice(0,60)||"Anteckning")+".html";saveFile(name,doc,"text/html")}
 /* Saving a picture from the full-screen view. */
 async function saveB64(name,dataUrl){const F=FSP(),b64=dataUrl.split(",")[1]||"";

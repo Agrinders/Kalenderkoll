@@ -846,3 +846,12 @@ mark.fdw{color:inherit}
 .mb-p.mmtgt{border-radius:6px;background-color:color-mix(in oklab,var(--acc) 7%,transparent);box-shadow:0 0 0 5px color-mix(in oklab,var(--acc) 7%,transparent);outline:1.5px solid color-mix(in oklab,var(--acc) 42%,transparent);outline-offset:5px}
 .mb-lh.mmtgt{outline:1.5px solid color-mix(in oklab,var(--acc) 50%,transparent);outline-offset:-1px}
 .mb-c.mmtgt::after{border-color:color-mix(in oklab,var(--tk,var(--lc,var(--acc))) 50%,transparent);background:color-mix(in oklab,var(--tk,var(--lc,var(--acc))) 6%,transparent)}
+/* Styled words in list points */
+.mbf{position:relative}
+.mbio{position:absolute;inset:0;margin:0;border:0;white-space:pre;overflow:hidden;pointer-events:none;color:var(--ink);font-weight:inherit}
+.mb[data-k] .mbio{color:var(--tk)}
+.mb-c.done .mbio{color:var(--soft);text-decoration:line-through;text-decoration-color:color-mix(in oklab,var(--soft) 60%,transparent)}
+.mb-c.richi .mbf>input{color:transparent!important;-webkit-text-fill-color:transparent;caret-color:var(--ink);text-decoration:none}
+.mb-c.richi .mbf>input::selection{color:transparent;-webkit-text-fill-color:transparent;background:color-mix(in oklab,var(--acc) 26%,transparent)}
+.mbio .rb{font-weight:700}.mbio .ri{font-style:italic}.mbio .rs{text-decoration:line-through;text-decoration-color:color-mix(in oklab,currentColor 60%,transparent)}
+.mbio.live .rb{font-weight:inherit;-webkit-text-stroke:.45px currentColor}.mbio .mk{opacity:.22}

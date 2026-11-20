@@ -17,7 +17,7 @@ let FMT_SUB="";
 mmFmtPaint=function(){const d=mmTarget(),st=d?(d.dataset.t==="p"?(d.dataset.s||"p"):d.dataset.t):"",k=d&&d.dataset.k||"",f=d&&d.dataset.f||"";
   const S2=[["h1",tx("Rubrik","Heading")],["h2",tx("Underrubrik","Subheading")],["p",tx("Text","Text")]],F2=[["",tx("Standard","Standard")],...Object.entries(MFONT)];
   const stName=(S2.find(x=>x[0]===st)||[0,tx("Text","Text")])[1],fName=(F2.find(x=>x[0]===f)||F2[0])[1];
-  const S3=mmSel,sel=S3&&S3.el&&S3.el.tagName==="TEXTAREA"&&S3.el.isConnected&&S3.s!==S3.e;
+  const S3=mmSel,sel=S3&&richOK(S3.el)&&S3.s!==S3.e;
   let h=`<div class="mmfr"><div class="mmbis"><button type="button" data-wr="**" aria-label="${tx("Fet","Bold")}"><b>B</b></button><button type="button" data-wr="*" aria-label="${tx("Kursiv","Italic")}"><i>I</i></button><button type="button" data-wr="~~" aria-label="${tx("Genomstruken","Strike")}"><s>S</s></button></div>
     <button type="button" class="mmdd${FMT_SUB==="s"?" on":""}" data-sub="s"><small>${tx("Stil","Style")}</small>${esc(stName)}<span>▾</span></button><button type="button" class="mmdd${FMT_SUB==="f"?" on":""}" data-sub="f"><small>${tx("Typsnitt","Font")}</small>${esc(fName)}<span>▾</span></button></div>`;
   if(FMT_SUB==="s")h+=`<div class="mmfs mmsub">${S2.map(([v,l])=>`<button type="button" data-fs="${v}" class="fs-${v}${st===v?" on":""}">${l}</button>`).join("")}</div>`;

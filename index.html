@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="0ed612992ab8">
+<meta name="kal-build" content="a56a76a9747a">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -859,6 +859,15 @@ mark.fdw{color:inherit}
 .mb-p.mmtgt{border-radius:6px;background-color:color-mix(in oklab,var(--acc) 7%,transparent);box-shadow:0 0 0 5px color-mix(in oklab,var(--acc) 7%,transparent);outline:1.5px solid color-mix(in oklab,var(--acc) 42%,transparent);outline-offset:5px}
 .mb-lh.mmtgt{outline:1.5px solid color-mix(in oklab,var(--acc) 50%,transparent);outline-offset:-1px}
 .mb-c.mmtgt::after{border-color:color-mix(in oklab,var(--tk,var(--lc,var(--acc))) 50%,transparent);background:color-mix(in oklab,var(--tk,var(--lc,var(--acc))) 6%,transparent)}
+/* Styled words in list points */
+.mbf{position:relative}
+.mbio{position:absolute;inset:0;margin:0;border:0;white-space:pre;overflow:hidden;pointer-events:none;color:var(--ink);font-weight:inherit}
+.mb[data-k] .mbio{color:var(--tk)}
+.mb-c.done .mbio{color:var(--soft);text-decoration:line-through;text-decoration-color:color-mix(in oklab,var(--soft) 60%,transparent)}
+.mb-c.richi .mbf>input{color:transparent!important;-webkit-text-fill-color:transparent;caret-color:var(--ink);text-decoration:none}
+.mb-c.richi .mbf>input::selection{color:transparent;-webkit-text-fill-color:transparent;background:color-mix(in oklab,var(--acc) 26%,transparent)}
+.mbio .rb{font-weight:700}.mbio .ri{font-style:italic}.mbio .rs{text-decoration:line-through;text-decoration-color:color-mix(in oklab,currentColor 60%,transparent)}
+.mbio.live .rb{font-weight:inherit;-webkit-text-stroke:.45px currentColor}.mbio .mk{opacity:.22}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1894,13 +1903,13 @@ const FF={sf:"Fraunces,Georgia,serif",h:"Caveat,cursive",r:"Nunito,system-ui,san
 function mmExport(){const ti=$("mm_ti").value.trim()||tx("Anteckning","Note"),bl=mmRead();let n=0,inList=false,h="";
   const st=b=>`${b.k?`color:${MCOL[b.k]};`:""}${b.f?`font-family:${FF[b.f]};`:""}`;
   bl.forEach(b=>{if(b.t!=="c"){n=0;if(inList){h+="</ul>";inList=false}}
-    if(b.t==="p"){if(!b.x.trim())return;const tag=b.s==="h1"?"h2":b.s==="h2"?"h3":"p";h+=`<${tag} style="${st(b)}">${esc(b.x).replace(URLRE,u=>`<a href="${u}">${u}</a>`).replace(/\n/g,"<br>")}</${tag}>`}
+    if(b.t==="p"){if(!b.x.trim())return;const tag=b.s==="h1"?"h2":b.s==="h2"?"h3":"p";h+=`<${tag} style="${st(b)}">${(typeof richHTML==="function"?richHTML(b.x):esc(b.x)).replace(URLRE,u=>`<a href="${u}">${u}</a>`).replace(/\n/g,"<br>")}</${tag}>`}
     else if(b.t==="lh")h+=`<h4 style="${st(b)}">${esc(b.x)}</h4>`;
-    else if(b.t==="c"){if(!inList){h+="<ul>";inList=true}const mk=b.m==="b"?"•":b.m==="n"?(++n)+".":b.d?"☑":"☐";h+=`<li style="${st(b)}${b.d&&!b.m?"text-decoration:line-through;opacity:.6;":""}"><span>${mk}</span>${esc(b.x)}</li>`}
+    else if(b.t==="c"){if(!inList){h+="<ul>";inList=true}const mk=b.m==="b"?"•":b.m==="n"?(++n)+".":b.d?"☑":"☐";h+=`<li style="${st(b)}${b.d&&!b.m?"text-decoration:line-through;opacity:.6;":""}"><span>${mk}</span>${typeof richHTML==="function"?richHTML(b.x):esc(b.x)}</li>`}
     else if(b.t==="l")h+=`<p><a href="${esc(b.u)}">${esc(b.u)}</a></p>`;
     else if(b.t==="i"&&MIMG[b.i])h+=`<img src="${MIMG[b.i]}" alt="">`});
   if(inList)h+="</ul>";
-  const doc=`<!DOCTYPE html><html lang="${S.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(ti)}</title><style>body{max-width:680px;margin:0 auto;padding:28px 20px;font:17px/1.55 system-ui,sans-serif;color:#2a2530;background:#fffcfd}h1{font:500 30px/1.2 Georgia,serif}ul{list-style:none;padding:0}li{padding:4px 0;display:flex;gap:10px}li span{min-width:1.2em;color:#8a72ee}img{max-width:100%;border-radius:14px;margin:10px 0}a{color:#8a72ee}small{color:#867d8c}</style></head><body><h1>${esc(ti)}</h1><small>Kalenderkoll · ${esc(new Date().toLocaleDateString(S.lang==="en"?"en-GB":"sv-SE"))}</small>${h}</body></html>`;
+  const doc=`<!DOCTYPE html><html lang="${S.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(ti)}</title><style>.rb{font-weight:700}.ri{font-style:italic}.rs{text-decoration:line-through}body{max-width:680px;margin:0 auto;padding:28px 20px;font:17px/1.55 system-ui,sans-serif;color:#2a2530;background:#fffcfd}h1{font:500 30px/1.2 Georgia,serif}ul{list-style:none;padding:0}li{padding:4px 0;display:flex;gap:10px}li span{min-width:1.2em;color:#8a72ee}img{max-width:100%;border-radius:14px;margin:10px 0}a{color:#8a72ee}small{color:#867d8c}</style></head><body><h1>${esc(ti)}</h1><small>Kalenderkoll · ${esc(new Date().toLocaleDateString(S.lang==="en"?"en-GB":"sv-SE"))}</small>${h}</body></html>`;
   const name=(ti.replace(/[\\/:*?"<>|]+/g," ").trim().slice(0,60)||"Anteckning")+".html";saveFile(name,doc,"text/html")}
 /* Saving a picture from the full-screen view. */
 async function saveB64(name,dataUrl){const F=FSP(),b64=dataUrl.split(",")[1]||"";
@@ -2368,7 +2377,7 @@ $("mm_body").addEventListener("click",e=>{const v=e.target.closest(".mbv");if(!v
 /* The Aa panel: B, I, S and colours work on the words you have selected (or start a styled word where you are). */
 function wrapSel(open,close){const S3=mmSel,t=S3&&S3.el;if(!t||!t.isConnected||t.tagName!=="TEXTAREA"){toast(tx("Markera några ord i en textrad först","Select some words in a text line first"));return false}
   const v=t.value,a=Math.min(S3.s,S3.e),b=Math.max(S3.s,S3.e);t.value=v.slice(0,a)+open+v.slice(a,b)+close+v.slice(b);const na=a+open.length,nb=b+open.length;if(!MMSOFT)t.focus();t.setSelectionRange(na,nb);mmSel={el:t,s:na,e:nb};mmGrow(t);mmChanged();return true}
-const _fmtPaint2=mmFmtPaint;mmFmtPaint=function(){_fmtPaint2();const f=$("mm_fmt");const S3=mmSel,sel=S3&&S3.el&&S3.el.tagName==="TEXTAREA"&&S3.el.isConnected&&S3.s!==S3.e;
+const _fmtPaint2=mmFmtPaint;mmFmtPaint=function(){_fmtPaint2();const f=$("mm_fmt");const S3=mmSel,sel=S3&&richOK(S3.el)&&S3.s!==S3.e;
   f.insertAdjacentHTML("afterbegin",`<div class="mmfs mmin"><button type="button" data-wr="**" aria-label="${tx("Fet","Bold")}"><b>B</b></button><button type="button" data-wr="*" aria-label="${tx("Kursiv","Italic")}"><i>I</i></button><button type="button" data-wr="~~" aria-label="${tx("Genomstruken","Strike")}"><s>S</s></button><span>${sel?tx("Gäller de markerade orden","For the selected words"):tx("Markera ord för fet, kursiv, struken eller färg på bara dem","Select words to make just them bold, italic, struck or coloured")}</span></div>`);
   f.classList.toggle("selmode",!!sel)};
 $("mm_fmt").addEventListener("click",e=>{const b=e.target.closest("[data-wr]");if(b){wrapSel(b.dataset.wr,b.dataset.wr);return}
@@ -2430,7 +2439,7 @@ async function mmCanvas(forPdf){const cuts=[],boxes=[];const ti=$("mm_ti").value
         else if(forPdf){/* In a PDF the box is a real checkbox drawn by the PDF itself. */}
         else{g.strokeStyle=b.d?"#8a72ee":"#bdb4c0";g.fillStyle="#8a72ee";g.beginPath();g.arc(P+18,yy+24,17,0,7);if(b.d){g.fill();g.strokeStyle="#fff";g.beginPath();g.moveTo(P+10,yy+25);g.lineTo(P+16,yy+31);g.lineTo(P+27,yy+18);g.stroke()}else g.stroke()}});
       const prW=b.pr!==undefined?170:0;/* In a PDF the text is not struck through, since the box can be ticked and unticked there. */
-      const strike=b.d&&!b.m&&!forPdf;wrap(b.x,`400 34px ${ff}`,34,52,strike?"#9a92a0":col,x0,cw-56-prW,strike);
+      const strike=b.d&&!b.m&&!forPdf;wrap(richPlain(b.x),`400 34px ${ff}`,34,52,strike?"#9a92a0":col,x0,cw-56-prW,strike);
       if(prW){const t=fmtKr(b.pr);ops.push(()=>{g.font=`600 32px ${UI}`;g.fillStyle="#2a2530";g.textAlign="right";g.fillText(t,P+cw,yy+34);g.textAlign="left"})}
       if(b.ds){wrap(b.ds,`400 28px ${UI}`,28,40,"#867d8c",x0,cw-56);y+=4}
       if(tot.has(b)){y+=8;const yy=y,t=fmtKr(tot.get(b));ops.push(()=>{g.fillStyle="#e3dce6";g.fillRect(P,yy,cw,2);g.font=`500 28px ${UI}`;g.fillStyle="#867d8c";g.fillText(tx("Totalt","Total"),P,yy+40);g.font=`700 32px ${UI}`;g.fillStyle="#2a2530";g.textAlign="right";g.fillText(t,P+cw,yy+40);g.textAlign="left"});y+=56;cuts.push(y)}}
@@ -2518,7 +2527,8 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
-{v:"3.5",d:"20 nov 2026",i:[["t","memos",["Välj rad med menyn öppen", "Pick a line with the menu open"],["Raden du jobbar med syns med en ram även när tangentbordet är nere. Med Aa eller Lista öppen trycker du på en annan rad för att byta till den, utan att tangentbordet kommer upp. Ett tryck bredvid raderna stänger menyn.", "The line you are working on shows a frame even with the keyboard down. With Aa or List open, tap another line to switch to it, without the keyboard coming up. A tap beside the lines closes the menu."]]]},
+{v:"3.6",d:"20 nov 2026",i:[["t","memos",["Markera ord, även i listor", "Select words, in lists too"],["Markerade ord ligger kvar när du trycker på knapparna längst ner, även om telefonen hinner ta bort markeringen. Fet, kursiv, struken och färg går nu också på ord i en listpunkt. Med en meny öppen kan du trycka in i en rad och markera ord som vanligt.", "Selected words stay selected when you tap the buttons at the bottom, even if the phone clears the selection. Bold, italic, strike and colour now also work on words in a list point. With a menu open you can tap into a line and select words as usual."]]]},
+{v:"3.5",d:"20 nov 2026",i:[["t","memos",["Välj rad med menyn öppen", "Pick a line with the menu open"],["Raden du jobbar med syns med en ram även när tangentbordet är nere. Ett tryck bredvid raderna stänger menyn.", "The line you are working on shows a frame even with the keyboard down. A tap beside the lines closes the menu."]]]},
 {v:"3.4",d:"20 nov 2026",i:[["t","memos",["Färg på markerade ord", "Colour on selected words"],["Markerar du några ord och öppnar Aa ligger markeringen kvar, så fet, kursiv, struken och färg hamnar på just dem. Färgen syns också genom markeringen.", "Select some words and open Aa: the selection stays, so bold, italic, strike and colour go on just them. The colour also shows through the selection."]]]},
 {v:"3.3",d:"20 nov 2026",i:[["t","memos",["Tangentbordet håller sig undan", "The keyboard stays away"],["Knapparna längst ner stänger tangentbordet, först när knappen har gjort sitt, så sidan inte hoppar. Är en meny öppen stänger ett tryck utanför den bara menyn, utan att börja skriva eller bocka i något. Tangentbordet kommer bara upp när du trycker på en rad eller skapar något nytt, som en lista.", "The buttons at the bottom close the keyboard, once the button has done its job, so the page does not jump. With a menu open, a tap outside it only closes the menu, without starting to write or ticking anything. The keyboard only comes up when you tap a line or create something new, like a list."]]]},
 {v:"3.2",d:"20 nov 2026",i:[["t","memos",["Se vem som bockade av", "See who ticked it"],["En liten bokstav i din partners färg sitter på det hen bockade av. Tryck på den för att se när. Medan din partner skriver i en anteckning står det ”Maya skriver…”.", "A small letter in your partner's colour sits on what they ticked. Tap it to see when. While your partner writes in a note it says “Maya is writing…”."]],["t","memos",["Besked när listor ändras", "A notice when lists change"],["Lägger din partner till eller bockar av något i en delad lista får du ett besked, även när appen är stängd (kräver den nya appen).", "When your partner adds or ticks off something in a shared list you get a notice, also when the app is closed (needs the new app)."]],["t","memos",["Taggar och kopior", "Tags and copies"],["Ge anteckningar taggar som #resa under rubriken och filtrera listan på dem. Under ⋯ finns Duplicera: en exakt kopia eller en mall utan bockar.", "Give notes tags like #trip under the title and filter the list by them. Under ⋯ there is Duplicate: an exact copy or a template without ticks."]],["t","memos",["Lugnare att skriva", "Calmer writing"],["Fet och kursiv syns medan du skriver, Aa-panelen är mindre, handtagen syns bara där du skriver, en ny punkt säger ”Ny punkt” och flera rader du klistrar in blir en punkt var.", "Bold and italic show while you write, the Aa panel is smaller, handles only show where you write, a new point says “New point” and several pasted lines become one point each."]],["t","memos",["Sök och flytta", "Search and move"],["Sökningen i en anteckning markerar själva ordet. Bilder, länkar och textstycken går att flytta, inte bara punkter.", "Search inside a note marks the word itself. Pictures, links and paragraphs can be moved, not only points."]]]},
@@ -2597,7 +2607,7 @@ $("mm_lst").addEventListener("click",e=>{const b=e.target.closest("[data-flag]")
   if(F.dataset[k]){const G=F.dataset.t==="lh"?itemsOf(F):mmGroup(F),first=G[0];if(first)setTimeout(()=>{const t=first.querySelector(k==="op"?".mbpr":".mbds");if(t)t.focus()},60)}});
 /* Search, copy and the saved files include descriptions and costs. */
 const _plain3=mmPlain;mmPlain=function(){const bl=mmRead(),lines=[];let n=0;const ti=$("mm_ti").value.trim();if(ti)lines.push(ti);
-  bl.forEach(b=>{if(b.t!=="c")n=0;if(b.t==="p")lines.push(richPlain(b.x));else if(b.t==="lh")lines.push("","",b.x+":");else if(b.t==="c"){lines.push((b.m==="b"?"• ":b.m==="n"?(++n)+". ":(b.d?"☑ ":"☐ "))+b.x+(b.pr!==undefined?" – "+fmtKr(b.pr):""));if(b.ds)lines.push("   "+b.ds.replace(/\n/g,"\n   "))}else if(b.t==="l")lines.push(b.u)});
+  bl.forEach(b=>{if(b.t!=="c")n=0;if(b.t==="p")lines.push(richPlain(b.x));else if(b.t==="lh")lines.push("","",b.x+":");else if(b.t==="c"){lines.push((b.m==="b"?"• ":b.m==="n"?(++n)+". ":(b.d?"☑ ":"☐ "))+richPlain(b.x)+(b.pr!==undefined?" – "+fmtKr(b.pr):""));if(b.ds)lines.push("   "+b.ds.replace(/\n/g,"\n   "))}else if(b.t==="l")lines.push(b.u)});
   return lines.join("\n").replace(/\n{3,}/g,"\n\n").trim()};
 const _fdRun2=fdRun;fdRun=function(){_fdRun2();const q=$("fd_q").value.trim().toLocaleLowerCase();if(!q)return;
   $("mm_body").querySelectorAll(":scope>.mb-c:not(.hit)").forEach(d=>{const t=d.querySelector(".mbds");if(t&&t.value.toLocaleLowerCase().includes(q)){d.classList.add("hit");FD.L.push(d)}});if(FD.L.length)fdGo(0)};
@@ -2679,7 +2689,7 @@ let FMT_SUB="";
 mmFmtPaint=function(){const d=mmTarget(),st=d?(d.dataset.t==="p"?(d.dataset.s||"p"):d.dataset.t):"",k=d&&d.dataset.k||"",f=d&&d.dataset.f||"";
   const S2=[["h1",tx("Rubrik","Heading")],["h2",tx("Underrubrik","Subheading")],["p",tx("Text","Text")]],F2=[["",tx("Standard","Standard")],...Object.entries(MFONT)];
   const stName=(S2.find(x=>x[0]===st)||[0,tx("Text","Text")])[1],fName=(F2.find(x=>x[0]===f)||F2[0])[1];
-  const S3=mmSel,sel=S3&&S3.el&&S3.el.tagName==="TEXTAREA"&&S3.el.isConnected&&S3.s!==S3.e;
+  const S3=mmSel,sel=S3&&richOK(S3.el)&&S3.s!==S3.e;
   let h=`<div class="mmfr"><div class="mmbis"><button type="button" data-wr="**" aria-label="${tx("Fet","Bold")}"><b>B</b></button><button type="button" data-wr="*" aria-label="${tx("Kursiv","Italic")}"><i>I</i></button><button type="button" data-wr="~~" aria-label="${tx("Genomstruken","Strike")}"><s>S</s></button></div>
     <button type="button" class="mmdd${FMT_SUB==="s"?" on":""}" data-sub="s"><small>${tx("Stil","Style")}</small>${esc(stName)}<span>▾</span></button><button type="button" class="mmdd${FMT_SUB==="f"?" on":""}" data-sub="f"><small>${tx("Typsnitt","Font")}</small>${esc(fName)}<span>▾</span></button></div>`;
   if(FMT_SUB==="s")h+=`<div class="mmfs mmsub">${S2.map(([v,l])=>`<button type="button" data-fs="${v}" class="fs-${v}${st===v?" on":""}">${l}</button>`).join("")}</div>`;
@@ -2877,26 +2887,23 @@ function mmKbField(){const a=document.activeElement;return a&&$("mm_w").contains
 function mmHold(ms){const w=$("mm_w"),top=w.scrollTop,end=Date.now()+(ms||600);(function f(){if(Math.abs(w.scrollTop-top)>1)w.scrollTop=top;if(Date.now()<end)requestAnimationFrame(f)})()}
 function mmKbAway(){const a=mmKbField();if(a){mmHold(700);a.blur()}MMKB=false;if(typeof tgtPaint==="function")tgtPaint()}
 function mmKbDown(e){if(!e.target.closest("input,textarea,select"))e.preventDefault()}
-function mmKbAfter(){const was=KBF;KBF=null;if(was&&document.activeElement===was)mmKbAway()}
+function mmKbAfter(){const was=KBF;KBF=null;if(was&&document.activeElement===was)mmKbAway();selBack()}
 [document.querySelector(".mmbar"),$("mm_fmt"),$("mm_sym"),$("mm_lst")].forEach(el=>{
   el.addEventListener("pointerdown",e=>{KBF=mmKbField();MMKB=false;
     /* Words marked in a line stay marked, and the keyboard stays, so B, I, S and colours can go on them. */
-    if(KBF&&KBF.tagName==="TEXTAREA"&&KBF.selectionStart!==KBF.selectionEnd){mmSel={el:KBF,s:KBF.selectionStart,e:KBF.selectionEnd};KBF=null;MMKB=true}},true);
+    const S=selKeep();if(S){mmSel={el:S.el,s:S.s,e:S.e};SELHOLD=S;KBF=null;MMKB=true}},true);
   el.addEventListener("mousedown",mmKbDown,true);
   el.addEventListener("click",mmKbAfter)});
 
 /* With a menu open, a tap in the note only closes the menu. It does not start writing or tick anything. */
 const mmMenuOpen=()=>!$("mm_fmt").hidden||!$("mm_sym").hidden||!$("mm_lst").hidden;
 function mmMenusShut(){mmFmt(false);mmSym(false);mmLst(false)}
-/* With a menu open, tapping a line makes it the line the menu works on, marked so you can see it, without the keyboard.
-   Tapping anywhere else closes the menu. */
-$("mm_w").addEventListener("mousedown",e=>{if(!mmMenuOpen()||DR)return;e.preventDefault();e.stopPropagation();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600);
-  const d=e.target.closest("#mm_body>.mb");
-  if(d&&/^(p|c|lh)$/.test(d.dataset.t)){mmKbAway();mmLast=d;const f=d.querySelector("textarea,form input");if(f){const n=f.value.length;mmSel=TGSEL={el:f,s:n,e:n}}
-    if(!$("mm_fmt").hidden){FMT_SUB="";mmFmtPaint()}if(!$("mm_lst").hidden)mmLst(true);tgtPaint();return}
-  mmKbAway();mmMenusShut()},true);
-/* The tap's own click must not move the menus to another line (the note can shift a little as the keyboard goes). */
-var TGSEL=null;$("mm_w").addEventListener("click",()=>{if(TGSEL){mmSel=TGSEL;TGSEL=null}},true);
+/* With a menu open you can still tap into a line, place the cursor and mark words; the menu stays open and follows.
+   A tap beside the lines closes the menu without bringing up the keyboard. */
+$("mm_w").addEventListener("mousedown",e=>{if(!mmMenuOpen()||DR)return;const d=e.target.closest("#mm_body>.mb");if(d&&/^(p|c|lh)$/.test(d.dataset.t))return;
+  e.preventDefault();e.stopPropagation();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600);mmKbAway();mmMenusShut()},true);
+$("mm_body").addEventListener("focusin",()=>{if(!$("mm_fmt").hidden){FMT_SUB="";mmFmtPaint()}if(!$("mm_lst").hidden)mmLst(true)});
+var TGSEL=null;
 function tgtPaint(){document.querySelectorAll("#mm_body .mmtgt").forEach(x=>x.classList.remove("mmtgt"));
   if(mmMenuOpen()&&!mmKbField()&&mmLast&&mmLast.isConnected&&mmLast.closest("#mm_body"))mmLast.classList.add("mmtgt")}
 [["mmFmt",mmFmt],["mmSym",mmSym],["mmLst",mmLst]].forEach(([n,f])=>{window[n]=function(){const r=f.apply(this,arguments);tgtPaint();return r}});
@@ -2910,6 +2917,50 @@ const _focusEnd22=mmFocusEnd;mmFocusEnd=function(d){if(MMSOFT&&d&&d.isConnected)
 /* "Do not bring the keyboard up" lasts for one tap only, whatever the tap's handlers do with it. */
 window.addEventListener("click",()=>setTimeout(()=>{MMSOFT=false},0),true);
 ["keydown","pointerdown","input"].forEach(ev=>window.addEventListener(ev,()=>{MMSOFT=false},true));
+/* ---------- Marked words, everywhere you write ----------
+   Words marked in a text line or a list point stay marked when you use the buttons at the bottom,
+   and bold, italic, strike and colour go on just them, in list points too. */
+
+/* Lines that can hold styled words: text lines and list points (not headings, prices or descriptions). */
+function richOK(el){return !!(el&&el.isConnected&&((el.tagName==="TEXTAREA"&&!el.classList.contains("mbds")&&el.closest(".mb-p"))||(el.tagName==="INPUT"&&el.parentElement&&el.parentElement.classList.contains("mbf")&&el.closest(".mb-c"))))}
+
+/* The phone may clear the marking the moment the finger lands on a button. The last marking is kept a moment so it can be put back. */
+var LSEL=null,SELHOLD=null;
+document.addEventListener("selectionchange",()=>{const a=document.activeElement;if(!a||!(a.tagName==="TEXTAREA"||a.tagName==="INPUT")||!$("mm_w").contains(a))return;
+  if(a.selectionStart!==a.selectionEnd)LSEL={el:a,s:a.selectionStart,e:a.selectionEnd,alive:true,tc:0};
+  else if(LSEL&&LSEL.el===a&&LSEL.alive){LSEL.alive=false;LSEL.tc=Date.now()}});
+function selKeep(){const a=mmKbField();
+  if(a&&a.selectionStart!==a.selectionEnd)return{el:a,s:a.selectionStart,e:a.selectionEnd};
+  if(LSEL&&LSEL.el.isConnected&&(!a||a===LSEL.el)&&(LSEL.alive||Date.now()-LSEL.tc<1500))return{el:LSEL.el,s:LSEL.s,e:LSEL.e};
+  return null}
+/* After the button has done its work, the marking is shown again where it now is. */
+function selBack(){const H=SELHOLD;SELHOLD=null;if(!H)return;const m=mmSel&&mmSel.el===H.el?mmSel:H,t=H.el;if(!t.isConnected)return;
+  try{if(document.activeElement!==t)t.focus({preventScroll:true});t.setSelectionRange(Math.min(m.s,m.e),Math.max(m.s,m.e))}catch(e){}
+  LSEL={el:t,s:Math.min(m.s,m.e),e:Math.max(m.s,m.e),alive:true,tc:0}}
+["mm_fmt","mm_sym","mm_lst"].forEach(id=>$(id).addEventListener("click",()=>{if(SELHOLD)selBack()}));
+
+/* Bold, italic, strike and colour on marked words, in text lines and list points alike. */
+wrapSel=function(open,close){const S3=mmSel,t=S3&&S3.el;if(!richOK(t)){toast(tx("Markera några ord i en rad först","Select some words in a line first"));return false}
+  const v=t.value,a=Math.min(S3.s,S3.e),b=Math.max(S3.s,S3.e);t.value=v.slice(0,a)+open+v.slice(a,b)+close+v.slice(b);const na=a+open.length,nb=b+open.length;
+  if(!MMSOFT||document.activeElement===t){if(document.activeElement!==t)t.focus();t.setSelectionRange(na,nb)}
+  mmSel={el:t,s:na,e:nb};if(SELHOLD&&SELHOLD.el===t)SELHOLD={el:t,s:na,e:nb};if(t.tagName==="TEXTAREA")mmGrow(t);mmChanged();const d=t.closest(".mb");liveUpd(d);inPaint(d);return true};
+$("mm_fmt").addEventListener("click",e=>{const c=e.target.closest("[data-fk]"),S3=mmSel;
+  if(c&&c.dataset.fk&&S3&&S3.el&&S3.el.tagName==="INPUT"&&richOK(S3.el)&&S3.s!==S3.e&&S3.el.closest(".mb")===mmTarget()){e.stopImmediatePropagation();wrapSel("{"+c.dataset.fk+"|","}")}},true);
+
+/* A list point with styled words: the field draws nothing itself, the styled words are drawn exactly under it.
+   While you write in it the marks stay (faint) so the cursor keeps in step; otherwise they are hidden. */
+function inPaint(d){if(!d||d.dataset.t!=="c")return;const inp=d.querySelector(".mbf>input");if(!inp)return;
+  const on=RICH_RE.test(inp.value);let o=d.querySelector(".mbio");d.classList.toggle("richi",on);if(!on){if(o)o.remove();return}
+  if(!o){o=document.createElement("div");o.className="mbio";o.setAttribute("aria-hidden","true");inp.after(o)}
+  const cs=getComputedStyle(inp);["fontFamily","fontSize","fontStyle","letterSpacing","paddingTop","paddingBottom","paddingLeft","paddingRight","lineHeight"].forEach(k=>o.style[k]=cs[k]);
+  const live=document.activeElement===inp;o.classList.toggle("live",live);o.innerHTML=richHTML(inp.value,false,live)+"​";o.scrollLeft=live?inp.scrollLeft:0}
+const _mbBlock23=mmBlock;mmBlock=function(b){const d=_mbBlock23(b);if(b.t==="c"&&RICH_RE.test(b.x||""))requestAnimationFrame(()=>inPaint(d));return d};
+$("mm_body").addEventListener("input",e=>{if(e.target.tagName==="INPUT")inPaint(e.target.closest(".mb-c"))});
+$("mm_body").addEventListener("focusin",e=>{if(e.target.tagName==="INPUT")inPaint(e.target.closest(".mb-c"))});
+$("mm_body").addEventListener("focusout",e=>{if(e.target.tagName==="INPUT"){const d=e.target.closest(".mb-c");setTimeout(()=>inPaint(d),0)}});
+$("mm_body").addEventListener("scroll",e=>{const t=e.target;if(t.tagName==="INPUT"){const o=t.parentElement.querySelector(".mbio");if(o)o.scrollLeft=t.scrollLeft}},true);
+document.addEventListener("selectionchange",()=>{const a=document.activeElement;if(a&&a.tagName==="INPUT"&&a.parentElement&&a.parentElement.classList.contains("mbf")){const o=a.parentElement.querySelector(".mbio");if(o)o.scrollLeft=a.scrollLeft}});
+["mm_fmt","mm_lst"].forEach(id=>$(id).addEventListener("click",()=>requestAnimationFrame(()=>document.querySelectorAll("#mm_body .mb-c.richi").forEach(inPaint))));
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>
