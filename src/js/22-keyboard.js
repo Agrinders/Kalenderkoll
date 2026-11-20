@@ -1,9 +1,19 @@
 /* ---------- The bottom bar puts the keyboard away ----------
    A tap on the bar or in one of its menus closes the keyboard; formatting still goes to the line you were on.
    Only something new to write in (a new list, a list name, a link) opens the keyboard again. */
-function mmKbAway(){const a=document.activeElement;if(a&&$("mm_w").contains(a)&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"))a.blur();MMKB=false}
-document.querySelector(".mmbar").addEventListener("pointerdown",mmKbAway,true);
-["mm_fmt","mm_sym","mm_lst"].forEach(id=>$(id).addEventListener("pointerdown",mmKbAway,true));
+/* The keyboard is put away only after the tap has done its job. Putting it away while the finger is still down
+   moves the bar under the finger, and the tap then lands on a line in the note instead. The view is held still
+   while the keyboard slides away, so nothing jumps. */
+var KBF=null;
+function mmKbField(){const a=document.activeElement;return a&&$("mm_w").contains(a)&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA")?a:null}
+function mmHold(ms){const w=$("mm_w"),top=w.scrollTop,end=Date.now()+(ms||600);(function f(){if(Math.abs(w.scrollTop-top)>1)w.scrollTop=top;if(Date.now()<end)requestAnimationFrame(f)})()}
+function mmKbAway(){const a=mmKbField();if(a){mmHold(700);a.blur()}MMKB=false}
+function mmKbDown(e){KBF=mmKbField();MMKB=false;if(!e.target.closest("input,textarea,select"))e.preventDefault()}
+function mmKbAfter(){const was=KBF;KBF=null;if(was&&document.activeElement===was)mmKbAway()}
+[document.querySelector(".mmbar"),$("mm_fmt"),$("mm_sym"),$("mm_lst")].forEach(el=>{
+  el.addEventListener("pointerdown",e=>{KBF=mmKbField();MMKB=false},true);
+  el.addEventListener("mousedown",mmKbDown,true);
+  el.addEventListener("click",mmKbAfter)});
 
 /* With a menu open, a tap in the note only closes the menu. It does not start writing or tick anything. */
 const mmMenuOpen=()=>!$("mm_fmt").hidden||!$("mm_sym").hidden||!$("mm_lst").hidden;
