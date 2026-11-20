@@ -7,11 +7,12 @@ function richRanges(raw){const R=[],M=new Set();const take=(re,st,open,close,k)=
   take(/\{([roygbvps])\|([^{}\n]*?)\}/g,"k",3,1,m=>m[1]);take(/\*\*(?=\S)([^\n]*?\S)\*\*/g,"b",2,2);take(/~~(?=\S)([^\n]*?\S)~~/g,"s",2,2);
   let m;const it=/(^|[^*\w])(\*(?=[^\s*])([^*\n]*?[^\s*])\*)(?![*\w])/g;while((m=it.exec(raw))){const a=m.index+m[1].length;if(M.has(a))continue;R.push({a:a+1,b:a+m[2].length-1,st:"i"});M.add(a);M.add(a+m[2].length-1)}
   return{R,M}}
-function richHTML(raw,offsets){const{R,M}=richRanges(raw);let h="",seg="",key=null,o0=0;
+function richHTML(raw,offsets,live){const{R,M}=richRanges(raw);let h="",seg="",key=null,o0=0;
   const style=i=>R.filter(r=>i>=r.a&&i<r.b).map(r=>r.st==="k"?"k"+r.k:r.st).sort().join(" ");
   const flush=()=>{if(!seg)return;const cls=key.split(" ").filter(Boolean),k=cls.find(c=>c[0]==="k"&&c.length===2);
     h+=`<span${offsets?` data-o="${o0}"`:""} class="${cls.filter(c=>c[0]!=="k").map(c=>"r"+c).join(" ")}"${k?` style="color:${MCOL[k[1]]}"`:""}>${esc(seg)}</span>`;seg=""};
-  for(let i=0;i<raw.length;i++){if(M.has(i)){flush();key=null;continue}const s=style(i);if(s!==key){flush();key=s;o0=i}seg+=raw[i]}flush();return h}
+  /* live: the marks stay in place (so letters line up with what you type) but are drawn faint. */
+  for(let i=0;i<raw.length;i++){if(M.has(i)){flush();key=null;if(live)h+=`<span class="mk">${esc(raw[i])}</span>`;continue}const s=style(i);if(s!==key){flush();key=s;o0=i}seg+=raw[i]}flush();return h}
 const richPlain=raw=>{const{M}=richRanges(raw);let t="";for(let i=0;i<raw.length;i++)if(!M.has(i))t+=raw[i];return t};
 function richUpd(d){if(!d||d.dataset.t!=="p")return;const ta=d.querySelector("textarea");if(!ta)return;let v=d.querySelector(".mbv");
   const on=RICH_RE.test(ta.value)&&document.activeElement!==ta;

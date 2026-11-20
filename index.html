@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="7108e64e1082">
+<meta name="kal-build" content="8aa3c0583cd0">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -609,8 +609,6 @@ html{padding:0!important;margin:0!important}body{margin:0!important}
 .mmfind span{flex:none;font-size:12.5px;font-weight:600;color:var(--soft)}
 .mmfind button{flex:none;display:grid;place-items:center;min-width:34px;height:34px;border-radius:10px;color:var(--ink)}.mmfind button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 #fd_x{padding:0 10px;font-weight:600;color:var(--acc)}
-.mb.hit,.mmti.hit{background-color:color-mix(in oklab,#ffd84d 22%,transparent)!important;border-radius:10px}
-.mb.hitc,.mmti.hitc{background-color:color-mix(in oklab,#ffc21a 42%,transparent)!important;box-shadow:0 0 0 2px color-mix(in oklab,#f0a800 55%,transparent)!important;border-radius:10px}
 
 /* Blank lines between lists take no room, so every gap between two lists is the same, open or folded. */
 .mb-p.slim{height:0;margin:0!important;overflow:hidden}.mb-p.slim textarea{height:0!important}
@@ -784,6 +782,55 @@ body:has(.sh.on) #toasts{bottom:calc(20px + var(--sab))}
 .mmpv{display:inline-flex;align-items:center;gap:6px;margin:-6px 0 12px;padding:5px 11px 5px 9px;border-radius:99px;font-size:12.5px;font-weight:600;color:var(--soft);background:var(--fill)}
 .mmpv svg{width:15px;height:15px;stroke-width:1.9}.mmpv.on{color:var(--acc);background:color-mix(in oklab,var(--acc) 12%,transparent)}
 .mmpv{align-self:flex-start}
+
+/* ================= Notes, round 2 ================= */
+/* Live styles while writing */
+.mb-p.live textarea{color:transparent;caret-color:var(--ink);position:relative;z-index:1;background:transparent}
+.mb-p.live .mbo{display:block;position:absolute;left:0;right:0;top:0;pointer-events:none}
+.mb-p:not(.live) .mbo{display:none}
+.mbo .mk{opacity:.22}.mbo .rb{font-weight:inherit;-webkit-text-stroke:.45px currentColor}
+.mb-p.live[data-k] textarea{caret-color:var(--tk)}
+/* Grips stay out of sight until you need them: holding the right edge of a point still picks it up. */
+.mbgrip{opacity:0;transition:opacity .2s}.mb:focus-within>.mbgrip,.mb.lift>.mbgrip,.mbgrip.arming{opacity:1}
+.mb-lh>.mbgrip{opacity:.45}
+/* The jump tab is slimmer and stays clear of the lists. */
+.tocflap{width:13px;height:52px;padding-left:3px;gap:3px;border-radius:0 10px 10px 0}.tocflap i:nth-child(1){width:6px}.tocflap i:nth-child(2),.tocflap i:nth-child(3){width:4px;margin-left:1px}
+.tocflap.on{transform:translateX(min(230px,64vw))}
+/* Compact Aa panel */
+.mmfr{display:flex;gap:6px;align-items:stretch}
+.mmbis{display:flex;border-radius:12px;background:var(--card);border:1px solid var(--rule);overflow:hidden;flex:none}
+.mmbis button{width:42px;min-height:44px;font-size:17px;border-radius:0}.mmbis button+button{border-left:1px solid var(--rule)}.mmbis b{font-weight:800}.mmbis i{font-family:Georgia,serif}
+.mmdd{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:0;padding:4px 26px 4px 10px;min-height:44px;border-radius:12px;background:var(--card);border:1px solid var(--rule);font-size:14px;font-weight:600;position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mmdd small{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--soft)}.mmdd span{position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--soft);font-size:11px;transition:transform .2s}
+.mmdd.on{border-color:var(--acc)}.mmdd.on span{transform:translateY(-50%) rotate(180deg)}
+.mmsub{margin-top:8px;flex-wrap:wrap}.mmsub button{flex:1 1 auto}
+.mmfc{align-items:center;flex-wrap:wrap}.mmfch{order:-1;flex-basis:100%;padding:0 2px 2px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);white-space:nowrap}.mmfmt.selmode .mmfch{color:var(--acc)}
+/* Bigger places to tap, same look */
+.mbck,.mbfold,.mmpinb,.mbgrip{position:relative}
+.mbck::before,.mbfold::before{content:"";position:absolute;inset:-10px}
+.mbgrip{width:40px;height:44px;margin-top:-10px;margin-bottom:-10px}
+.mmpinb{width:44px;height:44px;top:2px;right:-4px}
+/* A clearer pin */
+.mmpinb{color:color-mix(in oklab,var(--soft) 95%,transparent)}.mmpinb svg{width:19px;height:19px;stroke-width:1.9}
+.mb-c input::placeholder{color:color-mix(in oklab,var(--soft) 55%,transparent)}
+
+/* ---------- Notes, round 3 ---------- */
+.mb.hitc{outline:1.5px solid color-mix(in oklab,#f0a800 40%,transparent);outline-offset:-1px;border-radius:10px}
+.fdm{position:absolute;margin:0;pointer-events:none;color:transparent!important;-webkit-text-fill-color:transparent;overflow:hidden;background:none;z-index:2;text-decoration:none}
+.fdm mark,mark.fdw{color:transparent;background:color-mix(in oklab,#ffd84d 55%,transparent);border-radius:4px;box-shadow:0 0 0 1.5px color-mix(in oklab,#ffd84d 55%,transparent)}
+mark.fdw{color:inherit}
+.fdm mark.cur,mark.fdw.cur{background:color-mix(in oklab,#ffb300 62%,transparent);box-shadow:0 0 0 2px color-mix(in oklab,#f09000 70%,transparent)}
+/* Moving paragraphs, pictures and links */
+.mb-p>.mbgrip{position:absolute;right:-10px;top:-2px;margin:0;pointer-events:none}
+.mb-p:focus-within>.mbgrip{pointer-events:auto}.mb-p.slim>.mbgrip{display:none}
+.mb-p textarea,.mb-p .mbv{padding-right:26px}
+.mb-i>.mbgrip,.mb-l>.mbgrip{position:absolute;margin:0;opacity:1;z-index:2}
+.mb-i>.mbgrip{left:6px;top:6px;width:44px;height:44px;color:#fff}
+.mb-i>.mbgrip::before{content:"";position:absolute;inset:7px;border-radius:50%;background:rgba(20,16,26,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:-1}
+.mb-i>.mbgrip svg{position:relative}
+.mb-l>.mbgrip{right:38px;top:50%;transform:translateY(-50%);height:44px;width:36px;opacity:.6}
+.mb-l .mbl{padding-right:80px}
+.mb-i.lift,.mb-l.lift,.mb-p.lift{z-index:5}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -2083,17 +2130,17 @@ $("mm_body").addEventListener("pointerdown",e=>{const g=e.target.closest(".mbgri
   g.classList.add("arming");ARM={g,x:e.clientX,y:e.clientY,id:e.pointerId,t:setTimeout(()=>{const A=ARM;ARM=null;g.classList.remove("arming");startDrag({clientY:A.y,pointerId:A.id},g)},500)}});
 $("mm_body").addEventListener("pointermove",e=>{if(ARM&&Math.hypot(e.clientX-ARM.x,e.clientY-ARM.y)>8){clearTimeout(ARM.t);ARM.g.classList.remove("arming");ARM=null}else if(ARM){ARM.y=e.clientY}});
 ["pointerup","pointercancel"].forEach(ev=>$("mm_body").addEventListener(ev,()=>{if(ARM){clearTimeout(ARM.t);ARM.g.classList.remove("arming");ARM=null}}));
-function startDrag(e,g){const d=g.closest(".mb"),whole=d.dataset.t==="lh",unit=whole?[d,...itemsOf(d)]:[d];
+function startDrag(e,g){const d=g.closest(".mb"),whole=d.dataset.t==="lh",unit=whole?[d,...itemsOf(d)]:[d],step=d.dataset.t!=="c";
   if(document.activeElement&&$("mm").contains(document.activeElement))document.activeElement.blur();tocOpen(false);
   const r0=unit[0].getBoundingClientRect(),r1=unit[unit.length-1].getBoundingClientRect();
-  DR={unit,whole,y0:e.clientY,top0:r0.top+$("mm_w").scrollTop,c0:(r0.top+r1.bottom)/2,h:r1.bottom-r0.top,moved:false,order:[...$("mm_body").children].map(x=>x.dataset.b).join(),sc0:$("mm_w").scrollTop};
+  DR={unit,whole,step,y0:e.clientY,top0:r0.top+$("mm_w").scrollTop,c0:(r0.top+r1.bottom)/2,h:r1.bottom-r0.top,moved:false,order:[...$("mm_body").children].map(x=>x.dataset.b).join(),sc0:$("mm_w").scrollTop};
   unit.forEach(x=>{x.classList.add("drg");x.style.transition="none"});d.classList.add("lift");try{if(navigator.vibrate)navigator.vibrate(12)}catch(err){}}
 function drPlace(){const w=$("mm_w"),u=DR.unit,nowTop=u[0].getBoundingClientRect().top-parseFloat((u[0].style.transform||"").replace(/[^\d.-]/g,"")||0)+w.scrollTop;
   const dy=DR.y-DR.y0+(w.scrollTop-DR.sc0)-(nowTop-DR.top0);u.forEach(x=>x.style.transform=`translateY(${dy}px)`)}
 $("mm_body").addEventListener("pointermove",e=>{if(!DR)return;e.preventDefault();DR.y=e.clientY;const w=$("mm_w"),u=DR.unit,center=DR.c0+(e.clientY-DR.y0);
   /* Hidden blank lines between lists are stepped over, they are not places to land. */
   const skip=(x,dir)=>{while(x&&x.classList.contains("slim"))x=dir<0?x.previousElementSibling:x.nextElementSibling;return x};
-  const prev=unitAt(skip(u[0].previousElementSibling,-1),DR.whole),next=unitAt(skip(u[u.length-1].nextElementSibling,1),DR.whole);
+  const prev=unitAt(skip(u[0].previousElementSibling,-1),DR.step),next=unitAt(skip(u[u.length-1].nextElementSibling,1),DR.step);
   const mid=U=>{const a=U[0].getBoundingClientRect(),b=U[U.length-1].getBoundingClientRect();return(a.top+b.bottom)/2};
   /* Lines step over neighbours as your finger passes their middle; the neighbours slide out of the way. */
   if(prev&&center<mid(prev)-(DR.whole?0:4)){flip(prev,()=>prev[0].before(...u));DR.moved=true;DR.c0+=0}
@@ -2119,7 +2166,7 @@ function mmSort(d,how){const h=d.dataset.t==="lh"?d:null,L=h?itemsOf(h):mmGroup(
   if(S3.every((x,i)=>x===L[i])){toast(tx("Listan är redan sorterad","The list is already sorted"));return}
   const anchor=L[0].previousElementSibling;flip(L,()=>{if(anchor)anchor.after(...S3);else $("mm_body").prepend(...S3)});S3.forEach(x=>{x.dataset.b=bid();x._u=Date.now();x._sig=""});mmChanged()}
 const _lst2=mmLst;mmLst=function(open){_lst2(open);const f=$("mm_lst");if(f.hidden)return;const d=mmTarget(),G=d&&(d.dataset.t==="c"||d.dataset.t==="lh")?mmGroup(d):[];
-  if(G.length>1)f.insertAdjacentHTML("beforeend",`<p>${tx("Sortera listan","Sort the list")}</p><div class="mmfs"><button type="button" data-srt="az">A–Ö</button><button type="button" data-srt="done">${tx("Klara sist","Done last")}</button></div><p class="mmtip">${tx("Tips: håll i ⠿ till höger och dra för att flytta en punkt eller en hel lista.","Tip: hold ⠿ on the right and drag to move a point or a whole list.")}</p>`)};
+  if(G.length>1)f.insertAdjacentHTML("beforeend",`<p>${tx("Sortera listan","Sort the list")}</p><div class="mmfs"><button type="button" data-srt="az">A–Ö</button><button type="button" data-srt="done">${tx("Klara sist","Done last")}</button></div><p class="mmtip">${tx("Tips: håll fingret på högra kanten av en punkt en halv sekund och dra för att flytta den. På en listas namn flyttar du hela listan. Bilder och länkar har ett eget handtag, och ett stycke text visar sitt när du skriver i det.","Tip: hold your finger on the right edge of a point for half a second and drag to move it. On a list's name you move the whole list. Pictures and links have their own handle, and a paragraph shows its handle while you write in it.")}</p>`)};
 $("mm_lst").addEventListener("click",e=>{const b=e.target.closest("[data-srt]");if(!b)return;const d=mmTarget();if(d)mmSort(d,b.dataset.srt);mmLst(false)});
 
 /* ---------- Searching in a note ---------- */
@@ -2273,11 +2320,12 @@ function richRanges(raw){const R=[],M=new Set();const take=(re,st,open,close,k)=
   take(/\{([roygbvps])\|([^{}\n]*?)\}/g,"k",3,1,m=>m[1]);take(/\*\*(?=\S)([^\n]*?\S)\*\*/g,"b",2,2);take(/~~(?=\S)([^\n]*?\S)~~/g,"s",2,2);
   let m;const it=/(^|[^*\w])(\*(?=[^\s*])([^*\n]*?[^\s*])\*)(?![*\w])/g;while((m=it.exec(raw))){const a=m.index+m[1].length;if(M.has(a))continue;R.push({a:a+1,b:a+m[2].length-1,st:"i"});M.add(a);M.add(a+m[2].length-1)}
   return{R,M}}
-function richHTML(raw,offsets){const{R,M}=richRanges(raw);let h="",seg="",key=null,o0=0;
+function richHTML(raw,offsets,live){const{R,M}=richRanges(raw);let h="",seg="",key=null,o0=0;
   const style=i=>R.filter(r=>i>=r.a&&i<r.b).map(r=>r.st==="k"?"k"+r.k:r.st).sort().join(" ");
   const flush=()=>{if(!seg)return;const cls=key.split(" ").filter(Boolean),k=cls.find(c=>c[0]==="k"&&c.length===2);
     h+=`<span${offsets?` data-o="${o0}"`:""} class="${cls.filter(c=>c[0]!=="k").map(c=>"r"+c).join(" ")}"${k?` style="color:${MCOL[k[1]]}"`:""}>${esc(seg)}</span>`;seg=""};
-  for(let i=0;i<raw.length;i++){if(M.has(i)){flush();key=null;continue}const s=style(i);if(s!==key){flush();key=s;o0=i}seg+=raw[i]}flush();return h}
+  /* live: the marks stay in place (so letters line up with what you type) but are drawn faint. */
+  for(let i=0;i<raw.length;i++){if(M.has(i)){flush();key=null;if(live)h+=`<span class="mk">${esc(raw[i])}</span>`;continue}const s=style(i);if(s!==key){flush();key=s;o0=i}seg+=raw[i]}flush();return h}
 const richPlain=raw=>{const{M}=richRanges(raw);let t="";for(let i=0;i<raw.length;i++)if(!M.has(i))t+=raw[i];return t};
 function richUpd(d){if(!d||d.dataset.t!=="p")return;const ta=d.querySelector("textarea");if(!ta)return;let v=d.querySelector(".mbv");
   const on=RICH_RE.test(ta.value)&&document.activeElement!==ta;
@@ -2580,6 +2628,94 @@ document.addEventListener("click",async e=>{if(!e.target.closest||!e.target.clos
   mmSave();const m=MEMOS.find(x=>x.id===MM.id)||MM.m;
   if(!await ask(p?tx("Dela anteckningen?","Share the note?"):tx("Gör anteckningen privat?","Make the note private?"),p?tx(`${pname(other(ME||"a"))} kommer att kunna se och ändra den.`,`${pname(other(ME||"a"))} will be able to see and change it.`):tx(`Den försvinner från ${pname(other(ME||"a"))}s telefon och syns bara för dig.`,`It disappears from ${pname(other(ME||"a"))}'s phone and only you see it.`),p?tx("Dela","Share"):tx("Gör privat","Make private")))return;
   await memoMove(m,!p)});
+/* ---------- Notes, round 2: writing feel ---------- */
+
+/* Styled words while you write: the text field draws nothing itself; the finished look is drawn right under it,
+   with the ** and ~~ marks so faint you hardly see them. Letters keep their width, so the cursor stays in step. */
+function liveUpd(d){if(!d||d.dataset.t!=="p")return;const ta=d.querySelector("textarea");if(!ta)return;let o=d.querySelector(".mbo");
+  const on=document.activeElement===ta&&RICH_RE.test(ta.value);
+  if(on){if(!o){o=document.createElement("div");o.className="mbv mbo";o.setAttribute("aria-hidden","true");ta.before(o)}o.innerHTML=richHTML(ta.value,false,true)+"​"}
+  d.classList.toggle("live",on)}
+$("mm_body").addEventListener("input",e=>{if(e.target.tagName==="TEXTAREA"&&!e.target.classList.contains("mbds"))liveUpd(e.target.closest(".mb"))});
+$("mm_body").addEventListener("focusin",e=>{if(e.target.tagName==="TEXTAREA")setTimeout(()=>liveUpd(e.target.closest(".mb")),0)});
+$("mm_body").addEventListener("focusout",e=>{if(e.target.tagName==="TEXTAREA"){const d=e.target.closest(".mb");if(d)d.classList.remove("live")}});
+const _wrapSel=wrapSel;wrapSel=function(a,b){const r=_wrapSel(a,b);const t=mmSel&&mmSel.el;if(t)liveUpd(t.closest(".mb"));return r};
+
+/* The Aa panel in two short rows: B I S, text style and typeface on the first; colours on the second.
+   Style and typeface open a small row of their own instead of taking more room. */
+let FMT_SUB="";
+mmFmtPaint=function(){const d=mmTarget(),st=d?(d.dataset.t==="p"?(d.dataset.s||"p"):d.dataset.t):"",k=d&&d.dataset.k||"",f=d&&d.dataset.f||"";
+  const S2=[["h1",tx("Rubrik","Heading")],["h2",tx("Underrubrik","Subheading")],["p",tx("Text","Text")]],F2=[["",tx("Standard","Standard")],...Object.entries(MFONT)];
+  const stName=(S2.find(x=>x[0]===st)||[0,tx("Text","Text")])[1],fName=(F2.find(x=>x[0]===f)||F2[0])[1];
+  const S3=mmSel,sel=S3&&S3.el&&S3.el.tagName==="TEXTAREA"&&S3.el.isConnected&&S3.s!==S3.e;
+  let h=`<div class="mmfr"><div class="mmbis"><button type="button" data-wr="**" aria-label="${tx("Fet","Bold")}"><b>B</b></button><button type="button" data-wr="*" aria-label="${tx("Kursiv","Italic")}"><i>I</i></button><button type="button" data-wr="~~" aria-label="${tx("Genomstruken","Strike")}"><s>S</s></button></div>
+    <button type="button" class="mmdd${FMT_SUB==="s"?" on":""}" data-sub="s"><small>${tx("Stil","Style")}</small>${esc(stName)}<span>▾</span></button><button type="button" class="mmdd${FMT_SUB==="f"?" on":""}" data-sub="f"><small>${tx("Typsnitt","Font")}</small>${esc(fName)}<span>▾</span></button></div>`;
+  if(FMT_SUB==="s")h+=`<div class="mmfs mmsub">${S2.map(([v,l])=>`<button type="button" data-fs="${v}" class="fs-${v}${st===v?" on":""}">${l}</button>`).join("")}</div>`;
+  else if(FMT_SUB==="f")h+=`<div class="mmfs mmsub mmff">${F2.map(([v,l])=>`<button type="button" data-ff="${v}" class="${v?"ff-"+v:""}${f===v?" on":""}">${l}</button>`).join("")}</div>`;
+  else h+=`<div class="mmfc"><button type="button" data-fk="" class="${!k?"on":""}" style="--c:var(--ink)" aria-label="${esc(tx("Standard","Default"))}"></button>${Object.entries(MCOL).map(([n,c])=>`<button type="button" data-fk="${n}" class="${k===n?"on":""}" style="--c:${c}" aria-label="${n}"></button>`).join("")}<span class="mmfch">${sel?tx("Markerade ord","Selected words"):tx("Hela raden","Whole line")}</span></div>`;
+  $("mm_fmt").innerHTML=h;$("mm_fmt").classList.toggle("selmode",!!sel)};
+$("mm_fmt").addEventListener("click",e=>{const b=e.target.closest("[data-sub]");if(b){FMT_SUB=FMT_SUB===b.dataset.sub?"":b.dataset.sub;mmFmtPaint();return}
+  /* After choosing a style or typeface the small row closes again. */
+  if(e.target.closest("[data-fs],[data-ff]"))setTimeout(()=>{FMT_SUB="";if(!$("mm_fmt").hidden)mmFmtPaint()},0)});
+const _fmtOpen=mmFmt;mmFmt=function(open){if(open===undefined)open=$("mm_fmt").hidden;if(open)FMT_SUB="";_fmtOpen(open)};
+
+/* Pasting several lines into a list point makes one point per line. "- ", "• ", "1." and "[ ]" at the start are
+   taken away, and "[x]" makes the point ticked. */
+$("mm_body").addEventListener("paste",e=>{const inp=e.target;if(inp.tagName!=="INPUT")return;const d=inp.closest(".mb");if(!d||d.dataset.t!=="c")return;
+  const t=(e.clipboardData&&e.clipboardData.getData("text/plain"))||"";if(!/\n/.test(t.trim()))return;e.preventDefault();e.stopPropagation();
+  const L=t.replace(/\r/g,"").split("\n").map(x=>x.trim()).filter(Boolean).map(x=>{const done=/^\[[xX]\]/.test(x);return{x:x.replace(/^(\[[ xX]?\]|[-•*–]|\d+[.)])\s*/,""),done}});
+  const a=inp.selectionStart,b=inp.selectionEnd,v=inp.value,rest=v.slice(b);inp.value=v.slice(0,a)+L[0].x;if(L[0].done&&!d.dataset.m){d.classList.add("done");const ck=d.querySelector(".mbck");if(ck)ck.classList.add("on")}
+  let at=d;for(let i=1;i<L.length;i++){const n=mmBlock({t:"c",x:L[i].x+(i===L.length-1?rest:""),d:L[i].done&&!d.dataset.m,...(d.dataset.m?{m:d.dataset.m}:{}),...(d.dataset.f?{f:d.dataset.f}:{})});at.after(n);at=n}
+  if(L.length===1)inp.value+=rest;mmChanged();const last=at.querySelector("form input");if(last){last.focus();const n=last.value.length-rest.length;try{last.setSelectionRange(n,n)}catch(err){}}
+  toast(tx(`${L.length} punkter inklistrade`,`${L.length} points pasted`),2000)},true);
+
+/* A new empty point says where to write. */
+const _mbPh=mmBlock;mmBlock=function(b){const d=_mbPh(b);if(b.t==="c"){const i=d.querySelector("form input");if(i)i.placeholder=tx("Ny punkt","New point")}return d};
+/* ---------- Notes, round 3: finding words and moving everything ---------- */
+
+/* Search marks the word itself, not the whole line. Text fields cannot colour single letters, so a see-through copy
+   of the text is laid exactly over the field with only the found words painted. */
+var FDQ="";
+function fdEsc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function fdHits(v,q){const lo=v.toLocaleLowerCase(),R=[];if(!q)return R;let i=lo.indexOf(q);while(i>=0){R.push(i);i=lo.indexOf(q,i+q.length)}return R}
+function fdCover(f,q){if(!f.offsetWidth||!f.offsetHeight)return;const v=f.value||"",H=fdHits(v,q);if(!H.length)return;
+  const P=f.parentElement;if(getComputedStyle(P).position==="static"){P.style.position="relative";P.dataset.fdpos="1"}
+  const cs=getComputedStyle(f),o=document.createElement("div");o.className="fdm";o.setAttribute("aria-hidden","true");
+  ["fontFamily","fontSize","fontWeight","fontStyle","lineHeight","letterSpacing","wordSpacing","textTransform","textIndent","textAlign","paddingTop","paddingRight","paddingBottom","paddingLeft","borderTopWidth","borderRightWidth","borderBottomWidth","borderLeftWidth","boxSizing"].forEach(k=>o.style[k]=cs[k]);
+  o.style.borderStyle="solid";o.style.borderColor="transparent";o.style.whiteSpace=f.tagName==="TEXTAREA"?"pre-wrap":"pre";
+  const pr=P.getBoundingClientRect(),r=f.getBoundingClientRect();
+  Object.assign(o.style,{left:(r.left-pr.left-P.clientLeft)+"px",top:(r.top-pr.top-P.clientTop)+"px",width:r.width+"px",height:r.height+"px"});
+  let h="",at=0;H.forEach(i=>{h+=fdEsc(v.slice(at,i))+"<mark>"+fdEsc(v.slice(i,i+q.length))+"</mark>";at=i+q.length});h+=fdEsc(v.slice(at));
+  o.innerHTML=h+"​";f.after(o);o.scrollLeft=f.scrollLeft;f._fdm=o}
+/* Styled text that is only being shown (not written in) gets real marks around the words. */
+function fdWalk(root,q){const W=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),N=[];while(W.nextNode())N.push(W.currentNode);
+  N.forEach(n=>{const H=fdHits(n.nodeValue,q);if(!H.length)return;const fr=document.createDocumentFragment();let at=0;const v=n.nodeValue;
+    H.forEach(i=>{fr.append(v.slice(at,i));const m=document.createElement("mark");m.className="fdw";m.textContent=v.slice(i,i+q.length);fr.append(m);at=i+q.length});fr.append(v.slice(at));n.replaceWith(fr)})}
+function fdUnmark(){document.querySelectorAll("#mm .fdm").forEach(o=>o.remove());
+  document.querySelectorAll("#mm mark.fdw").forEach(m=>{const p=m.parentNode;m.replaceWith(m.textContent);if(p)p.normalize()});
+  document.querySelectorAll("#mm [data-fdpos]").forEach(p=>{p.style.position="";delete p.dataset.fdpos})}
+function fdMarkAll(){fdUnmark();const q=FDQ;if(!q||$("mm_fd").hidden)return;
+  if(FD.L.includes($("mm_ti")))fdCover($("mm_ti"),q);
+  FD.L.forEach(d=>{if(!d.classList||!d.classList.contains("mb"))return;
+    d.querySelectorAll("textarea,input:not([type=checkbox])").forEach(f=>fdCover(f,q));
+    const v=d.querySelector(".mbv:not(.mbo)");if(v&&v.offsetHeight)fdWalk(v,q);const l=d.querySelector(".mblt");if(l)fdWalk(l,q)});
+  fdCur()}
+function fdCur(){const el=FD.L[FD.i];document.querySelectorAll("#mm mark.cur").forEach(m=>m.classList.remove("cur"));if(!el)return;
+  const own=el.id==="mm_ti"?(el._fdm?[el._fdm]:[]):[el];own.forEach(x=>x.querySelectorAll("mark").forEach(m=>m.classList.add("cur")))}
+const _fdClear3=fdClear;fdClear=function(){_fdClear3();fdUnmark()};
+const _fdRun3=fdRun;fdRun=function(){FDQ=$("fd_q").value.trim().toLocaleLowerCase();_fdRun3();if(FDQ&&FD.L.length)requestAnimationFrame(fdMarkAll)};
+/* Opening a folded list moves things, so the marks are laid again once it has opened. */
+const _fdGo3=fdGo;fdGo=function(step){const el=FD.L[(FD.i+step+FD.L.length)%(FD.L.length||1)],wasHid=el&&el.classList&&el.classList.contains("hid");_fdGo3(step);
+  if(wasHid)setTimeout(fdMarkAll,420);else fdCur()};
+/* Writing while searching lays the marks again. */
+let FDT=0;$("mm_body").addEventListener("input",()=>{if($("mm_fd").hidden||!FDQ)return;clearTimeout(FDT);FDT=setTimeout(fdMarkAll,300)});
+window.addEventListener("resize",()=>{if(!$("mm_fd").hidden&&FDQ)fdMarkAll()});
+
+/* Text, pictures and links can be moved too, not only list points. Pictures and links show a grip;
+   a paragraph shows its grip at the right edge while you write in it. They step over whole lists, never into one. */
+const _mbBlock19=mmBlock;mmBlock=function(b){const d=_mbBlock19(b);
+  if((b.t==="p"||b.t==="i"||(b.t==="l"&&b.u))&&!d.querySelector(".mbgrip")){const g=document.createElement("span");g.className="mbgrip";g.setAttribute("aria-label",tx("Håll och dra för att flytta","Hold and drag to move"));g.innerHTML=GRIP;d.appendChild(g)}
+  return d};
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>

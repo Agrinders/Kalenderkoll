@@ -74,7 +74,7 @@ await step('notes: write, to-do list, link, picture; partner sees it',async()=>{
   const empty=await A1.evaluate(async()=>{const n=MEMOS.length;document.getElementById('mm_new').click();await new Promise(r=>setTimeout(r,400));document.getElementById('mm_back').click();await new Promise(r=>setTimeout(r,500));return MEMOS.length===n});need(empty,'empty note was kept');
   return types});
 await step('notes: headings, colour and named lists',async()=>{await A1.evaluate(()=>go('t'));await A1.click('#mm_new');await w(A1,400);await A1.fill('#mm_ti','Helgen');
-  await tap(A1,'#mm_body .mb-p textarea');await A1.keyboard.type('Lördag');await A1.click('#mm_aa');await A1.click('[data-fs="h2"]');await A1.click('[data-fk="r"]');await A1.keyboard.press('Enter');await A1.keyboard.type('Sovmorgon');
+  await tap(A1,'#mm_body .mb-p textarea');await A1.keyboard.type('Lördag');await A1.click('#mm_aa');await A1.click('[data-sub="s"]');await A1.click('[data-fs="h2"]');await A1.click('[data-fk="r"]');await A1.keyboard.press('Enter');await A1.keyboard.type('Sovmorgon');
   await A1.click('#mm_chk');await A1.click('[data-lk="named"]');await A1.keyboard.type('Handla');await A1.keyboard.press('Enter');await A1.keyboard.type('Mjölk');await A1.keyboard.press('Enter');await A1.keyboard.type('Ägg');
   await tap(A1,'#mm_body .mb-c .mbck');await w(A1,100);const pr=await A1.evaluate(()=>document.querySelector('#mm_body .mb-lh em').textContent);
   await A1.click('#mm_back');await w(A1,900);const m=await A1.evaluate(()=>MEMOS.find(x=>x.ti==='Helgen'));need(m,'not saved');
@@ -82,7 +82,7 @@ await step('notes: headings, colour and named lists',async()=>{await A1.evaluate
   need(h&&h.x==='Lördag'&&h.k==='r'&&m.bl.some(b=>b.t==='p'&&!b.s&&b.x==='Sovmorgon')&&lh&&lh.x==='Handla'&&cs.length===2&&cs[0].d&&pr==='1/2','fmt '+JSON.stringify([pr,m.bl]));return pr});
 await step('notes: symbols, fonts, numbered list, recently deleted',async()=>{await A1.evaluate(()=>go('t'));await A1.click('#mm_new');await w(A1,400);await A1.fill('#mm_ti','Att köpa');
   await A1.click('#mm_chk');await A1.click('[data-lk="c"]');await A1.keyboard.type('Bröd');await A1.keyboard.press('Enter');await A1.keyboard.type('Ost');
-  await A1.click('#mm_sy');await A1.click('[data-sym="❤️"]');await A1.click('#mm_chk');await A1.click('[data-lk="n"]');await A1.click('#mm_aa');await A1.click('[data-ff="h"]');await w(A1,200);
+  await A1.click('#mm_sy');await A1.click('[data-sym="❤️"]');await A1.click('#mm_chk');await A1.click('[data-lk="n"]');await A1.click('#mm_aa');await A1.click('[data-sub="f"]');await A1.click('[data-ff="h"]');await w(A1,200);
   const mk=await A1.evaluate(()=>[...document.querySelectorAll('#mm_body .mb-c .mbmk')].map(x=>x.textContent).join(','));
   await A1.click('#mm_more');await A1.click('[data-sco="del"]');await w(A1,700);
   let m=await A1.evaluate(()=>MEMOS.find(x=>x.ti==='Att köpa'));need(m&&m.del,'not in recently deleted');need(m.bl.filter(b=>b.t==='c').every(b=>b.m==='n')&&m.bl.some(b=>b.x==='Ost❤️'&&b.f==='h'),'fmt '+JSON.stringify(m.bl));

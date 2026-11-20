@@ -386,17 +386,17 @@ $("mm_body").addEventListener("pointerdown",e=>{const g=e.target.closest(".mbgri
   g.classList.add("arming");ARM={g,x:e.clientX,y:e.clientY,id:e.pointerId,t:setTimeout(()=>{const A=ARM;ARM=null;g.classList.remove("arming");startDrag({clientY:A.y,pointerId:A.id},g)},500)}});
 $("mm_body").addEventListener("pointermove",e=>{if(ARM&&Math.hypot(e.clientX-ARM.x,e.clientY-ARM.y)>8){clearTimeout(ARM.t);ARM.g.classList.remove("arming");ARM=null}else if(ARM){ARM.y=e.clientY}});
 ["pointerup","pointercancel"].forEach(ev=>$("mm_body").addEventListener(ev,()=>{if(ARM){clearTimeout(ARM.t);ARM.g.classList.remove("arming");ARM=null}}));
-function startDrag(e,g){const d=g.closest(".mb"),whole=d.dataset.t==="lh",unit=whole?[d,...itemsOf(d)]:[d];
+function startDrag(e,g){const d=g.closest(".mb"),whole=d.dataset.t==="lh",unit=whole?[d,...itemsOf(d)]:[d],step=d.dataset.t!=="c";
   if(document.activeElement&&$("mm").contains(document.activeElement))document.activeElement.blur();tocOpen(false);
   const r0=unit[0].getBoundingClientRect(),r1=unit[unit.length-1].getBoundingClientRect();
-  DR={unit,whole,y0:e.clientY,top0:r0.top+$("mm_w").scrollTop,c0:(r0.top+r1.bottom)/2,h:r1.bottom-r0.top,moved:false,order:[...$("mm_body").children].map(x=>x.dataset.b).join(),sc0:$("mm_w").scrollTop};
+  DR={unit,whole,step,y0:e.clientY,top0:r0.top+$("mm_w").scrollTop,c0:(r0.top+r1.bottom)/2,h:r1.bottom-r0.top,moved:false,order:[...$("mm_body").children].map(x=>x.dataset.b).join(),sc0:$("mm_w").scrollTop};
   unit.forEach(x=>{x.classList.add("drg");x.style.transition="none"});d.classList.add("lift");try{if(navigator.vibrate)navigator.vibrate(12)}catch(err){}}
 function drPlace(){const w=$("mm_w"),u=DR.unit,nowTop=u[0].getBoundingClientRect().top-parseFloat((u[0].style.transform||"").replace(/[^\d.-]/g,"")||0)+w.scrollTop;
   const dy=DR.y-DR.y0+(w.scrollTop-DR.sc0)-(nowTop-DR.top0);u.forEach(x=>x.style.transform=`translateY(${dy}px)`)}
 $("mm_body").addEventListener("pointermove",e=>{if(!DR)return;e.preventDefault();DR.y=e.clientY;const w=$("mm_w"),u=DR.unit,center=DR.c0+(e.clientY-DR.y0);
   /* Hidden blank lines between lists are stepped over, they are not places to land. */
   const skip=(x,dir)=>{while(x&&x.classList.contains("slim"))x=dir<0?x.previousElementSibling:x.nextElementSibling;return x};
-  const prev=unitAt(skip(u[0].previousElementSibling,-1),DR.whole),next=unitAt(skip(u[u.length-1].nextElementSibling,1),DR.whole);
+  const prev=unitAt(skip(u[0].previousElementSibling,-1),DR.step),next=unitAt(skip(u[u.length-1].nextElementSibling,1),DR.step);
   const mid=U=>{const a=U[0].getBoundingClientRect(),b=U[U.length-1].getBoundingClientRect();return(a.top+b.bottom)/2};
   /* Lines step over neighbours as your finger passes their middle; the neighbours slide out of the way. */
   if(prev&&center<mid(prev)-(DR.whole?0:4)){flip(prev,()=>prev[0].before(...u));DR.moved=true;DR.c0+=0}
@@ -422,7 +422,7 @@ function mmSort(d,how){const h=d.dataset.t==="lh"?d:null,L=h?itemsOf(h):mmGroup(
   if(S3.every((x,i)=>x===L[i])){toast(tx("Listan är redan sorterad","The list is already sorted"));return}
   const anchor=L[0].previousElementSibling;flip(L,()=>{if(anchor)anchor.after(...S3);else $("mm_body").prepend(...S3)});S3.forEach(x=>{x.dataset.b=bid();x._u=Date.now();x._sig=""});mmChanged()}
 const _lst2=mmLst;mmLst=function(open){_lst2(open);const f=$("mm_lst");if(f.hidden)return;const d=mmTarget(),G=d&&(d.dataset.t==="c"||d.dataset.t==="lh")?mmGroup(d):[];
-  if(G.length>1)f.insertAdjacentHTML("beforeend",`<p>${tx("Sortera listan","Sort the list")}</p><div class="mmfs"><button type="button" data-srt="az">A–Ö</button><button type="button" data-srt="done">${tx("Klara sist","Done last")}</button></div><p class="mmtip">${tx("Tips: håll i ⠿ till höger och dra för att flytta en punkt eller en hel lista.","Tip: hold ⠿ on the right and drag to move a point or a whole list.")}</p>`)};
+  if(G.length>1)f.insertAdjacentHTML("beforeend",`<p>${tx("Sortera listan","Sort the list")}</p><div class="mmfs"><button type="button" data-srt="az">A–Ö</button><button type="button" data-srt="done">${tx("Klara sist","Done last")}</button></div><p class="mmtip">${tx("Tips: håll fingret på högra kanten av en punkt en halv sekund och dra för att flytta den. På en listas namn flyttar du hela listan. Bilder och länkar har ett eget handtag, och ett stycke text visar sitt när du skriver i det.","Tip: hold your finger on the right edge of a point for half a second and drag to move it. On a list's name you move the whole list. Pictures and links have their own handle, and a paragraph shows its handle while you write in it.")}</p>`)};
 $("mm_lst").addEventListener("click",e=>{const b=e.target.closest("[data-srt]");if(!b)return;const d=mmTarget();if(d)mmSort(d,b.dataset.srt);mmLst(false)});
 
 /* ---------- Searching in a note ---------- */
