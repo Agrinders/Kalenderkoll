@@ -31,7 +31,7 @@ const _fmtPaint2=mmFmtPaint;mmFmtPaint=function(){_fmtPaint2();const f=$("mm_fmt
   f.insertAdjacentHTML("afterbegin",`<div class="mmfs mmin"><button type="button" data-wr="**" aria-label="${tx("Fet","Bold")}"><b>B</b></button><button type="button" data-wr="*" aria-label="${tx("Kursiv","Italic")}"><i>I</i></button><button type="button" data-wr="~~" aria-label="${tx("Genomstruken","Strike")}"><s>S</s></button><span>${sel?tx("Gäller de markerade orden","For the selected words"):tx("Markera ord för fet, kursiv, struken eller färg på bara dem","Select words to make just them bold, italic, struck or coloured")}</span></div>`);
   f.classList.toggle("selmode",!!sel)};
 $("mm_fmt").addEventListener("click",e=>{const b=e.target.closest("[data-wr]");if(b){wrapSel(b.dataset.wr,b.dataset.wr);return}
-  const c=e.target.closest("[data-fk]");const S3=mmSel;if(c&&c.dataset.fk&&S3&&S3.el&&S3.el.tagName==="TEXTAREA"&&S3.s!==S3.e){e.stopImmediatePropagation();wrapSel("{"+c.dataset.fk+"|","}")}},true);
+  const c=e.target.closest("[data-fk]");const S3=mmSel;if(c&&c.dataset.fk&&S3&&S3.el&&S3.el.tagName==="TEXTAREA"&&S3.s!==S3.e&&(!mmTarget()||S3.el.closest(".mb")===mmTarget())){e.stopImmediatePropagation();wrapSel("{"+c.dataset.fk+"|","}")}},true);
 /* Exports and previews show the finished text without the marks. */
 const _plain2=mmPlain;mmPlain=function(){return richPlain(_plain2())};
 

@@ -7,7 +7,7 @@
 var KBF=null;
 function mmKbField(){const a=document.activeElement;return a&&$("mm_w").contains(a)&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA")?a:null}
 function mmHold(ms){const w=$("mm_w"),top=w.scrollTop,end=Date.now()+(ms||600);(function f(){if(Math.abs(w.scrollTop-top)>1)w.scrollTop=top;if(Date.now()<end)requestAnimationFrame(f)})()}
-function mmKbAway(){const a=mmKbField();if(a){mmHold(700);a.blur()}MMKB=false}
+function mmKbAway(){const a=mmKbField();if(a){mmHold(700);a.blur()}MMKB=false;if(typeof tgtPaint==="function")tgtPaint()}
 function mmKbDown(e){if(!e.target.closest("input,textarea,select"))e.preventDefault()}
 function mmKbAfter(){const was=KBF;KBF=null;if(was&&document.activeElement===was)mmKbAway()}
 [document.querySelector(".mmbar"),$("mm_fmt"),$("mm_sym"),$("mm_lst")].forEach(el=>{
@@ -20,7 +20,21 @@ function mmKbAfter(){const was=KBF;KBF=null;if(was&&document.activeElement===was
 /* With a menu open, a tap in the note only closes the menu. It does not start writing or tick anything. */
 const mmMenuOpen=()=>!$("mm_fmt").hidden||!$("mm_sym").hidden||!$("mm_lst").hidden;
 function mmMenusShut(){mmFmt(false);mmSym(false);mmLst(false)}
-$("mm_w").addEventListener("mousedown",e=>{if(!mmMenuOpen()||DR)return;e.preventDefault();e.stopPropagation();mmKbAway();mmMenusShut();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600)},true);
+/* With a menu open, tapping a line makes it the line the menu works on, marked so you can see it, without the keyboard.
+   Tapping anywhere else closes the menu. */
+$("mm_w").addEventListener("mousedown",e=>{if(!mmMenuOpen()||DR)return;e.preventDefault();e.stopPropagation();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600);
+  const d=e.target.closest("#mm_body>.mb");
+  if(d&&/^(p|c|lh)$/.test(d.dataset.t)){mmKbAway();mmLast=d;const f=d.querySelector("textarea,form input");if(f){const n=f.value.length;mmSel=TGSEL={el:f,s:n,e:n}}
+    if(!$("mm_fmt").hidden){FMT_SUB="";mmFmtPaint()}if(!$("mm_lst").hidden)mmLst(true);tgtPaint();return}
+  mmKbAway();mmMenusShut()},true);
+/* The tap's own click must not move the menus to another line (the note can shift a little as the keyboard goes). */
+var TGSEL=null;$("mm_w").addEventListener("click",()=>{if(TGSEL){mmSel=TGSEL;TGSEL=null}},true);
+function tgtPaint(){document.querySelectorAll("#mm_body .mmtgt").forEach(x=>x.classList.remove("mmtgt"));
+  if(mmMenuOpen()&&!mmKbField()&&mmLast&&mmLast.isConnected&&mmLast.closest("#mm_body"))mmLast.classList.add("mmtgt")}
+[["mmFmt",mmFmt],["mmSym",mmSym],["mmLst",mmLst]].forEach(([n,f])=>{window[n]=function(){const r=f.apply(this,arguments);tgtPaint();return r}});
+mmFmt=window.mmFmt;mmSym=window.mmSym;mmLst=window.mmLst;
+["mm_fmt","mm_sym","mm_lst"].forEach(id=>$(id).addEventListener("click",()=>requestAnimationFrame(tgtPaint)));
+$("mm_body").addEventListener("focusin",tgtPaint);$("mm_body").addEventListener("focusout",()=>setTimeout(tgtPaint,0));
 $("mm_w").addEventListener("pointerdown",e=>{if(mmMenuOpen()&&e.target.closest(".mbgrip,.mb-lh"))e.stopPropagation()},true);
 /* When a menu choice replaces the line (a heading, a list), the menus keep working on the new line,
    even though the keyboard stays away. */

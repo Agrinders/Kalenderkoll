@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="71855dd5b90e">
+<meta name="kal-build" content="0ed612992ab8">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -855,6 +855,10 @@ mark.fdw{color:inherit}
 .mmrow[hidden]{display:none}
 /* Marked words keep showing their colour through the marking */
 .mb-p.live textarea::selection{color:transparent;-webkit-text-fill-color:transparent;background:color-mix(in oklab,var(--acc) 26%,transparent)}
+/* The line a menu works on while the keyboard is away */
+.mb-p.mmtgt{border-radius:6px;background-color:color-mix(in oklab,var(--acc) 7%,transparent);box-shadow:0 0 0 5px color-mix(in oklab,var(--acc) 7%,transparent);outline:1.5px solid color-mix(in oklab,var(--acc) 42%,transparent);outline-offset:5px}
+.mb-lh.mmtgt{outline:1.5px solid color-mix(in oklab,var(--acc) 50%,transparent);outline-offset:-1px}
+.mb-c.mmtgt::after{border-color:color-mix(in oklab,var(--tk,var(--lc,var(--acc))) 50%,transparent);background:color-mix(in oklab,var(--tk,var(--lc,var(--acc))) 6%,transparent)}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -2368,7 +2372,7 @@ const _fmtPaint2=mmFmtPaint;mmFmtPaint=function(){_fmtPaint2();const f=$("mm_fmt
   f.insertAdjacentHTML("afterbegin",`<div class="mmfs mmin"><button type="button" data-wr="**" aria-label="${tx("Fet","Bold")}"><b>B</b></button><button type="button" data-wr="*" aria-label="${tx("Kursiv","Italic")}"><i>I</i></button><button type="button" data-wr="~~" aria-label="${tx("Genomstruken","Strike")}"><s>S</s></button><span>${sel?tx("Gäller de markerade orden","For the selected words"):tx("Markera ord för fet, kursiv, struken eller färg på bara dem","Select words to make just them bold, italic, struck or coloured")}</span></div>`);
   f.classList.toggle("selmode",!!sel)};
 $("mm_fmt").addEventListener("click",e=>{const b=e.target.closest("[data-wr]");if(b){wrapSel(b.dataset.wr,b.dataset.wr);return}
-  const c=e.target.closest("[data-fk]");const S3=mmSel;if(c&&c.dataset.fk&&S3&&S3.el&&S3.el.tagName==="TEXTAREA"&&S3.s!==S3.e){e.stopImmediatePropagation();wrapSel("{"+c.dataset.fk+"|","}")}},true);
+  const c=e.target.closest("[data-fk]");const S3=mmSel;if(c&&c.dataset.fk&&S3&&S3.el&&S3.el.tagName==="TEXTAREA"&&S3.s!==S3.e&&(!mmTarget()||S3.el.closest(".mb")===mmTarget())){e.stopImmediatePropagation();wrapSel("{"+c.dataset.fk+"|","}")}},true);
 /* Exports and previews show the finished text without the marks. */
 const _plain2=mmPlain;mmPlain=function(){return richPlain(_plain2())};
 
@@ -2514,6 +2518,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"3.5",d:"20 nov 2026",i:[["t","memos",["Välj rad med menyn öppen", "Pick a line with the menu open"],["Raden du jobbar med syns med en ram även när tangentbordet är nere. Med Aa eller Lista öppen trycker du på en annan rad för att byta till den, utan att tangentbordet kommer upp. Ett tryck bredvid raderna stänger menyn.", "The line you are working on shows a frame even with the keyboard down. With Aa or List open, tap another line to switch to it, without the keyboard coming up. A tap beside the lines closes the menu."]]]},
 {v:"3.4",d:"20 nov 2026",i:[["t","memos",["Färg på markerade ord", "Colour on selected words"],["Markerar du några ord och öppnar Aa ligger markeringen kvar, så fet, kursiv, struken och färg hamnar på just dem. Färgen syns också genom markeringen.", "Select some words and open Aa: the selection stays, so bold, italic, strike and colour go on just them. The colour also shows through the selection."]]]},
 {v:"3.3",d:"20 nov 2026",i:[["t","memos",["Tangentbordet håller sig undan", "The keyboard stays away"],["Knapparna längst ner stänger tangentbordet, först när knappen har gjort sitt, så sidan inte hoppar. Är en meny öppen stänger ett tryck utanför den bara menyn, utan att börja skriva eller bocka i något. Tangentbordet kommer bara upp när du trycker på en rad eller skapar något nytt, som en lista.", "The buttons at the bottom close the keyboard, once the button has done its job, so the page does not jump. With a menu open, a tap outside it only closes the menu, without starting to write or ticking anything. The keyboard only comes up when you tap a line or create something new, like a list."]]]},
 {v:"3.2",d:"20 nov 2026",i:[["t","memos",["Se vem som bockade av", "See who ticked it"],["En liten bokstav i din partners färg sitter på det hen bockade av. Tryck på den för att se när. Medan din partner skriver i en anteckning står det ”Maya skriver…”.", "A small letter in your partner's colour sits on what they ticked. Tap it to see when. While your partner writes in a note it says “Maya is writing…”."]],["t","memos",["Besked när listor ändras", "A notice when lists change"],["Lägger din partner till eller bockar av något i en delad lista får du ett besked, även när appen är stängd (kräver den nya appen).", "When your partner adds or ticks off something in a shared list you get a notice, also when the app is closed (needs the new app)."]],["t","memos",["Taggar och kopior", "Tags and copies"],["Ge anteckningar taggar som #resa under rubriken och filtrera listan på dem. Under ⋯ finns Duplicera: en exakt kopia eller en mall utan bockar.", "Give notes tags like #trip under the title and filter the list by them. Under ⋯ there is Duplicate: an exact copy or a template without ticks."]],["t","memos",["Lugnare att skriva", "Calmer writing"],["Fet och kursiv syns medan du skriver, Aa-panelen är mindre, handtagen syns bara där du skriver, en ny punkt säger ”Ny punkt” och flera rader du klistrar in blir en punkt var.", "Bold and italic show while you write, the Aa panel is smaller, handles only show where you write, a new point says “New point” and several pasted lines become one point each."]],["t","memos",["Sök och flytta", "Search and move"],["Sökningen i en anteckning markerar själva ordet. Bilder, länkar och textstycken går att flytta, inte bara punkter.", "Search inside a note marks the word itself. Pictures, links and paragraphs can be moved, not only points."]]]},
@@ -2870,7 +2875,7 @@ $("mm_more").onclick=async()=>{if(!MM.m)return;mmSave();
 var KBF=null;
 function mmKbField(){const a=document.activeElement;return a&&$("mm_w").contains(a)&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA")?a:null}
 function mmHold(ms){const w=$("mm_w"),top=w.scrollTop,end=Date.now()+(ms||600);(function f(){if(Math.abs(w.scrollTop-top)>1)w.scrollTop=top;if(Date.now()<end)requestAnimationFrame(f)})()}
-function mmKbAway(){const a=mmKbField();if(a){mmHold(700);a.blur()}MMKB=false}
+function mmKbAway(){const a=mmKbField();if(a){mmHold(700);a.blur()}MMKB=false;if(typeof tgtPaint==="function")tgtPaint()}
 function mmKbDown(e){if(!e.target.closest("input,textarea,select"))e.preventDefault()}
 function mmKbAfter(){const was=KBF;KBF=null;if(was&&document.activeElement===was)mmKbAway()}
 [document.querySelector(".mmbar"),$("mm_fmt"),$("mm_sym"),$("mm_lst")].forEach(el=>{
@@ -2883,7 +2888,21 @@ function mmKbAfter(){const was=KBF;KBF=null;if(was&&document.activeElement===was
 /* With a menu open, a tap in the note only closes the menu. It does not start writing or tick anything. */
 const mmMenuOpen=()=>!$("mm_fmt").hidden||!$("mm_sym").hidden||!$("mm_lst").hidden;
 function mmMenusShut(){mmFmt(false);mmSym(false);mmLst(false)}
-$("mm_w").addEventListener("mousedown",e=>{if(!mmMenuOpen()||DR)return;e.preventDefault();e.stopPropagation();mmKbAway();mmMenusShut();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600)},true);
+/* With a menu open, tapping a line makes it the line the menu works on, marked so you can see it, without the keyboard.
+   Tapping anywhere else closes the menu. */
+$("mm_w").addEventListener("mousedown",e=>{if(!mmMenuOpen()||DR)return;e.preventDefault();e.stopPropagation();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600);
+  const d=e.target.closest("#mm_body>.mb");
+  if(d&&/^(p|c|lh)$/.test(d.dataset.t)){mmKbAway();mmLast=d;const f=d.querySelector("textarea,form input");if(f){const n=f.value.length;mmSel=TGSEL={el:f,s:n,e:n}}
+    if(!$("mm_fmt").hidden){FMT_SUB="";mmFmtPaint()}if(!$("mm_lst").hidden)mmLst(true);tgtPaint();return}
+  mmKbAway();mmMenusShut()},true);
+/* The tap's own click must not move the menus to another line (the note can shift a little as the keyboard goes). */
+var TGSEL=null;$("mm_w").addEventListener("click",()=>{if(TGSEL){mmSel=TGSEL;TGSEL=null}},true);
+function tgtPaint(){document.querySelectorAll("#mm_body .mmtgt").forEach(x=>x.classList.remove("mmtgt"));
+  if(mmMenuOpen()&&!mmKbField()&&mmLast&&mmLast.isConnected&&mmLast.closest("#mm_body"))mmLast.classList.add("mmtgt")}
+[["mmFmt",mmFmt],["mmSym",mmSym],["mmLst",mmLst]].forEach(([n,f])=>{window[n]=function(){const r=f.apply(this,arguments);tgtPaint();return r}});
+mmFmt=window.mmFmt;mmSym=window.mmSym;mmLst=window.mmLst;
+["mm_fmt","mm_sym","mm_lst"].forEach(id=>$(id).addEventListener("click",()=>requestAnimationFrame(tgtPaint)));
+$("mm_body").addEventListener("focusin",tgtPaint);$("mm_body").addEventListener("focusout",()=>setTimeout(tgtPaint,0));
 $("mm_w").addEventListener("pointerdown",e=>{if(mmMenuOpen()&&e.target.closest(".mbgrip,.mb-lh"))e.stopPropagation()},true);
 /* When a menu choice replaces the line (a heading, a list), the menus keep working on the new line,
    even though the keyboard stays away. */

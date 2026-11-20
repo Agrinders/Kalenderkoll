@@ -842,3 +842,7 @@ mark.fdw{color:inherit}
 .mmrow[hidden]{display:none}
 /* Marked words keep showing their colour through the marking */
 .mb-p.live textarea::selection{color:transparent;-webkit-text-fill-color:transparent;background:color-mix(in oklab,var(--acc) 26%,transparent)}
+/* The line a menu works on while the keyboard is away */
+.mb-p.mmtgt{border-radius:6px;background-color:color-mix(in oklab,var(--acc) 7%,transparent);box-shadow:0 0 0 5px color-mix(in oklab,var(--acc) 7%,transparent);outline:1.5px solid color-mix(in oklab,var(--acc) 42%,transparent);outline-offset:5px}
+.mb-lh.mmtgt{outline:1.5px solid color-mix(in oklab,var(--acc) 50%,transparent);outline-offset:-1px}
+.mb-c.mmtgt::after{border-color:color-mix(in oklab,var(--tk,var(--lc,var(--acc))) 50%,transparent);background:color-mix(in oklab,var(--tk,var(--lc,var(--acc))) 6%,transparent)}
