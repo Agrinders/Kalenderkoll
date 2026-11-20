@@ -840,3 +840,5 @@ mark.fdw{color:inherit}
 .mmtagf button small{font-size:11px;opacity:.7}.mmtagf button.on{color:#fff;background:var(--acc)}
 .mmtags .mmutag{color:var(--acc);background:color-mix(in oklab,var(--acc) 12%,transparent)}
 .mmrow[hidden]{display:none}
+/* Marked words keep showing their colour through the marking */
+.mb-p.live textarea::selection{color:transparent;-webkit-text-fill-color:transparent;background:color-mix(in oklab,var(--acc) 26%,transparent)}

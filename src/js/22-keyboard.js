@@ -8,10 +8,12 @@ var KBF=null;
 function mmKbField(){const a=document.activeElement;return a&&$("mm_w").contains(a)&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA")?a:null}
 function mmHold(ms){const w=$("mm_w"),top=w.scrollTop,end=Date.now()+(ms||600);(function f(){if(Math.abs(w.scrollTop-top)>1)w.scrollTop=top;if(Date.now()<end)requestAnimationFrame(f)})()}
 function mmKbAway(){const a=mmKbField();if(a){mmHold(700);a.blur()}MMKB=false}
-function mmKbDown(e){KBF=mmKbField();MMKB=false;if(!e.target.closest("input,textarea,select"))e.preventDefault()}
+function mmKbDown(e){if(!e.target.closest("input,textarea,select"))e.preventDefault()}
 function mmKbAfter(){const was=KBF;KBF=null;if(was&&document.activeElement===was)mmKbAway()}
 [document.querySelector(".mmbar"),$("mm_fmt"),$("mm_sym"),$("mm_lst")].forEach(el=>{
-  el.addEventListener("pointerdown",e=>{KBF=mmKbField();MMKB=false},true);
+  el.addEventListener("pointerdown",e=>{KBF=mmKbField();MMKB=false;
+    /* Words marked in a line stay marked, and the keyboard stays, so B, I, S and colours can go on them. */
+    if(KBF&&KBF.tagName==="TEXTAREA"&&KBF.selectionStart!==KBF.selectionEnd){mmSel={el:KBF,s:KBF.selectionStart,e:KBF.selectionEnd};KBF=null;MMKB=true}},true);
   el.addEventListener("mousedown",mmKbDown,true);
   el.addEventListener("click",mmKbAfter)});
 

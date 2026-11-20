@@ -201,7 +201,10 @@ await step('notes: the bottom bar puts the keyboard away; a tap beside a menu on
   await A1.click('#mm_aa');const k3=await kb();
   await tap(A1,'#mm_body [data-b="a"] form input');await A1.click('#mm_chk');const k4=await kb();const done0=await A1.evaluate(()=>document.querySelector('#mm_body [data-b="b"]').classList.contains('done'));
   await A1.click('#mm_ti');await w(A1,200);const r=await A1.evaluate(()=>[document.getElementById('mm_lst').hidden,document.querySelector('#mm_body [data-b="b"]').classList.contains('done')]);const k5=await kb();
-  await A1.click('#mm_back');await w(A1,500);
+  await A1.evaluate(()=>{const ta=document.querySelector('#mm_body .mb-p textarea');ta.value='Köp mjölk idag';ta.focus();ta.setSelectionRange(4,9);ta.dispatchEvent(new Event('select',{bubbles:true}))});
+  await A1.click('#mm_aa');const s1=await A1.evaluate(()=>{const ta=document.activeElement;return ta.tagName==='TEXTAREA'&&ta.selectionStart===4&&ta.selectionEnd===9});
+  await A1.click('#mm_fmt [data-fk="r"]');const s2=await A1.evaluate(()=>{const ta=document.activeElement;return[ta.value,ta.value.slice(ta.selectionStart,ta.selectionEnd),!document.getElementById('mm_fmt').hidden]});await A1.click('#mm_aa');
+  await A1.click('#mm_back');await w(A1,500);need(s1,'selection lost at Aa');need(s2[0]==='Köp {r|mjölk} idag'&&s2[1]==='mjölk'&&s2[2],'colour on selection '+s2);
   need(k0&&!k1&&!k2&&!k3&&!k4&&!k5,'keyboard '+[k0,k1,k2,k3,k4,k5]);need(col==='b','colour '+col);need(r[0]&&r[1]===done0,'menu '+r);return[k0,k1,k2,k3,k4,k5,col,r]});
 await step('a reinstalled phone gets everything back from a backup file',async()=>{const bk=await A1.evaluate(()=>backupText());const D1=await phone();await D1.goto(base);await waitFor(D1,()=>KK.mode!=='starting');await waitFor(D1,()=>cs.classList.contains('on'));
   need(await D1.evaluate(()=>!cs_rs.classList.contains('hide')),'no restore button on the welcome sheet');
