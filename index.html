@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="8aa3c0583cd0">
+<meta name="kal-build" content="1e1d5df42fc6">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -806,7 +806,7 @@ body:has(.sh.on) #toasts{bottom:calc(20px + var(--sab))}
 .mmsub{margin-top:8px;flex-wrap:wrap}.mmsub button{flex:1 1 auto}
 .mmfc{align-items:center;flex-wrap:wrap}.mmfch{order:-1;flex-basis:100%;padding:0 2px 2px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--soft);white-space:nowrap}.mmfmt.selmode .mmfch{color:var(--acc)}
 /* Bigger places to tap, same look */
-.mbck,.mbfold,.mmpinb,.mbgrip{position:relative}
+.mbck,.mbfold,.mbgrip{position:relative}
 .mbck::before,.mbfold::before{content:"";position:absolute;inset:-10px}
 .mbgrip{width:40px;height:44px;margin-top:-10px;margin-bottom:-10px}
 .mmpinb{width:44px;height:44px;top:2px;right:-4px}
@@ -831,6 +831,28 @@ mark.fdw{color:inherit}
 .mb-l>.mbgrip{right:38px;top:50%;transform:translateY(-50%);height:44px;width:36px;opacity:.6}
 .mb-l .mbl{padding-right:80px}
 .mb-i.lift,.mb-l.lift,.mb-p.lift{z-index:5}
+/* Who ticked, and who is writing */
+.mbwho{flex:none;position:relative;display:grid;place-items:center;width:20px;height:20px;margin:0 2px 0 4px;border-radius:50%;font-size:10.5px;font-weight:800;line-height:1;color:#fff;background:var(--wc,var(--acc));box-shadow:0 0 0 2px color-mix(in oklab,var(--card) 80%,transparent);opacity:.85}
+.mbwho::before{content:"";position:absolute;inset:-12px}
+.mmtyp{display:inline-flex;align-items:center;gap:2px;margin-left:8px;font-size:12.5px;font-weight:650;color:var(--wc,var(--acc));white-space:nowrap}
+.mmtyp i{width:4px;height:4px;border-radius:50%;background:currentColor;animation:typdot 1.2s infinite ease-in-out}.mmtyp i:nth-child(2){animation-delay:.15s}.mmtyp i:nth-child(3){animation-delay:.3s;margin-right:4px}
+@keyframes typdot{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-2px)}}
+.mmit .mmtyp{margin:2px 0 0}
+@media (prefers-reduced-motion:reduce){.mmtyp i{animation:none;opacity:.6}}
+/* Tags */
+.mmtg{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:-2px 0 10px}
+.mmtg:empty{display:none}
+.tgc{display:inline-flex;align-items:center;gap:2px;padding:3px 4px 3px 10px;border-radius:999px;font-size:13px;font-weight:650;color:var(--acc);background:color-mix(in oklab,var(--acc) 12%,transparent)}
+.tgc button{position:relative;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;font-size:15px;line-height:1;color:inherit;opacity:.6}.tgc button::before{content:"";position:absolute;inset:-10px}
+.tgadd{min-height:28px;padding:3px 11px;border-radius:999px;font-size:13px;font-weight:650;color:var(--soft);border:1.5px dashed color-mix(in oklab,var(--soft) 45%,transparent);position:relative}.tgadd::before{content:"";position:absolute;inset:-8px -4px}
+.tgin{display:inline-flex;align-items:center;gap:2px;padding:2px 10px;border-radius:999px;border:1.5px solid color-mix(in oklab,var(--acc) 55%,transparent);color:var(--acc);font-size:13px;font-weight:650}
+.tgin input{width:9em;border:0;background:none;outline:none;font:inherit;color:var(--ink);padding:3px 0}
+.tgs{min-height:28px;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:600;color:var(--soft);background:var(--fill)}
+.mmtagf{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 0 10px;padding:2px 0}.mmtagf::-webkit-scrollbar{display:none}
+.mmtagf button{flex:none;display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:4px 13px;border-radius:999px;font-size:13.5px;font-weight:650;color:var(--soft);background:var(--fill);transition:background .18s,color .18s}
+.mmtagf button small{font-size:11px;opacity:.7}.mmtagf button.on{color:#fff;background:var(--acc)}
+.mmtags .mmutag{color:var(--acc);background:color-mix(in oklab,var(--acc) 12%,transparent)}
+.mmrow[hidden]{display:none}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1748,7 +1770,7 @@ document.addEventListener("click",e=>{if(!e.target.closest)return;const b=e.targ
 /* var, so the list can be drawn while the app is still starting. */
 var MFONT={sf:"Serif",h:"Skrivstil",r:"Rund",m:"Mono"},MB_T=["p","c","l","i","lh"],MCOL={r:"#e5484d",o:"#ee8a2a",y:"#c99a0e",g:"#2f9e63",b:"#3b82f6",v:"#8a72ee",p:"#e0559c",s:"#8b8494"},URLRE=/https?:\/\/[^\s<>"']+[^\s<>"'.,;:!?)\]]/gi;
 function memoClean(v,fid){const id=String(v.id||fid);if(!id)return null;
-  const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map((b,ix)=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000),...(b.s==="h1"||b.s==="h2"?{s:b.s}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d,...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{}),...(b.m==="b"||b.m==="n"?{m:b.m}:{}),...(typeof b.ds==="string"&&b.ds?{ds:b.ds.slice(0,1000)}:{}),...(Number.isFinite(+b.pr)&&b.pr!==""&&b.pr!==null?{pr:Math.round(+b.pr*100)/100}:{}),...(b.od?{od:1}:{}),...(b.op?{op:1}:{})}:b.t==="lh"?{t:"lh",x:String(b.x||"").slice(0,200),...(b.od?{od:1}:{}),...(b.op?{op:1}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).map((x,ix)=>x&&{...x,b:typeof v.bl[ix].b==="string"&&v.bl[ix].b?v.bl[ix].b.slice(0,24):"o"+ix,tm:+v.bl[ix].tm||0}).filter(Boolean);
+  const bl=(Array.isArray(v.bl)?v.bl:[]).slice(0,400).map((b,ix)=>b&&MB_T.includes(b.t)?(b.t==="p"?{t:"p",x:String(b.x||"").slice(0,20000),...(b.s==="h1"||b.s==="h2"?{s:b.s}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="c"?{t:"c",x:String(b.x||"").slice(0,500),d:!!b.d,...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{}),...(b.m==="b"||b.m==="n"?{m:b.m}:{}),...(typeof b.ds==="string"&&b.ds?{ds:b.ds.slice(0,1000)}:{}),...(Number.isFinite(+b.pr)&&b.pr!==""&&b.pr!==null?{pr:Math.round(+b.pr*100)/100}:{}),...(b.od?{od:1}:{}),...(b.op?{op:1}:{}),...(b.d&&(b.db==="a"||b.db==="b")?{db:b.db}:{}),...(b.d&&+b.dt>0?{dt:+b.dt}:{})}:b.t==="lh"?{t:"lh",x:String(b.x||"").slice(0,200),...(b.od?{od:1}:{}),...(b.op?{op:1}:{}),...(MCOL[b.k]?{k:b.k}:{}),...(MFONT[b.f]?{f:b.f}:{})}:b.t==="l"?(/^https?:\/\//i.test(b.u||"")?{t:"l",u:String(b.u).slice(0,2000)}:null):(typeof b.i==="string"&&b.i?{t:"i",i:b.i}:null)):null).map((x,ix)=>x&&{...x,b:typeof v.bl[ix].b==="string"&&v.bl[ix].b?v.bl[ix].b.slice(0,24):"o"+ix,tm:+v.bl[ix].tm||0}).filter(Boolean);
   return{id,priv:v.priv?1:0,pin:+v.pin||0,ti:String(v.ti||"").slice(0,120),tu:+v.tu||0,gone:Array.isArray(v.gone)?v.gone.filter(x=>typeof x==="string").slice(-500):[],bl,del:+v.del||0,at:+v.at||0,up:+v.up||+v.at||0,by:v.by==="a"||v.by==="b"?v.by:"",ub:v.ub==="a"||v.ub==="b"?v.ub:""}}
 /* A fingerprint of a note's content, to tell whether a copy is one this phone has already handled. */
 function memoKey(m){return m?m.ti+"\u0002"+(m.tu||0)+"\u0002"+(m.bl||[]).map(b=>b.b+":"+(b.tm||0)+":"+mbSig(b)).join("|")+"\u0002"+(m.gone||[]).length+"\u0002"+(m.del||0):""}
@@ -2295,7 +2317,7 @@ try{const N=NATIVE()&&Capacitor.Plugins&&Capacitor.Plugins.LocalNotifications;if
    reads it while the app is closed. What the job has already told you about is not announced again here. */
 var bgTimer=0,bgPrev="",TOLD=new Set();
 function bgSync(){const F=FSP();if(!F||!window.KK||KK.mode!=="cloud"||!KK.cfg)return;clearTimeout(bgTimer);bgTimer=setTimeout(()=>{
-  const txt=JSON.stringify({space:KK.space(),me:ME||"",names:{a:CP.a||"",b:CP.b||""},lang:S.lang,key:KK.cfg.key,project:KK.cfg.project,seen:Object.keys(DOCS).filter(k=>/^(ev|note|todo|bd|memo)_/.test(k))});
+  const txt=JSON.stringify({space:KK.space(),me:ME||"",names:{a:CP.a||"",b:CP.b||""},lang:S.lang,key:KK.cfg.key,project:KK.cfg.project,seen:Object.keys(DOCS).filter(k=>/^(ev|note|todo|bd|memo)_/.test(k)),mc:typeof mcAll==="function"?mcAll():{}});
   if(txt===bgPrev)return;F.writeFile({path:"bg.json",data:txt,directory:"DATA",encoding:"utf8"}).then(()=>{bgPrev=txt}).catch(()=>{})},800)}
 (async()=>{const F=FSP();if(!F)return;try{const r=await F.readFile({path:"bg_told.json",directory:"DATA",encoding:"utf8"});JSON.parse(r.data).forEach(x=>TOLD.add(x))}catch(e){}})();
 
@@ -2490,6 +2512,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"3.2",d:"20 nov 2026",i:[["t","memos",["Se vem som bockade av", "See who ticked it"],["En liten bokstav i din partners färg sitter på det hen bockade av. Tryck på den för att se när. Medan din partner skriver i en anteckning står det ”Maya skriver…”.", "A small letter in your partner's colour sits on what they ticked. Tap it to see when. While your partner writes in a note it says “Maya is writing…”."]],["t","memos",["Besked när listor ändras", "A notice when lists change"],["Lägger din partner till eller bockar av något i en delad lista får du ett besked, även när appen är stängd (kräver den nya appen).", "When your partner adds or ticks off something in a shared list you get a notice, also when the app is closed (needs the new app)."]],["t","memos",["Taggar och kopior", "Tags and copies"],["Ge anteckningar taggar som #resa under rubriken och filtrera listan på dem. Under ⋯ finns Duplicera: en exakt kopia eller en mall utan bockar.", "Give notes tags like #trip under the title and filter the list by them. Under ⋯ there is Duplicate: an exact copy or a template without ticks."]],["t","memos",["Lugnare att skriva", "Calmer writing"],["Fet och kursiv syns medan du skriver, Aa-panelen är mindre, handtagen syns bara där du skriver, en ny punkt säger ”Ny punkt” och flera rader du klistrar in blir en punkt var.", "Bold and italic show while you write, the Aa panel is smaller, handles only show where you write, a new point says “New point” and several pasted lines become one point each."]],["t","memos",["Sök och flytta", "Search and move"],["Sökningen i en anteckning markerar själva ordet. Bilder, länkar och textstycken går att flytta, inte bara punkter.", "Search inside a note marks the word itself. Pictures, links and paragraphs can be moved, not only points."]]]},
 {v:"3.1",d:"20 nov 2026",i:[["t","memos",["Lugnare verktygsrad","A calmer toolbar"],["Knapparna längst ner i en anteckning öppnar inte tangentbordet av sig själva. Det öppnas bara när du skapar något nytt att skriva i, som en ny lista.","The buttons at the bottom of a note no longer open the keyboard by themselves. It only opens when you create something new to write in, like a new list."]],["t","memos",["Privata anteckningar","Private notes"],["Knappen Privat bredvid Ny skapar en anteckning som bara du ser. Den sparas på ett eget, hemligt ställe som din partners telefon aldrig får. Under rubriken i en anteckning kan du byta mellan delad och privat.","The Private button beside New makes a note only you see. It is saved in a separate, secret place your partner's phone never gets. Under a note's title you can switch between shared and private."]]]},
 {v:"3.0",d:"16 nov 2026",i:[["t","memos",["Fäst från listan","Pin from the list"],["Varje anteckning har en nål uppe till höger i listan. Tryck för att fästa den överst.","Each note has a pin at the top right in the list. Tap it to keep the note at the top."]],["t","memos",["Spara som PDF med bockrutor","Save as PDF with tick boxes"],["Under ⋯ i en anteckning finns Spara som: PDF i A4, en bild eller en webbsida. I PDF:en går de runda rutorna att bocka i.","Under ⋯ in a note there is Save as: a PDF in A4, a picture or a web page. In the PDF the round boxes can be ticked."]]]},
 {v:"2.9",d:"16 nov 2026",i:[["t","memos",["Ett tryck för att titta","One tap to look"],["Skriver du i en anteckning och trycker någon annanstans stängs bara tangentbordet, så du kan se allt. Tryck igen för att skriva där.","If you are writing in a note and tap somewhere else, only the keyboard closes so you can see everything. Tap again to write there."]],["t","memos",["Beskrivning och kostnad i listor","Descriptions and costs in lists"],["Ställ in i Lista-menyn när du står i en lista: en rad för detaljer under varje punkt, och ett belopp på varje punkt med summan och hur mycket som är kvar.","Switch on in the Lista menu while in a list: a line for details under each point, and an amount on each point with the total and how much is left."]]]},
@@ -2716,6 +2739,124 @@ window.addEventListener("resize",()=>{if(!$("mm_fd").hidden&&FDQ)fdMarkAll()});
 const _mbBlock19=mmBlock;mmBlock=function(b){const d=_mbBlock19(b);
   if((b.t==="p"||b.t==="i"||(b.t==="l"&&b.u))&&!d.querySelector(".mbgrip")){const g=document.createElement("span");g.className="mbgrip";g.setAttribute("aria-label",tx("Håll och dra för att flytta","Hold and drag to move"));g.innerHTML=GRIP;d.appendChild(g)}
   return d};
+/* ---------- Notes, round 4: writing together ---------- */
+
+/* Who ticked a point, and when. A small letter in the partner's colour sits on points they ticked;
+   tapping it says when. Your own ticks need no letter. */
+$("mm_body").addEventListener("click",e=>{const ck=e.target.closest(".mbck");if(!ck)return;const d=ck.closest(".mb");if(!d)return;
+  if(d.classList.contains("done")){d.dataset.db=me();d.dataset.dt=String(Date.now())}else{delete d.dataset.db;delete d.dataset.dt}whoPaint(d)});
+const _itemExtra20=itemExtra;itemExtra=function(d){const o=_itemExtra20(d);if(d.classList.contains("done")&&!d.dataset.m&&(d.dataset.db==="a"||d.dataset.db==="b")){o.db=d.dataset.db;if(+d.dataset.dt)o.dt=+d.dataset.dt}return o};
+const _mbBlock20=mmBlock;mmBlock=function(b){const d=_mbBlock20(b);if(b.t==="c"&&b.d){if(b.db)d.dataset.db=b.db;if(b.dt)d.dataset.dt=String(b.dt);whoPaint(d)}return d};
+function whoPaint(d){let w=d.querySelector(".mbwho");const by=d.dataset.db,show=d.classList.contains("done")&&!d.dataset.m&&by&&by!==ME&&SHARED()&&!(MM.m&&MM.m.priv);
+  if(!show){if(w)w.remove();return}
+  if(!w){w=document.createElement("button");w.type="button";w.className="mbwho";const at=d.querySelector(".mbpr")||d.querySelector(".mbgrip");if(at)at.before(w);else d.appendChild(w)}
+  const n=pname(by);w.textContent=(n[0]||"?").toUpperCase();w.style.setProperty("--wc",pvar(by));w.setAttribute("aria-label",tx(`Bockad av ${n}`,`Ticked by ${n}`))}
+$("mm_body").addEventListener("click",e=>{const w=e.target.closest(".mbwho");if(!w)return;e.preventDefault();e.stopPropagation();const d=w.closest(".mb"),t=+d.dataset.dt;
+  toast(tx(`${pname(d.dataset.db)} bockade av den`,`${pname(d.dataset.db)} ticked it`)+(t?" "+(dnD(new Date(t))===todayN()?tx("i dag ","today "):"")+whenTxt(t):""),3000)},true);
+
+/* "Maya skriver…": while the other phone's changes keep arriving in a note, it says so in the note and in the list of notes.
+   It goes by when changes arrive on this phone, so the two clocks need not agree. */
+var PRES={},MCB=null;
+function presOn(id){return PRES[id]&&Date.now()-PRES[id]<9000}
+function presPaint(){const p=pname(other(ME)),lbl=tx(`${p} skriver…`,`${p} is writing…`);
+  const meta=$("mm_meta");if(meta){let s=meta.querySelector(".mmtyp");const on=MM.open&&MM.m&&!MM.m.priv&&presOn(MM.id);
+    if(on&&!s){s=document.createElement("span");s.className="mmtyp";meta.appendChild(s)}if(s){if(on){s.innerHTML=`<i></i><i></i><i></i>${esc(lbl)}`;s.style.setProperty("--wc",pvar(other(ME)))}else s.remove()}}
+  document.querySelectorAll(".mmi[data-memo]").forEach(b=>{let s=b.querySelector(".mmtyp");const on=presOn(b.dataset.memo);
+    if(on&&!s){s=document.createElement("span");s.className="mmtyp";s.style.setProperty("--wc",pvar(other(ME)));s.innerHTML=`<i></i><i></i><i></i>${esc(lbl)}`;const t=b.querySelector(".mmit small")||b.querySelector(".mmit");if(t)t.after(s)}else if(!on&&s)s.remove()})}
+const _mmMeta20=mmMeta;mmMeta=function(){_mmMeta20();presPaint()};
+setInterval(()=>{if(Object.keys(PRES).some(k=>Date.now()-PRES[k]<12000))presPaint()},1500);
+const _rm20=renderMemos;renderMemos=function(){_rm20.apply(this,arguments);presPaint()};
+
+/* Counts of points and ticked points in each shared note, so the phone can say "Maya added 3 things to Inför flytt". */
+function memoCounts(m){let n=0,done=0;(m.bl||[]).forEach(b=>{if(b.t==="c"&&String(b.x||"").trim()){n++;if(b.d&&!b.m)done++}});return[n,done]}
+function mcAll(){const o={};MEMOS.forEach(m=>{if(!m.priv&&!m.del)o["memo_"+m.id]=memoCounts(m)});return o}
+var MCK={},LPEND={},LT=0;
+function watchLists(){if(!ME||!SHARED())return;let B=MCB;if(!B){try{B=JSON.parse(localStorage.getItem("kalenderkoll.mc")||"null")}catch(e){}}
+  const cur=mcAll(),first=!B;B=B||{};
+  MEMOS.forEach(m=>{if(m.priv)return;const id="memo_"+m.id,k=memoKey(m);
+    if(MCK[m.id]!==undefined&&MCK[m.id]!==k&&m.ub===other(ME)){PRES[m.id]=Date.now()}
+    MCK[m.id]=k;
+    const was=B[id],now=cur[id];if(first||!was||!now||m.ub!==other(ME)||m.del)return;
+    const add=Math.max(0,now[0]-was[0]),tick=Math.max(0,now[1]-was[1]);if(!add&&!tick)return;
+    /* The note you are looking at needs no notice. */
+    if(MM.open&&MM.id===m.id&&!document.hidden)return;
+    const P=LPEND[m.id]||(LPEND[m.id]={add:0,tick:0});P.add+=add;P.tick+=tick;P.ti=m.ti});
+  MCB=cur;try{localStorage.setItem("kalenderkoll.mc",JSON.stringify(cur))}catch(e){}
+  presPaint();
+  /* Changes come one at a time while someone writes; one notice comes when they have stopped for a little while. */
+  if(Object.keys(LPEND).length){clearTimeout(LT);LT=setTimeout(listTell,20000)}}
+function listTell(){const p=pname(other(ME)),L=Object.values(LPEND);LPEND={};if(!L.length)return;
+  const one=P=>{const t=P.ti||tx("en anteckning","a note"),a=P.add,k=P.tick;
+    if(a&&k)return tx(`${p} lade till ${a===1?"en sak":a+" saker"} och bockade av ${k===1?"en":k} i ${t}`,`${p} added ${a===1?"a thing":a+" things"} and ticked off ${k===1?"one":k} in ${t}`);
+    if(a)return a===1?tx(`${p} lade till en sak i ${t}`,`${p} added a thing to ${t}`):tx(`${p} lade till ${a} saker i ${t}`,`${p} added ${a} things to ${t}`);
+    return k===1?tx(`${p} bockade av en sak i ${t}`,`${p} ticked off a thing in ${t}`):tx(`${p} bockade av ${k} saker i ${t}`,`${p} ticked off ${k} things in ${t}`)};
+  const msg=L.length===1?one(L[0]):tx(`${p} har ändrat i ${L.length} listor`,`${p} changed ${L.length} lists`);
+  toast(msg,5000);notify("Kalenderkoll",msg);bgSync()}
+const _watchNew20=watchNew;watchNew=function(){_watchNew20();try{watchLists()}catch(e){}};
+/* Before the phone goes to sleep, any waiting notice is given right away. */
+document.addEventListener("visibilitychange",()=>{if(document.hidden&&Object.keys(LPEND).length){clearTimeout(LT);listTell()}});
+/* ---------- Notes, round 5: copies and tags ---------- */
+
+/* Tags: a few short words on a note (#resa, #hem). They are shown on the note and in the list, where they also filter. */
+function tagsClean(a){const out=[],seen=new Set();(Array.isArray(a)?a:[]).forEach(t=>{t=String(t||"").replace(/^#+/,"").replace(/\s+/g," ").trim().slice(0,24);const k=t.toLocaleLowerCase();if(t&&!seen.has(k)&&out.length<8){seen.add(k);out.push(t)}});return out}
+const _memoClean21=memoClean;memoClean=function(v,fid){const m=_memoClean21(v,fid);if(m){const t=tagsClean(v.tags);if(t.length)m.tags=t}return m};
+const _memoDoc21=memoDoc;memoDoc=m=>{const d=_memoDoc21(m),t=tagsClean(m.tags);if(t.length)d.tags=t;return d};
+const _memoKey21=memoKey;memoKey=function(m){return _memoKey21(m)+(m&&m.tags&&m.tags.length?"\u0003"+m.tags.join(","):"")};
+const _memoHay21=memoHay;memoHay=function(m){return _memoHay21(m)+" "+(m.tags||[]).map(t=>"#"+t).join(" ").toLocaleLowerCase()};
+function allTags(){const c=new Map();MEMOS.forEach(m=>{if(!m.del)(m.tags||[]).forEach(t=>{const k=t.toLocaleLowerCase();const o=c.get(k)||{t,n:0};o.n++;c.set(k,o)})});return[...c.values()].sort((a,b)=>b.n-a.n||a.t.localeCompare(b.t,"sv"))}
+
+/* In the note: the tags under the title, with "+ Tagg". */
+var TGADD=false;
+function tagPaint(){let row=$("mm_tg");if(!row){row=document.createElement("div");row.id="mm_tg";row.className="mmtg";$("mm_meta").after(row)}
+  const m=MM.m;if(!m){row.innerHTML="";return}const T=m.tags||[];
+  let h=T.map((t,i)=>`<span class="tgc">#${esc(t)}<button type="button" data-tgx="${i}" aria-label="${esc(tx("Ta bort taggen","Remove the tag")+" "+t)}">×</button></span>`).join("");
+  if(TGADD){const have=new Set(T.map(t=>t.toLocaleLowerCase())),sug=allTags().filter(o=>!have.has(o.t.toLocaleLowerCase())).slice(0,8);
+    h+=`<span class="tgin"><span>#</span><input id="mm_tgi" type="text" maxlength="24" enterkeyhint="done" autocomplete="off" placeholder="${esc(tx("ny tagg","new tag"))}"></span>`+sug.map(o=>`<button type="button" class="tgs" data-tgs="${esc(o.t)}">#${esc(o.t)}</button>`).join("")}
+  else if(T.length<8)h+=`<button type="button" class="tgadd" data-tgadd>${T.length?"+":"+ "+tx("Tagg","Tag")}</button>`;
+  row.innerHTML=h;if(TGADD){const i=$("mm_tgi");if(i)setTimeout(()=>i.focus(),0)}}
+function tagSet(T){if(!MM.m)return;MM.m.tags=tagsClean(T);MM.dirty=true;mmSave();tagPaint()}
+document.addEventListener("click",e=>{const row=e.target.closest("#mm_tg");if(!row)return;
+  const x=e.target.closest("[data-tgx]");if(x){const T=[...(MM.m.tags||[])];T.splice(+x.dataset.tgx,1);tagSet(T);return}
+  const s=e.target.closest("[data-tgs]");if(s){TGADD=false;tagSet([...(MM.m.tags||[]),s.dataset.tgs]);return}
+  if(e.target.closest("[data-tgadd]")){TGADD=true;tagPaint()}});
+/* The add button keeps the field from losing focus before the tap lands. */
+document.addEventListener("pointerdown",e=>{if(e.target.closest("#mm_tg [data-tgs]"))e.preventDefault()});
+document.addEventListener("keydown",e=>{if(e.target.id!=="mm_tgi")return;if(e.key==="Enter"||e.key===","){e.preventDefault();const v=e.target.value;TGADD=!!v.trim()&&(MM.m.tags||[]).length<7;if(v.trim())tagSet([...(MM.m.tags||[]),v]);else{TGADD=false;tagPaint()}}
+  else if(e.key==="Escape"){TGADD=false;tagPaint()}},true);
+document.addEventListener("focusout",e=>{if(e.target.id!=="mm_tgi")return;const v=e.target.value;setTimeout(()=>{if(!TGADD)return;TGADD=false;if(v.trim())tagSet([...(MM.m&&MM.m.tags||[]),v]);else tagPaint()},150)});
+const _mmMeta21=mmMeta;mmMeta=function(){_mmMeta21();if(!$("mm_tgi"))tagPaint()};
+const _closeMM21=closeMM;closeMM=function(){const i=$("mm_tgi");if(i&&i.value.trim()&&MM.m){MM.m.tags=tagsClean([...(MM.m.tags||[]),i.value]);MM.dirty=true}TGADD=false;_closeMM21()};
+
+/* In the list: the tags on each note, and a row of tags to filter by. */
+var MTAG="";try{MTAG=localStorage.getItem("kalenderkoll.mtag")||""}catch(e){}
+const _rm21=renderMemos;renderMemos=function(){_rm21.apply(this,arguments);try{tagList()}catch(e){}};
+function tagList(){const list=$("mm_list");if(!list)return;const A=allTags();if(MTAG&&!A.some(o=>o.t.toLocaleLowerCase()===MTAG.toLocaleLowerCase()))MTAG="";
+  let f=$("mm_tagf");if(!f){f=document.createElement("div");f.id="mm_tagf";f.className="mmtagf";list.before(f)}
+  f.hidden=!A.length;f.innerHTML=A.length?`<button type="button" data-tgf="" class="${!MTAG?"on":""}">${tx("Alla","All")}</button>`+A.map(o=>`<button type="button" data-tgf="${esc(o.t)}" class="${MTAG.toLocaleLowerCase()===o.t.toLocaleLowerCase()?"on":""}">#${esc(o.t)}<small>${o.n}</small></button>`).join(""):"";
+  const k=MTAG.toLocaleLowerCase();let shown=0;
+  list.querySelectorAll(".mmrow").forEach(r=>{const b=r.querySelector("[data-memo]"),m=b&&MEMOS.find(x=>x.id===b.dataset.memo);if(!m)return;
+    const T=m.tags||[],ok=!k||T.some(t=>t.toLocaleLowerCase()===k);r.hidden=!ok;if(ok)shown++;
+    const it=b.querySelector(".mmit");if(it&&T.length&&!it.querySelector(".mmutag")){let s=it.querySelector(".mmtags");if(!s){s=document.createElement("span");s.className="mmtags";it.appendChild(s)}s.insertAdjacentHTML("afterbegin",T.map(t=>`<i class="mmutag">#${esc(t)}</i>`).join(""))}});
+  let none=list.querySelector(".mmtgnone");if(k&&!shown){if(!none){none=document.createElement("p");none.className="muted mmnone mmtgnone";list.prepend(none)}none.textContent=tx(`Inga anteckningar med #${MTAG}`,`No notes tagged #${MTAG}`)}else if(none)none.remove()}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-tgf]");if(!b)return;const v=b.dataset.tgf;MTAG=MTAG.toLocaleLowerCase()===v.toLocaleLowerCase()?"":v;try{localStorage.setItem("kalenderkoll.mtag",MTAG)}catch(err){}tagList()});
+
+/* Duplicate: a copy of the note, its pictures too. As a template, the ticks are taken away so the list can be used again. */
+async function memoDup(){if(!MM.m)return;mmSave();const src=MEMOS.find(x=>x.id===MM.id)||MM.m;
+  const how=await askOpts(tx("Duplicera","Duplicate"),"",[["copy",tx("Exakt kopia","Exact copy"),tx("Allt följer med, även bockarna","Everything comes along, ticks too")],["tpl",tx("Som mall","As a template"),tx("Alla bockar tas bort så listan kan användas igen","All ticks are removed so the list can be used again")]]);if(!how)return;
+  const now=Date.now(),id=newId(),imgs={};
+  const bl=src.bl.map(b=>{const c=JSON.parse(JSON.stringify(b));c.b=bid();c.tm=now;if(how==="tpl"&&c.t==="c"){c.d=false;delete c.db;delete c.dt}
+    if(c.t==="i"){const ni=newId()+Math.random().toString(36).slice(2,5);imgs[ni]=c.i;c.i=ni}return c});
+  const ti=src.ti.trim()?(how==="tpl"?src.ti:tx("Kopia av ","Copy of ")+src.ti).slice(0,120):"";
+  const m={id,priv:src.priv?1:0,pin:0,ti,tu:now,gone:[],bl,at:now,up:now,by:ME||"",ub:ME||"",...(src.tags&&src.tags.length?{tags:[...src.tags]}:{})};
+  MEMOS.push(JSON.parse(JSON.stringify(m)));put("memo_"+id,memoDoc(m));
+  Object.entries(imgs).forEach(([ni,oi])=>{const data=MIMG[oi]||(typeof PIMG!=="undefined"&&PIMG[oi]);if(!data)return;MIMG[ni]=data;put("mimg_"+ni,{kind:"mimg",id:ni,memo:id,data,at:now})});
+  closeMM();renderMemos();setTimeout(()=>{openMM(id);toast(how==="tpl"?tx("En ny lista från mallen","A new list from the template"):tx("Kopian är klar","The copy is ready"),2500)},260)}
+/* The ⋯ menu gets Duplicera. */
+$("mm_more").onclick=async()=>{if(!MM.m)return;mmSave();
+  const v=await askOpts(MM.m.ti.trim()||tx("Anteckning","Note"),"",[["saveas",tx("Spara som…","Save as…"),tx("PDF, bild eller webbsida i Dokument › Kalenderkoll","PDF, picture or web page in Documents › Kalenderkoll")],["dup",tx("Duplicera","Duplicate"),tx("En kopia, eller en mall utan bockar","A copy, or a template without ticks")],["copy",tx("Kopiera texten","Copy the text"),""],["del",tx("Radera","Delete"),tx("Hamnar i Nyligen raderade i 30 dagar","Goes to Recently deleted for 30 days"),true]]);
+  if(v==="copy")mmCopy();else if(v==="del")mmTrash();else if(v==="dup")memoDup();
+  else if(v==="saveas"){const f=await askOpts(tx("Spara som","Save as"),"",[["pdf","PDF",tx("Sidor i A4, bra att skriva ut eller skicka","A4 pages, good to print or send")],["img",tx("Bild","Picture"),tx("En lång bild, lätt att dela i en chatt","One long picture, easy to share in a chat")],["html",tx("Webbsida","Web page"),tx("Öppnas i webbläsaren, med länkar som går att trycka på","Opens in the browser, with links you can tap")]]);
+    if(f){toast(tx("Sparar…","Saving…"),1500);if(f==="pdf")mmPdf();else if(f==="img")mmImage();else mmExport()}}};
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>

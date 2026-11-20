@@ -177,11 +177,88 @@ public class BgWorker extends Worker {
                 writeFile(new File(ctx.getFilesDir(), "bg_told.json"), all.toString());
             }
             if (!first && !fresh.isEmpty()) notifyNew(ctx, sv, partner, fresh);
+            try { listChanges(ctx, sv, partner, me, bg, docs, freshIds); } catch (Exception e) { /* lists are told next time */ }
             if (!fresh.isEmpty()) addToWidget(ctx, fresh);
             return Result.success();
         } catch (Exception e) {
             return Result.retry();
         }
+    }
+
+    /* Points and ticked points in a note's lists, counted the same way as in the app. */
+    static int[] counts(JSONObject f) {
+        int n = 0, done = 0;
+        JSONObject bl = f == null ? null : f.optJSONObject("bl");
+        JSONArray vals = bl == null || bl.optJSONObject("arrayValue") == null ? null : bl.optJSONObject("arrayValue").optJSONArray("values");
+        if (vals != null) for (int i = 0; i < vals.length(); i++) {
+            JSONObject m = vals.optJSONObject(i);
+            JSONObject b = m == null || m.optJSONObject("mapValue") == null ? null : m.optJSONObject("mapValue").optJSONObject("fields");
+            if (b == null || !"c".equals(str(b, "t")) || str(b, "x").trim().isEmpty()) continue;
+            n++;
+            JSONObject d = b.optJSONObject("d");
+            if (d != null && d.optBoolean("booleanValue", false) && str(b, "m").isEmpty()) done++;
+        }
+        return new int[]{n, done};
+    }
+
+    /* When your partner adds to or ticks off a shared list, you hear about it. The app leaves the counts it has
+       already shown you in bg.json; the job keeps its own after each notice, until the app has been opened again. */
+    void listChanges(Context ctx, boolean sv, String partner, String me, JSONObject bg, List<JSONObject[]> docs, List<String> freshIds) throws Exception {
+        SharedPreferences p = ctx.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        JSONObject appMc = bg.optJSONObject("mc");
+        if (appMc == null) return;
+        String appStr = appMc.toString();
+        JSONObject base = appMc;
+        if (appStr.equals(p.getString("mcsrc", ""))) {
+            try { base = new JSONObject(p.getString("mcb", "{}")); } catch (Exception e) { base = appMc; }
+        }
+        JSONObject now = new JSONObject();
+        List<String[]> told = new ArrayList<>();
+        for (JSONObject[] d : docs) {
+            String id = d[0].getString("id");
+            if (!id.startsWith("memo_") || freshIds.contains(id)) continue;
+            JSONObject f = d[1];
+            if (f == null) continue;
+            JSONObject pv = f.optJSONObject("priv");
+            if (pv != null && (pv.optInt("integerValue", 0) != 0 || "1".equals(pv.optString("integerValue")))) continue;
+            if (!str(f, "del").isEmpty() && !"0".equals(str(f, "del"))) continue;
+            int[] c = counts(f);
+            now.put(id, new JSONArray().put(c[0]).put(c[1]));
+            JSONArray was = base.optJSONArray(id);
+            String ub = str(f, "ub");
+            if (was == null || ub.isEmpty() || ub.equals(me)) continue;
+            int add = Math.max(0, c[0] - was.optInt(0)), tick = Math.max(0, c[1] - was.optInt(1));
+            if (add > 0 || tick > 0) told.add(new String[]{str(f, "ti"), String.valueOf(add), String.valueOf(tick)});
+        }
+        p.edit().putString("mcsrc", appStr).putString("mcb", now.toString()).apply();
+        if (told.isEmpty()) return;
+        String text;
+        if (told.size() > 1) text = sv ? partner + " har ändrat i " + told.size() + " listor" : partner + " changed " + told.size() + " lists";
+        else {
+            String[] t = told.get(0);
+            String ti = t[0].isEmpty() ? (sv ? "en anteckning" : "a note") : t[0];
+            int a = Integer.parseInt(t[1]), k = Integer.parseInt(t[2]);
+            if (a > 0 && k > 0) text = sv ? partner + " lade till " + (a == 1 ? "en sak" : a + " saker") + " och bockade av " + (k == 1 ? "en" : String.valueOf(k)) + " i " + ti : partner + " added " + (a == 1 ? "a thing" : a + " things") + " and ticked off " + (k == 1 ? "one" : String.valueOf(k)) + " in " + ti;
+            else if (a > 0) text = sv ? partner + " lade till " + (a == 1 ? "en sak" : a + " saker") + " i " + ti : partner + " added " + (a == 1 ? "a thing" : a + " things") + " to " + ti;
+            else text = sv ? partner + " bockade av " + (k == 1 ? "en sak" : k + " saker") + " i " + ti : partner + " ticked off " + (k == 1 ? "a thing" : k + " things") + " in " + ti;
+        }
+        show(ctx, sv, text);
+    }
+
+    void show(Context ctx, boolean sv, String text) {
+        if (Build.VERSION.SDK_INT >= 33 && ContextCompat.checkSelfPermission(ctx, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) return;
+        if (Build.VERSION.SDK_INT >= 26) {
+            NotificationManager nm = ctx.getSystemService(NotificationManager.class);
+            if (nm != null) nm.createNotificationChannel(new NotificationChannel(CHANNEL, sv ? "Från din partner" : "From your partner", NotificationManager.IMPORTANCE_DEFAULT));
+        }
+        if (text.length() > 140) text = text.substring(0, 140) + "…";
+        Intent open = new Intent(ctx, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pi = PendingIntent.getActivity(ctx, 1, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        NotificationCompat.Builder b = new NotificationCompat.Builder(ctx, CHANNEL)
+                .setSmallIcon(R.drawable.kk_notif).setContentTitle("Kalenderkoll").setContentText(text)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(text)).setColor(0xFF8A72EE)
+                .setContentIntent(pi).setAutoCancel(true);
+        try { NotificationManagerCompat.from(ctx).notify((int) (System.currentTimeMillis() % 100000) + 7, b.build()); } catch (SecurityException e) { /* no permission */ }
     }
 
     void notifyNew(Context ctx, boolean sv, String partner, List<JSONObject> fresh) {
