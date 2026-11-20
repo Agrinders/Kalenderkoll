@@ -169,7 +169,7 @@ await step('private notes: only the writer sees them; sharing and making private
 await step('notes: the bottom bar only opens the keyboard for something new to write',async()=>{await A1.evaluate(()=>{go('t');openMM('cost')});await w(A1,500);
   const kb=()=>A1.evaluate(()=>{const a=document.activeElement;return !!(a&&a.closest&&a.closest('#mm_w')&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA'))});
   await tap(A1,'#mm_body [data-b="a"] form input');await A1.evaluate(()=>document.activeElement.blur());
-  await A1.click('#mm_aa');await A1.click('[data-fk="g"]');const k1=await kb();await A1.click('#mm_sy');await A1.click('[data-sym="❤️"]');const k2=await kb();
+  await A1.click('#mm_aa');await A1.click('[data-fk="g"]');const k1=await kb();await A1.click('#mm_sy');await A1.click('[data-sym="❤️"]');const k2=await kb()&&await A1.evaluate(()=>document.activeElement.closest('.mb').dataset.b==='a');
   await A1.click('#mm_chk');await A1.click('[data-lk="b"]');const k3=await kb();
   await A1.click('#mm_chk');await A1.click('[data-lk="named"]');const k4=await kb();await A1.click('#mm_back');await w(A1,600);
   need(!k1&&!k2&&!k3&&k4,'keyboard '+[k1,k2,k3,k4]);return[k1,k2,k3,k4]});
@@ -195,7 +195,7 @@ await step('notes: tags filter the list; duplicate as a template',async()=>{awai
   await A1.click('#mm_tagf [data-tgf="resa"]');await w(A1,200);const vis=await A1.evaluate(()=>[...document.querySelectorAll('#mm_list .mmrow')].filter(r=>!r.hidden).map(r=>r.querySelector('.mmit b').textContent));
   await A1.click('#mm_tagf [data-tgf=""]');
   need(t1[0].join()==='resa'&&/resa/.test(t1[1][0]),'tag '+JSON.stringify(t1));need(d[0]&&d[1]==='Inför resan'&&!/true/.test(d[2])&&d[3]==='resa'&&d[4]&&d[5]>=1,'dup '+JSON.stringify(d));if(vis.length!==1)console.log('DBG2',await A1.evaluate(()=>JSON.stringify(MEMOS.filter(m=>!m.del).map(m=>[m.id,m.ti,m.tags]))));need(vis.length===1&&vis[0]==='Inför resan','filter '+JSON.stringify(vis));return[t1[0],d.slice(1,4),vis]});
-await step('notes: the bottom bar puts the keyboard away; a tap beside a menu only closes it',async()=>{await A1.evaluate(()=>{go('t');openMM('cost')});await w(A1,500);
+await step('notes: the line with the cursor keeps it while using the bottom bar; a tap beside a menu closes it',async()=>{await A1.evaluate(()=>{go('t');openMM('cost')});await w(A1,500);
   const kb=()=>A1.evaluate(()=>{const a=document.activeElement;return !!(a&&a.closest&&a.closest('#mm_w')&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA'))});
   await tap(A1,'#mm_body [data-b="a"] form input');const k0=await kb();await A1.click('#mm_aa');const k1=await kb();await A1.click('[data-fk="b"]');const k2=await kb();const col=await A1.evaluate(()=>document.querySelector('#mm_body [data-b="a"]').dataset.k);
   await A1.click('#mm_aa');const k3=await kb();
@@ -211,7 +211,7 @@ await step('notes: the bottom bar puts the keyboard away; a tap beside a menu on
   await A1.click('#mm_aa');await A1.click('#mm_fmt [data-wr="**"]');const t3=await A1.evaluate(()=>{const i=document.activeElement;return[i.value,i.value.slice(i.selectionStart,i.selectionEnd),!!document.querySelector('#mm_body [data-b="b"] .mbio .rb')]});await A1.click('#mm_aa');
   need(/^\*\*...\*\*/.test(t3[0])&&t3[1].length===3&&t3[2],'bold on marked words in a list point '+t3);need(t2==='g','colour on the tapped line '+t2);
   await A1.click('#mm_back');await w(A1,500);need(s1,'selection lost at Aa');need(s2[0]==='Köp {r|mjölk} idag'&&s2[1]==='mjölk'&&s2[2],'colour on selection '+s2);
-  need(k0&&!k1&&!k2&&!k3&&!k4&&!k5,'keyboard '+[k0,k1,k2,k3,k4,k5]);need(col==='b','colour '+col);need(r[0]&&r[1]===done0,'menu '+r);return[k0,k1,k2,k3,k4,k5,col,r]});
+  need(k0&&k1&&k2&&k3&&k4,'the line keeps the cursor '+[k0,k1,k2,k3,k4,k5]);need(col==='b','colour '+col);need(r[0]&&r[1]===done0,'menu '+r);return[k0,k1,k2,k3,k4,k5,col,r]});
 await step('a reinstalled phone gets everything back from a backup file',async()=>{const bk=await A1.evaluate(()=>backupText());const D1=await phone();await D1.goto(base);await waitFor(D1,()=>KK.mode!=='starting');await waitFor(D1,()=>cs.classList.contains('on'));
   need(await D1.evaluate(()=>!cs_rs.classList.contains('hide')),'no restore button on the welcome sheet');
   await D1.setInputFiles('#bk_in',{name:'Kalenderkoll-sakerhetskopia.json',mimeType:'application/json',buffer:Buffer.from(bk)});await w(D1);need(await D1.evaluate(()=>modal.classList.contains('on')),'did not ask');

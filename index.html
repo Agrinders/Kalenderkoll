@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="a56a76a9747a">
+<meta name="kal-build" content="95e0d64a4179">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -855,9 +855,6 @@ mark.fdw{color:inherit}
 .mmrow[hidden]{display:none}
 /* Marked words keep showing their colour through the marking */
 .mb-p.live textarea::selection{color:transparent;-webkit-text-fill-color:transparent;background:color-mix(in oklab,var(--acc) 26%,transparent)}
-/* The line a menu works on while the keyboard is away */
-.mb-p.mmtgt{border-radius:6px;background-color:color-mix(in oklab,var(--acc) 7%,transparent);box-shadow:0 0 0 5px color-mix(in oklab,var(--acc) 7%,transparent);outline:1.5px solid color-mix(in oklab,var(--acc) 42%,transparent);outline-offset:5px}
-.mb-lh.mmtgt{outline:1.5px solid color-mix(in oklab,var(--acc) 50%,transparent);outline-offset:-1px}
 .mb-c.mmtgt::after{border-color:color-mix(in oklab,var(--tk,var(--lc,var(--acc))) 50%,transparent);background:color-mix(in oklab,var(--tk,var(--lc,var(--acc))) 6%,transparent)}
 /* Styled words in list points */
 .mbf{position:relative}
@@ -2527,6 +2524,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"3.7",d:"20 nov 2026",i:[["t","memos",["Enklare: raden du skriver på", "Simpler: the line you are on"],["Raden där markören blinkar är raden knapparna längst ner jobbar med. Att trycka på en knapp eller välja något i menyn tar aldrig bort markören, så du kan fortsätta skriva direkt.", "The line where the cursor blinks is the line the buttons at the bottom work on. Tapping a button or choosing something in its menu never takes the cursor away, so you can keep writing."]]]},
 {v:"3.6",d:"20 nov 2026",i:[["t","memos",["Markera ord, även i listor", "Select words, in lists too"],["Markerade ord ligger kvar när du trycker på knapparna längst ner, även om telefonen hinner ta bort markeringen. Fet, kursiv, struken och färg går nu också på ord i en listpunkt. Med en meny öppen kan du trycka in i en rad och markera ord som vanligt.", "Selected words stay selected when you tap the buttons at the bottom, even if the phone clears the selection. Bold, italic, strike and colour now also work on words in a list point. With a menu open you can tap into a line and select words as usual."]]]},
 {v:"3.5",d:"20 nov 2026",i:[["t","memos",["Välj rad med menyn öppen", "Pick a line with the menu open"],["Raden du jobbar med syns med en ram även när tangentbordet är nere. Ett tryck bredvid raderna stänger menyn.", "The line you are working on shows a frame even with the keyboard down. A tap beside the lines closes the menu."]]]},
 {v:"3.4",d:"20 nov 2026",i:[["t","memos",["Färg på markerade ord", "Colour on selected words"],["Markerar du några ord och öppnar Aa ligger markeringen kvar, så fet, kursiv, struken och färg hamnar på just dem. Färgen syns också genom markeringen.", "Select some words and open Aa: the selection stays, so bold, italic, strike and colour go on just them. The colour also shows through the selection."]]]},
@@ -2876,43 +2874,26 @@ $("mm_more").onclick=async()=>{if(!MM.m)return;mmSave();
   if(v==="copy")mmCopy();else if(v==="del")mmTrash();else if(v==="dup")memoDup();
   else if(v==="saveas"){const f=await askOpts(tx("Spara som","Save as"),"",[["pdf","PDF",tx("Sidor i A4, bra att skriva ut eller skicka","A4 pages, good to print or send")],["img",tx("Bild","Picture"),tx("En lång bild, lätt att dela i en chatt","One long picture, easy to share in a chat")],["html",tx("Webbsida","Web page"),tx("Öppnas i webbläsaren, med länkar som går att trycka på","Opens in the browser, with links you can tap")]]);
     if(f){toast(tx("Sparar…","Saving…"),1500);if(f==="pdf")mmPdf();else if(f==="img")mmImage();else mmExport()}}};
-/* ---------- The bottom bar puts the keyboard away ----------
-   A tap on the bar or in one of its menus closes the keyboard; formatting still goes to the line you were on.
-   Only something new to write in (a new list, a list name, a link) opens the keyboard again. */
-/* The keyboard is put away only after the tap has done its job. Putting it away while the finger is still down
-   moves the bar under the finger, and the tap then lands on a line in the note instead. The view is held still
-   while the keyboard slides away, so nothing jumps. */
-var KBF=null;
+/* ---------- The bottom bar and the line you are on ----------
+   The simple rule: the line with the blinking cursor is the line the buttons at the bottom work on.
+   Tapping a button or a choice in its menu never takes the cursor away from that line, so you can go on writing.
+   If no line has the cursor, the buttons work on the line you were on last and do not bring up the keyboard. */
 function mmKbField(){const a=document.activeElement;return a&&$("mm_w").contains(a)&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA")?a:null}
-function mmHold(ms){const w=$("mm_w"),top=w.scrollTop,end=Date.now()+(ms||600);(function f(){if(Math.abs(w.scrollTop-top)>1)w.scrollTop=top;if(Date.now()<end)requestAnimationFrame(f)})()}
-function mmKbAway(){const a=mmKbField();if(a){mmHold(700);a.blur()}MMKB=false;if(typeof tgtPaint==="function")tgtPaint()}
-function mmKbDown(e){if(!e.target.closest("input,textarea,select"))e.preventDefault()}
-function mmKbAfter(){const was=KBF;KBF=null;if(was&&document.activeElement===was)mmKbAway();selBack()}
+function mmKbAway(){const a=mmKbField();if(a)a.blur();MMKB=false}
 [document.querySelector(".mmbar"),$("mm_fmt"),$("mm_sym"),$("mm_lst")].forEach(el=>{
-  el.addEventListener("pointerdown",e=>{KBF=mmKbField();MMKB=false;
-    /* Words marked in a line stay marked, and the keyboard stays, so B, I, S and colours can go on them. */
-    const S=selKeep();if(S){mmSel={el:S.el,s:S.s,e:S.e};SELHOLD=S;KBF=null;MMKB=true}},true);
-  el.addEventListener("mousedown",mmKbDown,true);
-  el.addEventListener("click",mmKbAfter)});
+  el.addEventListener("pointerdown",()=>{const S=selKeep();if(S){mmSel={el:S.el,s:S.s,e:S.e};SELHOLD=S}},true);
+  /* The button never takes the focus, so the cursor stays where it is. */
+  el.addEventListener("mousedown",e=>{if(!e.target.closest("input,textarea,select"))e.preventDefault()},true);
+  el.addEventListener("click",()=>selBack())});
 
-/* With a menu open, a tap in the note only closes the menu. It does not start writing or tick anything. */
+/* A tap beside the lines closes an open menu without bringing up the keyboard. Taps on lines work as usual. */
 const mmMenuOpen=()=>!$("mm_fmt").hidden||!$("mm_sym").hidden||!$("mm_lst").hidden;
 function mmMenusShut(){mmFmt(false);mmSym(false);mmLst(false)}
-/* With a menu open you can still tap into a line, place the cursor and mark words; the menu stays open and follows.
-   A tap beside the lines closes the menu without bringing up the keyboard. */
 $("mm_w").addEventListener("mousedown",e=>{if(!mmMenuOpen()||DR)return;const d=e.target.closest("#mm_body>.mb");if(d&&/^(p|c|lh)$/.test(d.dataset.t))return;
-  e.preventDefault();e.stopPropagation();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600);mmKbAway();mmMenusShut()},true);
+  e.preventDefault();e.stopPropagation();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600);mmMenusShut()},true);
+/* An open menu follows the line you move to. */
 $("mm_body").addEventListener("focusin",()=>{if(!$("mm_fmt").hidden){FMT_SUB="";mmFmtPaint()}if(!$("mm_lst").hidden)mmLst(true)});
-var TGSEL=null;
-function tgtPaint(){document.querySelectorAll("#mm_body .mmtgt").forEach(x=>x.classList.remove("mmtgt"));
-  if(mmMenuOpen()&&!mmKbField()&&mmLast&&mmLast.isConnected&&mmLast.closest("#mm_body"))mmLast.classList.add("mmtgt")}
-[["mmFmt",mmFmt],["mmSym",mmSym],["mmLst",mmLst]].forEach(([n,f])=>{window[n]=function(){const r=f.apply(this,arguments);tgtPaint();return r}});
-mmFmt=window.mmFmt;mmSym=window.mmSym;mmLst=window.mmLst;
-["mm_fmt","mm_sym","mm_lst"].forEach(id=>$(id).addEventListener("click",()=>requestAnimationFrame(tgtPaint)));
-$("mm_body").addEventListener("focusin",tgtPaint);$("mm_body").addEventListener("focusout",()=>setTimeout(tgtPaint,0));
-$("mm_w").addEventListener("pointerdown",e=>{if(mmMenuOpen()&&e.target.closest(".mbgrip,.mb-lh"))e.stopPropagation()},true);
-/* When a menu choice replaces the line (a heading, a list), the menus keep working on the new line,
-   even though the keyboard stays away. */
+/* When a menu choice replaces the line (a heading, a list) without a cursor, the menus keep working on the new line. */
 const _focusEnd22=mmFocusEnd;mmFocusEnd=function(d){if(MMSOFT&&d&&d.isConnected){mmLast=d;const f=d.querySelector("textarea,input");if(f){const n=f.value.length;mmSel={el:f,s:n,e:n}}return}_focusEnd22(d)};
 /* "Do not bring the keyboard up" lasts for one tap only, whatever the tap's handlers do with it. */
 window.addEventListener("click",()=>setTimeout(()=>{MMSOFT=false},0),true);
