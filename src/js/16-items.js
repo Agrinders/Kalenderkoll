@@ -55,3 +55,14 @@ $("mm_w").addEventListener("mousedown",e=>{const a=document.activeElement,w=$("m
   if(!t.closest("input,textarea,.mbv,#mm_tail,.mmti"))return;
   e.preventDefault();e.stopPropagation();a.blur();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600)},true);
 $("mm_w").addEventListener("click",e=>{if(!mmSwallow)return;mmSwallow=false;e.preventDefault();e.stopPropagation()},true);
+
+/* ---------- The bar at the bottom does not open the keyboard by itself ----------
+   Formatting, symbols, list kinds, sorting and switches work on the line you were on without bringing the keyboard up.
+   Only something new to write in (a new list, a list name, a link) opens it, so you can type right away.
+   If you were already writing, you stay where you were. */
+var MMKB=false,MMSOFT=false;
+["mm_fmt","mm_sym","mm_lst"].forEach(id=>{const el=$(id);
+  el.addEventListener("pointerdown",()=>{const a=document.activeElement;MMKB=!!(a&&$("mm_w").contains(a)&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"))},true);
+  el.addEventListener("click",()=>{MMSOFT=!MMKB},true);el.addEventListener("click",()=>{setTimeout(()=>{MMSOFT=false},0)})});
+document.querySelector(".mmbar").addEventListener("pointerdown",()=>{const a=document.activeElement;MMKB=!!(a&&$("mm_w").contains(a)&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"))},true);
+const _focusEnd=mmFocusEnd;mmFocusEnd=function(d){if(MMSOFT)return;_focusEnd(d)};

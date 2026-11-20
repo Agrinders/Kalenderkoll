@@ -195,6 +195,8 @@ function mmFmt(open){const f=$("mm_fmt");if(open===undefined)open=f.hidden;f.hid
 $("mm_aa").onmousedown=e=>e.preventDefault();$("mm_fmt").addEventListener("mousedown",e=>e.preventDefault());
 $("mm_aa").onclick=()=>mmFmt();
 function mmFocusEnd(d){const f=d&&d.querySelector("textarea,input");if(!f)return;f.focus();const n=f.value.length;try{f.setSelectionRange(n,n)}catch(e){}}
+/* Focus that always happens: used when something new to write in is created. */
+var mmFocusHard=mmFocusEnd;
 $("mm_fmt").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;let d=mmTarget();
   if(b.dataset.fs!==undefined){const v=b.dataset.fs;
     if(v==="lh"){/* A new list: a name, then its first item. */const at=d||$("mm_body").lastElementChild;const h=mmBlock({t:"lh",x:""});
@@ -237,7 +239,7 @@ $("mm_sy").onclick=()=>mmSym();
 const _fmt=mmFmt;mmFmt=function(open){if(open===undefined)open=$("mm_fmt").hidden;if(open)mmSym(false);_fmt(open)};
 $("mm_sym").addEventListener("click",e=>{const b=e.target.closest("[data-sym]");if(!b)return;let t=mmSel&&mmSel.el&&mmSel.el.isConnected?mmSel.el:null;
   if(!t){const d=mmInsert({t:"p",x:""},null,true);t=d.querySelector("textarea");mmSel={el:t,s:0,e:0}}
-  const v=t.value,s0=Math.min(mmSel.s??v.length,v.length),e0=Math.min(mmSel.e??v.length,v.length),sym=b.dataset.sym;t.value=v.slice(0,s0)+sym+v.slice(e0);const p=s0+sym.length;t.focus();try{t.setSelectionRange(p,p)}catch(err){}mmSel={el:t,s:p,e:p};
+  const v=t.value,s0=Math.min(mmSel.s??v.length,v.length),e0=Math.min(mmSel.e??v.length,v.length),sym=b.dataset.sym;t.value=v.slice(0,s0)+sym+v.slice(e0);const p=s0+sym.length;if(!MMSOFT)t.focus();try{t.setSelectionRange(p,p)}catch(err){}mmSel={el:t,s:p,e:p};
   if(t.tagName==="TEXTAREA")mmGrow(t);if(t.id==="mm_ti"||t.closest(".mb"))mmChanged()});
 const _closeMM2=closeMM;closeMM=function(){mmSym(false);_closeMM2()};
 
@@ -339,7 +341,7 @@ $("mm_lst").addEventListener("click",e=>{const b=e.target.closest("[data-lk]");i
     const c=mmBlock({t:"c",x:"",d:false});h.after(c);if(!c.nextElementSibling)c.after(mmBlock({t:"p",x:""}));h.querySelector("input").focus();mmChanged();mmLst(false);return}
   const G=d&&(d.dataset.t==="c"||d.dataset.t==="lh")?mmGroup(d):[];
   if(G.length){mmSetKind(G,v);mmChanged();mmFocusEnd(d);mmLst(false);return}
-  if(d)mmFocusEnd(d);mmMakeList();const n=mmCur();if(n&&n.dataset.t==="c"){mmSetKind(mmGroup(n),v);mmChanged()}mmLst(false)});
+  if(d)mmFocusHard(d);mmMakeList();const n=mmCur();if(n&&n.dataset.t==="c"){mmSetKind(mmGroup(n),v);mmChanged()}mmLst(false)});
 
 /* ---------- Jump to a heading or list ----------
    A small flap on the left edge appears when a note has headings or named lists.

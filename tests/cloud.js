@@ -166,6 +166,13 @@ await step('private notes: only the writer sees them; sharing and making private
   const b2=await waitFor(B1,()=>MEMOS.some(x=>x.ti==='Julklapp till Maya'));await ck('#mm_pv');await ck('#m_yes');await w(A1,900);await ck('#mm_back');
   const b3=await waitFor(B1,()=>!MEMOS.some(x=>x.ti==='Julklapp till Maya'));
   need(a[0]&&a[1]&&a[2]&&!a[3]&&a[4]&&!b&&!inShared,'private '+JSON.stringify([a,b,inShared]));need(b2,'sharing did not reach B');need(b3,'making private did not hide it from B');return[a,b,b2,b3]});
+await step('notes: the bottom bar only opens the keyboard for something new to write',async()=>{await A1.evaluate(()=>{go('t');openMM('cost')});await w(A1,500);
+  const kb=()=>A1.evaluate(()=>{const a=document.activeElement;return !!(a&&a.closest&&a.closest('#mm_w')&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA'))});
+  await tap(A1,'#mm_body [data-b="a"] form input');await A1.evaluate(()=>document.activeElement.blur());
+  await A1.click('#mm_aa');await A1.click('[data-fk="g"]');const k1=await kb();await A1.click('#mm_sy');await A1.click('[data-sym="❤️"]');const k2=await kb();
+  await A1.click('#mm_chk');await A1.click('[data-lk="b"]');const k3=await kb();
+  await A1.click('#mm_chk');await A1.click('[data-lk="named"]');const k4=await kb();await A1.click('#mm_back');await w(A1,600);
+  need(!k1&&!k2&&!k3&&k4,'keyboard '+[k1,k2,k3,k4]);return[k1,k2,k3,k4]});
 await step('a reinstalled phone gets everything back from a backup file',async()=>{const bk=await A1.evaluate(()=>backupText());const D1=await phone();await D1.goto(base);await waitFor(D1,()=>KK.mode!=='starting');await waitFor(D1,()=>cs.classList.contains('on'));
   need(await D1.evaluate(()=>!cs_rs.classList.contains('hide')),'no restore button on the welcome sheet');
   await D1.setInputFiles('#bk_in',{name:'Kalenderkoll-sakerhetskopia.json',mimeType:'application/json',buffer:Buffer.from(bk)});await w(D1);need(await D1.evaluate(()=>modal.classList.contains('on')),'did not ask');

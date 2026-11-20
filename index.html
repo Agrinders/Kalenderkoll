@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="1c41ea164b1b">
+<meta name="kal-build" content="7108e64e1082">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -1892,6 +1892,8 @@ function mmFmt(open){const f=$("mm_fmt");if(open===undefined)open=f.hidden;f.hid
 $("mm_aa").onmousedown=e=>e.preventDefault();$("mm_fmt").addEventListener("mousedown",e=>e.preventDefault());
 $("mm_aa").onclick=()=>mmFmt();
 function mmFocusEnd(d){const f=d&&d.querySelector("textarea,input");if(!f)return;f.focus();const n=f.value.length;try{f.setSelectionRange(n,n)}catch(e){}}
+/* Focus that always happens: used when something new to write in is created. */
+var mmFocusHard=mmFocusEnd;
 $("mm_fmt").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;let d=mmTarget();
   if(b.dataset.fs!==undefined){const v=b.dataset.fs;
     if(v==="lh"){/* A new list: a name, then its first item. */const at=d||$("mm_body").lastElementChild;const h=mmBlock({t:"lh",x:""});
@@ -1934,7 +1936,7 @@ $("mm_sy").onclick=()=>mmSym();
 const _fmt=mmFmt;mmFmt=function(open){if(open===undefined)open=$("mm_fmt").hidden;if(open)mmSym(false);_fmt(open)};
 $("mm_sym").addEventListener("click",e=>{const b=e.target.closest("[data-sym]");if(!b)return;let t=mmSel&&mmSel.el&&mmSel.el.isConnected?mmSel.el:null;
   if(!t){const d=mmInsert({t:"p",x:""},null,true);t=d.querySelector("textarea");mmSel={el:t,s:0,e:0}}
-  const v=t.value,s0=Math.min(mmSel.s??v.length,v.length),e0=Math.min(mmSel.e??v.length,v.length),sym=b.dataset.sym;t.value=v.slice(0,s0)+sym+v.slice(e0);const p=s0+sym.length;t.focus();try{t.setSelectionRange(p,p)}catch(err){}mmSel={el:t,s:p,e:p};
+  const v=t.value,s0=Math.min(mmSel.s??v.length,v.length),e0=Math.min(mmSel.e??v.length,v.length),sym=b.dataset.sym;t.value=v.slice(0,s0)+sym+v.slice(e0);const p=s0+sym.length;if(!MMSOFT)t.focus();try{t.setSelectionRange(p,p)}catch(err){}mmSel={el:t,s:p,e:p};
   if(t.tagName==="TEXTAREA")mmGrow(t);if(t.id==="mm_ti"||t.closest(".mb"))mmChanged()});
 const _closeMM2=closeMM;closeMM=function(){mmSym(false);_closeMM2()};
 
@@ -2036,7 +2038,7 @@ $("mm_lst").addEventListener("click",e=>{const b=e.target.closest("[data-lk]");i
     const c=mmBlock({t:"c",x:"",d:false});h.after(c);if(!c.nextElementSibling)c.after(mmBlock({t:"p",x:""}));h.querySelector("input").focus();mmChanged();mmLst(false);return}
   const G=d&&(d.dataset.t==="c"||d.dataset.t==="lh")?mmGroup(d):[];
   if(G.length){mmSetKind(G,v);mmChanged();mmFocusEnd(d);mmLst(false);return}
-  if(d)mmFocusEnd(d);mmMakeList();const n=mmCur();if(n&&n.dataset.t==="c"){mmSetKind(mmGroup(n),v);mmChanged()}mmLst(false)});
+  if(d)mmFocusHard(d);mmMakeList();const n=mmCur();if(n&&n.dataset.t==="c"){mmSetKind(mmGroup(n),v);mmChanged()}mmLst(false)});
 
 /* ---------- Jump to a heading or list ----------
    A small flap on the left edge appears when a note has headings or named lists.
@@ -2289,7 +2291,7 @@ $("mm_body").addEventListener("click",e=>{const v=e.target.closest(".mbv");if(!v
   d.classList.remove("rich");mmGrow(ta);ta.focus();try{ta.setSelectionRange(pos,pos)}catch(err){}});
 /* The Aa panel: B, I, S and colours work on the words you have selected (or start a styled word where you are). */
 function wrapSel(open,close){const S3=mmSel,t=S3&&S3.el;if(!t||!t.isConnected||t.tagName!=="TEXTAREA"){toast(tx("Markera några ord i en textrad först","Select some words in a text line first"));return false}
-  const v=t.value,a=Math.min(S3.s,S3.e),b=Math.max(S3.s,S3.e);t.value=v.slice(0,a)+open+v.slice(a,b)+close+v.slice(b);const na=a+open.length,nb=b+open.length;t.focus();t.setSelectionRange(na,nb);mmSel={el:t,s:na,e:nb};mmGrow(t);mmChanged();return true}
+  const v=t.value,a=Math.min(S3.s,S3.e),b=Math.max(S3.s,S3.e);t.value=v.slice(0,a)+open+v.slice(a,b)+close+v.slice(b);const na=a+open.length,nb=b+open.length;if(!MMSOFT)t.focus();t.setSelectionRange(na,nb);mmSel={el:t,s:na,e:nb};mmGrow(t);mmChanged();return true}
 const _fmtPaint2=mmFmtPaint;mmFmtPaint=function(){_fmtPaint2();const f=$("mm_fmt");const S3=mmSel,sel=S3&&S3.el&&S3.el.tagName==="TEXTAREA"&&S3.el.isConnected&&S3.s!==S3.e;
   f.insertAdjacentHTML("afterbegin",`<div class="mmfs mmin"><button type="button" data-wr="**" aria-label="${tx("Fet","Bold")}"><b>B</b></button><button type="button" data-wr="*" aria-label="${tx("Kursiv","Italic")}"><i>I</i></button><button type="button" data-wr="~~" aria-label="${tx("Genomstruken","Strike")}"><s>S</s></button><span>${sel?tx("Gäller de markerade orden","For the selected words"):tx("Markera ord för fet, kursiv, struken eller färg på bara dem","Select words to make just them bold, italic, struck or coloured")}</span></div>`);
   f.classList.toggle("selmode",!!sel)};
@@ -2440,7 +2442,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
-{v:"3.1",d:"20 nov 2026",i:[["t","memos",["Privata anteckningar","Private notes"],["Knappen Privat bredvid Ny skapar en anteckning som bara du ser. Den sparas på ett eget, hemligt ställe som din partners telefon aldrig får. Under rubriken i en anteckning kan du byta mellan delad och privat.","The Private button beside New makes a note only you see. It is saved in a separate, secret place your partner's phone never gets. Under a note's title you can switch between shared and private."]]]},
+{v:"3.1",d:"20 nov 2026",i:[["t","memos",["Lugnare verktygsrad","A calmer toolbar"],["Knapparna längst ner i en anteckning öppnar inte tangentbordet av sig själva. Det öppnas bara när du skapar något nytt att skriva i, som en ny lista.","The buttons at the bottom of a note no longer open the keyboard by themselves. It only opens when you create something new to write in, like a new list."]],["t","memos",["Privata anteckningar","Private notes"],["Knappen Privat bredvid Ny skapar en anteckning som bara du ser. Den sparas på ett eget, hemligt ställe som din partners telefon aldrig får. Under rubriken i en anteckning kan du byta mellan delad och privat.","The Private button beside New makes a note only you see. It is saved in a separate, secret place your partner's phone never gets. Under a note's title you can switch between shared and private."]]]},
 {v:"3.0",d:"16 nov 2026",i:[["t","memos",["Fäst från listan","Pin from the list"],["Varje anteckning har en nål uppe till höger i listan. Tryck för att fästa den överst.","Each note has a pin at the top right in the list. Tap it to keep the note at the top."]],["t","memos",["Spara som PDF med bockrutor","Save as PDF with tick boxes"],["Under ⋯ i en anteckning finns Spara som: PDF i A4, en bild eller en webbsida. I PDF:en går de runda rutorna att bocka i.","Under ⋯ in a note there is Save as: a PDF in A4, a picture or a web page. In the PDF the round boxes can be ticked."]]]},
 {v:"2.9",d:"16 nov 2026",i:[["t","memos",["Ett tryck för att titta","One tap to look"],["Skriver du i en anteckning och trycker någon annanstans stängs bara tangentbordet, så du kan se allt. Tryck igen för att skriva där.","If you are writing in a note and tap somewhere else, only the keyboard closes so you can see everything. Tap again to write there."]],["t","memos",["Beskrivning och kostnad i listor","Descriptions and costs in lists"],["Ställ in i Lista-menyn när du står i en lista: en rad för detaljer under varje punkt, och ett belopp på varje punkt med summan och hur mycket som är kvar.","Switch on in the Lista menu while in a list: a line for details under each point, and an amount on each point with the total and how much is left."]]]},
 {v:"2.8",d:"16 nov 2026",i:[["o","",["Enklare ikon","Simpler icon"],["En lugnare appikon: en vit kalender med ett hjärta på rosa botten. Den syns efter att du installerat den nya Android-appen.","A calmer app icon: a white calendar with a heart on a pink background. It shows after you install the new Android app."]],["n","",["Meddelanden längst ner","Messages at the bottom"],["Korta meddelanden som \"Sparat\" och \"Ångra\" visas nu längst ner, så de aldrig täcker knapparna högst upp.","Short messages like \"Saved\" and \"Undo\" now show at the bottom, so they never cover the buttons at the top."]]]},
@@ -2529,6 +2531,17 @@ $("mm_w").addEventListener("mousedown",e=>{const a=document.activeElement,w=$("m
   if(!t.closest("input,textarea,.mbv,#mm_tail,.mmti"))return;
   e.preventDefault();e.stopPropagation();a.blur();mmSwallow=true;setTimeout(()=>{mmSwallow=false},600)},true);
 $("mm_w").addEventListener("click",e=>{if(!mmSwallow)return;mmSwallow=false;e.preventDefault();e.stopPropagation()},true);
+
+/* ---------- The bar at the bottom does not open the keyboard by itself ----------
+   Formatting, symbols, list kinds, sorting and switches work on the line you were on without bringing the keyboard up.
+   Only something new to write in (a new list, a list name, a link) opens it, so you can type right away.
+   If you were already writing, you stay where you were. */
+var MMKB=false,MMSOFT=false;
+["mm_fmt","mm_sym","mm_lst"].forEach(id=>{const el=$(id);
+  el.addEventListener("pointerdown",()=>{const a=document.activeElement;MMKB=!!(a&&$("mm_w").contains(a)&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"))},true);
+  el.addEventListener("click",()=>{MMSOFT=!MMKB},true);el.addEventListener("click",()=>{setTimeout(()=>{MMSOFT=false},0)})});
+document.querySelector(".mmbar").addEventListener("pointerdown",()=>{const a=document.activeElement;MMKB=!!(a&&$("mm_w").contains(a)&&(a.tagName==="INPUT"||a.tagName==="TEXTAREA"))},true);
+const _focusEnd=mmFocusEnd;mmFocusEnd=function(d){if(MMSOFT)return;_focusEnd(d)};
 /* ---------- Private notes ----------
    A private note is saved in a separate space whose code only you have, never in the shared calendar.
    Your partner's phone does not get it, cannot open it and is not told about it. */
