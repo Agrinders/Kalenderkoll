@@ -74,7 +74,7 @@ await step('notes: write, to-do list, link, picture; partner sees it',async()=>{
   const empty=await A1.evaluate(async()=>{const n=MEMOS.length;document.getElementById('mm_new').click();await new Promise(r=>setTimeout(r,400));document.getElementById('mm_back').click();await new Promise(r=>setTimeout(r,500));return MEMOS.length===n});need(empty,'empty note was kept');
   return types});
 await step('notes: headings, colour and named lists',async()=>{await A1.evaluate(()=>go('t'));await A1.click('#mm_new');await w(A1,400);await A1.fill('#mm_ti','Helgen');
-  await tap(A1,'#mm_body .mb-p textarea');await A1.keyboard.type('Lördag');await A1.click('#mm_aa');await A1.click('[data-sub="s"]');await A1.click('[data-fs="h2"]');await A1.click('[data-fk="r"]');await A1.keyboard.press('Enter');await A1.keyboard.type('Sovmorgon');
+  await tap(A1,'#mm_body .mb-p textarea');await A1.keyboard.type('Lördag');await A1.click('#mm_aa');await A1.click('[data-sub="s"]');await A1.click('[data-fs="h2"]');await A1.click('[data-fk="r"]');await A1.click('#mm_aa');await tap(A1,'#mm_body .mb-h2 textarea');await A1.keyboard.press('End');await A1.keyboard.press('Enter');await A1.keyboard.type('Sovmorgon');
   await A1.click('#mm_chk');await A1.click('[data-lk="named"]');await A1.keyboard.type('Handla');await A1.keyboard.press('Enter');await A1.keyboard.type('Mjölk');await A1.keyboard.press('Enter');await A1.keyboard.type('Ägg');
   await tap(A1,'#mm_body .mb-c .mbck');await w(A1,100);const pr=await A1.evaluate(()=>document.querySelector('#mm_body .mb-lh em').textContent);
   await A1.click('#mm_back');await w(A1,900);const m=await A1.evaluate(()=>MEMOS.find(x=>x.ti==='Helgen'));need(m,'not saved');
@@ -147,7 +147,7 @@ await step('notes: bold word, search and pin in the list; calendar search',async
   await A1.evaluate(()=>go('k'));await A1.click('#k_cal .srchb');await A1.fill('#ss_q','middag');await w(A1,200);const ev=await A1.evaluate(()=>[...document.querySelectorAll('#ss_r .ssi b')].map(b=>b.textContent));await A1.click('#ss_r .ssi');await w(A1,500);const opened=await A1.evaluate(()=>es.classList.contains('on'));await A1.evaluate(()=>closeES());
   need(rich[0]==='Ring **hyresvärden** idag'&&rich[1]&&rich[2]==='hyresvärden','rich '+JSON.stringify(rich));need(/📌/.test(first),'pin '+first);need(hits===1,'search '+hits);need(ev.some(x=>/Middag/.test(x))&&opened,'event search '+JSON.stringify(ev));return[rich,first,hits,ev]});
 await step('notes: descriptions and costs on list points, with a total',async()=>{await A1.evaluate(()=>{const now=Date.now(),m={id:'cost',ti:'Möbler',bl:[{t:'lh',x:'Vardagsrum',b:'h'},{t:'c',x:'Soffa',d:false,b:'a'},{t:'c',x:'Matta',d:false,b:'b'}],at:now,up:now,by:'a',ub:'a'};MEMOS.push(m);put('memo_cost',memoDoc(m));go('t');openMM('cost')});await w(A1,500);
-  await tap(A1,'#mm_body [data-b="a"] form input');await A1.click('#mm_chk');await A1.click('[data-flag="op"]');await A1.click('[data-flag="od"]');await w(A1,200);
+  await tap(A1,'#mm_body [data-b="a"] form input');await A1.click('#mm_chk');await A1.click('[data-flag="op"]');await A1.click('[data-flag="od"]');await w(A1,200);await A1.click('#mm_chk');
   await A1.fill('#mm_body [data-b="a"] .mbpr','4 995');await A1.fill('#mm_body [data-b="b"] .mbpr','1200,50');await tap(A1,'#mm_body [data-b="a"] form input');await A1.fill('#mm_body [data-b="a"] .mbds','Grå, tre sits');await tap(A1,'#mm_body [data-b="b"] .mbck');await A1.click('#mm_ti');await w(A1,300);
   const tot=await A1.evaluate(()=>[document.querySelector('#mm_body .mbtot b').textContent,document.querySelector('#mm_body .mb-lh .mbsum').textContent]);await A1.click('#mm_back');await w(A1,800);
   const sv=await A1.evaluate(()=>MEMOS.find(m=>m.id==='cost').bl.map(b=>[b.t,b.x,b.pr,b.ds,b.op,b.od]));
@@ -195,6 +195,14 @@ await step('notes: tags filter the list; duplicate as a template',async()=>{awai
   await A1.click('#mm_tagf [data-tgf="resa"]');await w(A1,200);const vis=await A1.evaluate(()=>[...document.querySelectorAll('#mm_list .mmrow')].filter(r=>!r.hidden).map(r=>r.querySelector('.mmit b').textContent));
   await A1.click('#mm_tagf [data-tgf=""]');
   need(t1[0].join()==='resa'&&/resa/.test(t1[1][0]),'tag '+JSON.stringify(t1));need(d[0]&&d[1]==='Inför resan'&&!/true/.test(d[2])&&d[3]==='resa'&&d[4]&&d[5]>=1,'dup '+JSON.stringify(d));if(vis.length!==1)console.log('DBG2',await A1.evaluate(()=>JSON.stringify(MEMOS.filter(m=>!m.del).map(m=>[m.id,m.ti,m.tags]))));need(vis.length===1&&vis[0]==='Inför resan','filter '+JSON.stringify(vis));return[t1[0],d.slice(1,4),vis]});
+await step('notes: the bottom bar puts the keyboard away; a tap beside a menu only closes it',async()=>{await A1.evaluate(()=>{go('t');openMM('cost')});await w(A1,500);
+  const kb=()=>A1.evaluate(()=>{const a=document.activeElement;return !!(a&&a.closest&&a.closest('#mm_w')&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA'))});
+  await tap(A1,'#mm_body [data-b="a"] form input');const k0=await kb();await A1.click('#mm_aa');const k1=await kb();await A1.click('[data-fk="b"]');const k2=await kb();const col=await A1.evaluate(()=>document.querySelector('#mm_body [data-b="a"]').dataset.k);
+  await A1.click('#mm_aa');const k3=await kb();
+  await tap(A1,'#mm_body [data-b="a"] form input');await A1.click('#mm_chk');const k4=await kb();const done0=await A1.evaluate(()=>document.querySelector('#mm_body [data-b="b"]').classList.contains('done'));
+  await A1.click('#mm_ti');await w(A1,200);const r=await A1.evaluate(()=>[document.getElementById('mm_lst').hidden,document.querySelector('#mm_body [data-b="b"]').classList.contains('done')]);const k5=await kb();
+  await A1.click('#mm_back');await w(A1,500);
+  need(k0&&!k1&&!k2&&!k3&&!k4&&!k5,'keyboard '+[k0,k1,k2,k3,k4,k5]);need(col==='b','colour '+col);need(r[0]&&r[1]===done0,'menu '+r);return[k0,k1,k2,k3,k4,k5,col,r]});
 await step('a reinstalled phone gets everything back from a backup file',async()=>{const bk=await A1.evaluate(()=>backupText());const D1=await phone();await D1.goto(base);await waitFor(D1,()=>KK.mode!=='starting');await waitFor(D1,()=>cs.classList.contains('on'));
   need(await D1.evaluate(()=>!cs_rs.classList.contains('hide')),'no restore button on the welcome sheet');
   await D1.setInputFiles('#bk_in',{name:'Kalenderkoll-sakerhetskopia.json',mimeType:'application/json',buffer:Buffer.from(bk)});await w(D1);need(await D1.evaluate(()=>modal.classList.contains('on')),'did not ask');
