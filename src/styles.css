@@ -852,3 +852,28 @@ mark.fdw{color:inherit}
 .mb-c.richi .mbf>input::selection{color:transparent;-webkit-text-fill-color:transparent;background:color-mix(in oklab,var(--acc) 26%,transparent)}
 .mbio .rb{font-weight:700}.mbio .ri{font-style:italic}.mbio .rs{text-decoration:line-through;text-decoration-color:color-mix(in oklab,currentColor 60%,transparent)}
 .mbio.live .rb{font-weight:inherit;-webkit-text-stroke:.45px currentColor}.mbio .mk{opacity:.22}
+/* The month on the whole screen */
+.mnav .fsb{order:6;width:40px;height:40px;color:var(--soft)}.mnav .fsb svg{width:19px;height:19px;stroke-width:1.9}
+body.calfs{overflow:hidden}
+body.calfs #k_cal{position:fixed;inset:0;z-index:46;margin:0;max-width:none;border:0;border-radius:0;box-shadow:none;display:flex;flex-direction:column;padding:calc(6px + var(--sat)) 6px calc(8px + var(--sab));background:var(--bg);animation:fsIn .26s cubic-bezier(.2,.8,.2,1)}
+body.calfs #k_cal .mnav{flex:none;margin:0 0 2px;padding:0 4px}
+body.calfs #k_cal .cwk{flex:none}
+body.calfs #k_cal .cgr{flex:1;min-height:0;grid-template-rows:repeat(var(--rows,6),minmax(0,1fr));gap:3px 2px}
+body.calfs #k_cal .cgr button{height:auto!important;min-height:0!important;padding:3px 0}
+body.calfs #k_cal .cgr .v{padding-top:8px}
+body.calfs #k_now{display:none}
+body.calfs .cev{flex:1;min-height:0;overflow:hidden;gap:2px;padding:0 2px}
+body.calfs .cev u{flex:none;font-size:10.5px;line-height:1.2;padding:0 2px 0 4px;border-block:2px solid transparent;-webkit-line-clamp:3}
+body.calfs .cev em{flex:none}
+body.calfs .cev u i{font-style:normal;font-weight:750;opacity:.65}
+body.calfs .cev em{font-size:10px}
+@media (min-width:560px){body.calfs .cev u{font-size:12px;-webkit-line-clamp:1;text-overflow:ellipsis}body.calfs .cev em{font-size:11px}}
+@keyframes fsIn{from{opacity:0;transform:scale(.985)}}
+/* Sideways: low rows, so the heading and the day numbers take less room. */
+@media (max-height:520px){body.calfs #k_cal{padding-top:calc(2px + var(--sat));padding-left:calc(6px + env(safe-area-inset-left,0px));padding-right:calc(6px + env(safe-area-inset-right,0px))}
+  body.calfs #k_cal .mnav button{width:36px;height:34px}body.calfs #k_cal .mnav b{font-size:17px}
+  body.calfs #k_cal .cwk span{padding:1px 0;font-size:10px}
+  body.calfs #k_cal .cgr button{flex-direction:row;align-items:stretch;padding:2px 2px 2px 3px;gap:3px}body.calfs #k_cal .cgr button b{width:22px;height:22px;font-size:12px}
+  body.calfs .cev{height:100%;gap:1.5px}body.calfs .cev u{display:block;white-space:nowrap;text-overflow:ellipsis;font-size:11px;border-block-width:1.5px}body.calfs .cev u::after{display:none}
+  body.calfs #k_cal .cgr .v{padding-top:4px}body.calfs .cev u{-webkit-line-clamp:1;text-overflow:ellipsis}}
+@media (prefers-reduced-motion:reduce){body.calfs #k_cal{animation:none}}

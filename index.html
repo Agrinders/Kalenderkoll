@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="95e0d64a4179">
+<meta name="kal-build" content="bde3aeb06995">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -865,6 +865,31 @@ mark.fdw{color:inherit}
 .mb-c.richi .mbf>input::selection{color:transparent;-webkit-text-fill-color:transparent;background:color-mix(in oklab,var(--acc) 26%,transparent)}
 .mbio .rb{font-weight:700}.mbio .ri{font-style:italic}.mbio .rs{text-decoration:line-through;text-decoration-color:color-mix(in oklab,currentColor 60%,transparent)}
 .mbio.live .rb{font-weight:inherit;-webkit-text-stroke:.45px currentColor}.mbio .mk{opacity:.22}
+/* The month on the whole screen */
+.mnav .fsb{order:6;width:40px;height:40px;color:var(--soft)}.mnav .fsb svg{width:19px;height:19px;stroke-width:1.9}
+body.calfs{overflow:hidden}
+body.calfs #k_cal{position:fixed;inset:0;z-index:46;margin:0;max-width:none;border:0;border-radius:0;box-shadow:none;display:flex;flex-direction:column;padding:calc(6px + var(--sat)) 6px calc(8px + var(--sab));background:var(--bg);animation:fsIn .26s cubic-bezier(.2,.8,.2,1)}
+body.calfs #k_cal .mnav{flex:none;margin:0 0 2px;padding:0 4px}
+body.calfs #k_cal .cwk{flex:none}
+body.calfs #k_cal .cgr{flex:1;min-height:0;grid-template-rows:repeat(var(--rows,6),minmax(0,1fr));gap:3px 2px}
+body.calfs #k_cal .cgr button{height:auto!important;min-height:0!important;padding:3px 0}
+body.calfs #k_cal .cgr .v{padding-top:8px}
+body.calfs #k_now{display:none}
+body.calfs .cev{flex:1;min-height:0;overflow:hidden;gap:2px;padding:0 2px}
+body.calfs .cev u{flex:none;font-size:10.5px;line-height:1.2;padding:0 2px 0 4px;border-block:2px solid transparent;-webkit-line-clamp:3}
+body.calfs .cev em{flex:none}
+body.calfs .cev u i{font-style:normal;font-weight:750;opacity:.65}
+body.calfs .cev em{font-size:10px}
+@media (min-width:560px){body.calfs .cev u{font-size:12px;-webkit-line-clamp:1;text-overflow:ellipsis}body.calfs .cev em{font-size:11px}}
+@keyframes fsIn{from{opacity:0;transform:scale(.985)}}
+/* Sideways: low rows, so the heading and the day numbers take less room. */
+@media (max-height:520px){body.calfs #k_cal{padding-top:calc(2px + var(--sat));padding-left:calc(6px + env(safe-area-inset-left,0px));padding-right:calc(6px + env(safe-area-inset-right,0px))}
+  body.calfs #k_cal .mnav button{width:36px;height:34px}body.calfs #k_cal .mnav b{font-size:17px}
+  body.calfs #k_cal .cwk span{padding:1px 0;font-size:10px}
+  body.calfs #k_cal .cgr button{flex-direction:row;align-items:stretch;padding:2px 2px 2px 3px;gap:3px}body.calfs #k_cal .cgr button b{width:22px;height:22px;font-size:12px}
+  body.calfs .cev{height:100%;gap:1.5px}body.calfs .cev u{display:block;white-space:nowrap;text-overflow:ellipsis;font-size:11px;border-block-width:1.5px}body.calfs .cev u::after{display:none}
+  body.calfs #k_cal .cgr .v{padding-top:4px}body.calfs .cev u{-webkit-line-clamp:1;text-overflow:ellipsis}}
+@media (prefers-reduced-motion:reduce){body.calfs #k_cal{animation:none}}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1628,7 +1653,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
 (()=>{const on=id=>$(id).classList.contains("on");
-  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["mv",closeMV],["mm",closeMM],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
+  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["mv",closeMV],["mm",closeMM],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(typeof calFsOn==="function"&&calFsOn()){calFs(false);return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
   const guard=()=>history.pushState({kk:1},"");try{history.replaceState({kk:0},"");guard()}catch(e){return}
   addEventListener("popstate",()=>{if(closeTop())return guard();if(tab!=="h"){go("h");return guard()}history.back()})})();
 
@@ -2524,6 +2549,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"3.8",d:"24 nov 2026",i:[["k","",["Månaden i helskärm", "The month full screen"],["Tryck på helskärmsknappen uppe till höger i månaden. Då fyller månaden hela skärmen och varje dag visar så många händelser som får plats. Svep för att byta månad och tryck på en dag för att se den. Vrid telefonen för ännu bredare dagar med klockslag.", "Tap the full screen button at the top right of the month. The month then fills the whole screen and each day shows as many events as fit. Swipe to change month and tap a day to see it. Turn the phone sideways for even wider days with times."]]]},
 {v:"3.7",d:"20 nov 2026",i:[["t","memos",["Enklare: raden du skriver på", "Simpler: the line you are on"],["Raden där markören blinkar är raden knapparna längst ner jobbar med. Att trycka på en knapp eller välja något i menyn tar aldrig bort markören, så du kan fortsätta skriva direkt.", "The line where the cursor blinks is the line the buttons at the bottom work on. Tapping a button or choosing something in its menu never takes the cursor away, so you can keep writing."]]]},
 {v:"3.6",d:"20 nov 2026",i:[["t","memos",["Markera ord, även i listor", "Select words, in lists too"],["Markerade ord ligger kvar när du trycker på knapparna längst ner, även om telefonen hinner ta bort markeringen. Fet, kursiv, struken och färg går nu också på ord i en listpunkt. Med en meny öppen kan du trycka in i en rad och markera ord som vanligt.", "Selected words stay selected when you tap the buttons at the bottom, even if the phone clears the selection. Bold, italic, strike and colour now also work on words in a list point. With a menu open you can tap into a line and select words as usual."]]]},
 {v:"3.5",d:"20 nov 2026",i:[["t","memos",["Välj rad med menyn öppen", "Pick a line with the menu open"],["Raden du jobbar med syns med en ram även när tangentbordet är nere. Ett tryck bredvid raderna stänger menyn.", "The line you are working on shows a frame even with the keyboard down. A tap beside the lines closes the menu."]]]},
@@ -2942,6 +2968,28 @@ $("mm_body").addEventListener("focusout",e=>{if(e.target.tagName==="INPUT"){cons
 $("mm_body").addEventListener("scroll",e=>{const t=e.target;if(t.tagName==="INPUT"){const o=t.parentElement.querySelector(".mbio");if(o)o.scrollLeft=t.scrollLeft}},true);
 document.addEventListener("selectionchange",()=>{const a=document.activeElement;if(a&&a.tagName==="INPUT"&&a.parentElement&&a.parentElement.classList.contains("mbf")){const o=a.parentElement.querySelector(".mbio");if(o)o.scrollLeft=a.scrollLeft}});
 ["mm_fmt","mm_lst"].forEach(id=>$(id).addEventListener("click",()=>requestAnimationFrame(()=>document.querySelectorAll("#mm_body .mb-c.richi").forEach(inPaint))));
+/* ---------- The month on the whole screen ----------
+   A button in the month's heading opens the month over the whole screen: no top bar, no tab bar,
+   every day as large as the screen allows and as many events in each day as fit. Swipe for the next month,
+   tap a day to see it, and the same button (or the back button) brings you back. Turn the phone sideways for times too. */
+var CALFS=false;
+function calFsOn(){return CALFS}
+function fsIcon(){const b=$("k_fs");if(!b)return;b.setAttribute("aria-label",CALFS?tx("Stäng helskärm","Close full screen"):tx("Visa månaden i helskärm","Show the month full screen"));
+  b.innerHTML=CALFS?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>'}
+(()=>{const nv=document.querySelector("#k_cal .mnav");if(!nv)return;const b=document.createElement("button");b.type="button";b.id="k_fs";b.className="fsb";nv.appendChild(b);b.onclick=()=>calFs(!CALFS);fsIcon()})();
+function calFs(on){if(CALFS===on)return;CALFS=on;document.body.classList.toggle("calfs",on);fsIcon();renderMonth();
+}
+/* In full screen every event of the day is drawn, then the ones that do not fit are counted in a "+2" line. */
+function calFsPaint(){const g=$("k_gr");if(!g)return;const one=g.querySelector("button[data-cday]"),wide=one&&one.clientWidth>=84;
+  g.querySelectorAll("button[data-cday]").forEach(bt=>{const d=+bt.dataset.cday,c=bt.querySelector(".cev");if(!c)return;
+    const A=[...bdOn(d).map(b=>`<u style="--c:var(--acc)">♥ ${esc(b.n)}</u>`),...between(d,d).filter(o=>o.s<=d&&o.end>=d).map(o=>`<u class="${stMini(o.e)}" style="--c:${evCol(o.e)}">${wide&&o.e.t&&o.s===d?`<i>${esc(o.e.t)}</i> `:""}${esc(o.e.n)}</u>`)];
+    c.innerHTML=A.join("")});
+  requestAnimationFrame(calFsFit)}
+function calFsFit(){document.querySelectorAll("#k_gr .cev").forEach(c=>{const K=[...c.children];if(!K.length)return;const H=c.clientHeight;if(c.scrollHeight<=H+1)return;
+  const em=document.createElement("em");c.appendChild(em);let n=0;for(let i=K.length-1;i>=0&&c.scrollHeight>H+1;i--){K[i].style.display="none";n++;em.textContent="+"+n}})}
+const _renderMonth24=renderMonth;renderMonth=function(){if(CALFS&&KV!=="month"){calFs(false);return}_renderMonth24.apply(this,arguments);if(CALFS)calFsPaint()};
+const _go24=go;go=function(x){if(CALFS&&x!=="k")calFs(false);return _go24.apply(this,arguments)};
+let FST=0;window.addEventListener("resize",()=>{if(!CALFS)return;clearTimeout(FST);FST=setTimeout(calFsPaint,120)});
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>

@@ -94,7 +94,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
 (()=>{const on=id=>$(id).classList.contains("on");
-  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["mv",closeMV],["mm",closeMM],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
+  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["mv",closeMV],["mm",closeMM],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(typeof calFsOn==="function"&&calFsOn()){calFs(false);return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
   const guard=()=>history.pushState({kk:1},"");try{history.replaceState({kk:0},"");guard()}catch(e){return}
   addEventListener("popstate",()=>{if(closeTop())return guard();if(tab!=="h"){go("h");return guard()}history.back()})})();
 
