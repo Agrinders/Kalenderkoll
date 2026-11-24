@@ -889,3 +889,31 @@ body.calfs .cev em{font-size:10px}
 .cspan .spc{background:none}
 @media (max-width:559px){.cspan{gap:1.5px}.cspan u{height:13px;line-height:13px;font-size:9px;padding-left:3px}.cspan u.s0,.cspan u.s1{border-radius:4px}.cspan u.s0:not(.s1){border-top-right-radius:0;border-bottom-right-radius:0}.cspan u.s1:not(.s0){border-top-left-radius:0;border-bottom-left-radius:0}}
 body.calfs .cspan u{height:16px;line-height:16px;font-size:10.5px}
+/* ---------- Calmer month ----------
+   No box around every day: the weeks are parted by one hairline, the days stand on the card itself.
+   Events are a light wash of their colour with a solid colour edge, and the name is written in a deep shade
+   of the same colour, so every event is easy to read and the month does not shout. */
+#k_gr{gap:0!important}
+#k_gr>button{border-radius:0!important;box-shadow:none!important;border-top:1px solid var(--rule)}
+#k_gr>button:not(.fst):not(.s){background:transparent}
+#k_gr>.v{border-top:1px solid var(--rule)}
+#k_gr>button.s{background:color-mix(in oklab,var(--acc) 7%,transparent)!important}
+#k_gr>button b{font-size:13.5px;font-weight:600;width:24px;height:24px}
+#k_gr>button.t b{background:var(--acc);color:#fff;box-shadow:none}
+#k_gr>button.s:not(.t) b{background:none;color:var(--acc);box-shadow:inset 0 0 0 1.5px var(--acc)}
+#k_gr>button.out{opacity:.38}
+#k_gr .cev{padding:0 2px}
+#k_gr .cev u{--bg:color-mix(in oklab,var(--c) 20%,var(--card));--fg:color-mix(in oklab,var(--c) 32%,var(--ink));background:var(--bg);color:var(--fg);box-shadow:inset 2.5px 0 0 var(--c);border:0;font-weight:600;padding-left:5px;border-radius:4px}
+#k_gr .cev u::after{display:none}
+#k_gr .cev u.gl{--bg:var(--card);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--c) 55%,transparent),inset 2.5px 0 0 var(--c)}
+#k_gr .cev u.sp{background:repeating-linear-gradient(135deg,color-mix(in oklab,var(--c) 24%,var(--card)) 0 4px,color-mix(in oklab,var(--c) 12%,var(--card)) 4px 8px);box-shadow:inset 2.5px 0 0 var(--c);border:0}
+#k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 20%,var(--card));color:color-mix(in oklab,var(--c) 32%,var(--ink));margin:0;font-weight:650}
+#k_gr .cspan u.s0{margin-left:2px;box-shadow:inset 2.5px 0 0 var(--c)}
+#k_gr .cspan u.s1{margin-right:2px}
+#k_gr .cspan u.gl{--bg:var(--card);box-shadow:inset 0 1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 0 -1px 0 color-mix(in oklab,var(--c) 55%,transparent)}
+#k_gr .cspan u.gl.s0{box-shadow:inset 0 1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 0 -1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 2.5px 0 0 var(--c)}
+#k_gr .cspan u.str{background:repeating-linear-gradient(135deg,color-mix(in oklab,var(--c) 24%,var(--card)) 0 4px,color-mix(in oklab,var(--c) 12%,var(--card)) 4px 8px)}
+#k_gr .cev em{color:var(--soft);font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #k_gr .cev u,:root:not([data-theme="light"]) #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 26%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}}
+:root[data-theme="dark"] #k_gr .cev u,:root[data-theme="dark"] #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 26%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}
+body.calfs #k_cal{background:var(--card)}

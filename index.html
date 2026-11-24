@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="fe2c63d9a6e1">
+<meta name="kal-build" content="7cc3907a93e4">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -902,6 +902,34 @@ body.calfs .cev em{font-size:10px}
 .cspan .spc{background:none}
 @media (max-width:559px){.cspan{gap:1.5px}.cspan u{height:13px;line-height:13px;font-size:9px;padding-left:3px}.cspan u.s0,.cspan u.s1{border-radius:4px}.cspan u.s0:not(.s1){border-top-right-radius:0;border-bottom-right-radius:0}.cspan u.s1:not(.s0){border-top-left-radius:0;border-bottom-left-radius:0}}
 body.calfs .cspan u{height:16px;line-height:16px;font-size:10.5px}
+/* ---------- Calmer month ----------
+   No box around every day: the weeks are parted by one hairline, the days stand on the card itself.
+   Events are a light wash of their colour with a solid colour edge, and the name is written in a deep shade
+   of the same colour, so every event is easy to read and the month does not shout. */
+#k_gr{gap:0!important}
+#k_gr>button{border-radius:0!important;box-shadow:none!important;border-top:1px solid var(--rule)}
+#k_gr>button:not(.fst):not(.s){background:transparent}
+#k_gr>.v{border-top:1px solid var(--rule)}
+#k_gr>button.s{background:color-mix(in oklab,var(--acc) 7%,transparent)!important}
+#k_gr>button b{font-size:13.5px;font-weight:600;width:24px;height:24px}
+#k_gr>button.t b{background:var(--acc);color:#fff;box-shadow:none}
+#k_gr>button.s:not(.t) b{background:none;color:var(--acc);box-shadow:inset 0 0 0 1.5px var(--acc)}
+#k_gr>button.out{opacity:.38}
+#k_gr .cev{padding:0 2px}
+#k_gr .cev u{--bg:color-mix(in oklab,var(--c) 20%,var(--card));--fg:color-mix(in oklab,var(--c) 32%,var(--ink));background:var(--bg);color:var(--fg);box-shadow:inset 2.5px 0 0 var(--c);border:0;font-weight:600;padding-left:5px;border-radius:4px}
+#k_gr .cev u::after{display:none}
+#k_gr .cev u.gl{--bg:var(--card);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--c) 55%,transparent),inset 2.5px 0 0 var(--c)}
+#k_gr .cev u.sp{background:repeating-linear-gradient(135deg,color-mix(in oklab,var(--c) 24%,var(--card)) 0 4px,color-mix(in oklab,var(--c) 12%,var(--card)) 4px 8px);box-shadow:inset 2.5px 0 0 var(--c);border:0}
+#k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 20%,var(--card));color:color-mix(in oklab,var(--c) 32%,var(--ink));margin:0;font-weight:650}
+#k_gr .cspan u.s0{margin-left:2px;box-shadow:inset 2.5px 0 0 var(--c)}
+#k_gr .cspan u.s1{margin-right:2px}
+#k_gr .cspan u.gl{--bg:var(--card);box-shadow:inset 0 1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 0 -1px 0 color-mix(in oklab,var(--c) 55%,transparent)}
+#k_gr .cspan u.gl.s0{box-shadow:inset 0 1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 0 -1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 2.5px 0 0 var(--c)}
+#k_gr .cspan u.str{background:repeating-linear-gradient(135deg,color-mix(in oklab,var(--c) 24%,var(--card)) 0 4px,color-mix(in oklab,var(--c) 12%,var(--card)) 4px 8px)}
+#k_gr .cev em{color:var(--soft);font-weight:600}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #k_gr .cev u,:root:not([data-theme="light"]) #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 26%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}}
+:root[data-theme="dark"] #k_gr .cev u,:root[data-theme="dark"] #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 26%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}
+body.calfs #k_cal{background:var(--card)}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -2561,6 +2589,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"4.0",d:"24 nov 2026",i:[["k","",["Lugnare månad", "Calmer month"],["Dagarna har inga rutor runt sig längre, bara en tunn linje mellan veckorna. Händelserna är en ljus ton av sin färg med en färgkant, och namnet står i en mörk nyans av samma färg, så de är lättare att läsa.", "The days no longer have boxes around them, just a thin line between the weeks. Events are a light tint of their colour with a coloured edge, and the name is written in a deep shade of the same colour, so they are easier to read."]]]},
 {v:"3.9",d:"24 nov 2026",i:[["k","",["Flerdagshändelser som en linje", "Several-day events as one bar"],["En händelse som pågår flera dagar ligger överst i dagarna, alltid på samma rad, och linjen går obruten från första till sista dagen. Namnet står en gång per vecka.", "An event lasting several days sits at the top of its days, always on the same line, and the bar runs unbroken from the first to the last day. The name is written once per week."]]]},
 {v:"3.8",d:"24 nov 2026",i:[["k","",["Månaden i helskärm", "The month full screen"],["Tryck på helskärmsknappen uppe till höger i månaden. Då fyller månaden hela skärmen och varje dag visar så många händelser som får plats. Svep för att byta månad och tryck på en dag för att se den. Vrid telefonen för ännu bredare dagar med klockslag.", "Tap the full screen button at the top right of the month. The month then fills the whole screen and each day shows as many events as fit. Swipe to change month and tap a day to see it. Turn the phone sideways for even wider days with times."]]]},
 {v:"3.7",d:"20 nov 2026",i:[["t","memos",["Enklare: raden du skriver på", "Simpler: the line you are on"],["Raden där markören blinkar är raden knapparna längst ner jobbar med. Att trycka på en knapp eller välja något i menyn tar aldrig bort markören, så du kan fortsätta skriva direkt.", "The line where the cursor blinks is the line the buttons at the bottom work on. Tapping a button or choosing something in its menu never takes the cursor away, so you can keep writing."]]]},
