@@ -873,7 +873,19 @@ body.calfs .cev em{font-size:10px}
 @media (max-height:520px){body.calfs #k_cal{padding-top:calc(2px + var(--sat));padding-left:calc(6px + env(safe-area-inset-left,0px));padding-right:calc(6px + env(safe-area-inset-right,0px))}
   body.calfs #k_cal .mnav button{width:36px;height:34px}body.calfs #k_cal .mnav b{font-size:17px}
   body.calfs #k_cal .cwk span{padding:1px 0;font-size:10px}
-  body.calfs #k_cal .cgr button{flex-direction:row;align-items:stretch;padding:2px 2px 2px 3px;gap:3px}body.calfs #k_cal .cgr button b{width:22px;height:22px;font-size:12px}
-  body.calfs .cev{height:100%;gap:1.5px}body.calfs .cev u{display:block;white-space:nowrap;text-overflow:ellipsis;font-size:11px;border-block-width:1.5px}body.calfs .cev u::after{display:none}
+  body.calfs #k_cal .cgr button{padding:1px 0 2px;gap:1px}body.calfs #k_cal .cgr button b{align-self:flex-start;margin-left:3px;width:20px;height:18px;font-size:12px}
+  body.calfs .cev{gap:1.5px}body.calfs .cev u{display:block;white-space:nowrap;text-overflow:ellipsis;font-size:11px;border-block-width:1.5px}body.calfs .cev u::after{display:none}
   body.calfs #k_cal .cgr .v{padding-top:4px}body.calfs .cev u{-webkit-line-clamp:1;text-overflow:ellipsis}}
 @media (prefers-reduced-motion:reduce){body.calfs #k_cal{animation:none}}
+/* Events over several days: one bar through the days */
+.cspan{display:flex;flex-direction:column;gap:2px;align-self:stretch;flex:none}
+.cspan u{--bg:color-mix(in oklab,var(--c) 38%,var(--card));position:relative;display:block;height:15px;margin:0 -2px 0 -1px;padding:0 0 0 4px;background:var(--bg);text-decoration:none;font-size:10.5px;font-weight:650;line-height:15px;letter-spacing:-.01em;color:var(--ink);white-space:nowrap;text-align:left}
+.cspan u.s0{margin-left:1px;border-top-left-radius:5px;border-bottom-left-radius:5px}
+.cspan u.s1{margin-right:1px;border-top-right-radius:5px;border-bottom-right-radius:5px}
+.cspan u span{position:relative;z-index:3;display:inline-block;vertical-align:top;max-width:calc(var(--n,1)*100% + (var(--n,1) - 1)*3px - 6px);overflow:hidden;text-overflow:ellipsis}
+.cspan u span i{font-style:normal;font-weight:750;opacity:.65}
+.cspan u.gl{--bg:color-mix(in oklab,var(--c) 18%,var(--card));box-shadow:inset 0 1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 0 -1px 0 color-mix(in oklab,var(--c) 55%,transparent)}
+.cspan u.str{background:repeating-linear-gradient(135deg,color-mix(in oklab,var(--c) 36%,var(--card)) 0 4px,color-mix(in oklab,var(--c) 17%,var(--card)) 4px 8px)}
+.cspan .spc{background:none}
+@media (max-width:559px){.cspan{gap:1.5px}.cspan u{height:13px;line-height:13px;font-size:9px;padding-left:3px}.cspan u.s0,.cspan u.s1{border-radius:4px}.cspan u.s0:not(.s1){border-top-right-radius:0;border-bottom-right-radius:0}.cspan u.s1:not(.s0){border-top-left-radius:0;border-bottom-left-radius:0}}
+body.calfs .cspan u{height:16px;line-height:16px;font-size:10.5px}

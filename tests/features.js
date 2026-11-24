@@ -32,4 +32,8 @@ check('big month',await (async()=>{await ev(()=>{for(let i=1;i<=6;i++)saveEv({id
   await ev(()=>document.querySelector('#k_gr [data-cday]:nth-child(20)').click());await p.waitForTimeout(300);const ds=await ev(()=>document.getElementById('ds').classList.contains('on'));
   await ev(()=>history.back());await p.waitForTimeout(300);await ev(()=>history.back());await p.waitForTimeout(300);const b2=await ev(()=>[document.getElementById('ds').classList.contains('on'),document.body.classList.contains('calfs')]);
   await ev(()=>{for(let i=1;i<=6;i++)EV=EV.filter(e=>e.id!=='fs'+i);render()});return[...a,ds,...b2]})(),[true,true,6,true,false,false]);
+check('a three-day event is one bar on one line',await ev(()=>{saveEv({id:'sp1',n:'Resa',d:'2026-11-18',e:'2026-11-20',r:'o',w:'g'});saveEv({id:'sp2',n:'Fika',d:'2026-11-19',r:'o',w:'g'});P={y:2026,m:10};KV='month';render();
+  const D=['2026-11-18','2026-11-19','2026-11-20','2026-11-21'].map(x=>[...document.querySelectorAll('#k_gr [data-cday]')].find(b=>+b.dataset.cday===dn(x)));
+  const r=D.map(b=>{const u=b.querySelector('.cspan u');return u?[u.className.trim(),u.textContent]:null});const fika=D[1].querySelector('.cev').textContent;
+  EV=EV.filter(e=>e.id!=='sp1'&&e.id!=='sp2');render();return[r,fika]}),[[['s0','Resa'],['',''],['s1',''],null],'Fika']);
 await b.close();srv.close();console.log(fails?fails+' failed':'all passed');process.exit(fails?1:0)})();
