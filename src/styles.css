@@ -917,3 +917,10 @@ body.calfs .cspan u{height:16px;line-height:16px;font-size:10.5px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #k_gr .cev u,:root:not([data-theme="light"]) #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 26%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}}
 :root[data-theme="dark"] #k_gr .cev u,:root[data-theme="dark"] #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 26%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}
 body.calfs #k_cal{background:var(--card)}
+/* Event names in the month stay on one line and are simply cut off at the day's edge; the boxes are slimmer. */
+#k_gr .cev{gap:1.5px}
+#k_gr .cev u{display:block!important;-webkit-line-clamp:none!important;white-space:nowrap!important;overflow:hidden;text-overflow:clip;hyphens:none;height:13px;line-height:13px!important;padding:0 1px 0 4px!important;border:0!important;font-size:9px!important;border-radius:3px}
+#k_gr .cspan{gap:1.5px}#k_gr .cspan u{height:13px;line-height:13px;font-size:9px}
+@media (min-width:560px){#k_gr .cev u,#k_gr .cspan u{height:15px;line-height:15px!important;font-size:10.5px!important}}
+body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!important;font-size:10px!important}
+#k_gr .cspan u span{text-overflow:clip}
