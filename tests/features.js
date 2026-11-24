@@ -36,4 +36,8 @@ check('a three-day event is one bar on one line',await ev(()=>{saveEv({id:'sp1',
   const D=['2026-11-18','2026-11-19','2026-11-20','2026-11-21'].map(x=>[...document.querySelectorAll('#k_gr [data-cday]')].find(b=>+b.dataset.cday===dn(x)));
   const r=D.map(b=>{const u=b.querySelector('.cspan u');return u?[u.className.trim(),u.textContent]:null});const fika=D[1].querySelector('.cev').textContent;
   EV=EV.filter(e=>e.id!=='sp1'&&e.id!=='sp2');render();return[r,fika]}),[[['s0','Resa'],['',''],['s1',''],null],'Fika']);
+check('every Saturday and Sunday is one bar over the weekend',await ev(()=>{saveEv({id:'we1',n:'Stugan',d:'2026-11-07',r:'w',wd:[5,6],w:'g'});P={y:2026,m:10};KV='month';render();
+  const D=['2026-11-13','2026-11-14','2026-11-15'].map(x=>[...document.querySelectorAll('#k_gr [data-cday]')].find(b=>+b.dataset.cday===dn(x)));
+  const r=D.map(b=>{const u=b.querySelector('.cspan u');return u?[u.className.trim(),u.textContent]:(b.querySelector('.cev').textContent.includes('Stugan')?'single':null)});
+  EV=EV.filter(e=>e.id!=='we1');render();return r}),[null,['s0','Stugan'],['s1','']]);
 await b.close();srv.close();console.log(fails?fails+' failed':'all passed');process.exit(fails?1:0)})();

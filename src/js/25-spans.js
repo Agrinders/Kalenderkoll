@@ -1,9 +1,14 @@
 /* ---------- Events over several days: one bar through the days ----------
    An event that lasts several days sits at the top of each of its days, always on the same line,
    and the bar runs unbroken from its first day to its last. The name is written once per week row. */
+/* The same event on days next to each other (every Saturday and Sunday, every day, overlapping times)
+   is drawn as one bar, just like an event that lasts several days. */
+function runs(O){const by=new Map(),out=[];O.forEach(o=>{const k=o.e.id;if(!by.has(k))by.set(k,[]);by.get(k).push(o)});
+  by.forEach(L=>{L.sort((x,y)=>x.s-y.s);let cur=null;L.forEach(o=>{if(cur&&o.s<=cur.end+1){cur.end=Math.max(cur.end,o.end)}else{cur={e:o.e,s:o.s,end:o.end};out.push(cur)}})});
+  return out.sort(byTime)}
 function monthPaint(){const g=$("k_gr");if(!g)return;const cells=[...g.querySelectorAll("button[data-cday]")];if(!cells.length)return;
   const wide=CALFS&&cells[0].clientWidth>=84;
-  for(let r=0;r<cells.length;r+=7){const row=cells.slice(r,r+7),a=+row[0].dataset.cday,b=+row[row.length-1].dataset.cday,O=between(a,b);
+  for(let r=0;r<cells.length;r+=7){const row=cells.slice(r,r+7),a=+row[0].dataset.cday,b=+row[row.length-1].dataset.cday,O=runs(between(a,b));
     /* Longer bars first, each on the first free line, so a bar keeps its line through the whole week. */
     const multi=O.filter(o=>o.end>o.s).sort((x,y)=>Math.max(x.s,a)-Math.max(y.s,a)||(y.end-y.s)-(x.end-x.s)),lanes=[];
     multi.forEach(o=>{const from=Math.max(o.s,a);let k=lanes.findIndex(e=>e<from);if(k<0){k=lanes.length;lanes.push(0)}lanes[k]=o.end;o.lane=k});
