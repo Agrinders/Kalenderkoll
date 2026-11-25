@@ -333,7 +333,7 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 
 /* Phones: the whole month fits on the screen. Row height follows the screen; event names are a size smaller. */
 @media (max-width:559px){
-  .cgr button{min-height:clamp(52px,calc((100dvh - 262px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px);height:clamp(52px,calc((100dvh - 262px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px);padding:3px 0 3px;gap:2px}
+  .cgr button{min-height:clamp(52px,calc((100dvh - 262px - var(--sat) - var(--sab))/5 - 3px),104px);height:clamp(52px,calc((100dvh - 262px - var(--sat) - var(--sab))/5 - 3px),104px);padding:3px 0 3px;gap:2px}
   .cgr button b{width:25px;height:25px;font-size:13.5px}
   .cev{flex:1;min-height:0;overflow:hidden;gap:1.5px}
   .cev u{font-size:9px;line-height:1.25;padding:1px 0 1px 3px;border-radius:5px}.cev em{font-size:9px;line-height:1.1}
@@ -460,7 +460,7 @@ body{padding-top:calc(var(--topH) + var(--sat) + 6px)!important;padding-bottom:c
 main,section{gap:10px}
 .hello{padding:0 2px}.hello h2{margin-top:2px;font-size:27px}
 @media (max-width:559px){#k_cal{padding-top:8px}#k_wv,#k_dv{padding-top:8px}#k_cal .mnav{margin-bottom:2px}
-  .cgr button{min-height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px);height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px)}}
+  .cgr button{min-height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/5 - 3px),104px);height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/5 - 3px),104px)}}
 /* The Android app can add its own space above the page; the page itself never needs any. */
 html{padding:0!important;margin:0!important}body{margin:0!important}
 
@@ -924,3 +924,7 @@ body.calfs #k_cal{background:var(--card)}
 @media (min-width:560px){#k_gr .cev u,#k_gr .cspan u{height:15px;line-height:15px!important;font-size:10.5px!important}}
 body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!important;font-size:10px!important}
 #k_gr .cspan u span{text-overflow:clip}
+/* The month's name stays on one line on narrow phones: it shrinks a little and the buttons sit closer. */
+#k_cal .mnav b,#k_wv .mnav b,#k_dv .mnav b{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(16px,5.2vw,20px)}
+@media (max-width:400px){#k_cal .mnav button{width:38px}}
+@media (max-width:350px){#k_cal .mnav button{width:34px}#k_cal .mnav b{padding-left:6px}}

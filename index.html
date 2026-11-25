@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="993e1188cef2">
+<meta name="kal-build" content="dfad875b8942">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -346,7 +346,7 @@ nav button.on svg{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}@keyframes pop{0%
 
 /* Phones: the whole month fits on the screen. Row height follows the screen; event names are a size smaller. */
 @media (max-width:559px){
-  .cgr button{min-height:clamp(52px,calc((100dvh - 262px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px);height:clamp(52px,calc((100dvh - 262px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px);padding:3px 0 3px;gap:2px}
+  .cgr button{min-height:clamp(52px,calc((100dvh - 262px - var(--sat) - var(--sab))/5 - 3px),104px);height:clamp(52px,calc((100dvh - 262px - var(--sat) - var(--sab))/5 - 3px),104px);padding:3px 0 3px;gap:2px}
   .cgr button b{width:25px;height:25px;font-size:13.5px}
   .cev{flex:1;min-height:0;overflow:hidden;gap:1.5px}
   .cev u{font-size:9px;line-height:1.25;padding:1px 0 1px 3px;border-radius:5px}.cev em{font-size:9px;line-height:1.1}
@@ -473,7 +473,7 @@ body{padding-top:calc(var(--topH) + var(--sat) + 6px)!important;padding-bottom:c
 main,section{gap:10px}
 .hello{padding:0 2px}.hello h2{margin-top:2px;font-size:27px}
 @media (max-width:559px){#k_cal{padding-top:8px}#k_wv,#k_dv{padding-top:8px}#k_cal .mnav{margin-bottom:2px}
-  .cgr button{min-height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px);height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/var(--rows,6) - 3px),104px)}}
+  .cgr button{min-height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/5 - 3px),104px);height:clamp(52px,calc((100dvh - 246px - var(--sat) - var(--sab))/5 - 3px),104px)}}
 /* The Android app can add its own space above the page; the page itself never needs any. */
 html{padding:0!important;margin:0!important}body{margin:0!important}
 
@@ -937,6 +937,10 @@ body.calfs #k_cal{background:var(--card)}
 @media (min-width:560px){#k_gr .cev u,#k_gr .cspan u{height:15px;line-height:15px!important;font-size:10.5px!important}}
 body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!important;font-size:10px!important}
 #k_gr .cspan u span{text-overflow:clip}
+/* The month's name stays on one line on narrow phones: it shrinks a little and the buttons sit closer. */
+#k_cal .mnav b,#k_wv .mnav b,#k_dv .mnav b{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(16px,5.2vw,20px)}
+@media (max-width:400px){#k_cal .mnav button{width:38px}}
+@media (max-width:350px){#k_cal .mnav button{width:34px}#k_cal .mnav b{padding-left:6px}}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -2596,6 +2600,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"4.3",d:"25 nov 2026",i:[["k","",["Lika höga dagar varje månad", "Equally tall days every month"],["Månader med sex veckor, som november, har lika höga dagar som andra månader i stället för att tryckas ihop. Den sista veckan når du genom att skrolla lite. Månadens namn står alltid på en rad.", "Months with six weeks, like November, have days as tall as other months instead of being squeezed. You reach the last week with a little scroll. The month's name always stays on one line."]]]},
 {v:"4.2",d:"24 nov 2026",i:[["k","",["Upprepningar i rad blir en linje", "Repeats in a row become one bar"],["Samma händelse på dagar i rad, som varje lördag och söndag eller varje dag, visas som en sammanhängande linje i månaden.", "The same event on days in a row, like every Saturday and Sunday or every day, shows as one connected bar in the month."]]]},
 {v:"4.1",d:"24 nov 2026",i:[["k","",["Smalare händelser", "Slimmer events"],["Händelserna i månaden är mindre och står på en rad. Långa namn klipps av i kanten av dagen i stället för att brytas.", "Events in the month are smaller and stay on one line. Long names are cut off at the edge of the day instead of wrapping."]]]},
 {v:"4.0",d:"24 nov 2026",i:[["k","",["Lugnare månad", "Calmer month"],["Dagarna har inga rutor runt sig längre, bara en tunn linje mellan veckorna. Händelserna är en ljus ton av sin färg med en färgkant, och namnet står i en mörk nyans av samma färg, så de är lättare att läsa.", "The days no longer have boxes around them, just a thin line between the weeks. Events are a light tint of their colour with a coloured edge, and the name is written in a deep shade of the same colour, so they are easier to read."]]]},
