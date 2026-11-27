@@ -52,3 +52,13 @@ const _renderKV27=renderKV;renderKV=function(){_renderKV27.apply(this,arguments)
 segPlace();
 /* On a narrow phone the day's heading uses the short weekday so it fits beside Månad / Vecka / Dag. */
 const _rdv27=renderDayView;renderDayView=function(){_rdv27.apply(this,arguments);if(!NARROW.matches)return;const s=$("dv_t").querySelector("span");if(s)s.textContent=SEL===todayN()?tx("Idag","Today")+", "+fmtD(SEL,{day:"numeric",month:"short"}).replace(/\./g,""):cap(fmtD(SEL,{weekday:"short",day:"numeric",month:"short"}).replace(/\./g,""))};
+/* Week and day views reach down to the bottom of the screen, like the month, so more hours show at once. */
+function fitTall(){["dv_body","wv_body"].forEach(id=>{const el=$(id);if(!el)return;
+  if(!(NARROW.matches&&tab==="k")||!el.offsetParent){el.style.removeProperty("max-height");return}
+  const top=el.getBoundingClientRect().top+window.scrollY;el.style.setProperty("--fitTop",Math.round(top)+"px");el.style.maxHeight="max(240px,calc(100dvh - var(--fitTop) - 26px - var(--sab)))"})}
+const _rdv28=renderDayView;renderDayView=function(){_rdv28.apply(this,arguments);requestAnimationFrame(fitTall)};
+const _rwv28=renderWeekView;renderWeekView=function(){_rwv28.apply(this,arguments);
+  /* A shorter week heading on a phone, so the dates are not cut off beside Månad / Vecka / Dag. */
+  const w=$("wv_t");if(NARROW.matches&&w&&w.children.length===0)w.textContent=w.textContent.replace(/^Vecka /,"v. ").replace(/^Week /,"Wk ");requestAnimationFrame(fitTall)};
+const _calAuto28=calAuto;calAuto=function(){_calAuto28();requestAnimationFrame(fitTall)};
+window.addEventListener("resize",()=>requestAnimationFrame(fitTall));
