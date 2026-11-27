@@ -23,8 +23,7 @@ $("k_m").addEventListener("click",()=>{if(P.y===NOW.getFullYear()&&P.m===NOW.get
 /* Swiping: the month follows the finger, slides out, and the next one slides in from the other side.
    Only transforms move (on their own layer), at most once a frame; the new month is drawn while hidden
    and only slides in once it is fully drawn, so nothing stutters. */
-(()=>{const card=$("k_cal");let sx=0,sy=0,dx=0,on=false,dead=false,busy=false,W=1,raf=0;
-  const parts=()=>[$("k_gr"),$("k_m")];
+function swipeNav(card,parts,step){let sx=0,sy=0,dx=0,on=false,dead=false,busy=false,W=1,raf=0;
   const put=()=>{raf=0;const x=dx;parts().forEach((el,i)=>{el.style.transform=`translate3d(${x*(i?0.5:1)}px,0,0)`})};
   const layer=v=>parts().forEach(el=>{el.style.willChange=v?"transform,opacity":""});
   const clear=()=>parts().forEach(el=>{el.style.transform="";el.style.opacity=""});
@@ -42,12 +41,14 @@ $("k_m").addEventListener("click",()=>{if(P.y===NOW.getFullYear()&&P.m===NOW.get
       const a=parts().map((el,i)=>el.animate([{transform:`translate3d(${dx*(i?0.5:1)}px,0,0)`,opacity:1},{transform:`translate3d(${out*(i?0.5:1)}px,0,0)`,opacity:0}],{duration:170,easing:"cubic-bezier(.4,0,.9,.6)",fill:"forwards"}));
       await a[0].finished;
       parts().forEach(el=>{el.style.opacity="0"});a.forEach(x=>x.cancel());
-      moveMonth(k);await frames(2);
+      step(k);await frames(2);
       parts().forEach(el=>{el.style.transform="";el.style.opacity=""});
       await Promise.all(parts().map((el,i)=>el.animate([{transform:`translate3d(${-out*.35*(i?0.5:1)}px,0,0)`,opacity:0},{transform:"translate3d(0,0,0)",opacity:1}],{duration:260,easing:"cubic-bezier(.2,.8,.2,1)"}).finished.catch(()=>{})));
     }catch(e){}
     clear();layer(false);busy=false};
-  card.addEventListener("touchend",done,{passive:true});card.addEventListener("touchcancel",()=>{if(on){on=false;clear();layer(false)}},{passive:true})})();
+  card.addEventListener("touchend",done,{passive:true});card.addEventListener("touchcancel",()=>{if(on){on=false;clear();layer(false)}},{passive:true})}
+swipeNav($("k_cal"),()=>[$("k_gr"),$("k_m")],k=>moveMonth(k));
+swipeNav($("k_wv"),()=>[$("wv_head"),$("wv_body"),$("wv_t")],k=>pickDay(SEL+7*k));
 $("tsrch").classList.toggle("hide",tab!=="k");calAuto();
 /* Switching between the full month and the week or day view starts at the top, never under the title bar. */
 const _calFs26=calFs;calFs=function(on){const was=CALFS;_calFs26(on);if(was!==CALFS){window.scrollTo(0,0);document.body.scrollTop=0;if(!CALFS){document.body.style.removeProperty("padding-top");setTimeout(fixTop,30)}}};
@@ -85,3 +86,9 @@ $("ttl").removeAttribute("role");$("ttl").removeAttribute("aria-expanded");
 /* Red days (Sundays and public holidays) get a faint red tint in the week and day views too. */
 const _rwv29=renderWeekView;renderWeekView=function(){_rwv29.apply(this,arguments);document.querySelectorAll("#wv_body .wvcol[data-d]").forEach(c=>{const d=+c.dataset.d;c.classList.toggle("red",wdOf(d)===6||(S.hol&&isRed(d)))})};
 const _rdv29=renderDayView;renderDayView=function(){_rdv29.apply(this,arguments);const d=SEL;$("k_dv").classList.toggle("red",wdOf(d)===6||(S.hol&&isRed(d)))};
+/* "Till idag" in the week view too, when another week is shown. */
+(()=>{const b=document.createElement("button");b.type="button";b.id="wv_now";b.className="nowpill hide";document.body.appendChild(b);
+  b.onclick=()=>pickDay(todayN());
+  const paint=()=>{const n=todayN(),mon=SEL-wdOf(SEL),show=tab==="k"&&KV==="week"&&!(n>=mon&&n<mon+7);b.textContent=tx("Till idag","To today");b.classList.toggle("hide",!show)};
+  const _r=renderWeekView;renderWeekView=function(){_r.apply(this,arguments);paint()};const _g=go;go=function(){const r=_g.apply(this,arguments);paint();return r};
+  const _k=renderKV;renderKV=function(){_k.apply(this,arguments);paint()};paint()})();

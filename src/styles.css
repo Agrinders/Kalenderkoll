@@ -1015,3 +1015,5 @@ body.calfs #k{animation:none}body.calfs #k_cal{animation:kin .28s ease}
 .wvh b{width:32px;height:24px;border-radius:8px}
 body.calfs #k_cal .cgr button b{width:30px;height:21px}
 @media (max-height:520px){body.calfs #k_cal .cgr button b{width:26px;height:18px;border-radius:6px}}
+.nowpill{position:fixed;left:50%;bottom:calc(16px + var(--sab));transform:translateX(-50%);z-index:16;padding:9px 18px;border-radius:999px;background:var(--acc);color:#fff;font-weight:650;font-size:14px;box-shadow:0 8px 22px color-mix(in oklab,var(--acc) 40%,transparent);animation:kin .2s ease}
+.nowpill.hide{display:none}

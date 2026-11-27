@@ -60,7 +60,7 @@ function renderWeekView(){const n=todayN(),mon=SEL-wdOf(SEL),B=between(mon,mon+6
     h+=`<div class="wvcol${x.i%2?" alt":""}${x.d===n?" t":""}" data-d="${x.d}" data-h0="${h0}" style="grid-column:${x.i+2}">${items.map(o=>{const e=o.e,nl=lanes.length,top=(st(o)-h0*60)/60*WPX,ht=Math.max(20,(en(o)-st(o))/60*WPX-2);return `<button class="wvev ${stMini(e)}${fxCls(e.fx)}" data-ev="${esc(e.id)}" data-on="${nd(o.s)}" style="--c:${evCol(e)};top:${top+1}px;height:${ht}px;left:calc(${100/nl*pos.get(o)}% + 1px);width:calc(${100/nl}% - 2px)">${esc(e.n)}</button>`}).join("")}${x.d===n&&nowM>=h0*60&&nowM<=h1*60?`<i class="nowl" style="top:${(nowM-h0*60)/60*WPX}px"></i>`:""}</div>`});
   $("wv_body").innerHTML=h+`</div>`;
   const first=T.length?Math.min(...T.map(st)):8*60;requestAnimationFrame(()=>{const b=$("wv_body");if(b&&b.dataset.n!==String(mon)){b.dataset.n=mon;b.scrollTop=Math.max(0,(first-h0*60)/60*WPX-14)}})}
-(()=>{let sx=0,sy=0;const g=$("k_wv");g.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});g.addEventListener("touchend",e=>{const p=e.changedTouches[0],dx=p.clientX-sx,dy=p.clientY-sy;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.6)pickDay(SEL+(dx<0?7:-7))},{passive:true})})();
+
 function pickDay(d){SEL=d;const[y,m]=ymd(d);P={y,m};renderMonth()}
 
 /* ---------- Day view: both of you side by side ---------- */
