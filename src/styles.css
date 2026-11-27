@@ -1000,3 +1000,11 @@ body.calfs #k{animation:none}body.calfs #k_cal{animation:kin .28s ease}
 /* "Heldag" chosen: the purple button with white text, inside sheets too */
 .box .field.tog.on{background-color:var(--acc);color:#fff;border-color:var(--acc)}
 @media (max-width:419px){#es .bh>.seg.esw button.on>span:last-child:not(.ava2){display:none}#es .bh>.seg.esw button.on{padding-right:7px}}
+/* Red days: a faint red tint */
+#k_gr>button.red:not(.fst):not(.s){background:color-mix(in oklab,var(--red) 6%,transparent)}
+#k_gr>button.red.out:not(.fst){background:color-mix(in oklab,var(--red) 4%,transparent)}
+#wv_body .wvcol.red:not(.wfest){background:color-mix(in oklab,var(--red) 6%,transparent)}
+#wv_head .wvh button.red{background:color-mix(in oklab,var(--red) 7%,transparent);border-radius:10px}
+#k_dv.red #dv_body .dvcol{background-color:color-mix(in oklab,var(--red) 5%,var(--card))}
+:root[data-theme="dark"] #k_gr>button.red:not(.fst):not(.s),:root[data-theme="dark"] #wv_body .wvcol.red:not(.wfest){background:color-mix(in oklab,var(--red) 9%,transparent)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #k_gr>button.red:not(.fst):not(.s),:root:not([data-theme="light"]) #wv_body .wvcol.red:not(.wfest){background:color-mix(in oklab,var(--red) 9%,transparent)}}

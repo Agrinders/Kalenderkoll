@@ -82,3 +82,6 @@ navUp=function(){document.body.classList.remove("navup")};
     box.querySelectorAll("[data-go] span").forEach(s=>{s.textContent=t(s.dataset.i)});box.querySelectorAll("[data-go]").forEach(b=>b.classList.toggle("on",b.dataset.go===tab))};
   paint();const _go=go;go=function(x){const r=_go.apply(this,arguments);paint();return r};const _al=applyLang;applyLang=function(){_al.apply(this,arguments);paint()}})();
 $("ttl").removeAttribute("role");$("ttl").removeAttribute("aria-expanded");
+/* Red days (Sundays and public holidays) get a faint red tint in the week and day views too. */
+const _rwv29=renderWeekView;renderWeekView=function(){_rwv29.apply(this,arguments);document.querySelectorAll("#wv_body .wvcol[data-d]").forEach(c=>{const d=+c.dataset.d;c.classList.toggle("red",wdOf(d)===6||(S.hol&&isRed(d)))})};
+const _rdv29=renderDayView;renderDayView=function(){_rdv29.apply(this,arguments);const d=SEL;$("k_dv").classList.toggle("red",wdOf(d)===6||(S.hol&&isRed(d)))};

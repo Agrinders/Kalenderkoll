@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="79940075571b">
+<meta name="kal-build" content="858ad92e7e2b">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -1013,6 +1013,14 @@ body.calfs #k{animation:none}body.calfs #k_cal{animation:kin .28s ease}
 /* "Heldag" chosen: the purple button with white text, inside sheets too */
 .box .field.tog.on{background-color:var(--acc);color:#fff;border-color:var(--acc)}
 @media (max-width:419px){#es .bh>.seg.esw button.on>span:last-child:not(.ava2){display:none}#es .bh>.seg.esw button.on{padding-right:7px}}
+/* Red days: a faint red tint */
+#k_gr>button.red:not(.fst):not(.s){background:color-mix(in oklab,var(--red) 6%,transparent)}
+#k_gr>button.red.out:not(.fst){background:color-mix(in oklab,var(--red) 4%,transparent)}
+#wv_body .wvcol.red:not(.wfest){background:color-mix(in oklab,var(--red) 6%,transparent)}
+#wv_head .wvh button.red{background:color-mix(in oklab,var(--red) 7%,transparent);border-radius:10px}
+#k_dv.red #dv_body .dvcol{background-color:color-mix(in oklab,var(--red) 5%,var(--card))}
+:root[data-theme="dark"] #k_gr>button.red:not(.fst):not(.s),:root[data-theme="dark"] #wv_body .wvcol.red:not(.wfest){background:color-mix(in oklab,var(--red) 9%,transparent)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #k_gr>button.red:not(.fst):not(.s),:root:not([data-theme="light"]) #wv_body .wvcol.red:not(.wfest){background:color-mix(in oklab,var(--red) 9%,transparent)}}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -2676,6 +2684,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"5.1",d:"27 nov 2026",i:[["k","",["Röda dagar", "Red days"],["Söndagar och helgdagar har en svag röd ton i månaden, veckan och dagen.", "Sundays and public holidays have a faint red tint in the month, week and day views."]]]},
 {v:"5.0",d:"27 nov 2026",i:[["k","",["Färre val i en händelse", "Fewer choices in an event"],["”Aldrig” under Upprepa och ”Ingen” under Påminnelse är borta. Väljer du inget händer det en gång utan påminnelse, och trycker du på ett valt alternativ igen tas det bort.", "“Never” under Repeat and “None” under Reminder are gone. Choose nothing and it happens once without a reminder; tap a chosen option again to remove it."]]]},
 {v:"4.9",d:"27 nov 2026",i:[["k","",["Vems uppe vid rubriken", "Whose up by the title"],["När du skapar eller ändrar en händelse väljer du Båda, dig eller din partner i en liten knappgrupp till höger om rubriken, utan egen rubrik. ”Heldag” syns nu tydligt när den är vald.", "When you create or edit an event, you pick Both, you or your partner in a small switch right of the title, with no heading of its own. “All day” now shows clearly when it is chosen."]]]},
 {v:"4.8",d:"27 nov 2026",i:[["k","",["Flikarna i sidomenyn", "Tabs in the side menu"],["På telefonen ligger Idag, Kalender, Att göra och Vi nu överst i sidomenyn under Menyer, och flikraden längst ner är borta. Menyknappen har en tydlig frostad kant. Svepet mellan månader är mjukare, och kalendern tonar in på sin plats när du öppnar den.", "On a phone, Today, Calendar, To do and Us are now at the top of the side menu under Menus, and the tab bar at the bottom is gone. The menu button has a clear frosted edge. Swiping between months is smoother, and the calendar fades in where it belongs when you open it."]]]},
@@ -3245,6 +3254,9 @@ navUp=function(){document.body.classList.remove("navup")};
     box.querySelectorAll("[data-go] span").forEach(s=>{s.textContent=t(s.dataset.i)});box.querySelectorAll("[data-go]").forEach(b=>b.classList.toggle("on",b.dataset.go===tab))};
   paint();const _go=go;go=function(x){const r=_go.apply(this,arguments);paint();return r};const _al=applyLang;applyLang=function(){_al.apply(this,arguments);paint()}})();
 $("ttl").removeAttribute("role");$("ttl").removeAttribute("aria-expanded");
+/* Red days (Sundays and public holidays) get a faint red tint in the week and day views too. */
+const _rwv29=renderWeekView;renderWeekView=function(){_rwv29.apply(this,arguments);document.querySelectorAll("#wv_body .wvcol[data-d]").forEach(c=>{const d=+c.dataset.d;c.classList.toggle("red",wdOf(d)===6||(S.hol&&isRed(d)))})};
+const _rdv29=renderDayView;renderDayView=function(){_rdv29.apply(this,arguments);const d=SEL;$("k_dv").classList.toggle("red",wdOf(d)===6||(S.hol&&isRed(d)))};
 /* ---------- The event sheet: whose it is sits up by the title ----------
    Båda / Oliver / Elin is a small switch right of "Ny händelse" / "Ändra", like Månad / Vecka / Dag,
    with no heading of its own. The chosen one shows its name; the others show only their picture. */
