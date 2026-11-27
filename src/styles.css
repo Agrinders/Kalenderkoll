@@ -903,19 +903,19 @@ body.calfs .cspan u{height:16px;line-height:16px;font-size:10.5px}
 #k_gr>button.s:not(.t) b{background:none;color:var(--acc);box-shadow:inset 0 0 0 1.5px var(--acc)}
 #k_gr>button.out{opacity:.38}
 #k_gr .cev{padding:0 2px}
-#k_gr .cev u{--bg:color-mix(in oklab,var(--c) 20%,var(--card));--fg:color-mix(in oklab,var(--c) 32%,var(--ink));background:var(--bg);color:var(--fg);box-shadow:inset 2.5px 0 0 var(--c);border:0;font-weight:600;padding-left:5px;border-radius:4px}
+#k_gr .cev u{--bg:color-mix(in oklab,var(--c) 28%,var(--card));--fg:color-mix(in oklab,var(--c) 32%,var(--ink));background:var(--bg);color:var(--fg);box-shadow:inset 2.5px 0 0 var(--c);border:0;font-weight:600;padding-left:5px;border-radius:4px}
 #k_gr .cev u::after{display:none}
 #k_gr .cev u.gl{--bg:var(--card);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--c) 55%,transparent),inset 2.5px 0 0 var(--c)}
 #k_gr .cev u.sp{background:repeating-linear-gradient(135deg,color-mix(in oklab,var(--c) 24%,var(--card)) 0 4px,color-mix(in oklab,var(--c) 12%,var(--card)) 4px 8px);box-shadow:inset 2.5px 0 0 var(--c);border:0}
-#k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 20%,var(--card));color:color-mix(in oklab,var(--c) 32%,var(--ink));margin:0;font-weight:650}
+#k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 28%,var(--card));color:color-mix(in oklab,var(--c) 32%,var(--ink));margin:0;font-weight:650}
 #k_gr .cspan u.s0{margin-left:2px;box-shadow:inset 2.5px 0 0 var(--c)}
 #k_gr .cspan u.s1{margin-right:2px}
 #k_gr .cspan u.gl{--bg:var(--card);box-shadow:inset 0 1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 0 -1px 0 color-mix(in oklab,var(--c) 55%,transparent)}
 #k_gr .cspan u.gl.s0{box-shadow:inset 0 1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 0 -1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 2.5px 0 0 var(--c)}
 #k_gr .cspan u.str{background:repeating-linear-gradient(135deg,color-mix(in oklab,var(--c) 24%,var(--card)) 0 4px,color-mix(in oklab,var(--c) 12%,var(--card)) 4px 8px)}
 #k_gr .cev em{color:var(--soft);font-weight:600}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #k_gr .cev u,:root:not([data-theme="light"]) #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 26%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}}
-:root[data-theme="dark"] #k_gr .cev u,:root[data-theme="dark"] #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 26%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #k_gr .cev u,:root:not([data-theme="light"]) #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 38%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}}
+:root[data-theme="dark"] #k_gr .cev u,:root[data-theme="dark"] #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 38%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}
 body.calfs #k_cal{background:var(--card)}
 /* Event names in the month stay on one line and are simply cut off at the day's edge; the boxes are slimmer. */
 #k_gr .cev{gap:1.5px}
@@ -957,3 +957,18 @@ body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!i
 @media (max-width:379px){#k_cal .mnav>.seg.kv button,#k_wv .mnav>.seg.kv button,#k_dv .mnav>.seg.kv button{padding:0 10px;font-size:12px}}
 @media (max-width:859px){#k_wv .mnav:has(>.seg.kv) b,#k_dv .mnav:has(>.seg.kv) b{font-size:17px;padding-left:4px;min-width:0;flex:1 1 0}}
 @media (max-width:859px){#k_dv .mnav b{display:flex;align-items:center;gap:4px}#k_dv .mnav b>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+
+/* ---------- Clearer person colours ---------- */
+:root{--pa:oklch(.70 .15 158);--pb:oklch(.63 .19 290);--pg:oklch(.69 .17 356)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pa:oklch(.74 .14 158);--pb:oklch(.70 .17 290);--pg:oklch(.74 .15 356)}}
+:root[data-theme="dark"]{--pa:oklch(.74 .14 158);--pb:oklch(.70 .17 290);--pg:oklch(.74 .15 356)}
+/* ---------- Dashed: a light tint with a dashed edge all round ---------- */
+.evr.dash,.dvev.dash{background:color-mix(in oklab,var(--c) 10%,var(--card));border:1.8px dashed color-mix(in oklab,var(--c) 85%,var(--ink));box-shadow:none}
+.evr.dash{grid-template-columns:auto minmax(0,1fr) auto;margin:8px 0;padding:11px 14px 11px 12px;border-radius:18px;color:var(--ink)}
+.dvev.dash{padding:6px 7px}
+.wvev.ds,.dvall.ds,.wvad button.ds,.cev u.ds{background:color-mix(in oklab,var(--c) 10%,var(--card));border:1.3px dashed color-mix(in oklab,var(--c) 85%,var(--ink));box-shadow:none}
+.wvev.ds{border-left-width:1.3px}
+#k_gr .cev u.ds{--bg:color-mix(in oklab,var(--c) 10%,var(--card));border:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink))!important;box-shadow:none;line-height:11px!important;padding-left:4px!important}
+#k_gr .cspan u.dsh{--bg:color-mix(in oklab,var(--c) 10%,var(--card));box-shadow:none;border-top:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink));border-bottom:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink));line-height:11px}
+#k_gr .cspan u.dsh.s0{border-left:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink))}#k_gr .cspan u.dsh.s1{border-right:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink))}
+#es_st{grid-template-columns:repeat(4,minmax(0,1fr))!important}#es_st button{font-size:13.5px;padding:0 4px}

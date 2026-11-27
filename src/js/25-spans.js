@@ -15,7 +15,7 @@ function monthPaint(){const g=$("k_gr");if(!g)return;const cells=[...g.querySele
     row.forEach(bt=>{const d=+bt.dataset.cday,here=multi.filter(o=>o.s<=d&&o.end>=d),top=here.reduce((m,o)=>Math.max(m,o.lane+1),0);
       let sp="";for(let k=0;k<top;k++){const o=here.find(x=>x.lane===k);if(!o){sp+=`<u class="spc"></u>`;continue}
         const st=o.s===d||d===a,en=o.end===d||d===b,run=Math.min(o.end,b)-d+1,cl=stMini(o.e);
-        sp+=`<u class="${cl==="gl"?"gl":cl==="sp"?"str":""}${st?" s0":""}${en?" s1":""}" style="--c:${evCol(o.e)};--n:${run}">${st?`<span>${wide&&o.e.t&&o.s===d?`<i>${esc(o.e.t)}</i> `:""}${esc(o.e.n)}</span>`:""}</u>`}
+        sp+=`<u class="${cl==="gl"?"gl":cl==="sp"?"str":cl==="ds"?"dsh":""}${st?" s0":""}${en?" s1":""}" style="--c:${evCol(o.e)};--n:${run}">${st?`<span>${wide&&o.e.t&&o.s===d?`<i>${esc(o.e.t)}</i> `:""}${esc(o.e.n)}</span>`:""}</u>`}
       let cs=bt.querySelector(".cspan");const c=bt.querySelector(".cev");
       if(top){if(!cs){cs=document.createElement("span");cs.className="cspan";if(c)bt.insertBefore(cs,c);else bt.appendChild(cs)}cs.innerHTML=sp}else if(cs)cs.remove();
       if(!c)return;

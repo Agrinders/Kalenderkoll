@@ -27,7 +27,7 @@ let PICS={a:"",b:""};
 const okPic=s=>typeof s==="string"&&s.length<90000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(s);
 const ava1=(w,sz)=>`<i class="ava${sz?" "+sz:""}${PICS[w]?" pic":""}" style="--p:${pvar(w)}${PICS[w]?`;--img:var(--pic${w})`:""}">${esc(initial(w))}</i>`;
 const ava=(w,sz)=>w==="g"?`<span class="ava2">${ava1("a")}${ava1("b")}</span>`:ava1(w,sz);
-function applyPeople(){const r=document.documentElement.style;for(const w of["a","b"]){const c=CP["c"+w];if(/^#[0-9a-f]{6}$/i.test(c||""))r.setProperty("--p"+w,c);else r.removeProperty("--p"+w);if(PICS[w])r.setProperty("--pic"+w,`url("${PICS[w]}")`);else r.removeProperty("--pic"+w)}}
+function applyPeople(){const r=document.documentElement.style;for(const w of["a","b"]){const c=newCol(CP["c"+w]);if(/^#[0-9a-f]{6}$/i.test(c||""))r.setProperty("--p"+w,c);else r.removeProperty("--p"+w);if(PICS[w])r.setProperty("--pic"+w,`url("${PICS[w]}")`);else r.removeProperty("--pic"+w)}}
 function setMe(w){ME=w;try{localStorage.setItem("kalenderkoll.me",w)}catch(e){}}
 const RM=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;
 /* Icons for events and days: simple line drawings. */
@@ -50,10 +50,14 @@ const ICONS={heart:'<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4
 const icon=k=>ICONS[k]?`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>`:"";
 /* Effects a day can have around it. In day view, that day's events get it too. */
 /* The three looks an event can have, and the short class used for its small labels. */
-const stOf=e=>e.st==="glass"||e.st==="stripe"?e.st:"fill",stMini=e=>e.st==="glass"?"gl":e.st==="stripe"?"sp":"";
+const stOf=e=>e.st==="glass"||e.st==="stripe"||e.st==="dash"?e.st:"fill",stMini=e=>e.st==="glass"?"gl":e.st==="stripe"?"sp":e.st==="dash"?"ds":"";
 /* Reminder choices, in minutes before the start (-1 is none). */
 const REMS=[-1,0,10,30,60,1440];
 const FX=[["glow","Glöd","Glow"],["rainbow","Regnbåge","Rainbow"],["sparkle","Gnistor","Sparkle"],["hearts","Hjärtan","Hearts"]];
 const fxCls=k=>FX.some(x=>x[0]===k)?" fx fx-"+k:"";
 /* Event colours. Any colour works; these are the quick ones. */
-const COLORS=["#a996f7","#7dd6b0","#82c3f5","#f5a3c7","#f8b98a","#f3d679","#f2928a","#9cc3a8","#c9c1bb"];
+/* Colours far apart in hue and a little apart in lightness, so two events never look alike.
+   The softer colours of earlier versions are read as their clearer counterpart. */
+const COLORS=["#8a6ef5","#3d8bf2","#17a9b5","#34b36a","#e9b622","#f07b2f","#e5484d","#e15fa7","#8f7a6a"];
+const OLDCOL={"#a996f7":"#8a6ef5","#7dd6b0":"#34b36a","#82c3f5":"#3d8bf2","#f5a3c7":"#e15fa7","#f8b98a":"#f07b2f","#f3d679":"#e9b622","#f2928a":"#e5484d","#9cc3a8":"#17a9b5","#c9c1bb":"#8f7a6a"};
+const newCol=c=>OLDCOL[String(c||"").toLowerCase()]||c||"";

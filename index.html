@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="1fff975d7cf1">
+<meta name="kal-build" content="448c9c16b917">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -916,19 +916,19 @@ body.calfs .cspan u{height:16px;line-height:16px;font-size:10.5px}
 #k_gr>button.s:not(.t) b{background:none;color:var(--acc);box-shadow:inset 0 0 0 1.5px var(--acc)}
 #k_gr>button.out{opacity:.38}
 #k_gr .cev{padding:0 2px}
-#k_gr .cev u{--bg:color-mix(in oklab,var(--c) 20%,var(--card));--fg:color-mix(in oklab,var(--c) 32%,var(--ink));background:var(--bg);color:var(--fg);box-shadow:inset 2.5px 0 0 var(--c);border:0;font-weight:600;padding-left:5px;border-radius:4px}
+#k_gr .cev u{--bg:color-mix(in oklab,var(--c) 28%,var(--card));--fg:color-mix(in oklab,var(--c) 32%,var(--ink));background:var(--bg);color:var(--fg);box-shadow:inset 2.5px 0 0 var(--c);border:0;font-weight:600;padding-left:5px;border-radius:4px}
 #k_gr .cev u::after{display:none}
 #k_gr .cev u.gl{--bg:var(--card);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--c) 55%,transparent),inset 2.5px 0 0 var(--c)}
 #k_gr .cev u.sp{background:repeating-linear-gradient(135deg,color-mix(in oklab,var(--c) 24%,var(--card)) 0 4px,color-mix(in oklab,var(--c) 12%,var(--card)) 4px 8px);box-shadow:inset 2.5px 0 0 var(--c);border:0}
-#k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 20%,var(--card));color:color-mix(in oklab,var(--c) 32%,var(--ink));margin:0;font-weight:650}
+#k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 28%,var(--card));color:color-mix(in oklab,var(--c) 32%,var(--ink));margin:0;font-weight:650}
 #k_gr .cspan u.s0{margin-left:2px;box-shadow:inset 2.5px 0 0 var(--c)}
 #k_gr .cspan u.s1{margin-right:2px}
 #k_gr .cspan u.gl{--bg:var(--card);box-shadow:inset 0 1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 0 -1px 0 color-mix(in oklab,var(--c) 55%,transparent)}
 #k_gr .cspan u.gl.s0{box-shadow:inset 0 1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 0 -1px 0 color-mix(in oklab,var(--c) 55%,transparent),inset 2.5px 0 0 var(--c)}
 #k_gr .cspan u.str{background:repeating-linear-gradient(135deg,color-mix(in oklab,var(--c) 24%,var(--card)) 0 4px,color-mix(in oklab,var(--c) 12%,var(--card)) 4px 8px)}
 #k_gr .cev em{color:var(--soft);font-weight:600}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #k_gr .cev u,:root:not([data-theme="light"]) #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 26%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}}
-:root[data-theme="dark"] #k_gr .cev u,:root[data-theme="dark"] #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 26%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #k_gr .cev u,:root:not([data-theme="light"]) #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 38%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}}
+:root[data-theme="dark"] #k_gr .cev u,:root[data-theme="dark"] #k_gr .cspan u{--bg:color-mix(in oklab,var(--c) 38%,var(--card));color:color-mix(in oklab,var(--c) 55%,var(--ink))}
 body.calfs #k_cal{background:var(--card)}
 /* Event names in the month stay on one line and are simply cut off at the day's edge; the boxes are slimmer. */
 #k_gr .cev{gap:1.5px}
@@ -970,6 +970,21 @@ body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!i
 @media (max-width:379px){#k_cal .mnav>.seg.kv button,#k_wv .mnav>.seg.kv button,#k_dv .mnav>.seg.kv button{padding:0 10px;font-size:12px}}
 @media (max-width:859px){#k_wv .mnav:has(>.seg.kv) b,#k_dv .mnav:has(>.seg.kv) b{font-size:17px;padding-left:4px;min-width:0;flex:1 1 0}}
 @media (max-width:859px){#k_dv .mnav b{display:flex;align-items:center;gap:4px}#k_dv .mnav b>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+
+/* ---------- Clearer person colours ---------- */
+:root{--pa:oklch(.70 .15 158);--pb:oklch(.63 .19 290);--pg:oklch(.69 .17 356)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--pa:oklch(.74 .14 158);--pb:oklch(.70 .17 290);--pg:oklch(.74 .15 356)}}
+:root[data-theme="dark"]{--pa:oklch(.74 .14 158);--pb:oklch(.70 .17 290);--pg:oklch(.74 .15 356)}
+/* ---------- Dashed: a light tint with a dashed edge all round ---------- */
+.evr.dash,.dvev.dash{background:color-mix(in oklab,var(--c) 10%,var(--card));border:1.8px dashed color-mix(in oklab,var(--c) 85%,var(--ink));box-shadow:none}
+.evr.dash{grid-template-columns:auto minmax(0,1fr) auto;margin:8px 0;padding:11px 14px 11px 12px;border-radius:18px;color:var(--ink)}
+.dvev.dash{padding:6px 7px}
+.wvev.ds,.dvall.ds,.wvad button.ds,.cev u.ds{background:color-mix(in oklab,var(--c) 10%,var(--card));border:1.3px dashed color-mix(in oklab,var(--c) 85%,var(--ink));box-shadow:none}
+.wvev.ds{border-left-width:1.3px}
+#k_gr .cev u.ds{--bg:color-mix(in oklab,var(--c) 10%,var(--card));border:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink))!important;box-shadow:none;line-height:11px!important;padding-left:4px!important}
+#k_gr .cspan u.dsh{--bg:color-mix(in oklab,var(--c) 10%,var(--card));box-shadow:none;border-top:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink));border-bottom:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink));line-height:11px}
+#k_gr .cspan u.dsh.s0{border-left:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink))}#k_gr .cspan u.dsh.s1{border-right:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink))}
+#es_st{grid-template-columns:repeat(4,minmax(0,1fr))!important}#es_st button{font-size:13.5px;padding:0 4px}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1128,7 +1143,7 @@ let PICS={a:"",b:""};
 const okPic=s=>typeof s==="string"&&s.length<90000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(s);
 const ava1=(w,sz)=>`<i class="ava${sz?" "+sz:""}${PICS[w]?" pic":""}" style="--p:${pvar(w)}${PICS[w]?`;--img:var(--pic${w})`:""}">${esc(initial(w))}</i>`;
 const ava=(w,sz)=>w==="g"?`<span class="ava2">${ava1("a")}${ava1("b")}</span>`:ava1(w,sz);
-function applyPeople(){const r=document.documentElement.style;for(const w of["a","b"]){const c=CP["c"+w];if(/^#[0-9a-f]{6}$/i.test(c||""))r.setProperty("--p"+w,c);else r.removeProperty("--p"+w);if(PICS[w])r.setProperty("--pic"+w,`url("${PICS[w]}")`);else r.removeProperty("--pic"+w)}}
+function applyPeople(){const r=document.documentElement.style;for(const w of["a","b"]){const c=newCol(CP["c"+w]);if(/^#[0-9a-f]{6}$/i.test(c||""))r.setProperty("--p"+w,c);else r.removeProperty("--p"+w);if(PICS[w])r.setProperty("--pic"+w,`url("${PICS[w]}")`);else r.removeProperty("--pic"+w)}}
 function setMe(w){ME=w;try{localStorage.setItem("kalenderkoll.me",w)}catch(e){}}
 const RM=()=>matchMedia("(prefers-reduced-motion:reduce)").matches;
 /* Icons for events and days: simple line drawings. */
@@ -1151,13 +1166,17 @@ const ICONS={heart:'<path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4
 const icon=k=>ICONS[k]?`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>`:"";
 /* Effects a day can have around it. In day view, that day's events get it too. */
 /* The three looks an event can have, and the short class used for its small labels. */
-const stOf=e=>e.st==="glass"||e.st==="stripe"?e.st:"fill",stMini=e=>e.st==="glass"?"gl":e.st==="stripe"?"sp":"";
+const stOf=e=>e.st==="glass"||e.st==="stripe"||e.st==="dash"?e.st:"fill",stMini=e=>e.st==="glass"?"gl":e.st==="stripe"?"sp":e.st==="dash"?"ds":"";
 /* Reminder choices, in minutes before the start (-1 is none). */
 const REMS=[-1,0,10,30,60,1440];
 const FX=[["glow","Glöd","Glow"],["rainbow","Regnbåge","Rainbow"],["sparkle","Gnistor","Sparkle"],["hearts","Hjärtan","Hearts"]];
 const fxCls=k=>FX.some(x=>x[0]===k)?" fx fx-"+k:"";
 /* Event colours. Any colour works; these are the quick ones. */
-const COLORS=["#a996f7","#7dd6b0","#82c3f5","#f5a3c7","#f8b98a","#f3d679","#f2928a","#9cc3a8","#c9c1bb"];
+/* Colours far apart in hue and a little apart in lightness, so two events never look alike.
+   The softer colours of earlier versions are read as their clearer counterpart. */
+const COLORS=["#8a6ef5","#3d8bf2","#17a9b5","#34b36a","#e9b622","#f07b2f","#e5484d","#e15fa7","#8f7a6a"];
+const OLDCOL={"#a996f7":"#8a6ef5","#7dd6b0":"#34b36a","#82c3f5":"#3d8bf2","#f5a3c7":"#e15fa7","#f8b98a":"#f07b2f","#f3d679":"#e9b622","#f2928a":"#e5484d","#9cc3a8":"#17a9b5","#c9c1bb":"#8f7a6a"};
+const newCol=c=>OLDCOL[String(c||"").toLowerCase()]||c||"";
 /* ---------- Dates. Days are counted as whole numbers (days since 1970) so the maths never trips on summer time. ---------- */
 const pad=n=>String(n).padStart(2,"0");
 const isoOf=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
@@ -1275,7 +1294,7 @@ const PEND=new Map();
 function later(key,fn,ms){const old=PEND.get(key);if(old)clearTimeout(old.t);PEND.set(key,{fn,t:setTimeout(()=>{PEND.delete(key);fn()},ms)})}
 function flushSaves(){PEND.forEach(e=>{clearTimeout(e.t);e.fn()});PEND.clear()}
 addEventListener("pagehide",flushSaves);document.addEventListener("visibilitychange",()=>{if(document.hidden)flushSaves()});
-const evDoc=e=>({kind:"ev",id:e.id,n:e.n,d:e.d,e:e.e||"",t:e.t||"",t2:e.t2||"",r:e.r||"o",u:e.u||"",skip:e.skip||[],pl:e.pl||"",o:e.o||"",w:["a","b","g"].includes(e.w)?e.w:"g",col:/^#[0-9a-f]{6}$/i.test(e.col||"")?e.col:"",st:e.st==="glass"||e.st==="stripe"?e.st:"fill",ic:ICONS[e.ic]?e.ic:"",fx:fxCls(e.fx)?e.fx:"",wd:e.r==="w"&&Array.isArray(e.wd)?e.wd:[],by:e.by==="a"||e.by==="b"?e.by:"",at:+e.at||0,rm:REMS.includes(+e.rm)?+e.rm:-1});
+const evDoc=e=>({kind:"ev",id:e.id,n:e.n,d:e.d,e:e.e||"",t:e.t||"",t2:e.t2||"",r:e.r||"o",u:e.u||"",skip:e.skip||[],pl:e.pl||"",o:e.o||"",w:["a","b","g"].includes(e.w)?e.w:"g",col:/^#[0-9a-f]{6}$/i.test(e.col||"")?e.col:"",st:e.st==="glass"||e.st==="stripe"||e.st==="dash"?e.st:"fill",ic:ICONS[e.ic]?e.ic:"",fx:fxCls(e.fx)?e.fx:"",wd:e.r==="w"&&Array.isArray(e.wd)?e.wd:[],by:e.by==="a"||e.by==="b"?e.by:"",at:+e.at||0,rm:REMS.includes(+e.rm)?+e.rm:-1});
 const bdDoc=b=>({kind:"bd",id:b.id,n:b.n,md:b.md,y:b.y||0,ty:b.ty||"b"});
 const todoDoc=x=>({kind:"todo",id:x.id,n:x.n,w:x.w||"g",done:!!x.done,at:x.at||0,dt:x.dt||0,by:x.by||ME||""});
 const noteDoc=x=>({kind:"note",id:x.id,f:x.f,txt:x.txt,at:x.at});
@@ -1515,7 +1534,7 @@ function remLbl(m,ad){return m<0?tx("Ingen","None"):m===0?(ad?tx("Samma dag 09:0
 function paintES(){$("es_ml").textContent=tx("Påminnelse","Reminder");$("es_m").innerHTML=REMS.filter(m=>!ES.ad||m<0||m===0||m===1440).map(m=>`<button type="button" class="chip${ES.rm===m?" on":""}" data-esm="${m}">${remLbl(m,ES.ad)}</button>`).join("");if(ES.ad&&ES.rm>0&&ES.rm<1440)ES.rm=0;const c=ES.col||pvar(ES.w),dd=ymd(dn($("es_d").value))[2],wdn=wdOf(dn($("es_d").value));
   $("es_wd").classList.toggle("hide",ES.r!=="w");$("es_wd").innerHTML=[0,1,2,3,4,5,6].map(i=>`<button type="button" class="${esWd().includes(i)?"on":""}${i===wdn?" base":""}" data-eswd="${i}" aria-pressed="${esWd().includes(i)}">${dshort(i)}</button>`).join("");
   $("es_fx").innerHTML=[["",tx("Ingen","None"),tx("Ingen","None")],...FX].map(([k,a,b])=>`<button type="button" class="${ES.fx===k?"on":""}" data-esfx="${k}"><span class="fxd${fxCls(k)}">${dd}</span><small>${li()?b:a}</small></button>`).join("");
-  $("es_st").innerHTML=[["fill",tx("Block","Block")],["glass",tx("Glas","Glass")],["stripe",tx("Ränder","Stripes")]].map(([v,l])=>`<button type="button" class="${ES.st===v?"on":""}" data-est="${v}">${l}</button>`).join("");
+  $("es_st").innerHTML=[["fill",tx("Block","Block")],["glass",tx("Glas","Glass")],["stripe",tx("Ränder","Stripes")],["dash",tx("Streckad","Dashed")]].map(([v,l])=>`<button type="button" class="${ES.st===v?"on":""}" data-est="${v}">${l}</button>`).join("");
   $("es_pv").innerHTML=`<div class="evr ${stOf(ES)}" style="--c:${c}"><i class="ei${ES.ic?fxCls(ES.fx):""}">${ES.ic?icon(ES.ic):""}</i><span><b>${esc($("es_n").value.trim()||tx("Så här ser den ut","This is how it looks"))}</b></span><span class="et">${ES.ad?tx("Heldag","All day"):esc($("es_t1").value||"")}</span></div>`;
   $("es_c").innerHTML=`<button type="button" class="swt auto${!ES.col?" on":""}" data-esc="" style="--c:${pvar(ES.w)}" aria-label="${esc(tx("Personens färg","The person's colour"))}"></button>`+COLORS.map(x=>`<button type="button" class="swt${ES.col===x?" on":""}" data-esc="${x}" style="--c:${x}" aria-label="${x}"></button>`).join("")+`<label class="swt cust${ES.col&&!COLORS.includes(ES.col)?" on":""}" style="--c:${ES.col&&!COLORS.includes(ES.col)?ES.col:"#ffffff"}" aria-label="${esc(tx("Valfri färg","Any colour"))}"><input type="color" id="es_cc" value="${ES.col||"#a996f7"}"></label>`;
   $("es_ic").innerHTML=`<button type="button" class="${!ES.ic?"on":""}" data-esi="" aria-label="${esc(tx("Ingen ikon","No icon"))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"/></svg></button>`+Object.keys(ICONS).map(k=>`<button type="button" class="${ES.ic===k?"on":""}" data-esi="${k}" aria-label="${k}">${icon(k)}</button>`).join("");
@@ -1717,7 +1736,7 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
       if(d.id==="plan"){if(!PEND.has("plan")){if(typeof v.wkno==="boolean")S.wkno=v.wkno;if(typeof v.hol==="boolean")S.hol=v.hol}}
       else if(d.id==="couple")cp={a:String(v.a||""),b:String(v.b||""),ua:String(v.ua||""),ub:String(v.ub||""),since:iso(v.since)?v.since:"",ca:String(v.ca||""),cb:String(v.cb||"")};
       else if(v.kind==="pic"&&(v.w==="a"||v.w==="b")&&okPic(v.img))PICS[v.w]=v.img;
-      else if(v.kind==="ev"&&iso(v.d))EV.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),d:v.d,e:iso(v.e)&&v.e>v.d&&(v.r||"o")==="o"?v.e:"",t:/^\d\d:\d\d$/.test(v.t||"")?v.t:"",t2:/^\d\d:\d\d$/.test(v.t2||"")?v.t2:"",r:["o","d","wd","w","2w","m","y"].includes(v.r)?v.r:"o",u:iso(v.u)?v.u:(iso(v.e)&&v.e>v.d&&v.r&&v.r!=="o"?v.e:""),skip:Array.isArray(v.skip)?v.skip.filter(x=>typeof x==="string"):[],pl:String(v.pl||""),o:String(v.o||""),w:["a","b","g"].includes(v.w)?v.w:"g",col:/^#[0-9a-f]{6}$/i.test(v.col||"")?v.col:"",st:v.st==="glass"||v.st==="stripe"?v.st:"fill",ic:ICONS[v.ic]?v.ic:"",fx:fxCls(v.fx)?v.fx:"",wd:Array.isArray(v.wd)?[...new Set(v.wd.filter(x=>Number.isInteger(x)&&x>=0&&x<7))].sort():[],by:v.by==="a"||v.by==="b"?v.by:"",at:+v.at||0,rm:REMS.includes(+v.rm)?+v.rm:-1});
+      else if(v.kind==="ev"&&iso(v.d))EV.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),d:v.d,e:iso(v.e)&&v.e>v.d&&(v.r||"o")==="o"?v.e:"",t:/^\d\d:\d\d$/.test(v.t||"")?v.t:"",t2:/^\d\d:\d\d$/.test(v.t2||"")?v.t2:"",r:["o","d","wd","w","2w","m","y"].includes(v.r)?v.r:"o",u:iso(v.u)?v.u:(iso(v.e)&&v.e>v.d&&v.r&&v.r!=="o"?v.e:""),skip:Array.isArray(v.skip)?v.skip.filter(x=>typeof x==="string"):[],pl:String(v.pl||""),o:String(v.o||""),w:["a","b","g"].includes(v.w)?v.w:"g",col:/^#[0-9a-f]{6}$/i.test(v.col||"")?newCol(v.col):"",st:v.st==="glass"||v.st==="stripe"||v.st==="dash"?v.st:"fill",ic:ICONS[v.ic]?v.ic:"",fx:fxCls(v.fx)?v.fx:"",wd:Array.isArray(v.wd)?[...new Set(v.wd.filter(x=>Number.isInteger(x)&&x>=0&&x<7))].sort():[],by:v.by==="a"||v.by==="b"?v.by:"",at:+v.at||0,rm:REMS.includes(+v.rm)?+v.rm:-1});
       else if(v.kind==="day"&&iso(v.d)&&ICONS[v.ic])DAYS[v.d]={ic:v.ic};
       else if(v.kind==="bd"&&/^\d\d-\d\d$/.test(v.md||""))BD.push({id:String(v.id||d.id.slice(3)),n:String(v.n||""),md:v.md,y:+v.y||0,ty:["b","a","o"].includes(v.ty)?v.ty:"b"});
       else if(v.kind==="todo"){const id=String(v.id||d.id.slice(5)),ae=document.activeElement,typing=ae&&ae.dataset&&ae.dataset.tn===id||PEND.has("todo_"+id);TODOS.push(typing&&prevT.find(z=>z.id===id)||{id,n:String(v.n||""),w:["a","b","g"].includes(v.w)?v.w:"g",done:!!v.done,at:+v.at||0,dt:+v.dt||0})}
@@ -2629,6 +2648,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"4.7",d:"27 nov 2026",i:[["k","",["Tydligare färger och en streckad stil", "Clearer colours and a dashed style"],["Färgerna ligger längre ifrån varandra och är klarare, så händelser är lättare att skilja åt. Dina gamla färgval visas automatiskt som sin tydligare motsvarighet. Det finns också en ny stil, Streckad, med en streckad kant runt händelsen.", "The colours are further apart and clearer, so events are easier to tell apart. Your old colour choices show as their clearer counterpart automatically. There is also a new style, Dashed, with a dashed edge around the event."]]]},
 {v:"4.6",d:"27 nov 2026",i:[["k","",["Fler timmar i vecka och dag", "More hours in week and day"],["Vecko- och dagvyn går nu ända ner till skärmens kant, så fler tider syns på en gång.", "The week and day views now reach the bottom of the screen, so more hours show at once."]]]},
 {v:"4.5",d:"27 nov 2026",i:[["k","",["Månad, Vecka, Dag i rubriken", "Month, Week, Day in the heading"],["Valet Månad / Vecka / Dag sitter nu till höger om månadens namn, lägre och lite bredare. Titelraden får mer plats.", "The Month / Week / Day choice now sits right of the month's name, lower and a little wider. The title bar gets more room."]]]},
 {v:"4.4",d:"27 nov 2026",i:[["k","",["Kalendern är hem", "The calendar is home"],["Appen öppnar i kalendern, och månaden fyller skärmen under titelraden. Svep för att byta månad – månaden följer fingret. Sök finns uppe i titelraden. Tryck på ”Kalender” för att ta fram flikarna när du vill gå någon annanstans. Tryck på månadens namn eller ”Till idag” för att komma tillbaka.", "The app opens on the calendar, and the month fills the screen under the title bar. Swipe to change month – the month follows your finger. Search is up in the title bar. Tap “Calendar” to bring up the tabs when you want to go elsewhere. Tap the month's name or “To today” to come back."]]]},
@@ -3094,7 +3114,7 @@ function monthPaint(){const g=$("k_gr");if(!g)return;const cells=[...g.querySele
     row.forEach(bt=>{const d=+bt.dataset.cday,here=multi.filter(o=>o.s<=d&&o.end>=d),top=here.reduce((m,o)=>Math.max(m,o.lane+1),0);
       let sp="";for(let k=0;k<top;k++){const o=here.find(x=>x.lane===k);if(!o){sp+=`<u class="spc"></u>`;continue}
         const st=o.s===d||d===a,en=o.end===d||d===b,run=Math.min(o.end,b)-d+1,cl=stMini(o.e);
-        sp+=`<u class="${cl==="gl"?"gl":cl==="sp"?"str":""}${st?" s0":""}${en?" s1":""}" style="--c:${evCol(o.e)};--n:${run}">${st?`<span>${wide&&o.e.t&&o.s===d?`<i>${esc(o.e.t)}</i> `:""}${esc(o.e.n)}</span>`:""}</u>`}
+        sp+=`<u class="${cl==="gl"?"gl":cl==="sp"?"str":cl==="ds"?"dsh":""}${st?" s0":""}${en?" s1":""}" style="--c:${evCol(o.e)};--n:${run}">${st?`<span>${wide&&o.e.t&&o.s===d?`<i>${esc(o.e.t)}</i> `:""}${esc(o.e.n)}</span>`:""}</u>`}
       let cs=bt.querySelector(".cspan");const c=bt.querySelector(".cev");
       if(top){if(!cs){cs=document.createElement("span");cs.className="cspan";if(c)bt.insertBefore(cs,c);else bt.appendChild(cs)}cs.innerHTML=sp}else if(cs)cs.remove();
       if(!c)return;
