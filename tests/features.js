@@ -40,4 +40,7 @@ check('every Saturday and Sunday is one bar over the weekend',await ev(()=>{save
   const D=['2026-11-13','2026-11-14','2026-11-15'].map(x=>[...document.querySelectorAll('#k_gr [data-cday]')].find(b=>+b.dataset.cday===dn(x)));
   const r=D.map(b=>{const u=b.querySelector('.cspan u');return u?[u.className.trim(),u.textContent]:(b.querySelector('.cev').textContent.includes('Stugan')?'single':null)});
   EV=EV.filter(e=>e.id!=='we1');render();return r}),[null,['s0','Stugan'],['s1','']]);
+check('no Never or None: nothing chosen is the default, a second tap removes',await ev(()=>{openES();const has=[!!document.querySelector('[data-esr="o"]'),!!document.querySelector('[data-esm="-1"]'),ES.r,ES.rm];
+  document.querySelector('[data-esr="w"]').click();document.querySelector('[data-esm="30"]').click();const on=[ES.r,ES.rm];
+  document.querySelector('[data-esr="w"]').click();document.querySelector('[data-esm="30"]').click();const off=[ES.r,ES.rm];closeES&&closeES();return[has,on,off]}),[[false,false,'o',-1],['w',30],['o',-1]]);
 await b.close();srv.close();console.log(fails?fails+' failed':'all passed');process.exit(fails?1:0)})();
