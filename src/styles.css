@@ -990,3 +990,13 @@ body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!i
 /* Opening the calendar: the month just fades in where it belongs (a sliding page would carry it through the middle). */
 body.calfs #k{animation:none}body.calfs #k_cal{animation:kin .28s ease}
 @keyframes kin{from{opacity:0}}
+/* Whose, in the event sheet's heading */
+#es .bh{gap:8px}#es .bh>b{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#es .bh>.seg.esw{flex:none;display:flex;gap:2px;margin:0;padding:3px;border-radius:12px;--r:12px;--p:3px}
+#es .bh>.seg.esw button{display:flex;align-items:center;gap:6px;min-height:32px;height:32px;padding:0 7px;border-radius:9px;font-size:13px;font-weight:650}
+#es .bh>.seg.esw button>span:last-child:not(.ava2){display:none}#es .bh>.seg.esw button.on>span:last-child:not(.ava2){display:inline;max-width:6.5em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#es .bh>.seg.esw button.on{padding-right:10px}
+#es .bh>.seg.esw .ava{width:22px;height:22px}
+/* "Heldag" chosen: the purple button with white text, inside sheets too */
+.box .field.tog.on{background-color:var(--acc);color:#fff;border-color:var(--acc)}
+@media (max-width:419px){#es .bh>.seg.esw button.on>span:last-child:not(.ava2){display:none}#es .bh>.seg.esw button.on{padding-right:7px}}
