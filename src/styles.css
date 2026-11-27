@@ -939,9 +939,7 @@ body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!i
   body.calfs #k_cal .mnav b{padding-left:8px}
   body.ktab nav{transform:translate(-50%,calc(100% + 24px + var(--sab)));opacity:0;pointer-events:none;transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .2s}
   body.ktab.navup nav{transform:translateX(-50%);opacity:1;pointer-events:auto}
-  body.ktab #ttl{cursor:pointer;display:flex;align-items:center;gap:5px;min-width:0;font-size:20px!important;white-space:nowrap}
-  body.ktab .top{gap:2px}body.ktab .top .ib{width:38px;min-width:38px}body.ktab .top .ib.add{margin-left:2px}
-  body.ktab .seg.kv button{padding:0 7px;font-size:13px}
+  body.ktab #ttl{cursor:pointer;display:flex;align-items:center;gap:5px;min-width:0;white-space:nowrap}
   body.calfs #k_now{width:auto}
   body.ktab #ttl::after{content:"";flex:none;width:6px;height:6px;margin-top:-4px;border-right:2px solid var(--soft);border-bottom:2px solid var(--soft);transform:rotate(45deg);transition:transform .25s,margin .25s}
   body.ktab.navup #ttl::after{transform:rotate(-135deg);margin-top:4px}
@@ -949,5 +947,13 @@ body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!i
   body.calfs.navup #k_now{display:none!important}
 }
 @media (min-width:860px){#tsrch{display:none}}
-@media (max-width:419px){body.ktab #ttl{font-size:18.5px!important}body.ktab .seg.kv button{padding:0 5px;font-size:12.5px}body.ktab .top .ib{width:34px;min-width:34px}body.ktab #tadd{width:40px;min-width:40px}}
-@media (max-width:379px){body.ktab #ttl{font-size:17.5px!important;gap:4px}body.ktab .seg.kv button{padding:0 4px;font-size:12px}body.ktab .top .ib{width:32px;min-width:32px}body.ktab #menu{width:30px;min-width:30px}}
+
+/* Månad / Vecka / Dag sits in the calendar's own heading, right of the month's name: low and a little wider. */
+@media (max-width:859px){
+  .mnav>.seg.kv{flex:none;margin:0 4px 0 auto;padding:2px;border-radius:10px;--r:10px;--p:2px;display:grid;grid-template-columns:repeat(3,auto)}
+  #k_cal .mnav>.seg.kv button,#k_wv .mnav>.seg.kv button,#k_dv .mnav>.seg.kv button{width:auto;min-height:26px;height:26px;padding:0 11px;font-size:12.5px;border-radius:8px;display:flex}
+  .mnav:has(>.seg.kv) b{flex:1 1 auto}
+}
+@media (max-width:379px){#k_cal .mnav>.seg.kv button,#k_wv .mnav>.seg.kv button,#k_dv .mnav>.seg.kv button{padding:0 10px;font-size:12px}}
+@media (max-width:859px){#k_wv .mnav:has(>.seg.kv) b,#k_dv .mnav:has(>.seg.kv) b{font-size:17px;padding-left:4px;min-width:0;flex:1 1 0}}
+@media (max-width:859px){#k_dv .mnav b{display:flex;align-items:center;gap:4px}#k_dv .mnav b>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}

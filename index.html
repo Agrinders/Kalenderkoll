@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="2bf93bf242ce">
+<meta name="kal-build" content="51b2c40243aa">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -952,9 +952,7 @@ body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!i
   body.calfs #k_cal .mnav b{padding-left:8px}
   body.ktab nav{transform:translate(-50%,calc(100% + 24px + var(--sab)));opacity:0;pointer-events:none;transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .2s}
   body.ktab.navup nav{transform:translateX(-50%);opacity:1;pointer-events:auto}
-  body.ktab #ttl{cursor:pointer;display:flex;align-items:center;gap:5px;min-width:0;font-size:20px!important;white-space:nowrap}
-  body.ktab .top{gap:2px}body.ktab .top .ib{width:38px;min-width:38px}body.ktab .top .ib.add{margin-left:2px}
-  body.ktab .seg.kv button{padding:0 7px;font-size:13px}
+  body.ktab #ttl{cursor:pointer;display:flex;align-items:center;gap:5px;min-width:0;white-space:nowrap}
   body.calfs #k_now{width:auto}
   body.ktab #ttl::after{content:"";flex:none;width:6px;height:6px;margin-top:-4px;border-right:2px solid var(--soft);border-bottom:2px solid var(--soft);transform:rotate(45deg);transition:transform .25s,margin .25s}
   body.ktab.navup #ttl::after{transform:rotate(-135deg);margin-top:4px}
@@ -962,8 +960,16 @@ body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!i
   body.calfs.navup #k_now{display:none!important}
 }
 @media (min-width:860px){#tsrch{display:none}}
-@media (max-width:419px){body.ktab #ttl{font-size:18.5px!important}body.ktab .seg.kv button{padding:0 5px;font-size:12.5px}body.ktab .top .ib{width:34px;min-width:34px}body.ktab #tadd{width:40px;min-width:40px}}
-@media (max-width:379px){body.ktab #ttl{font-size:17.5px!important;gap:4px}body.ktab .seg.kv button{padding:0 4px;font-size:12px}body.ktab .top .ib{width:32px;min-width:32px}body.ktab #menu{width:30px;min-width:30px}}
+
+/* Månad / Vecka / Dag sits in the calendar's own heading, right of the month's name: low and a little wider. */
+@media (max-width:859px){
+  .mnav>.seg.kv{flex:none;margin:0 4px 0 auto;padding:2px;border-radius:10px;--r:10px;--p:2px;display:grid;grid-template-columns:repeat(3,auto)}
+  #k_cal .mnav>.seg.kv button,#k_wv .mnav>.seg.kv button,#k_dv .mnav>.seg.kv button{width:auto;min-height:26px;height:26px;padding:0 11px;font-size:12.5px;border-radius:8px;display:flex}
+  .mnav:has(>.seg.kv) b{flex:1 1 auto}
+}
+@media (max-width:379px){#k_cal .mnav>.seg.kv button,#k_wv .mnav>.seg.kv button,#k_dv .mnav>.seg.kv button{padding:0 10px;font-size:12px}}
+@media (max-width:859px){#k_wv .mnav:has(>.seg.kv) b,#k_dv .mnav:has(>.seg.kv) b{font-size:17px;padding-left:4px;min-width:0;flex:1 1 0}}
+@media (max-width:859px){#k_dv .mnav b{display:flex;align-items:center;gap:4px}#k_dv .mnav b>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -2623,6 +2629,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"4.5",d:"27 nov 2026",i:[["k","",["Månad, Vecka, Dag i rubriken", "Month, Week, Day in the heading"],["Valet Månad / Vecka / Dag sitter nu till höger om månadens namn, lägre och lite bredare. Titelraden får mer plats.", "The Month / Week / Day choice now sits right of the month's name, lower and a little wider. The title bar gets more room."]]]},
 {v:"4.4",d:"27 nov 2026",i:[["k","",["Kalendern är hem", "The calendar is home"],["Appen öppnar i kalendern, och månaden fyller skärmen under titelraden. Svep för att byta månad – månaden följer fingret. Sök finns uppe i titelraden. Tryck på ”Kalender” för att ta fram flikarna när du vill gå någon annanstans. Tryck på månadens namn eller ”Till idag” för att komma tillbaka.", "The app opens on the calendar, and the month fills the screen under the title bar. Swipe to change month – the month follows your finger. Search is up in the title bar. Tap “Calendar” to bring up the tabs when you want to go elsewhere. Tap the month's name or “To today” to come back."]]]},
 {v:"4.3",d:"25 nov 2026",i:[["k","",["Lika höga dagar varje månad", "Equally tall days every month"],["Månader med sex veckor, som november, har lika höga dagar som andra månader i stället för att tryckas ihop. Den sista veckan når du genom att skrolla lite. Månadens namn står alltid på en rad.", "Months with six weeks, like November, have days as tall as other months instead of being squeezed. You reach the last week with a little scroll. The month's name always stays on one line."]]]},
 {v:"4.2",d:"24 nov 2026",i:[["k","",["Upprepningar i rad blir en linje", "Repeats in a row become one bar"],["Samma händelse på dagar i rad, som varje lördag och söndag eller varje dag, visas som en sammanhängande linje i månaden.", "The same event on days in a row, like every Saturday and Sunday or every day, shows as one connected bar in the month."]]]},
@@ -3146,6 +3153,16 @@ $("k_m").addEventListener("click",()=>{if(P.y===NOW.getFullYear()&&P.m===NOW.get
 $("tsrch").classList.toggle("hide",tab!=="k");calAuto();
 /* Switching between the full month and the week or day view starts at the top, never under the title bar. */
 const _calFs26=calFs;calFs=function(on){const was=CALFS;_calFs26(on);if(was!==CALFS){window.scrollTo(0,0);document.body.scrollTop=0;if(!CALFS){document.body.style.removeProperty("padding-top");setTimeout(fixTop,30)}}};
+/* On a phone, Månad / Vecka / Dag sits in the heading of the view you are in, right of its name. */
+function segPlace(){const seg=$("k_v");if(!seg)return;let host=null;
+  if(NARROW.matches&&tab==="k"){const card=KV==="week"?$("k_wv"):KV==="day"?$("k_dv"):$("k_cal");host=card&&card.querySelector(".mnav")}
+  if(host){if(seg.parentElement!==host)host.appendChild(seg)}
+  else if(seg.parentElement!==$("main_top"))$("main_top").insertBefore(seg,$("tsrch"))}
+const _calAuto27=calAuto;calAuto=function(){_calAuto27();segPlace()};
+const _renderKV27=renderKV;renderKV=function(){_renderKV27.apply(this,arguments);segPlace()};
+segPlace();
+/* On a narrow phone the day's heading uses the short weekday so it fits beside Månad / Vecka / Dag. */
+const _rdv27=renderDayView;renderDayView=function(){_rdv27.apply(this,arguments);if(!NARROW.matches)return;const s=$("dv_t").querySelector("span");if(s)s.textContent=SEL===todayN()?tx("Idag","Today")+", "+fmtD(SEL,{day:"numeric",month:"short"}).replace(/\./g,""):cap(fmtD(SEL,{weekday:"short",day:"numeric",month:"short"}).replace(/\./g,""))};
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>

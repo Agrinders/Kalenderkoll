@@ -42,3 +42,13 @@ $("k_m").addEventListener("click",()=>{if(P.y===NOW.getFullYear()&&P.m===NOW.get
 $("tsrch").classList.toggle("hide",tab!=="k");calAuto();
 /* Switching between the full month and the week or day view starts at the top, never under the title bar. */
 const _calFs26=calFs;calFs=function(on){const was=CALFS;_calFs26(on);if(was!==CALFS){window.scrollTo(0,0);document.body.scrollTop=0;if(!CALFS){document.body.style.removeProperty("padding-top");setTimeout(fixTop,30)}}};
+/* On a phone, Månad / Vecka / Dag sits in the heading of the view you are in, right of its name. */
+function segPlace(){const seg=$("k_v");if(!seg)return;let host=null;
+  if(NARROW.matches&&tab==="k"){const card=KV==="week"?$("k_wv"):KV==="day"?$("k_dv"):$("k_cal");host=card&&card.querySelector(".mnav")}
+  if(host){if(seg.parentElement!==host)host.appendChild(seg)}
+  else if(seg.parentElement!==$("main_top"))$("main_top").insertBefore(seg,$("tsrch"))}
+const _calAuto27=calAuto;calAuto=function(){_calAuto27();segPlace()};
+const _renderKV27=renderKV;renderKV=function(){_renderKV27.apply(this,arguments);segPlace()};
+segPlace();
+/* On a narrow phone the day's heading uses the short weekday so it fits beside Månad / Vecka / Dag. */
+const _rdv27=renderDayView;renderDayView=function(){_rdv27.apply(this,arguments);if(!NARROW.matches)return;const s=$("dv_t").querySelector("span");if(s)s.textContent=SEL===todayN()?tx("Idag","Today")+", "+fmtD(SEL,{day:"numeric",month:"short"}).replace(/\./g,""):cap(fmtD(SEL,{weekday:"short",day:"numeric",month:"short"}).replace(/\./g,""))};
