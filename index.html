@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="858ad92e7e2b">
+<meta name="kal-build" content="f755394a85bc">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -1021,6 +1021,13 @@ body.calfs #k{animation:none}body.calfs #k_cal{animation:kin .28s ease}
 #k_dv.red #dv_body .dvcol{background-color:color-mix(in oklab,var(--red) 5%,var(--card))}
 :root[data-theme="dark"] #k_gr>button.red:not(.fst):not(.s),:root[data-theme="dark"] #wv_body .wvcol.red:not(.wfest){background:color-mix(in oklab,var(--red) 9%,transparent)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #k_gr>button.red:not(.fst):not(.s),:root:not([data-theme="light"]) #wv_body .wvcol.red:not(.wfest){background:color-mix(in oklab,var(--red) 9%,transparent)}}
+/* Today and the chosen day: a rounded rectangle around the date instead of a circle */
+#k_gr>button b{width:30px;height:21px;border-radius:7px;font-size:13px}
+#k_gr>button.t b{background:var(--acc);color:#fff;box-shadow:none}
+#k_gr>button.s:not(.t) b{background:color-mix(in oklab,var(--acc) 14%,transparent);color:var(--acc);box-shadow:inset 0 0 0 1.5px color-mix(in oklab,var(--acc) 70%,transparent)}
+.wvh b{width:32px;height:24px;border-radius:8px}
+body.calfs #k_cal .cgr button b{width:30px;height:21px}
+@media (max-height:520px){body.calfs #k_cal .cgr button b{width:26px;height:18px;border-radius:6px}}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -2684,6 +2691,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"5.2",d:"27 nov 2026",i:[["k","",["Rektangel runt dagens datum", "A rectangle around today's date"],["Dagens datum och dagen du har valt markeras med en rundad rektangel i stället för en cirkel, i månaden och veckan.", "Today's date and the day you have chosen are marked with a rounded rectangle instead of a circle, in the month and the week."]]]},
 {v:"5.1",d:"27 nov 2026",i:[["k","",["Röda dagar", "Red days"],["Söndagar och helgdagar har en svag röd ton i månaden, veckan och dagen.", "Sundays and public holidays have a faint red tint in the month, week and day views."]]]},
 {v:"5.0",d:"27 nov 2026",i:[["k","",["Färre val i en händelse", "Fewer choices in an event"],["”Aldrig” under Upprepa och ”Ingen” under Påminnelse är borta. Väljer du inget händer det en gång utan påminnelse, och trycker du på ett valt alternativ igen tas det bort.", "“Never” under Repeat and “None” under Reminder are gone. Choose nothing and it happens once without a reminder; tap a chosen option again to remove it."]]]},
 {v:"4.9",d:"27 nov 2026",i:[["k","",["Vems uppe vid rubriken", "Whose up by the title"],["När du skapar eller ändrar en händelse väljer du Båda, dig eller din partner i en liten knappgrupp till höger om rubriken, utan egen rubrik. ”Heldag” syns nu tydligt när den är vald.", "When you create or edit an event, you pick Both, you or your partner in a small switch right of the title, with no heading of its own. “All day” now shows clearly when it is chosen."]]]},
