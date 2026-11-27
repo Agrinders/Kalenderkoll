@@ -39,7 +39,7 @@ $("reset").onclick=async()=>{if(!await ask(tx("Radera allt?","Delete everything?
 
 /* ---------- Start ---------- */
 try{const l=JSON.parse(localStorage.getItem("kalenderkoll.look")||"null");if(l){if(l.lang==="sv"||l.lang==="en")S.lang=l.lang;if(["auto","light","dark"].includes(l.theme))S.theme=l.theme}}catch(e){}
-applyTheme();applyLang();let startTab="h";try{const s=sessionStorage.getItem("kalenderkoll.tab");if(TABS.includes(s))startTab=s}catch(e){}go(startTab);
+applyTheme();applyLang();let startTab="k";try{const s=sessionStorage.getItem("kalenderkoll.tab");if(TABS.includes(s))startTab=s}catch(e){}go(startTab);
 requestAnimationFrame(()=>document.documentElement.classList.remove("boot"));setTimeout(()=>document.documentElement.classList.remove("boot"),600);
 let lastDay=todayN();
 function tick(){const n=todayN();if(n!==lastDay){if(SEL===lastDay){SEL=n;const[y,m]=ymd(n);P={y,m}}lastDay=n}const ae=document.activeElement;if(!(ae&&ae.dataset&&ae.dataset.tn))render()}
@@ -94,9 +94,9 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
 (()=>{const on=id=>$(id).classList.contains("on");
-  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["mv",closeMV],["mm",closeMM],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(typeof calFsOn==="function"&&calFsOn()){calFs(false);return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
+  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["mv",closeMV],["mm",closeMM],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(document.body.classList.contains("navup")){navUp(false);return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
   const guard=()=>history.pushState({kk:1},"");try{history.replaceState({kk:0},"");guard()}catch(e){return}
-  addEventListener("popstate",()=>{if(closeTop())return guard();if(tab!=="h"){go("h");return guard()}history.back()})})();
+  addEventListener("popstate",()=>{if(closeTop())return guard();if(tab!=="k"){go("k");return guard()}history.back()})})();
 
 /* Inviting and joining (installed version, shared through Firebase). */
 async function shareInvite(){askNotify();const url=KK.inviteUrl(),p=pname(other(me())),text=tx(`Hej ${p}! Gå med i vår gemensamma kalender:`,`Hi ${p}! Join our shared calendar:`);

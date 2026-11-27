@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="dfad875b8942">
+<meta name="kal-build" content="2bf93bf242ce">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -941,6 +941,29 @@ body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!i
 #k_cal .mnav b,#k_wv .mnav b,#k_dv .mnav b{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(16px,5.2vw,20px)}
 @media (max-width:400px){#k_cal .mnav button{width:38px}}
 @media (max-width:350px){#k_cal .mnav button{width:34px}#k_cal .mnav b{padding-left:6px}}
+/* ---------- The calendar is home (phones) ---------- */
+#tsrch svg{width:21px;height:21px}
+#k_fs{display:none!important}
+#k_m{cursor:pointer}
+@media (max-width:859px){
+  #k_cal .mnav [data-mv],#k_wv .mnav [data-wmv],#k_dv .mnav [data-dmv],#k_cal .srchb,#k_wv .srchb,#k_dv .srchb{display:none!important}
+  body.calfs #k_cal{top:var(--toph,calc(var(--topH) + var(--sat)));padding-top:2px;z-index:14;animation:none}
+  body.calfs #k_cal .mnav{min-height:36px;margin:2px 0 2px}
+  body.calfs #k_cal .mnav b{padding-left:8px}
+  body.ktab nav{transform:translate(-50%,calc(100% + 24px + var(--sab)));opacity:0;pointer-events:none;transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .2s}
+  body.ktab.navup nav{transform:translateX(-50%);opacity:1;pointer-events:auto}
+  body.ktab #ttl{cursor:pointer;display:flex;align-items:center;gap:5px;min-width:0;font-size:20px!important;white-space:nowrap}
+  body.ktab .top{gap:2px}body.ktab .top .ib{width:38px;min-width:38px}body.ktab .top .ib.add{margin-left:2px}
+  body.ktab .seg.kv button{padding:0 7px;font-size:13px}
+  body.calfs #k_now{width:auto}
+  body.ktab #ttl::after{content:"";flex:none;width:6px;height:6px;margin-top:-4px;border-right:2px solid var(--soft);border-bottom:2px solid var(--soft);transform:rotate(45deg);transition:transform .25s,margin .25s}
+  body.ktab.navup #ttl::after{transform:rotate(-135deg);margin-top:4px}
+  body.calfs #k_now:not(.hide){display:block!important;position:fixed;left:50%;bottom:calc(16px + var(--sab));transform:translateX(-50%);z-index:16;margin:0;padding:9px 18px;border-radius:999px;background:var(--acc);color:#fff;font-weight:650;font-size:14px;box-shadow:0 8px 22px color-mix(in oklab,var(--acc) 40%,transparent)}
+  body.calfs.navup #k_now{display:none!important}
+}
+@media (min-width:860px){#tsrch{display:none}}
+@media (max-width:419px){body.ktab #ttl{font-size:18.5px!important}body.ktab .seg.kv button{padding:0 5px;font-size:12.5px}body.ktab .top .ib{width:34px;min-width:34px}body.ktab #tadd{width:40px;min-width:40px}}
+@media (max-width:379px){body.ktab #ttl{font-size:17.5px!important;gap:4px}body.ktab .seg.kv button{padding:0 4px;font-size:12px}body.ktab .top .ib{width:32px;min-width:32px}body.ktab #menu{width:30px;min-width:30px}}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -1025,7 +1048,7 @@ body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!i
 <button class="di dset" data-go="c" id="dr_set" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h2M11 17h9"/><circle cx="15.5" cy="7" r="2.5"/><circle cx="8.5" cy="17" r="2.5"/></svg><span></span></button>
 <div class="dlang" id="dr_lang"></div></aside>
 <main>
-<header class="top" id="main_top"><button class="ib" id="menu" type="button" aria-label="Meny"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h11M4 17h16"/></svg></button><h1 id="ttl"></h1><button type="button" class="sync" id="sync" hidden aria-live="polite"><i></i><span></span></button><div class="seg kv hide" id="k_v"></div><button class="ib add" id="tadd" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></header>
+<header class="top" id="main_top"><button class="ib" id="menu" type="button" aria-label="Meny"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h11M4 17h16"/></svg></button><h1 id="ttl"></h1><button type="button" class="sync" id="sync" hidden aria-live="polite"><i></i><span></span></button><div class="seg kv hide" id="k_v"></div><button class="ib" id="tsrch" type="button" aria-label="Sök"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 4.5 4.5"/></svg></button><button class="ib add" id="tadd" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button></header>
 
 <section id="h">
 <div class="hello"><p class="eyebrow" id="h_date"></p><h2 id="h_hi"></h2></div>
@@ -1372,7 +1395,7 @@ function renderDayView(){const n=SEL,L=onDay(n),timed=L.filter(o=>o.e.t&&o.s===n
   const first=timed.length?Math.min(...timed.map(st)):nowM>=0?nowM-60:8*60;requestAnimationFrame(()=>{const b=$("dv_body");if(b&&b.dataset.n!==String(n)){b.dataset.n=n;b.scrollTop=Math.max(0,(first-h0*60)/60*HPX-20)}})}
 (()=>{let sx=0,sy=0;const g=$("k_dv");g.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});g.addEventListener("touchend",e=>{const p=e.changedTouches[0],dx=p.clientX-sx,dy=p.clientY-sy;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.6)pickDay(SEL+(dx<0?1:-1))},{passive:true})})();
 function moveMonth(k){const d=new Date(P.y,P.m+k,1);P={y:d.getFullYear(),m:d.getMonth()};const[sy,sm,sd]=ymd(SEL);if(sy!==P.y||sm!==P.m)SEL=P.y===NOW.getFullYear()&&P.m===NOW.getMonth()?todayN():dnOf(P.y,P.m,Math.min(sd,dim(P.y,P.m)));renderMonth()}
-(()=>{let sx=0,sy=0;const g=$("k_cal");g.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});g.addEventListener("touchend",e=>{const p=e.changedTouches[0],dx=p.clientX-sx,dy=p.clientY-sy;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.6)moveMonth(dx<0?1:-1)},{passive:true})})();
+
 
 /* ---------- Att göra ---------- */
 let TF="g";
@@ -1649,7 +1672,7 @@ $("reset").onclick=async()=>{if(!await ask(tx("Radera allt?","Delete everything?
 
 /* ---------- Start ---------- */
 try{const l=JSON.parse(localStorage.getItem("kalenderkoll.look")||"null");if(l){if(l.lang==="sv"||l.lang==="en")S.lang=l.lang;if(["auto","light","dark"].includes(l.theme))S.theme=l.theme}}catch(e){}
-applyTheme();applyLang();let startTab="h";try{const s=sessionStorage.getItem("kalenderkoll.tab");if(TABS.includes(s))startTab=s}catch(e){}go(startTab);
+applyTheme();applyLang();let startTab="k";try{const s=sessionStorage.getItem("kalenderkoll.tab");if(TABS.includes(s))startTab=s}catch(e){}go(startTab);
 requestAnimationFrame(()=>document.documentElement.classList.remove("boot"));setTimeout(()=>document.documentElement.classList.remove("boot"),600);
 let lastDay=todayN();
 function tick(){const n=todayN();if(n!==lastDay){if(SEL===lastDay){SEL=n;const[y,m]=ymd(n);P={y,m}}lastDay=n}const ae=document.activeElement;if(!(ae&&ae.dataset&&ae.dataset.tn))render()}
@@ -1704,9 +1727,9 @@ function checkWho(){if(!firstDone||!SHARED()||!MYID||$("cs").classList.contains(
 
 /* Android back button: close what is open first, then go back to Idag, and only then leave. */
 (()=>{const on=id=>$(id).classList.contains("on");
-  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["mv",closeMV],["mm",closeMM],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(typeof calFsOn==="function"&&calFsOn()){calFs(false);return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
+  function closeTop(){if(on("modal")){$("m_no").click();return true}for(const[id,f]of[["dp",closeDP],["tp",closeTP],["pk",closePK],["ip",closeIP],["sc",()=>closeSC(null)],["mv",closeMV],["mm",closeMM],["as",closeAS],["es",closeES],["bs",closeBS],["ns",closeNS],["ds",closeDS]])if(on(id)){f();return true}if(document.body.classList.contains("navup")){navUp(false);return true}if(on("cs")&&!$("cs_no").classList.contains("hide")){closeCS();return true}if(on("drawer")){closeDrawer();return true}if(on("js")){closeJS();return true}return false}
   const guard=()=>history.pushState({kk:1},"");try{history.replaceState({kk:0},"");guard()}catch(e){return}
-  addEventListener("popstate",()=>{if(closeTop())return guard();if(tab!=="h"){go("h");return guard()}history.back()})})();
+  addEventListener("popstate",()=>{if(closeTop())return guard();if(tab!=="k"){go("k");return guard()}history.back()})})();
 
 /* Inviting and joining (installed version, shared through Firebase). */
 async function shareInvite(){askNotify();const url=KK.inviteUrl(),p=pname(other(me())),text=tx(`Hej ${p}! Gå med i vår gemensamma kalender:`,`Hi ${p}! Join our shared calendar:`);
@@ -1815,7 +1838,7 @@ function widgetSync(){const F=FSP();if(!F)return;clearTimeout(wgTimer);wgTimer=s
   const txt=JSON.stringify({v:1,lang:S.lang,names:{a:CP.a||"",b:CP.b||""},cols:{a:pc("a"),b:pc("b")},days});
   if(txt===wgPrev)return;F.writeFile({path:"widget.json",data:txt,directory:"DATA",encoding:"utf8"}).then(()=>{wgPrev=txt}).catch(()=>{})},500)}
 /* Keeps the first card just under the top bar, whatever extra space the phone adds above the page. */
-function fixTop(){try{const bar=$("main_top").getBoundingClientRect().bottom,m=document.querySelector("main");if(!m||!bar)return;
+function fixTop(){try{if(document.body.classList.contains("calfs"))return;const bar=$("main_top").getBoundingClientRect().bottom,m=document.querySelector("main");if(!m||!bar)return;
   const first=[...m.querySelectorAll("section:not(.hide)>*")].find(x=>x.offsetHeight&&!x.classList.contains("hide"));if(!first)return;
   /* offsetTop ignores the slide-in animation, so a page that is still moving is measured right. */
   let top=0;for(let el=first;el;el=el.offsetParent)top+=el.offsetTop;const diff=top-(bar+6);if(Math.abs(diff)<3)return;
@@ -2600,6 +2623,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"4.4",d:"27 nov 2026",i:[["k","",["Kalendern är hem", "The calendar is home"],["Appen öppnar i kalendern, och månaden fyller skärmen under titelraden. Svep för att byta månad – månaden följer fingret. Sök finns uppe i titelraden. Tryck på ”Kalender” för att ta fram flikarna när du vill gå någon annanstans. Tryck på månadens namn eller ”Till idag” för att komma tillbaka.", "The app opens on the calendar, and the month fills the screen under the title bar. Swipe to change month – the month follows your finger. Search is up in the title bar. Tap “Calendar” to bring up the tabs when you want to go elsewhere. Tap the month's name or “To today” to come back."]]]},
 {v:"4.3",d:"25 nov 2026",i:[["k","",["Lika höga dagar varje månad", "Equally tall days every month"],["Månader med sex veckor, som november, har lika höga dagar som andra månader i stället för att tryckas ihop. Den sista veckan når du genom att skrolla lite. Månadens namn står alltid på en rad.", "Months with six weeks, like November, have days as tall as other months instead of being squeezed. You reach the last week with a little scroll. The month's name always stays on one line."]]]},
 {v:"4.2",d:"24 nov 2026",i:[["k","",["Upprepningar i rad blir en linje", "Repeats in a row become one bar"],["Samma händelse på dagar i rad, som varje lördag och söndag eller varje dag, visas som en sammanhängande linje i månaden.", "The same event on days in a row, like every Saturday and Sunday or every day, shows as one connected bar in the month."]]]},
 {v:"4.1",d:"24 nov 2026",i:[["k","",["Smalare händelser", "Slimmer events"],["Händelserna i månaden är mindre och står på en rad. Långa namn klipps av i kanten av dagen i stället för att brytas.", "Events in the month are smaller and stay on one line. Long names are cut off at the edge of the day instead of wrapping."]]]},
@@ -3032,7 +3056,6 @@ var CALFS=false;
 function calFsOn(){return CALFS}
 function fsIcon(){const b=$("k_fs");if(!b)return;b.setAttribute("aria-label",CALFS?tx("Stäng helskärm","Close full screen"):tx("Visa månaden i helskärm","Show the month full screen"));
   b.innerHTML=CALFS?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>'}
-(()=>{const nv=document.querySelector("#k_cal .mnav");if(!nv)return;const b=document.createElement("button");b.type="button";b.id="k_fs";b.className="fsb";nv.appendChild(b);b.onclick=()=>calFs(!CALFS);fsIcon()})();
 function calFs(on){if(CALFS===on)return;CALFS=on;document.body.classList.toggle("calfs",on);fsIcon();renderMonth();
 }
 /* In full screen every event of the day is drawn, then the ones that do not fit are counted in a "+2" line. */
@@ -3079,6 +3102,50 @@ calFsFit=function(){document.querySelectorAll("#k_gr .cev").forEach(c=>{const K=
   const H=c.clientHeight;if(!H||c.scrollHeight<=H+1)return;
   let em=c.querySelector("em");const base=em?+em.textContent.slice(1)||0:0;if(!em){em=document.createElement("em");em.className="fit";c.appendChild(em)}let n=0;
   for(let i=K.length-1;i>0&&c.scrollHeight>H+1;i--){K[i].style.display="none";n++;em.textContent="+"+(base+n)}})};
+/* ---------- The calendar is home ----------
+   The app opens on the calendar, and on a phone the month fills the screen under the title bar.
+   The tab bar hides; tap the title to bring it up when you want to go somewhere else.
+   Swipe to change month (the month follows the finger), search sits in the title bar, and a small
+   "Till idag" pill brings you back to this month. */
+const NARROW=matchMedia("(max-width:859px)");
+function calAuto(){const want=tab==="k"&&KV==="month"&&NARROW.matches;document.body.classList.toggle("ktab",tab==="k"&&NARROW.matches);
+  const top=$("main_top");if(top)document.documentElement.style.setProperty("--toph",top.offsetHeight+"px");
+  if(want!==CALFS)calFs(want)}
+function navUp(on){document.body.classList.toggle("navup",on);$("ttl").setAttribute("aria-expanded",on?"true":"false")}
+$("ttl").addEventListener("click",()=>{if(tab==="k"&&NARROW.matches)navUp(!document.body.classList.contains("navup"))});
+$("ttl").setAttribute("role","button");
+/* Picking a tab puts the bar away again on the calendar; a tap in the calendar does too. */
+const _go26=go;go=function(x){navUp(false);const r=_go26.apply(this,arguments);$("tsrch").classList.toggle("hide",x!=="k");calAuto();return r};
+const _render26=render;render=function(){_render26.apply(this,arguments);calAuto()};
+$("k_cal").addEventListener("pointerdown",()=>{if(document.body.classList.contains("navup"))navUp(false)},true);
+NARROW.addEventListener?NARROW.addEventListener("change",calAuto):NARROW.addListener(calAuto);
+window.addEventListener("resize",()=>{const top=$("main_top");if(top)document.documentElement.style.setProperty("--toph",top.offsetHeight+"px")});
+$("tsrch").onclick=()=>openSearch();$("tsrch").setAttribute("aria-label",tx("Sök","Search"));
+/* Tapping the month's name goes back to this month. */
+$("k_m").addEventListener("click",()=>{if(P.y===NOW.getFullYear()&&P.m===NOW.getMonth())return;$("k_now").click()});
+
+/* Swiping: the month follows the finger, slides out, and the next one slides in from the other side. */
+(()=>{const card=$("k_cal");let sx=0,sy=0,dx=0,on=false,dead=false,busy=false,W=1;
+  const parts=()=>[$("k_gr"),$("k_m")];
+  const put=x=>parts().forEach((el,i)=>{el.style.transform=`translateX(${x*(i?0.5:1)}px)`;el.style.opacity=String(1-Math.min(.6,Math.abs(x)/W*.9))});
+  const clear=()=>parts().forEach(el=>{el.style.transform="";el.style.opacity=""});
+  card.addEventListener("touchstart",e=>{if(busy||e.touches.length>1)return;sx=e.touches[0].clientX;sy=e.touches[0].clientY;dx=0;on=false;dead=false;W=card.clientWidth||360},{passive:true});
+  card.addEventListener("touchmove",e=>{if(busy||dead)return;const t=e.touches[0],x=t.clientX-sx,y=t.clientY-sy;
+    if(!on){if(Math.abs(y)>10&&Math.abs(y)>Math.abs(x)){dead=true;return}if(Math.abs(x)<10)return;on=true}
+    dx=x;put(dx)},{passive:true});
+  const done=()=>{if(!on){return}on=false;
+    if(Math.abs(dx)<60){parts().forEach(el=>el.animate([{transform:el.style.transform,opacity:el.style.opacity},{transform:"none",opacity:1}],{duration:200,easing:"cubic-bezier(.2,.8,.2,1)"}));clear();return}
+    busy=true;const k=dx<0?1:-1,out=-k*W*.55,ease="cubic-bezier(.3,.7,.3,1)";
+    const a=parts().map((el,i)=>el.animate([{transform:el.style.transform,opacity:el.style.opacity},{transform:`translateX(${out*(i?0.5:1)}px)`,opacity:0}],{duration:140,easing:"ease-in",fill:"forwards"}));
+    a[0].finished.then(()=>{moveMonth(k);a.forEach(x=>x.cancel());clear();
+      parts().forEach((el,i)=>el.animate([{transform:`translateX(${-out*.6*(i?0.5:1)}px)`,opacity:0},{transform:"none",opacity:1}],{duration:240,easing:ease}));
+      busy=false}).catch(()=>{busy=false;clear()});
+    /* The finger lifted after a swipe is not a tap on a day. */
+    const stop=e=>{e.stopPropagation();e.preventDefault()};card.addEventListener("click",stop,{capture:true,once:true});setTimeout(()=>card.removeEventListener("click",stop,{capture:true}),400)};
+  card.addEventListener("touchend",done,{passive:true});card.addEventListener("touchcancel",()=>{if(on){on=false;clear()}},{passive:true})})();
+$("tsrch").classList.toggle("hide",tab!=="k");calAuto();
+/* Switching between the full month and the week or day view starts at the top, never under the title bar. */
+const _calFs26=calFs;calFs=function(on){const was=CALFS;_calFs26(on);if(was!==CALFS){window.scrollTo(0,0);document.body.scrollTop=0;if(!CALFS){document.body.style.removeProperty("padding-top");setTimeout(fixTop,30)}}};
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>

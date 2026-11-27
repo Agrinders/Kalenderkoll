@@ -928,3 +928,26 @@ body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!i
 #k_cal .mnav b,#k_wv .mnav b,#k_dv .mnav b{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:clamp(16px,5.2vw,20px)}
 @media (max-width:400px){#k_cal .mnav button{width:38px}}
 @media (max-width:350px){#k_cal .mnav button{width:34px}#k_cal .mnav b{padding-left:6px}}
+/* ---------- The calendar is home (phones) ---------- */
+#tsrch svg{width:21px;height:21px}
+#k_fs{display:none!important}
+#k_m{cursor:pointer}
+@media (max-width:859px){
+  #k_cal .mnav [data-mv],#k_wv .mnav [data-wmv],#k_dv .mnav [data-dmv],#k_cal .srchb,#k_wv .srchb,#k_dv .srchb{display:none!important}
+  body.calfs #k_cal{top:var(--toph,calc(var(--topH) + var(--sat)));padding-top:2px;z-index:14;animation:none}
+  body.calfs #k_cal .mnav{min-height:36px;margin:2px 0 2px}
+  body.calfs #k_cal .mnav b{padding-left:8px}
+  body.ktab nav{transform:translate(-50%,calc(100% + 24px + var(--sab)));opacity:0;pointer-events:none;transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .2s}
+  body.ktab.navup nav{transform:translateX(-50%);opacity:1;pointer-events:auto}
+  body.ktab #ttl{cursor:pointer;display:flex;align-items:center;gap:5px;min-width:0;font-size:20px!important;white-space:nowrap}
+  body.ktab .top{gap:2px}body.ktab .top .ib{width:38px;min-width:38px}body.ktab .top .ib.add{margin-left:2px}
+  body.ktab .seg.kv button{padding:0 7px;font-size:13px}
+  body.calfs #k_now{width:auto}
+  body.ktab #ttl::after{content:"";flex:none;width:6px;height:6px;margin-top:-4px;border-right:2px solid var(--soft);border-bottom:2px solid var(--soft);transform:rotate(45deg);transition:transform .25s,margin .25s}
+  body.ktab.navup #ttl::after{transform:rotate(-135deg);margin-top:4px}
+  body.calfs #k_now:not(.hide){display:block!important;position:fixed;left:50%;bottom:calc(16px + var(--sab));transform:translateX(-50%);z-index:16;margin:0;padding:9px 18px;border-radius:999px;background:var(--acc);color:#fff;font-weight:650;font-size:14px;box-shadow:0 8px 22px color-mix(in oklab,var(--acc) 40%,transparent)}
+  body.calfs.navup #k_now{display:none!important}
+}
+@media (min-width:860px){#tsrch{display:none}}
+@media (max-width:419px){body.ktab #ttl{font-size:18.5px!important}body.ktab .seg.kv button{padding:0 5px;font-size:12.5px}body.ktab .top .ib{width:34px;min-width:34px}body.ktab #tadd{width:40px;min-width:40px}}
+@media (max-width:379px){body.ktab #ttl{font-size:17.5px!important;gap:4px}body.ktab .seg.kv button{padding:0 4px;font-size:12px}body.ktab .top .ib{width:32px;min-width:32px}body.ktab #menu{width:30px;min-width:30px}}

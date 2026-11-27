@@ -43,7 +43,7 @@ function widgetSync(){const F=FSP();if(!F)return;clearTimeout(wgTimer);wgTimer=s
   const txt=JSON.stringify({v:1,lang:S.lang,names:{a:CP.a||"",b:CP.b||""},cols:{a:pc("a"),b:pc("b")},days});
   if(txt===wgPrev)return;F.writeFile({path:"widget.json",data:txt,directory:"DATA",encoding:"utf8"}).then(()=>{wgPrev=txt}).catch(()=>{})},500)}
 /* Keeps the first card just under the top bar, whatever extra space the phone adds above the page. */
-function fixTop(){try{const bar=$("main_top").getBoundingClientRect().bottom,m=document.querySelector("main");if(!m||!bar)return;
+function fixTop(){try{if(document.body.classList.contains("calfs"))return;const bar=$("main_top").getBoundingClientRect().bottom,m=document.querySelector("main");if(!m||!bar)return;
   const first=[...m.querySelectorAll("section:not(.hide)>*")].find(x=>x.offsetHeight&&!x.classList.contains("hide"));if(!first)return;
   /* offsetTop ignores the slide-in animation, so a page that is still moving is measured right. */
   let top=0;for(let el=first;el;el=el.offsetParent)top+=el.offsetTop;const diff=top-(bar+6);if(Math.abs(diff)<3)return;

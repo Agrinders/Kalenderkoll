@@ -6,7 +6,6 @@ var CALFS=false;
 function calFsOn(){return CALFS}
 function fsIcon(){const b=$("k_fs");if(!b)return;b.setAttribute("aria-label",CALFS?tx("Stäng helskärm","Close full screen"):tx("Visa månaden i helskärm","Show the month full screen"));
   b.innerHTML=CALFS?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>'}
-(()=>{const nv=document.querySelector("#k_cal .mnav");if(!nv)return;const b=document.createElement("button");b.type="button";b.id="k_fs";b.className="fsb";nv.appendChild(b);b.onclick=()=>calFs(!CALFS);fsIcon()})();
 function calFs(on){if(CALFS===on)return;CALFS=on;document.body.classList.toggle("calfs",on);fsIcon();renderMonth();
 }
 /* In full screen every event of the day is drawn, then the ones that do not fit are counted in a "+2" line. */

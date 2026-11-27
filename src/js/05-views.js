@@ -86,7 +86,7 @@ function renderDayView(){const n=SEL,L=onDay(n),timed=L.filter(o=>o.e.t&&o.s===n
   const first=timed.length?Math.min(...timed.map(st)):nowM>=0?nowM-60:8*60;requestAnimationFrame(()=>{const b=$("dv_body");if(b&&b.dataset.n!==String(n)){b.dataset.n=n;b.scrollTop=Math.max(0,(first-h0*60)/60*HPX-20)}})}
 (()=>{let sx=0,sy=0;const g=$("k_dv");g.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});g.addEventListener("touchend",e=>{const p=e.changedTouches[0],dx=p.clientX-sx,dy=p.clientY-sy;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.6)pickDay(SEL+(dx<0?1:-1))},{passive:true})})();
 function moveMonth(k){const d=new Date(P.y,P.m+k,1);P={y:d.getFullYear(),m:d.getMonth()};const[sy,sm,sd]=ymd(SEL);if(sy!==P.y||sm!==P.m)SEL=P.y===NOW.getFullYear()&&P.m===NOW.getMonth()?todayN():dnOf(P.y,P.m,Math.min(sd,dim(P.y,P.m)));renderMonth()}
-(()=>{let sx=0,sy=0;const g=$("k_cal");g.addEventListener("touchstart",e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY},{passive:true});g.addEventListener("touchend",e=>{const p=e.changedTouches[0],dx=p.clientX-sx,dy=p.clientY-sy;if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.6)moveMonth(dx<0?1:-1)},{passive:true})})();
+
 
 /* ---------- Att göra ---------- */
 let TF="g";
