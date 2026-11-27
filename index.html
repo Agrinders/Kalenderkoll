@@ -4,7 +4,7 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f4f1ec"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}[hidden]{display:none!important}body{margin:0}</style>
-<meta name="kal-build" content="448c9c16b917">
+<meta name="kal-build" content="5662f77618ba">
 <title>Kalenderkoll</title>
 <script>document.documentElement.classList.add("boot")</script>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -952,10 +952,8 @@ body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!i
   body.calfs #k_cal .mnav b{padding-left:8px}
   body.ktab nav{transform:translate(-50%,calc(100% + 24px + var(--sab)));opacity:0;pointer-events:none;transition:transform .32s cubic-bezier(.2,.8,.2,1),opacity .2s}
   body.ktab.navup nav{transform:translateX(-50%);opacity:1;pointer-events:auto}
-  body.ktab #ttl{cursor:pointer;display:flex;align-items:center;gap:5px;min-width:0;white-space:nowrap}
+  body.ktab #ttl{display:flex;align-items:center;min-width:0;white-space:nowrap}
   body.calfs #k_now{width:auto}
-  body.ktab #ttl::after{content:"";flex:none;width:6px;height:6px;margin-top:-4px;border-right:2px solid var(--soft);border-bottom:2px solid var(--soft);transform:rotate(45deg);transition:transform .25s,margin .25s}
-  body.ktab.navup #ttl::after{transform:rotate(-135deg);margin-top:4px}
   body.calfs #k_now:not(.hide){display:block!important;position:fixed;left:50%;bottom:calc(16px + var(--sab));transform:translateX(-50%);z-index:16;margin:0;padding:9px 18px;border-radius:999px;background:var(--acc);color:#fff;font-weight:650;font-size:14px;box-shadow:0 8px 22px color-mix(in oklab,var(--acc) 40%,transparent)}
   body.calfs.navup #k_now{display:none!important}
 }
@@ -985,6 +983,26 @@ body.calfs #k_gr .cev u,body.calfs #k_gr .cspan u{height:15px;line-height:15px!i
 #k_gr .cspan u.dsh{--bg:color-mix(in oklab,var(--c) 10%,var(--card));box-shadow:none;border-top:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink));border-bottom:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink));line-height:11px}
 #k_gr .cspan u.dsh.s0{border-left:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink))}#k_gr .cspan u.dsh.s1{border-right:1px dashed color-mix(in oklab,var(--c) 85%,var(--ink))}
 #es_st{grid-template-columns:repeat(4,minmax(0,1fr))!important}#es_st button{font-size:13.5px;padding:0 4px}
+
+/* ---------- Phones: tabs in the side menu, a clear menu button ---------- */
+.dtabs{display:flex;flex-direction:column;gap:2px;margin-bottom:6px}
+.dsec{padding:10px 12px 4px;font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--soft)}
+.dsec2{margin-top:6px;border-top:1px solid var(--rule);padding-top:14px}
+#drawer .dtabs button.di{display:flex;align-items:center;gap:12px;width:100%;min-height:48px;padding:0 12px;border-radius:14px;font-weight:600;text-align:left}
+#drawer .dtabs button.di svg{width:22px;height:22px}
+#drawer .dtabs button.di.on{background:color-mix(in oklab,var(--acc) 14%,transparent);color:var(--acc)}
+@media (min-width:860px){.dtabs{display:none}}
+@media (max-width:859px){
+  nav{display:none!important}
+  body{padding-bottom:calc(24px + var(--sab))!important}
+  #menu{background:color-mix(in oklab,var(--card) 55%,transparent);-webkit-backdrop-filter:blur(12px) saturate(1.4);backdrop-filter:blur(12px) saturate(1.4);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--ink) 14%,transparent),inset 0 1px 0 color-mix(in oklab,#fff 55%,transparent),0 2px 8px color-mix(in oklab,var(--ink) 10%,transparent);width:40px!important;height:40px;min-width:40px!important;margin-right:6px}
+  #menu svg{stroke-width:2.2}
+}
+:root[data-theme="dark"] #menu{box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),inset 0 1px 0 rgba(255,255,255,.12),0 2px 8px rgba(0,0,0,.3)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #menu{box-shadow:inset 0 0 0 1px rgba(255,255,255,.16),inset 0 1px 0 rgba(255,255,255,.12),0 2px 8px rgba(0,0,0,.3)}}
+/* Opening the calendar: the month just fades in where it belongs (a sliding page would carry it through the middle). */
+body.calfs #k{animation:none}body.calfs #k_cal{animation:kin .28s ease}
+@keyframes kin{from{opacity:0}}
 </style>
 <script src="app-shell.js"></script>
 </head>
@@ -2648,6 +2666,7 @@ document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"4.8",d:"27 nov 2026",i:[["k","",["Flikarna i sidomenyn", "Tabs in the side menu"],["På telefonen ligger Idag, Kalender, Att göra och Vi nu överst i sidomenyn under Menyer, och flikraden längst ner är borta. Menyknappen har en tydlig frostad kant. Svepet mellan månader är mjukare, och kalendern tonar in på sin plats när du öppnar den.", "On a phone, Today, Calendar, To do and Us are now at the top of the side menu under Menus, and the tab bar at the bottom is gone. The menu button has a clear frosted edge. Swiping between months is smoother, and the calendar fades in where it belongs when you open it."]]]},
 {v:"4.7",d:"27 nov 2026",i:[["k","",["Tydligare färger och en streckad stil", "Clearer colours and a dashed style"],["Färgerna ligger längre ifrån varandra och är klarare, så händelser är lättare att skilja åt. Dina gamla färgval visas automatiskt som sin tydligare motsvarighet. Det finns också en ny stil, Streckad, med en streckad kant runt händelsen.", "The colours are further apart and clearer, so events are easier to tell apart. Your old colour choices show as their clearer counterpart automatically. There is also a new style, Dashed, with a dashed edge around the event."]]]},
 {v:"4.6",d:"27 nov 2026",i:[["k","",["Fler timmar i vecka och dag", "More hours in week and day"],["Vecko- och dagvyn går nu ända ner till skärmens kant, så fler tider syns på en gång.", "The week and day views now reach the bottom of the screen, so more hours show at once."]]]},
 {v:"4.5",d:"27 nov 2026",i:[["k","",["Månad, Vecka, Dag i rubriken", "Month, Week, Day in the heading"],["Valet Månad / Vecka / Dag sitter nu till höger om månadens namn, lägre och lite bredare. Titelraden får mer plats.", "The Month / Week / Day choice now sits right of the month's name, lower and a little wider. The title bar gets more room."]]]},
@@ -3152,25 +3171,34 @@ $("tsrch").onclick=()=>openSearch();$("tsrch").setAttribute("aria-label",tx("Sö
 /* Tapping the month's name goes back to this month. */
 $("k_m").addEventListener("click",()=>{if(P.y===NOW.getFullYear()&&P.m===NOW.getMonth())return;$("k_now").click()});
 
-/* Swiping: the month follows the finger, slides out, and the next one slides in from the other side. */
-(()=>{const card=$("k_cal");let sx=0,sy=0,dx=0,on=false,dead=false,busy=false,W=1;
+/* Swiping: the month follows the finger, slides out, and the next one slides in from the other side.
+   Only transforms move (on their own layer), at most once a frame; the new month is drawn while hidden
+   and only slides in once it is fully drawn, so nothing stutters. */
+(()=>{const card=$("k_cal");let sx=0,sy=0,dx=0,on=false,dead=false,busy=false,W=1,raf=0;
   const parts=()=>[$("k_gr"),$("k_m")];
-  const put=x=>parts().forEach((el,i)=>{el.style.transform=`translateX(${x*(i?0.5:1)}px)`;el.style.opacity=String(1-Math.min(.6,Math.abs(x)/W*.9))});
+  const put=()=>{raf=0;const x=dx;parts().forEach((el,i)=>{el.style.transform=`translate3d(${x*(i?0.5:1)}px,0,0)`})};
+  const layer=v=>parts().forEach(el=>{el.style.willChange=v?"transform,opacity":""});
   const clear=()=>parts().forEach(el=>{el.style.transform="";el.style.opacity=""});
+  const frames=n=>new Promise(r=>{const f=()=>--n<=0?r():requestAnimationFrame(f);requestAnimationFrame(f)});
   card.addEventListener("touchstart",e=>{if(busy||e.touches.length>1)return;sx=e.touches[0].clientX;sy=e.touches[0].clientY;dx=0;on=false;dead=false;W=card.clientWidth||360},{passive:true});
   card.addEventListener("touchmove",e=>{if(busy||dead)return;const t=e.touches[0],x=t.clientX-sx,y=t.clientY-sy;
-    if(!on){if(Math.abs(y)>10&&Math.abs(y)>Math.abs(x)){dead=true;return}if(Math.abs(x)<10)return;on=true}
-    dx=x;put(dx)},{passive:true});
-  const done=()=>{if(!on){return}on=false;
-    if(Math.abs(dx)<60){parts().forEach(el=>el.animate([{transform:el.style.transform,opacity:el.style.opacity},{transform:"none",opacity:1}],{duration:200,easing:"cubic-bezier(.2,.8,.2,1)"}));clear();return}
-    busy=true;const k=dx<0?1:-1,out=-k*W*.55,ease="cubic-bezier(.3,.7,.3,1)";
-    const a=parts().map((el,i)=>el.animate([{transform:el.style.transform,opacity:el.style.opacity},{transform:`translateX(${out*(i?0.5:1)}px)`,opacity:0}],{duration:140,easing:"ease-in",fill:"forwards"}));
-    a[0].finished.then(()=>{moveMonth(k);a.forEach(x=>x.cancel());clear();
-      parts().forEach((el,i)=>el.animate([{transform:`translateX(${-out*.6*(i?0.5:1)}px)`,opacity:0},{transform:"none",opacity:1}],{duration:240,easing:ease}));
-      busy=false}).catch(()=>{busy=false;clear()});
+    if(!on){if(Math.abs(y)>10&&Math.abs(y)>Math.abs(x)){dead=true;return}if(Math.abs(x)<10)return;on=true;layer(true)}
+    dx=x;if(!raf)raf=requestAnimationFrame(put)},{passive:true});
+  const done=async()=>{if(!on)return;on=false;if(raf){cancelAnimationFrame(raf);raf=0}
     /* The finger lifted after a swipe is not a tap on a day. */
-    const stop=e=>{e.stopPropagation();e.preventDefault()};card.addEventListener("click",stop,{capture:true,once:true});setTimeout(()=>card.removeEventListener("click",stop,{capture:true}),400)};
-  card.addEventListener("touchend",done,{passive:true});card.addEventListener("touchcancel",()=>{if(on){on=false;clear()}},{passive:true})})();
+    const stop=e=>{e.stopPropagation();e.preventDefault()};card.addEventListener("click",stop,{capture:true,once:true});setTimeout(()=>card.removeEventListener("click",stop,{capture:true}),400);
+    if(Math.abs(dx)<60){await Promise.all(parts().map((el,i)=>el.animate([{transform:`translate3d(${dx*(i?0.5:1)}px,0,0)`},{transform:"translate3d(0,0,0)"}],{duration:220,easing:"cubic-bezier(.2,.8,.2,1)"}).finished.catch(()=>{})));clear();layer(false);return}
+    busy=true;const k=dx<0?1:-1,out=-k*W;
+    try{
+      const a=parts().map((el,i)=>el.animate([{transform:`translate3d(${dx*(i?0.5:1)}px,0,0)`,opacity:1},{transform:`translate3d(${out*(i?0.5:1)}px,0,0)`,opacity:0}],{duration:170,easing:"cubic-bezier(.4,0,.9,.6)",fill:"forwards"}));
+      await a[0].finished;
+      parts().forEach(el=>{el.style.opacity="0"});a.forEach(x=>x.cancel());
+      moveMonth(k);await frames(2);
+      parts().forEach(el=>{el.style.transform="";el.style.opacity=""});
+      await Promise.all(parts().map((el,i)=>el.animate([{transform:`translate3d(${-out*.35*(i?0.5:1)}px,0,0)`,opacity:0},{transform:"translate3d(0,0,0)",opacity:1}],{duration:260,easing:"cubic-bezier(.2,.8,.2,1)"}).finished.catch(()=>{})));
+    }catch(e){}
+    clear();layer(false);busy=false};
+  card.addEventListener("touchend",done,{passive:true});card.addEventListener("touchcancel",()=>{if(on){on=false;clear();layer(false)}},{passive:true})})();
 $("tsrch").classList.toggle("hide",tab!=="k");calAuto();
 /* Switching between the full month and the week or day view starts at the top, never under the title bar. */
 const _calFs26=calFs;calFs=function(on){const was=CALFS;_calFs26(on);if(was!==CALFS){window.scrollTo(0,0);document.body.scrollTop=0;if(!CALFS){document.body.style.removeProperty("padding-top");setTimeout(fixTop,30)}}};
@@ -3194,6 +3222,17 @@ const _rwv28=renderWeekView;renderWeekView=function(){_rwv28.apply(this,argument
   const w=$("wv_t");if(NARROW.matches&&w&&w.children.length===0)w.textContent=w.textContent.replace(/^Vecka /,"v. ").replace(/^Week /,"Wk ");requestAnimationFrame(fitTall)};
 const _calAuto28=calAuto;calAuto=function(){_calAuto28();requestAnimationFrame(fitTall)};
 window.addEventListener("resize",()=>requestAnimationFrame(fitTall));
+/* ---------- The tabs live in the side menu (phones) ----------
+   The tab bar is gone on a phone; Idag, Kalender, Att göra and Vi are at the top of the side menu
+   under "Menyer". The title no longer opens anything. */
+navUp=function(){document.body.classList.remove("navup")};
+(()=>{const dr=$("drawer"),brand=dr&&dr.querySelector(".dbrand");if(!brand)return;const box=document.createElement("div");box.id="dr_tabs";box.className="dtabs";
+  box.innerHTML=`<div class="dsec" data-dk="mMenus"></div>`+[...document.querySelectorAll("nav button[data-go]")].map(b=>`<button class="di" type="button" data-go="${b.dataset.go}">${b.querySelector("svg").outerHTML}<span data-i="${b.querySelector("em").dataset.i}"></span></button>`).join("")+`<div class="dsec dsec2" data-dk="mMore"></div>`;
+  brand.after(box);
+  const paint=()=>{box.querySelector('[data-dk="mMenus"]').textContent=tx("Menyer","Menus");box.querySelector('[data-dk="mMore"]').textContent=tx("Mer","More");
+    box.querySelectorAll("[data-go] span").forEach(s=>{s.textContent=t(s.dataset.i)});box.querySelectorAll("[data-go]").forEach(b=>b.classList.toggle("on",b.dataset.go===tab))};
+  paint();const _go=go;go=function(x){const r=_go.apply(this,arguments);paint();return r};const _al=applyLang;applyLang=function(){_al.apply(this,arguments);paint()}})();
+$("ttl").removeAttribute("role");$("ttl").removeAttribute("aria-expanded");
 </script>
 
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js")</script>

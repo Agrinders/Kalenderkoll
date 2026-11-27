@@ -20,25 +20,34 @@ $("tsrch").onclick=()=>openSearch();$("tsrch").setAttribute("aria-label",tx("Sö
 /* Tapping the month's name goes back to this month. */
 $("k_m").addEventListener("click",()=>{if(P.y===NOW.getFullYear()&&P.m===NOW.getMonth())return;$("k_now").click()});
 
-/* Swiping: the month follows the finger, slides out, and the next one slides in from the other side. */
-(()=>{const card=$("k_cal");let sx=0,sy=0,dx=0,on=false,dead=false,busy=false,W=1;
+/* Swiping: the month follows the finger, slides out, and the next one slides in from the other side.
+   Only transforms move (on their own layer), at most once a frame; the new month is drawn while hidden
+   and only slides in once it is fully drawn, so nothing stutters. */
+(()=>{const card=$("k_cal");let sx=0,sy=0,dx=0,on=false,dead=false,busy=false,W=1,raf=0;
   const parts=()=>[$("k_gr"),$("k_m")];
-  const put=x=>parts().forEach((el,i)=>{el.style.transform=`translateX(${x*(i?0.5:1)}px)`;el.style.opacity=String(1-Math.min(.6,Math.abs(x)/W*.9))});
+  const put=()=>{raf=0;const x=dx;parts().forEach((el,i)=>{el.style.transform=`translate3d(${x*(i?0.5:1)}px,0,0)`})};
+  const layer=v=>parts().forEach(el=>{el.style.willChange=v?"transform,opacity":""});
   const clear=()=>parts().forEach(el=>{el.style.transform="";el.style.opacity=""});
+  const frames=n=>new Promise(r=>{const f=()=>--n<=0?r():requestAnimationFrame(f);requestAnimationFrame(f)});
   card.addEventListener("touchstart",e=>{if(busy||e.touches.length>1)return;sx=e.touches[0].clientX;sy=e.touches[0].clientY;dx=0;on=false;dead=false;W=card.clientWidth||360},{passive:true});
   card.addEventListener("touchmove",e=>{if(busy||dead)return;const t=e.touches[0],x=t.clientX-sx,y=t.clientY-sy;
-    if(!on){if(Math.abs(y)>10&&Math.abs(y)>Math.abs(x)){dead=true;return}if(Math.abs(x)<10)return;on=true}
-    dx=x;put(dx)},{passive:true});
-  const done=()=>{if(!on){return}on=false;
-    if(Math.abs(dx)<60){parts().forEach(el=>el.animate([{transform:el.style.transform,opacity:el.style.opacity},{transform:"none",opacity:1}],{duration:200,easing:"cubic-bezier(.2,.8,.2,1)"}));clear();return}
-    busy=true;const k=dx<0?1:-1,out=-k*W*.55,ease="cubic-bezier(.3,.7,.3,1)";
-    const a=parts().map((el,i)=>el.animate([{transform:el.style.transform,opacity:el.style.opacity},{transform:`translateX(${out*(i?0.5:1)}px)`,opacity:0}],{duration:140,easing:"ease-in",fill:"forwards"}));
-    a[0].finished.then(()=>{moveMonth(k);a.forEach(x=>x.cancel());clear();
-      parts().forEach((el,i)=>el.animate([{transform:`translateX(${-out*.6*(i?0.5:1)}px)`,opacity:0},{transform:"none",opacity:1}],{duration:240,easing:ease}));
-      busy=false}).catch(()=>{busy=false;clear()});
+    if(!on){if(Math.abs(y)>10&&Math.abs(y)>Math.abs(x)){dead=true;return}if(Math.abs(x)<10)return;on=true;layer(true)}
+    dx=x;if(!raf)raf=requestAnimationFrame(put)},{passive:true});
+  const done=async()=>{if(!on)return;on=false;if(raf){cancelAnimationFrame(raf);raf=0}
     /* The finger lifted after a swipe is not a tap on a day. */
-    const stop=e=>{e.stopPropagation();e.preventDefault()};card.addEventListener("click",stop,{capture:true,once:true});setTimeout(()=>card.removeEventListener("click",stop,{capture:true}),400)};
-  card.addEventListener("touchend",done,{passive:true});card.addEventListener("touchcancel",()=>{if(on){on=false;clear()}},{passive:true})})();
+    const stop=e=>{e.stopPropagation();e.preventDefault()};card.addEventListener("click",stop,{capture:true,once:true});setTimeout(()=>card.removeEventListener("click",stop,{capture:true}),400);
+    if(Math.abs(dx)<60){await Promise.all(parts().map((el,i)=>el.animate([{transform:`translate3d(${dx*(i?0.5:1)}px,0,0)`},{transform:"translate3d(0,0,0)"}],{duration:220,easing:"cubic-bezier(.2,.8,.2,1)"}).finished.catch(()=>{})));clear();layer(false);return}
+    busy=true;const k=dx<0?1:-1,out=-k*W;
+    try{
+      const a=parts().map((el,i)=>el.animate([{transform:`translate3d(${dx*(i?0.5:1)}px,0,0)`,opacity:1},{transform:`translate3d(${out*(i?0.5:1)}px,0,0)`,opacity:0}],{duration:170,easing:"cubic-bezier(.4,0,.9,.6)",fill:"forwards"}));
+      await a[0].finished;
+      parts().forEach(el=>{el.style.opacity="0"});a.forEach(x=>x.cancel());
+      moveMonth(k);await frames(2);
+      parts().forEach(el=>{el.style.transform="";el.style.opacity=""});
+      await Promise.all(parts().map((el,i)=>el.animate([{transform:`translate3d(${-out*.35*(i?0.5:1)}px,0,0)`,opacity:0},{transform:"translate3d(0,0,0)",opacity:1}],{duration:260,easing:"cubic-bezier(.2,.8,.2,1)"}).finished.catch(()=>{})));
+    }catch(e){}
+    clear();layer(false);busy=false};
+  card.addEventListener("touchend",done,{passive:true});card.addEventListener("touchcancel",()=>{if(on){on=false;clear();layer(false)}},{passive:true})})();
 $("tsrch").classList.toggle("hide",tab!=="k");calAuto();
 /* Switching between the full month and the week or day view starts at the top, never under the title bar. */
 const _calFs26=calFs;calFs=function(on){const was=CALFS;_calFs26(on);if(was!==CALFS){window.scrollTo(0,0);document.body.scrollTop=0;if(!CALFS){document.body.style.removeProperty("padding-top");setTimeout(fixTop,30)}}};
@@ -62,3 +71,14 @@ const _rwv28=renderWeekView;renderWeekView=function(){_rwv28.apply(this,argument
   const w=$("wv_t");if(NARROW.matches&&w&&w.children.length===0)w.textContent=w.textContent.replace(/^Vecka /,"v. ").replace(/^Week /,"Wk ");requestAnimationFrame(fitTall)};
 const _calAuto28=calAuto;calAuto=function(){_calAuto28();requestAnimationFrame(fitTall)};
 window.addEventListener("resize",()=>requestAnimationFrame(fitTall));
+/* ---------- The tabs live in the side menu (phones) ----------
+   The tab bar is gone on a phone; Idag, Kalender, Att göra and Vi are at the top of the side menu
+   under "Menyer". The title no longer opens anything. */
+navUp=function(){document.body.classList.remove("navup")};
+(()=>{const dr=$("drawer"),brand=dr&&dr.querySelector(".dbrand");if(!brand)return;const box=document.createElement("div");box.id="dr_tabs";box.className="dtabs";
+  box.innerHTML=`<div class="dsec" data-dk="mMenus"></div>`+[...document.querySelectorAll("nav button[data-go]")].map(b=>`<button class="di" type="button" data-go="${b.dataset.go}">${b.querySelector("svg").outerHTML}<span data-i="${b.querySelector("em").dataset.i}"></span></button>`).join("")+`<div class="dsec dsec2" data-dk="mMore"></div>`;
+  brand.after(box);
+  const paint=()=>{box.querySelector('[data-dk="mMenus"]').textContent=tx("Menyer","Menus");box.querySelector('[data-dk="mMore"]').textContent=tx("Mer","More");
+    box.querySelectorAll("[data-go] span").forEach(s=>{s.textContent=t(s.dataset.i)});box.querySelectorAll("[data-go]").forEach(b=>b.classList.toggle("on",b.dataset.go===tab))};
+  paint();const _go=go;go=function(x){const r=_go.apply(this,arguments);paint();return r};const _al=applyLang;applyLang=function(){_al.apply(this,arguments);paint()}})();
+$("ttl").removeAttribute("role");$("ttl").removeAttribute("aria-expanded");
