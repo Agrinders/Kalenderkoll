@@ -92,3 +92,5 @@ const _rdv29=renderDayView;renderDayView=function(){_rdv29.apply(this,arguments)
   const paint=()=>{const n=todayN(),mon=SEL-wdOf(SEL),show=tab==="k"&&KV==="week"&&!(n>=mon&&n<mon+7);b.textContent=tx("Till idag","To today");b.classList.toggle("hide",!show)};
   const _r=renderWeekView;renderWeekView=function(){_r.apply(this,arguments);paint()};const _g=go;go=function(){const r=_g.apply(this,arguments);paint();return r};
   const _k=renderKV;renderKV=function(){_k.apply(this,arguments);paint()};paint()})();
+/* Switching back to Månad from Vecka or Dag brings the full month back too. */
+const _renderKV30=renderKV;renderKV=function(){_renderKV30.apply(this,arguments);calAuto()};

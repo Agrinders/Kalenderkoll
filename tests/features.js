@@ -43,4 +43,6 @@ check('every Saturday and Sunday is one bar over the weekend',await ev(()=>{save
 check('no Never or None: nothing chosen is the default, a second tap removes',await ev(()=>{openES();const has=[!!document.querySelector('[data-esr="o"]'),!!document.querySelector('[data-esm="-1"]'),ES.r,ES.rm];
   document.querySelector('[data-esr="w"]').click();document.querySelector('[data-esm="30"]').click();const on=[ES.r,ES.rm];
   document.querySelector('[data-esr="w"]').click();document.querySelector('[data-esm="30"]').click();const off=[ES.r,ES.rm];closeES&&closeES();return[has,on,off]}),[[false,false,'o',-1],['w',30],['o',-1]]);
+check('back to Månad from Vecka is full screen again',await ev(()=>{go('k');document.querySelector('[data-kv="week"]').click();const a=CALFS;document.querySelector('[data-kv="month"]').click();return[a,CALFS===(innerWidth<860)]}),[false,true]);
+check('Easter: Thursday to Monday decorated',await ev(()=>['2027-03-25','2027-03-26','2027-03-27','2027-03-28','2027-03-29'].map(x=>festOf(holidays(2027).find(h=>h[0]===dn(x))))),['easter','easter','easter','easter','easter']);
 await b.close();srv.close();console.log(fails?fails+' failed':'all passed');process.exit(fails?1:0)})();

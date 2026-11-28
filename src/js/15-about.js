@@ -2,6 +2,7 @@
    Each new thing can have a "Ta mig dit" button: [page, what to open, [title sv, en], [text sv, en]].
    "n" means there is nowhere in particular to go. */
 var CHANGELOG=[
+{v:"5.4",d:"28 nov 2026",i:[["k","",["Hela påsken", "All of Easter"],["Påskens dekoration finns nu från skärtorsdagen till annandag påsk. Byter du tillbaka till Månad från Vecka eller Dag fyller månaden skärmen igen.", "Easter's decoration now runs from Maundy Thursday to Easter Monday. Switching back to Month from Week or Day fills the screen with the month again."]]]},
 {v:"5.3",d:"27 nov 2026",i:[["k","",["Veckovyn: svep och Till idag", "Week view: swipe and To today"],["Veckan följer fingret när du sveper och glider över till nästa vecka, precis som månaden. När du har bläddrat bort finns en ”Till idag”-knapp längst ner.", "The week follows your finger when you swipe and slides over to the next week, just like the month. When you have browsed away there is a “To today” button at the bottom."]]]},
 {v:"5.2",d:"27 nov 2026",i:[["k","",["Rektangel runt dagens datum", "A rectangle around today's date"],["Dagens datum och dagen du har valt markeras med en rundad rektangel i stället för en cirkel, i månaden och veckan.", "Today's date and the day you have chosen are marked with a rounded rectangle instead of a circle, in the month and the week."]]]},
 {v:"5.1",d:"27 nov 2026",i:[["k","",["Röda dagar", "Red days"],["Söndagar och helgdagar har en svag röd ton i månaden, veckan och dagen.", "Sundays and public holidays have a faint red tint in the month, week and day views."]]]},
